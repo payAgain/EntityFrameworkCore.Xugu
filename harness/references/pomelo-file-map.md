@@ -88,3 +88,54 @@
 | 连接串 | MySQL 标准 | `IP=...; DB=...; USER=...; PWD=...; PORT=...` |
 | 兼容模式 | 不需要 | SET compatible_mode TO 'MYSQL' |
 | INSERT 回读 | LAST_INSERT_ID() | 查 insert.md RETURNING 或等效函数 |
+
+## Phase 8 差距审计（2026-07-06 Wave 4）
+
+> Xugu **117** .cs vs Pomelo **194** .cs（~60%）；测试 **194/194** PASS
+
+### 状态汇总
+
+| 状态 | 数量 | 说明 |
+|------|------|------|
+| **done** | ~45 任务 ID | W1–W4 核心 Query/Storage/Migrations/Scaffolding/Extensions |
+| **skip** | 6 | JSON/NTS、Collation/Charset DataAnnotations、FULLTEXT |
+| **defer** | 11 | 见下表 |
+
+### 模块 done/skip/defer
+
+| 模块 | Pomelo | Xugu | 状态 |
+|------|--------|------|------|
+| Query Core | 65 | ~35 | **done** 核心路径；defer Q11/Q12/Q14 |
+| Query Translators | — | 14 文件 | **done**（无 JSON） |
+| Storage TypeMapping | 43 | 22 | **done** 核心 CLR 映射；defer S8–S10 |
+| Extensions | 23 | ~12 | **partial** E1–E3 done；defer E6–E8 |
+| Migrations | 8 | 5 | **done** 核心；defer M3 FK 全动作 |
+| Scaffolding | 6 | 4 | **done** SC1–SC2/SC4；defer SC3 布局 |
+| ValueGeneration | 2 | 2 | **done** |
+| DataAnnotations | 2 | 0 | **skip** DA1–DA2 |
+| Native RID | — | — | **defer** N1–N3 |
+
+### defer 清单（Phase 8 剩余）
+
+| ID | 项 | 原因 |
+|----|-----|------|
+| 8.Q11 | BitwiseOperationReturnTypeCorrecting | P2；Xugu 整数位运算返回 BIGINT，暂无 EF 翻译失败报告 |
+| 8.Q12 | FOR UPDATE / 窗口函数 | P2；文档支持 `FOR UPDATE` 但 EF Core 无标准 API |
+| 8.Q14 | 参数内联 | P2 性能优化 |
+| 8.Q15 | ConvertTimeZone | 无 CONVERT_TZ |
+| 8.S8–S10 | RelationalCommand/Database 表面 | P2 |
+| 8.E6–E8 | TableBuilder/ModelBuilder/Options 增量 | P1–P2 |
+| 8.M3 | FK 全动作 differ | P1 |
+| 8.SC3 | CodeGenerator 布局 | P2 |
+| 8.N1–N3 | Linux RID 打包 | 依赖驱动发布 |
+
+### Pomelo 独有、Xugu 不实现
+
+| Pomelo 文件/功能 | 处理 |
+|-----------------|------|
+| `MySqlJson*` 全套 | **skip** |
+| `MySqlQueryStringFactory` | EF Core 默认 `IRelationalQueryStringFactory` 足够 |
+| `MySqlConnectionStringOptionsValidator` | **defer**（连接串格式不同） |
+| `BitwiseOperationReturnTypeCorrectingExpressionVisitor` | **defer** 8.Q11 |
+| Collation/Charset Fluent + DataAnnotations | **skip** |
+| FULLTEXT/SPATIAL 索引 | **skip** |

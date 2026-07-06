@@ -5,9 +5,9 @@
 ## 当前 Phase: **8**（`in_progress` — Pomelo 9.0.0 功能对等）
 
 **版本**：**`1.0.0`**（Phase 7 已发布）→ 目标 **`1.1.0`**  
-**测试**：**166/166** PASS（Wave 2 +6）  
-**源码**：Xugu **~111** .cs vs Pomelo **194** .cs  
-**Wave 指针**：Wave 2 `done` → **Wave 3**（8.Q7–Q10、8.Q13、8.M4）
+**测试**：**194/194** PASS（Wave 4 +22）  
+**源码**：Xugu **117** .cs vs Pomelo **194** .cs（~60%）  
+**Wave 指针**：Wave 4 `done` → **Wave 5**（8.E6–E8、8.M3、8.SC3、8.N2）
 
 ---
 
@@ -137,6 +137,8 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 
 | 日期 | 事件 |
 |------|------|
+| 2026-07-06 | **Phase 8 W4**：测试扩展 + DI/contract 审计；**194/194** 测试；8.Q11/Q12 defer |
+| 2026-07-06 | **Phase 8 W3**：Query Postprocessor visitors + SequentialGuid；**172/172** 测试 |
 | 2026-07-06 | **Phase 7 关闭**：`1.0.0` 发版、CHANGELOG、`publish-nuget.ps1`；**141/141** 测试 |
 | 2026-07-06 | **Phase 7 W3**：ExecuteDelete/Update SQL 生成 + 冒烟测试（7.Q1/7.T1/7.T2）；**141/141** 测试 |
 | 2026-07-06 | **Phase 7 W2**：SqlTranslating/QueryableMethod Visitor 骨架、CompiledQueryCacheKey、7.O1 DI 合并；**136/136** 测试 |

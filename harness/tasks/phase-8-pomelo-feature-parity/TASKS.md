@@ -50,14 +50,14 @@
 | 8.Q8 | `XuguBoolOptimizingExpressionVisitor` | QueryCore | 8.Q6 | ❌ | P1 | done |
 | 8.Q9 | `XuguQueryableMethodNormalizingExpressionVisitor` | QueryCore | Phase 7.Q1 | ❌ | P1 | done |
 | 8.Q10 | `XuguQueryTranslationPostprocessor` 完整（含 nullability 传播） | QueryCore | Phase 7.Q2 | ❌ | P0 | done |
-| 8.Q11 | `BitwiseOperationReturnTypeCorrectingExpressionVisitor`（若 Xugu 位运算返回类型与 CLR 不一致） | QueryCore | 8.Q6 | ❌ | P2 | todo |
-| 8.Q12 | `XuguQuerySqlGenerator` 增量：`FOR UPDATE`、窗口函数子集（若文档支持）— **查** `reference/sql/dml/select.md` | QueryCore | — | ✅ | P2 | todo |
+| 8.Q11 | `BitwiseOperationReturnTypeCorrectingExpressionVisitor`（若 Xugu 位运算返回类型与 CLR 不一致） | QueryCore | 8.Q6 | ❌ | P2 | defer |
+| 8.Q12 | `XuguQuerySqlGenerator` 增量：`FOR UPDATE`、窗口函数子集（若文档支持）— **查** `reference/sql/dml/select.md` | QueryCore | — | ✅ | P2 | defer |
 | 8.Q13 | ExecuteUpdate/Delete 边缘：关联子查询、多表、Owned 类型 — **查** DML 文档 | QueryCore | Phase 7.Q1 | ❌ | P0 | done |
 | 8.Q14 | `XuguInlinedParameterExpression` + 参数内联优化（对齐 Pomelo 性能路径） | QueryCore | 8.Q6 | ❌ | P2 | todo |
 | 8.Q15 | DbFunctions 增量：`ConvertTimeZone` — **defer/skip** 若无 `CONVERT_TZ`；`IsMatch` 已有 Regex 则补文档 | QueryTranslators | — | ✅ | P2 | todo |
 | 8.Q16 | JSON 相关 Translators / Visitors | — | — | — | **skip** | skip |
 | 8.Q17 | Pomelo `MySqlJson*` 全套 | — | — | — | **skip** | skip |
-| 8.Q18 | Query 模块单元测试：每 Translator 至少 1 条 `TranslatorSqlTests` 断言 | Testing | 各 Q* | ✅ | P1 | todo |
+| 8.Q18 | Query 模块单元测试：每 Translator 至少 1 条 `TranslatorSqlTests` 断言 | Testing | 各 Q* | ✅ | P1 | done |
 
 **8.Q15 说明**：`ConvertTimeZone` → **defer**（无 `CONVERT_TZ`，见 BACKLOG）；`IsMatch` 若已覆盖 `REGEXP_LIKE` 则标 done 并写 contract。
 
@@ -77,7 +77,7 @@
 | 8.S8 | `XuguRelationalCommand` / `XuguRelationalDataReader` 增强（若驱动需要） | Storage | — | ✅ | P2 | todo |
 | 8.S9 | `XuguSqlGenerationHelper` 增量：字面量转义、标识符引用边缘 | Storage | — | ✅ | P1 | todo |
 | 8.S10 | `XuguDatabase` / `XuguRelationalDatabase` 表面 API（若 Pomelo 有而 Xugu 缺） | Storage | — | ✅ | P2 | todo |
-| 8.S11 | Storage 模块 `TypeMappingSourceTests` 扩展 | Testing | 8.S7 | ❌ | P1 | todo |
+| 8.S11 | Storage 模块 `TypeMappingSourceTests` 扩展 | Testing | 8.S7 | ❌ | P1 | done |
 
 > **必先查** `E:\BaiduSyncdisk\docs\content\reference\data-type\` 各类型页；禁止照搬 Pomelo `CONVERT` 映射表。
 
@@ -95,7 +95,7 @@
 | 8.E6 | `XuguTableBuilderExtensions` | Extensions | — | ✅ | P1 | todo |
 | 8.E7 | `XuguModelBuilderExtensions` 增量（默认字符集 — 连接级替代） | Extensions | — | ✅ | P2 | todo |
 | 8.E8 | `XuguDbContextOptionsBuilder` 增量（ServerVersion 自动探测、Retry 策略入口） | Infra | 7.S2 | ✅ | P1 | todo |
-| 8.E9 | `XuguServiceCollectionExtensions` 由 Orchestrator 合并 Extension 注册 | Orchestrator | 8.E1–E8 | ❌ | P0 | todo |
+| 8.E9 | `XuguServiceCollectionExtensions` 由 Orchestrator 合并 Extension 注册 | Orchestrator | 8.E1–E8 | ❌ | P0 | done |
 
 ---
 
@@ -107,7 +107,7 @@
 | 8.M2 | 列重命名、类型变更组合迁移 SQL | Migrations | 8.S7 | ❌ | P0 | done |
 | 8.M3 | 外键 `ON DELETE`/`ON UPDATE` 全动作 — **查** `reference/object/table/foreign-key.md` | Migrations | — | ✅ | P1 | todo |
 | 8.M4 | `XuguMigrationsModelDiffer` 边缘：索引过滤、包含列（若 Xugu 不支持则 skip） | Migrations | — | ✅ | P1 | done |
-| 8.M5 | `MigrationsModelDifferTests` + `MigrationSqlGeneratorTests` 增量 | Testing | 8.M1–M4 | ✅ | P1 | todo |
+| 8.M5 | `MigrationsModelDifferTests` + `MigrationSqlGeneratorTests` 增量 | Testing | 8.M1–M4 | ✅ | P1 | done |
 
 ---
 
@@ -118,7 +118,7 @@
 | 8.SC1 | `XuguDatabaseModelFactory` 增量：视图、存储过程（若文档支持） | Migrations | — | ✅ | P1 | done |
 | 8.SC2 | `XuguAnnotationCodeGenerator` 增量：Fluent 反向生成 | Migrations | — | ✅ | P1 | done |
 | 8.SC3 | `XuguCodeGenerator` 命名空间/文件布局对齐 Pomelo | Migrations | — | ✅ | P2 | todo |
-| 8.SC4 | `ScaffoldingIntegrationTests` 扩展（多 schema、复合 PK） | Testing | 8.SC1 | ❌ | P1 | todo |
+| 8.SC4 | `ScaffoldingIntegrationTests` 扩展（多 schema、复合 PK） | Testing | 8.SC1 | ❌ | P1 | done |
 
 ---
 
@@ -155,9 +155,9 @@
 
 | ID | 描述 | Agent | 依赖 | 可并行? | 优先级 | 状态 |
 |----|------|-------|------|---------|--------|------|
-| 8.O1 | `pomelo-file-map.md` 差距审计：标记 done/skip/defer | Orchestrator | 8.* | ❌ | P0 | todo |
-| 8.O2 | `sql-dialect.contract.md` Phase 8 全量登记 | Orchestrator | 8.* | ❌ | P0 | todo |
-| 8.O3 | Phase 8 handoff + 文件数统计 | Orchestrator | 8.O1, 8.O2 | ❌ | P0 | todo |
+| 8.O1 | `pomelo-file-map.md` 差距审计：标记 done/skip/defer | Orchestrator | 8.* | ❌ | P0 | done |
+| 8.O2 | `sql-dialect.contract.md` Phase 8 全量登记 | Orchestrator | 8.* | ❌ | P0 | done |
+| 8.O3 | Phase 8 handoff + 文件数统计 | Orchestrator | 8.O1, 8.O2 | ❌ | P0 | done |
 
 ---
 

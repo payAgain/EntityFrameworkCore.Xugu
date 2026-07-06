@@ -453,6 +453,150 @@ public class TranslatorSqlTests
         AssertSql.Contains("LIMIT", sql);
     }
 
+    [Fact]
+    public void Math_Ceiling_generates_CEILING()
+    {
+        using var context = CreateContext();
+
+        var sql = context.NumericItems
+            .Where(i => Math.Ceiling((double)i.Id) > 0)
+            .ToQueryString();
+
+        AssertSql.Contains("CEILING(", sql);
+    }
+
+    [Fact]
+    public void Math_Round_generates_ROUND()
+    {
+        using var context = CreateContext();
+
+        var sql = context.NumericItems
+            .Where(i => Math.Round((double)i.Id) > 0)
+            .ToQueryString();
+
+        AssertSql.Contains("ROUND(", sql);
+    }
+
+    [Fact]
+    public void Math_Abs_generates_ABS()
+    {
+        using var context = CreateContext();
+
+        var sql = context.NumericItems
+            .Where(i => Math.Abs(i.Id - 5) > 0)
+            .ToQueryString();
+
+        AssertSql.Contains("ABS(", sql);
+    }
+
+    [Fact]
+    public void Math_Pow_generates_POWER()
+    {
+        using var context = CreateContext();
+
+        var sql = context.NumericItems
+            .Where(i => Math.Pow(i.Id, 2) > 0)
+            .ToQueryString();
+
+        AssertSql.Contains("POWER(", sql);
+    }
+
+    [Fact]
+    public void Math_Truncate_generates_TRUNCATE()
+    {
+        using var context = CreateContext();
+
+        var sql = context.NumericItems
+            .Where(i => Math.Truncate((double)i.Id) > 0)
+            .ToQueryString();
+
+        AssertSql.Contains("TRUNCATE(", sql);
+    }
+
+    [Fact]
+    public void String_Contains_generates_LIKE()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .Where(e => e.Title.Contains("test"))
+            .ToQueryString();
+
+        AssertSql.Contains("LIKE", sql);
+    }
+
+    [Fact]
+    public void String_ToLower_generates_LCASE()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .Where(e => e.Title.ToLower() == "test")
+            .ToQueryString();
+
+        AssertSql.Contains("LCASE(", sql);
+    }
+
+    [Fact]
+    public void String_PadLeft_generates_LPAD()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .Where(e => e.Title.PadLeft(10) == "test")
+            .ToQueryString();
+
+        AssertSql.Contains("LPAD(", sql);
+    }
+
+    [Fact]
+    public void String_Substring_generates_SUBSTRING()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .Where(e => e.Title.Substring(0, 3) == "tes")
+            .ToQueryString();
+
+        AssertSql.Contains("SUBSTRING(", sql);
+    }
+
+    [Fact]
+    public void DateTime_Year_generates_YEAR()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .Where(e => e.CreatedAt.Year == 2024)
+            .ToQueryString();
+
+        AssertSql.Contains("YEAR(", sql);
+    }
+
+    [Fact]
+    public void DateTime_AddMonths_generates_TIMESTAMPADD()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .Where(e => e.CreatedAt.AddMonths(1).Month == 6)
+            .ToQueryString();
+
+        AssertSql.Contains("TIMESTAMPADD(MONTH,", sql);
+    }
+
+    [Fact]
+    public void TimeSpan_Minutes_generates_MINUTE()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Durations
+            .Where(d => d.Duration.Minutes > 0)
+            .ToQueryString();
+
+        AssertSql.Contains("MINUTE(", sql);
+    }
+
     private static SqlTestContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<SqlTestContext>()

@@ -98,6 +98,51 @@ public class TypeMappingSourceTests
         Assert.Equal("NUMERIC(10,4)", mapping.StoreType);
     }
 
+    [Theory]
+    [InlineData("CHAR(10)", false)]
+    [InlineData("VARCHAR(255)", false)]
+    public void FindMapping_string_store_types_use_xugu_string_mapping(string storeType, bool isFixedLength)
+    {
+        using var context = CreateContext();
+        var source = context.GetInfrastructure().GetRequiredService<IRelationalTypeMappingSource>();
+        var mapping = source.FindMapping(typeof(string), storeType);
+
+        Assert.NotNull(mapping);
+        Assert.IsType<XuguStringTypeMapping>(mapping);
+        Assert.Equal(isFixedLength, mapping!.IsFixedLength);
+    }
+
+    [Fact]
+    public void FindMapping_string_max_length_from_store_type()
+    {
+        using var context = CreateContext();
+        var source = context.GetInfrastructure().GetRequiredService<IRelationalTypeMappingSource>();
+        var mapping = source.FindMapping(typeof(string), "VARCHAR(500)");
+
+        Assert.NotNull(mapping);
+        Assert.Equal(500, mapping!.Size);
+    }
+
+    [Fact]
+    public void FindMapping_unknown_store_type_falls_back_to_clr_type()
+    {
+        using var context = CreateContext();
+        var source = context.GetInfrastructure().GetRequiredService<IRelationalTypeMappingSource>();
+        var mapping = source.FindMapping(typeof(int), "NOT_A_REAL_TYPE");
+
+        Assert.NotNull(mapping);
+        Assert.Equal(typeof(int), mapping!.ClrType);
+    }
+
+    [Fact]
+    public void XuguGuidTypeMapping_generates_quoted_literal()
+    {
+        var mapping = XuguGuidTypeMapping.Default;
+        var guid = Guid.Parse("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
+
+        Assert.Equal($"'{guid:N}'", mapping.GenerateSqlLiteral(guid));
+    }
+
     private static DbContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<DbContext>()

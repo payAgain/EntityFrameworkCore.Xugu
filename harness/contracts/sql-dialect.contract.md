@@ -279,6 +279,17 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | FULLTEXT IsMatch | **无 MATCH AGAINST** | `MATCH … AGAINST` | **不实现** |
 | HasTables | `DBA_TABLES`（`VALID='T'`, `IS_SYS='F'`） | `information_schema.tables` | XuguDatabaseCreator |
 
+## FOR UPDATE / 位运算（Phase 8 调研）
+
+> 文档：`reference/sql/select/select.md` §FOR UPDATE；`reference/sql/datatype/bit.md`；`reference/sql/operators/bit-operators/`
+
+| 场景 | XuguDB | Provider | 状态 |
+|------|--------|----------|------|
+| `SELECT … FOR UPDATE` | 支持行排他锁 | — | **defer**（8.Q12；EF Core 无标准 Tag 翻译入口） |
+| 窗口函数 | 文档子集支持 | — | **defer**（8.Q12） |
+| 整数位运算 `& \| ^ << >>` | BIGINT 返回；BIT 类型独立 | — | **defer**（8.Q11；暂无翻译类型不匹配报告） |
+| `BitwiseOperationReturnTypeCorrecting` | Pomelo 用于 MySQL 返回类型修正 | — | **defer** |
+
 ## DDL 差异
 
 | 操作 | 文档路径 | 负责 Agent | 状态 |
@@ -318,6 +329,7 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-06 | Phase 8 W4：FOR UPDATE/位运算 defer 登记；Translator/TypeMapping/Migration/Scaffolding 测试扩展 | Orchestrator |
 | 2026-07-06 | Phase 8 W3：Having/BoolOptimizing/Postprocessor visitors；ExecuteUpdate 多表 LIMIT 守卫；SequentialGuid；MigrationsModelDiffer 索引/Collation 过滤 | Orchestrator |
 | 2026-07-06 | Phase 8 W2：SqlTranslating/Convert 扩展；Migration 列重命名/备注；视图 Scaffolding；Extensions E1–E3 | Orchestrator |
 | 2026-07-06 | Phase 8 W1：StringComparison/Math/TimeSpan Translators；专用 TypeMapping 注册表 | Orchestrator |
