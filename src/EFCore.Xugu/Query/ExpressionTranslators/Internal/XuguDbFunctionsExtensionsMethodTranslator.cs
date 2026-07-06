@@ -8,11 +8,45 @@ using Microsoft.EntityFrameworkCore.Xugu.Query.Internal;
 namespace Microsoft.EntityFrameworkCore.Xugu.Query.ExpressionTranslators.Internal;
 
 /// <summary>
-/// XuguDbFunctionsExtensions.Like → SQL LIKE.
-/// Docs: reference/sql/select/where.md
+/// XuguDbFunctionsExtensions.Like → SQL LIKE; Hex → HEX().
+/// Docs: reference/sql/select/where.md, reference/function/uncategorized-functions/hex.md
 /// </summary>
 public class XuguDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
 {
+    private static readonly Type[] SupportedHexTypes =
+    [
+        typeof(string),
+        typeof(byte[]),
+        typeof(int),
+        typeof(long),
+        typeof(short),
+        typeof(sbyte),
+        typeof(int?),
+        typeof(long?),
+        typeof(short?),
+        typeof(sbyte?),
+        typeof(uint),
+        typeof(ulong),
+        typeof(ushort),
+        typeof(byte),
+        typeof(uint?),
+        typeof(ulong?),
+        typeof(ushort?),
+        typeof(byte?),
+        typeof(decimal),
+        typeof(double),
+        typeof(float),
+        typeof(decimal?),
+        typeof(double?),
+        typeof(float?),
+    ];
+
+    private static readonly MethodInfo[] HexMethodInfos
+        = typeof(XuguDbFunctionsExtensions).GetRuntimeMethods()
+            .Where(method => method.Name == nameof(XuguDbFunctionsExtensions.Hex) && method.IsGenericMethod)
+            .SelectMany(method => SupportedHexTypes.Select(type => method.MakeGenericMethod(type)))
+            .ToArray();
+
     private readonly XuguSqlExpressionFactory _sqlExpressionFactory;
 
     public XuguDbFunctionsExtensionsMethodTranslator(XuguSqlExpressionFactory sqlExpressionFactory)
@@ -24,8 +58,20 @@ public class XuguDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
         IReadOnlyList<SqlExpression> arguments,
         IDiagnosticsLogger<DbLoggerCategory.Query> logger)
     {
-        if (method.DeclaringType != typeof(XuguDbFunctionsExtensions)
-            || method.Name != nameof(XuguDbFunctionsExtensions.Like)
+        if (method.DeclaringType != typeof(XuguDbFunctionsExtensions))
+        {
+            return null;
+        }
+
+        if (HexMethodInfos.Any(m => m.Equals(method)))
+        {
+            return _sqlExpressionFactory.NullableFunction(
+                "HEX",
+                [arguments[1]],
+                typeof(string));
+        }
+
+        if (method.Name != nameof(XuguDbFunctionsExtensions.Like)
             || arguments.Count is not (3 or 4))
         {
             return null;

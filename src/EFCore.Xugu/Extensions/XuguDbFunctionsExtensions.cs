@@ -1118,4 +1118,20 @@ public static class XuguDbFunctionsExtensions
             => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Like)));
 
         #endregion Like
+
+        #region Hex
+
+        /// <summary>
+        ///     Converts a string or numeric value to a hexadecimal string via <c>HEX(expr)</c>.
+        ///     Docs: reference/function/uncategorized-functions/hex.md
+        /// </summary>
+        /// <param name="_">The DbFunctions instance.</param>
+        /// <param name="value">The string or number to convert.</param>
+        /// <returns>The hexadecimal string, or <see langword="null" />.</returns>
+        public static string Hex<T>(
+            this DbFunctions _,
+            T value)
+            => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Hex)));
+
+        #endregion Hex
 }

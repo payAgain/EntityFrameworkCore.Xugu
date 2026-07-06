@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
+using System.Text.RegularExpressions;
 using Xunit;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
@@ -138,6 +139,30 @@ public class TranslatorSqlTests
             .ToQueryString();
 
         AssertSql.Contains("LIKE", sql);
+    }
+
+    [Fact]
+    public void DbFunctions_Hex_generates_HEX()
+    {
+        using var context = CreateContext();
+
+        var sql = context.NumericItems
+            .Where(i => XuguDbFunctionsExtensions.Hex(EF.Functions, i.Label) == "616263")
+            .ToQueryString();
+
+        AssertSql.Contains("HEX(", sql);
+    }
+
+    [Fact]
+    public void Regex_IsMatch_generates_REGEXP_LIKE()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .Where(e => Regex.IsMatch(e.Title, @"^Test\d+$"))
+            .ToQueryString();
+
+        AssertSql.Contains("REGEXP_LIKE(", sql);
     }
 
     [Fact]
