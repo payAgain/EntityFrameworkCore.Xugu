@@ -42,6 +42,17 @@ public class TypeMappingSourceTests
     [InlineData(typeof(uint), "BIGINT", typeof(XuguUIntTypeMapping))]
     [InlineData(typeof(ulong), "NUMERIC(20,0)", typeof(XuguULongTypeMapping))]
     [InlineData(typeof(TimeSpan), "TIME", typeof(XuguTimeSpanTypeMapping))]
+    [InlineData(typeof(float), "FLOAT", typeof(XuguFloatTypeMapping))]
+    [InlineData(typeof(double), "DOUBLE", typeof(XuguDoubleTypeMapping))]
+    [InlineData(typeof(byte), "TINYINT", typeof(XuguByteTypeMapping))]
+    [InlineData(typeof(sbyte), "TINYINT", typeof(XuguSByteTypeMapping))]
+    [InlineData(typeof(short), "SMALLINT", typeof(XuguShortTypeMapping))]
+    [InlineData(typeof(ushort), "SMALLINT", typeof(XuguUShortTypeMapping))]
+    [InlineData(typeof(string), "VARCHAR(255)", typeof(XuguStringTypeMapping))]
+    [InlineData(typeof(byte[]), "BLOB", typeof(XuguByteArrayTypeMapping))]
+    [InlineData(typeof(DateOnly), "DATE", typeof(XuguDateOnlyTypeMapping))]
+    [InlineData(typeof(TimeOnly), "TIME", typeof(XuguTimeOnlyTypeMapping))]
+    [InlineData(typeof(DateTimeOffset), "DATETIME WITH TIME ZONE", typeof(XuguDateTimeOffsetTypeMapping))]
     public void FindMapping_uses_xugu_specific_clr_mappings(Type clrType, string expectedStoreType, Type expectedMappingType)
     {
         using var context = CreateContext();

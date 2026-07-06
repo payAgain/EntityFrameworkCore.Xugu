@@ -14,6 +14,7 @@ public class XuguMemberTranslatorProvider : RelationalMemberTranslatorProvider
         [
             new XuguStringMemberTranslator(sqlExpressionFactory),
             new XuguDateTimeMemberTranslator(sqlExpressionFactory),
+            new XuguTimeSpanMemberTranslator(sqlExpressionFactory),
         ]);
     }
 }

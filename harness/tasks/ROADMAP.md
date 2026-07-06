@@ -2,11 +2,11 @@
 
 > Orchestrator 维护。仓库：`E:\Work\xuguefcore`
 
-## 当前 Phase: **8**（`planned` — Pomelo 9.0.0 功能对等）
+## 当前 Phase: **8**（`in_progress` — Pomelo 9.0.0 功能对等）
 
 **版本**：**`1.0.0`**（Phase 7 已发布）→ 目标 **`1.1.0`**  
-**测试**：**141/141** PASS  
-**源码**：Xugu **105** .cs vs Pomelo **194** .cs（~54%）
+**测试**：**160/160** PASS（Wave 1 +19）  
+**源码**：Xugu **~120** .cs vs Pomelo **194** .cs
 
 ---
 
@@ -36,7 +36,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 | 5 | Extensions + 高级 | `done` | — | Fluent API E1–E5 |
 | 6 | 测试 + 生产化 | `done` | `0.1.0-preview` | .resx + NuGet pack + 116 测试 |
 | **7** | **1.0.0 生产级发版** | **`done`** | **`1.0.0`** | ExecuteDelete/Update、编译管道、LIMITATIONS、pack |
-| **8** | **Pomelo 功能对等** | **`planned`** | **`1.1.0`** | ~150+ .cs；Translators/Storage/Extensions 对齐 |
+| **8** | **Pomelo 功能对等** | **`in_progress`** | **`1.1.0`** | ~150+ .cs；Translators/Storage/Extensions 对齐 |
 | 9 | Pomelo 测试对等 | `planned` | `2.0.0` | FunctionalTests 30%→60%→90% |
 
 ### Phase 任务文档

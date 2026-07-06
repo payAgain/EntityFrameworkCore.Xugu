@@ -12,6 +12,7 @@ public class XuguMethodCallTranslatorProvider : RelationalMethodCallTranslatorPr
 
         AddTranslators(
         [
+            new XuguStringComparisonMethodTranslator(sqlExpressionFactory),
             new XuguStringMethodTranslator(sqlExpressionFactory),
             new XuguMathMethodTranslator(sqlExpressionFactory),
             new XuguDateTimeMethodTranslator(sqlExpressionFactory),

@@ -1,6 +1,6 @@
 # Phase 8：Pomelo 9.0.0 功能对等
 
-> **状态**：`planned`  
+> **状态**：`in_progress`  
 > **版本目标**：`1.0.0` → **`1.1.0`**（功能对等里程碑，可打 `-preview` 直至 Phase 9 测试达标）  
 > **前置**：Phase 7 `done`  
 > **差距基线**（2026-07-06）：Xugu **85** .cs vs Pomelo **194** .cs（~44%）；Query **23/65**；Storage **7/43**；Extensions **10/23**
@@ -40,10 +40,10 @@
 
 | ID | 描述 | Agent | 依赖 | 可并行? | 优先级 | 状态 |
 |----|------|-------|------|---------|--------|------|
-| 8.Q1 | `XuguStringComparisonMethodTranslator`（`string.Equals` 带 `StringComparison`）— **查** `reference/function/string-functions/` | QueryTranslators | Phase 7 | ✅ | P0 | todo |
-| 8.Q2 | `XuguTimeSpanMemberTranslator` + `XuguTimeSpanMethodTranslator` — **查** 日期时间函数文档 | QueryTranslators | Phase 7 | ✅ | P0 | todo |
-| 8.Q3 | Math 全量：`Floor`/`Ceiling`/`Round`/`Truncate`/`Abs`/`Pow`/`Sqrt`/`Sin`/`Cos`/`Tan`/`Atan2`/`Log`/`Exp` 等 — **查** `reference/function/mathematical-functions/` | QueryTranslators | Phase 7 | ✅ | P0 | todo |
-| 8.Q4 | `XuguStringMethodTranslator` 增量：`Trim`/`Replace`/`PadLeft`/`PadRight`/`Split` 子集 — **查** 字符串函数文档 | QueryTranslators | — | ✅ | P1 | todo |
+| 8.Q1 | `XuguStringComparisonMethodTranslator`（`string.Equals` 带 `StringComparison`）— **查** `reference/function/string-functions/` | QueryTranslators | Phase 7 | ✅ | P0 | done |
+| 8.Q2 | `XuguTimeSpanMemberTranslator` + `XuguTimeSpanMethodTranslator` — **查** 日期时间函数文档 | QueryTranslators | Phase 7 | ✅ | P0 | done |
+| 8.Q3 | Math 全量：`Floor`/`Ceiling`/`Round`/`Truncate`/`Abs`/`Pow`/`Sqrt`/`Sin`/`Cos`/`Tan`/`Atan2`/`Log`/`Exp` 等 — **查** `reference/function/mathematical-functions/` | QueryTranslators | Phase 7 | ✅ | P0 | done |
+| 8.Q4 | `XuguStringMethodTranslator` 增量：`Trim`/`Replace`/`PadLeft`/`PadRight`/`Split` 子集 — **查** 字符串函数文档 | QueryTranslators | — | ✅ | P1 | done |
 | 8.Q5 | `XuguConvertTranslator` 扩展：与 Pomelo `MySqlConvertTranslator` 可对齐的 `Convert.*` 路径 — **查** `reference/sql/expression/type_conversion.md` | QueryTranslators | 8.S2 | ✅ | P1 | todo |
 | 8.Q6 | `XuguSqlTranslatingExpressionVisitor` 完整行为（子查询、GroupBy 边缘、nullable） | QueryCore | Phase 7.Q4 | ❌ | P0 | todo |
 | 8.Q7 | `XuguHavingExpressionVisitor` | QueryCore | 8.Q6 | ❌ | P1 | todo |
@@ -67,13 +67,13 @@
 
 | ID | 描述 | Agent | 依赖 | 可并行? | 优先级 | 状态 |
 |----|------|-------|------|---------|--------|------|
-| 8.S1 | `XuguBoolTypeMapping` / `XuguBoolTypeMappingSource` | Storage | Phase 7.S1 | ✅ | P0 | todo |
-| 8.S2 | 数值映射：`XuguDecimalTypeMapping`、`XuguDoubleTypeMapping`、`XuguFloatTypeMapping`、`XuguByteTypeMapping` 等 | Storage | Phase 7.S1 | ✅ | P0 | todo |
-| 8.S3 | 字符串映射：`XuguStringTypeMapping`（长度、固定/可变） | Storage | — | ✅ | P0 | todo |
-| 8.S4 | 日期时间映射：`XuguDateTimeTypeMapping`、`XuguDateOnlyTypeMapping`、`XuguTimeOnlyTypeMapping` | Storage | — | ✅ | P0 | todo |
-| 8.S5 | 二进制：`XuguByteArrayTypeMapping` | Storage | — | ✅ | P1 | todo |
-| 8.S6 | GUID：`XuguGuidTypeMapping` | Storage | — | ✅ | P1 | todo |
-| 8.S7 | `XuguRelationalTypeMappingSource` 拆分/对齐 Pomelo 注册表模式 | Storage | 8.S1–S6 | ❌ | P0 | todo |
+| 8.S1 | `XuguBoolTypeMapping` / `XuguBoolTypeMappingSource` | Storage | Phase 7.S1 | ✅ | P0 | done |
+| 8.S2 | 数值映射：`XuguDecimalTypeMapping`、`XuguDoubleTypeMapping`、`XuguFloatTypeMapping`、`XuguByteTypeMapping` 等 | Storage | Phase 7.S1 | ✅ | P0 | done |
+| 8.S3 | 字符串映射：`XuguStringTypeMapping`（长度、固定/可变） | Storage | — | ✅ | P0 | done |
+| 8.S4 | 日期时间映射：`XuguDateTimeTypeMapping`、`XuguDateOnlyTypeMapping`、`XuguTimeOnlyTypeMapping` | Storage | — | ✅ | P0 | done |
+| 8.S5 | 二进制：`XuguByteArrayTypeMapping` | Storage | — | ✅ | P1 | done |
+| 8.S6 | GUID：`XuguGuidTypeMapping` | Storage | — | ✅ | P1 | done |
+| 8.S7 | `XuguRelationalTypeMappingSource` 拆分/对齐 Pomelo 注册表模式 | Storage | 8.S1–S6 | ❌ | P0 | done |
 | 8.S8 | `XuguRelationalCommand` / `XuguRelationalDataReader` 增强（若驱动需要） | Storage | — | ✅ | P2 | todo |
 | 8.S9 | `XuguSqlGenerationHelper` 增量：字面量转义、标识符引用边缘 | Storage | — | ✅ | P1 | todo |
 | 8.S10 | `XuguDatabase` / `XuguRelationalDatabase` 表面 API（若 Pomelo 有而 Xugu 缺） | Storage | — | ✅ | P2 | todo |

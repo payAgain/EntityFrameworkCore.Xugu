@@ -124,6 +124,36 @@ public class NorthwindFunctionsQueryTests(XuguDatabaseFixture fixture)
         Assert.Equal(1, count);
     }
 
+    [SkippableFact]
+    public void Math_Floor_and_string_trim_execute_on_database()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ClearNumericItems();
+        fixture.InsertNumericItem(1, "  hello  ");
+
+        using var context = CreateContext();
+
+        var count = context.NumericItems.Count(
+            i => Math.Floor((double)i.Id) == 1 && i.Label.Trim() == "hello");
+
+        Assert.Equal(1, count);
+    }
+
+    [SkippableFact]
+    public void String_Equals_OrdinalIgnoreCase_executes_on_database()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ClearNumericItems();
+        fixture.InsertNumericItem(1, "TestValue");
+
+        using var context = CreateContext();
+
+        var count = context.NumericItems.Count(
+            i => i.Label.Equals("testvalue", StringComparison.OrdinalIgnoreCase));
+
+        Assert.Equal(1, count);
+    }
+
     private static FunctionsContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<FunctionsContext>()

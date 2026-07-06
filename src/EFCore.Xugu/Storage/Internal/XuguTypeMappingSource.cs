@@ -18,18 +18,20 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
     private const string ULongTypeName = "NUMERIC(20,0)";
 
     private static readonly XuguLongTypeMapping BigInt = XuguLongTypeMapping.Default;
-    private static readonly DoubleTypeMapping Double = new(DoubleTypeName);
-    private static readonly FloatTypeMapping Float = new(FloatTypeName);
+    private static readonly XuguDoubleTypeMapping Double = XuguDoubleTypeMapping.Default;
+    private static readonly XuguFloatTypeMapping Float = XuguFloatTypeMapping.Default;
     private static readonly XuguDecimalTypeMapping Decimal = XuguDecimalTypeMapping.Default;
-    private static readonly StringTypeMapping VarChar = new(VarCharTypeName, dbType: DbType.String);
+    private static readonly XuguStringTypeMapping VarChar = XuguStringTypeMapping.Default;
     private static readonly XuguDateTimeTypeMapping DateTime = XuguDateTimeTypeMapping.Default;
 
     private readonly Dictionary<Type, RelationalTypeMapping> _clrTypeMappings = new()
     {
         { typeof(string), VarChar },
         { typeof(bool), XuguBoolTypeMapping.Default },
-        { typeof(byte), new ByteTypeMapping("TINYINT") },
-        { typeof(short), new ShortTypeMapping("SMALLINT") },
+        { typeof(byte), XuguByteTypeMapping.Default },
+        { typeof(sbyte), XuguSByteTypeMapping.Default },
+        { typeof(short), XuguShortTypeMapping.Default },
+        { typeof(ushort), XuguUShortTypeMapping.Default },
         { typeof(int), XuguIntTypeMapping.Default },
         { typeof(long), BigInt },
         { typeof(uint), XuguUIntTypeMapping.Default },
@@ -38,12 +40,12 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
         { typeof(double), Double },
         { typeof(decimal), Decimal },
         { typeof(DateTime), DateTime },
-        { typeof(DateTimeOffset), new DateTimeOffsetTypeMapping("DATETIME WITH TIME ZONE") },
-        { typeof(DateOnly), new DateOnlyTypeMapping("DATE") },
-        { typeof(TimeOnly), new TimeOnlyTypeMapping("TIME") },
+        { typeof(DateTimeOffset), XuguDateTimeOffsetTypeMapping.Default },
+        { typeof(DateOnly), XuguDateOnlyTypeMapping.Default },
+        { typeof(TimeOnly), XuguTimeOnlyTypeMapping.Default },
         { typeof(TimeSpan), XuguTimeSpanTypeMapping.Default },
         { typeof(Guid), XuguGuidTypeMapping.Default },
-        { typeof(byte[]), new ByteArrayTypeMapping(BlobTypeName) },
+        { typeof(byte[]), XuguByteArrayTypeMapping.Default },
     };
 
     private readonly Dictionary<string, RelationalTypeMapping> _storeTypeMappings =
@@ -57,18 +59,24 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
             { "BOOL", XuguBoolTypeMapping.Default },
             { VarCharTypeName, VarChar },
             { "VARCHAR", VarChar },
+            { "CHAR", new XuguStringTypeMapping("CHAR", StoreTypePostfix.Size, fixedLength: true) },
             { DateTimeTypeName, DateTime },
+            { "TIMESTAMP", DateTime },
             { DoubleTypeName, Double },
             { FloatTypeName, Float },
             { DecimalTypeName, Decimal },
             { "DECIMAL", Decimal },
             { "NUMBER", Decimal },
-            { BlobTypeName, new ByteArrayTypeMapping(BlobTypeName) },
-            { "BINARY", new ByteArrayTypeMapping("BINARY") },
-            { "DATE", new DateOnlyTypeMapping("DATE") },
-            { "TIME", new TimeOnlyTypeMapping("TIME") },
+            { BlobTypeName, XuguByteArrayTypeMapping.Default },
+            { "BINARY", new XuguByteArrayTypeMapping("BINARY", fixedLength: true) },
+            { "DATE", XuguDateOnlyTypeMapping.Default },
+            { "TIME", XuguTimeOnlyTypeMapping.Default },
+            { "DATETIME WITH TIME ZONE", XuguDateTimeOffsetTypeMapping.Default },
+            { "TIMESTAMP WITH TIME ZONE", XuguDateTimeOffsetTypeMapping.Default },
             { GuidTypeName, XuguGuidTypeMapping.Default },
             { ULongTypeName, XuguULongTypeMapping.Default },
+            { "TINYINT", XuguByteTypeMapping.Default },
+            { "SMALLINT", XuguShortTypeMapping.Default },
         };
 
     public XuguTypeMappingSource(
@@ -86,6 +94,23 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
             && TryParseDecimalStoreType(mappingInfo.StoreTypeName, out var precision, out var scale))
         {
             return new XuguDecimalTypeMapping(mappingInfo.StoreTypeName, precision: precision, scale: scale);
+        }
+
+        if (clrType == typeof(string) && mappingInfo.Size is int size)
+        {
+            return new XuguStringTypeMapping(
+                mappingInfo.IsFixedLength == true ? "CHAR" : "VARCHAR",
+                StoreTypePostfix.Size,
+                size: size,
+                fixedLength: mappingInfo.IsFixedLength == true);
+        }
+
+        if (clrType == typeof(byte[]) && mappingInfo.Size is int binarySize)
+        {
+            return new XuguByteArrayTypeMapping(
+                mappingInfo.IsFixedLength == true ? "BINARY" : "BLOB",
+                size: binarySize,
+                fixedLength: mappingInfo.IsFixedLength == true);
         }
 
         var mapping = base.FindMapping(mappingInfo)
@@ -141,12 +166,12 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
 
             if (Contains(storeTypeName, "SMALLINT") || Contains(storeTypeName, "SHORT"))
             {
-                return new ShortTypeMapping("SMALLINT");
+                return XuguShortTypeMapping.Default;
             }
 
             if (Contains(storeTypeName, "TINYINT"))
             {
-                return new ByteTypeMapping("TINYINT");
+                return XuguByteTypeMapping.Default;
             }
 
             if (Contains(storeTypeName, "INT"))
@@ -164,13 +189,17 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
             if (Contains(storeTypeName, "BLOB")
                 || Contains(storeTypeName, "BINARY"))
             {
-                return new ByteArrayTypeMapping(BlobTypeName);
+                return XuguByteArrayTypeMapping.Default;
             }
 
-            if (Contains(storeTypeName, "DOUBLE")
-                || Contains(storeTypeName, "FLOAT"))
+            if (Contains(storeTypeName, "DOUBLE"))
             {
                 return Double;
+            }
+
+            if (Contains(storeTypeName, "FLOAT") && !Contains(storeTypeName, "DOUBLE"))
+            {
+                return Float;
             }
 
             if (Contains(storeTypeName, "DECIMAL")
@@ -183,6 +212,18 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
             if (Contains(storeTypeName, "GUID"))
             {
                 return XuguGuidTypeMapping.Default;
+            }
+
+            if (Contains(storeTypeName, "DATE")
+                && !Contains(storeTypeName, "TIME"))
+            {
+                return XuguDateOnlyTypeMapping.Default;
+            }
+
+            if (Contains(storeTypeName, "TIME")
+                && !Contains(storeTypeName, "DATE"))
+            {
+                return XuguTimeOnlyTypeMapping.Default;
             }
 
             if (Contains(storeTypeName, "DATE")

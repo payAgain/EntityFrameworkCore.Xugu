@@ -304,6 +304,78 @@ public class TranslatorSqlTests
         AssertSql.Contains("LEAST(", sql);
     }
 
+    [Fact]
+    public void Math_Floor_generates_FLOOR()
+    {
+        using var context = CreateContext();
+
+        var sql = context.NumericItems
+            .Where(i => Math.Floor((double)i.Id) > 0)
+            .ToQueryString();
+
+        AssertSql.Contains("FLOOR(", sql);
+    }
+
+    [Fact]
+    public void Math_Sqrt_generates_SQRT()
+    {
+        using var context = CreateContext();
+
+        var sql = context.NumericItems
+            .Where(i => Math.Sqrt(i.Id) > 0)
+            .ToQueryString();
+
+        AssertSql.Contains("SQRT(", sql);
+    }
+
+    [Fact]
+    public void String_Trim_generates_TRIM()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .Where(e => e.Title.Trim() == "test")
+            .ToQueryString();
+
+        AssertSql.Contains("TRIM(", sql);
+    }
+
+    [Fact]
+    public void String_Replace_generates_REPLACE()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .Where(e => e.Title.Replace("a", "b") == "test")
+            .ToQueryString();
+
+        AssertSql.Contains("REPLACE(", sql);
+    }
+
+    [Fact]
+    public void String_Equals_OrdinalIgnoreCase_generates_LCASE()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .Where(e => e.Title.Equals("test", StringComparison.OrdinalIgnoreCase))
+            .ToQueryString();
+
+        AssertSql.Contains("LCASE(", sql);
+    }
+
+    [Fact]
+    public void TimeSpan_Hours_generates_HOUR()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Durations
+            .Where(d => d.Duration.Hours > 0)
+            .ToQueryString();
+
+        AssertSql.Contains("HOUR(", sql);
+    }
+
     private static SqlTestContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<SqlTestContext>()
@@ -320,6 +392,8 @@ public class TranslatorSqlTests
         public DbSet<NumericEntity> NumericItems => Set<NumericEntity>();
 
         public DbSet<ScheduleEntity> ScheduleItems => Set<ScheduleEntity>();
+
+        public DbSet<DurationEntity> Durations => Set<DurationEntity>();
 
         public DbSet<AppointmentEntity> Appointments => Set<AppointmentEntity>();
 
@@ -350,6 +424,13 @@ public class TranslatorSqlTests
                 entity.Property(e => e.EventDate).HasColumnName("EVENT_DATE");
                 entity.Property(e => e.StartsAt).HasColumnName("STARTS_AT");
                 entity.Property(e => e.EventAt).HasColumnName("EVENT_AT");
+            });
+
+            modelBuilder.Entity<DurationEntity>(entity =>
+            {
+                entity.ToTable("EF_TEST_DURATION");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Duration).HasColumnName("DURATION");
             });
 
             modelBuilder.Entity<AppointmentEntity>(entity =>
@@ -393,6 +474,13 @@ public class TranslatorSqlTests
         public TimeOnly StartsAt { get; set; }
 
         public DateTime EventAt { get; set; }
+    }
+
+    private sealed class DurationEntity
+    {
+        public int Id { get; set; }
+
+        public TimeSpan Duration { get; set; }
     }
 
     private sealed class AppointmentEntity

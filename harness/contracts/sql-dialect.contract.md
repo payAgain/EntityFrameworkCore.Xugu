@@ -184,6 +184,19 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | `XuguDbFunctionsExtensions.Unhex` | `UNHEX(expr)` | 同左 | QueryTranslators | done |
 | `object.ToString()` | `CAST(expr AS VARCHAR)` | 同左 | QueryTranslators | done |
 | `Regex.IsMatch(s, pattern)` | `REGEXP_LIKE(expr, pattern)` | `expr REGEXP pattern` | QueryTranslators | done |
+| `string.Equals(s, StringComparison)` | `LCASE(a)=LCASE(b)`（IgnoreCase）/ 直接 `=` | COLLATE utf8mb4_bin | QueryTranslators | done |
+| `string.Trim/TrimStart/TrimEnd` | `TRIM([LEADING\|TRAILING] … FROM …)` | 同左 | QueryTranslators | done |
+| `string.Replace` | `REPLACE()` | 同左 | QueryTranslators | done |
+| `string.ToLower/ToUpper` | `LCASE()` / `UCASE()` | `LOWER()` / `UPPER()` | QueryTranslators | done |
+| `string.PadLeft/PadRight` | `LPAD()` / `RPAD()`（常量参数） | 同左 | QueryTranslators | done |
+| `string.IndexOf` | `LOCATE(sub, str) - 1` | 同左 | QueryTranslators | done |
+| `string.Substring` | `SUBSTRING(str, start+1, len)` | 同左 | QueryTranslators | done |
+| `Math.Floor/Ceiling/Round/Truncate` | `FLOOR/CEILING/ROUND/TRUNCATE` | 同左 | QueryTranslators | done |
+| `Math.Sin/Cos/Tan/Sqrt/Pow/Exp` | `SIN/COS/TAN/SQRT/POWER/EXP` | 同左 | QueryTranslators | done |
+| `Math.Log(x)` | `LN(x)` | `LOG(x)` | QueryTranslators | done |
+| `Math.Log(x, base)` | `LOG(base, x)`（参数反转，见 log.md） | `LOG(x, base)` | QueryTranslators | done |
+| `TimeSpan.Hours/Minutes/Seconds/Milliseconds` | `HOUR/MINUTE/SECOND/MICROSECOND` | `EXTRACT(part FROM …)` | QueryTranslators | done |
+| `string.Split` | — | — | — | **defer**（无简单 LINQ→SQL 映射；`SPLIT_PART` 仅常量） |
 
 ## 索引 DDL
 
@@ -229,6 +242,11 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | DbFunctions.Unhex | `UNHEX(expr)` | 同左 | XuguDbFunctionsExtensionsMethodTranslator |
 | object.ToString() | `CAST(expr AS VARCHAR)` | 同左 | XuguObjectToStringTranslator |
 | Regex.IsMatch | `REGEXP_LIKE(expr, pattern)` | `expr REGEXP pattern` | XuguRegexIsMatchTranslator |
+| StringComparison.Equals | `LCASE` 双端（IgnoreCase） | `COLLATE utf8mb4_bin` | XuguStringComparisonMethodTranslator |
+| Math.Log (1-arg) | `LN()` | `LOG()` | XuguMathMethodTranslator |
+| Math.Log (2-arg) | `LOG(base, value)` 参数序与 CLR 相反 | `LOG(value, base)` | XuguMathMethodTranslator |
+| TimeSpan members | `HOUR()` 等独立函数 | `EXTRACT(hour FROM …)` | XuguTimeSpanMemberTranslator |
+| MySQL YEAR 类型 | **无 YEAR 列类型** | `YEAR` | **skip** |
 | ConvertTimeZone | **无 CONVERT_TZ** | `CONVERT_TZ(dt, from, to)` | **不实现**（defer） |
 | FULLTEXT IsMatch | **无 MATCH AGAINST** | `MATCH … AGAINST` | **不实现** |
 | HasTables | `DBA_TABLES`（`VALID='T'`, `IS_SYS='F'`） | `information_schema.tables` | XuguDatabaseCreator |
@@ -264,7 +282,7 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
-| 2026-07-06 | Phase 7 W3：ExecuteDelete/Update SQL 生成（`VisitDelete`/`VisitUpdate`）；冒烟测试 | QueryCore |
+| 2026-07-06 | Phase 8 W1：StringComparison/Math/TimeSpan Translators；专用 TypeMapping 注册表 | Orchestrator |
 | 2026-07-06 | Phase 7 W1：TypeMapping 专用类（GUID/BOOL/TIME/uint/ulong）；Retry defer 文档化 | Storage |
 | 2026-07-06 | 批次 B：Unhex/ObjectToString Translator；NorthwindDbFunctions + DateOnly/TimeOnly 测试；TypeMapping NUMERIC/BINARY | Orchestrator |
 | 2026-07-06 | 波次 7：DateDiff/ByteArray/DbFunctions.Like Translator；HasTables via DBA_TABLES | Orchestrator |
