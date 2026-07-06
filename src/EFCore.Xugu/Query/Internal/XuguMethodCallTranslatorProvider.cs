@@ -24,4 +24,6 @@ public class XuguMethodCallTranslatorProvider : RelationalMethodCallTranslatorPr
             new XuguObjectToStringTranslator(sqlExpressionFactory),
         ]);
     }
+
+    public virtual QueryCompilationContext? QueryCompilationContext { get; set; }
 }

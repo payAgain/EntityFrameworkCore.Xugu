@@ -50,7 +50,19 @@ Phase 2: Metadata + Update
 Phase 3: QueryCore → QueryTranslators
 Phase 4: Migrations
 Phase 5: Extensions
+Phase 6: Testing + 生产化 (done → 0.1.0-preview)
+Phase 7: 1.0.0 生产级 (active)
+    └─ 7.Q2 编译管道 → 7.Q4 SqlTranslating → 7.Q1 ExecuteDelete/Update
+    └─ 7.S1 TypeMapping ∥ 7.S2 Retry/文档
+    └─ 7.O1 DI 合并 → 7.T1 冒烟 → 7.V1 发版
+Phase 8: Pomelo 9.0.0 功能对等 (依赖 Phase 7 done)
+    └─ 8.S7 TypeMapping 注册表 + 8.Q6 SqlTranslating 为关键路径
+    └─ Translators (8.Q1–Q5) 与 Storage 映射 (8.S1–S6) 可最大并行
+Phase 9: Pomelo 9.0.0 测试对等 (依赖 Phase 8 done)
+    └─ 9.I1 TestStore → 9.I5 AssertSql → 9.T* 分批移植
 ```
+
+详见 `harness/tasks/PARALLEL-EXECUTION-PLAN.md`。
 
 ## Handoff 模板
 
@@ -79,3 +91,35 @@ Phase 5: Extensions
 
 - QueryTranslators 各 Translator 可并行（独立任务文件）
 - 不可并行：同一文件、未交付的上游接口
+- **仅 Orchestrator** 修改：`XuguServiceCollectionExtensions.cs`、`Version.props`、`ROADMAP.md`、`sql-dialect.contract.md`（合并登记）
+
+### Phase 7 并行示例
+
+```
+Wave 1（6 路）: 7.R1, 7.R2, 7.R4, 7.Q2, 7.S1, 7.S2
+Wave 2（3 路）: 7.Q3, 7.Q4, 7.S3  — 门槛: 7.Q2 handoff
+Wave 3（1 路）: 7.Q1              — 门槛: 7.Q4
+Wave 4: 7.O1 (Orchestrator) → 7.T1 ∥ 7.T2
+Wave 5: 7.R3, 7.T3, 7.V1
+```
+
+### Phase 8 并行示例
+
+```
+Wave 1（~15 路）: 8.Q1–Q4, 8.S1–S6, 8.E1, 8.VG1, 8.N1 — 每 Translator/TypeMapping 单文件
+Wave 2: 8.S7, 8.Q6, 8.M1, 8.SC1 — 注册表与核心 Visitor
+禁止: Phase 8 未完成 8.S7 时启动 Phase 9 大规模实库移植
+```
+
+### Phase 9 并行示例
+
+```
+Wave 1: 9.I1 → 9.I4 → 9.I5（基础设施串行关键路径）
+Wave 3–5: 9.T1–T10 / T11–T22 / T23–T30 — 每测试类单 Agent，最高 12 路并行
+```
+
+### 冲突处理
+
+1. 两 Agent 需改同一文件 → Orchestrator 拆任务或串行
+2. DI 注册 → 各 Agent 在 handoff 提供 `services.TryAdd<...>` 片段，由 **7.O1 / 8.E9** 统一合并
+3. `sql-dialect.contract.md` → 各 Agent 提交 contract 片段，Orchestrator 每日合并

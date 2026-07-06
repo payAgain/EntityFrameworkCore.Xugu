@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Query.ExpressionVisitors.Internal;
 
@@ -13,7 +14,7 @@ public class XuguSqlTranslatingExpressionVisitorFactory : IRelationalSqlTranslat
     public virtual RelationalSqlTranslatingExpressionVisitor Create(
         QueryCompilationContext queryCompilationContext,
         QueryableMethodTranslatingExpressionVisitor queryableMethodTranslatingExpressionVisitor)
-        => new(
+        => new XuguSqlTranslatingExpressionVisitor(
             _dependencies,
             queryCompilationContext,
             queryableMethodTranslatingExpressionVisitor);

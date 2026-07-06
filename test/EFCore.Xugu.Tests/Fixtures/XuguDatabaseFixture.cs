@@ -39,7 +39,8 @@ public sealed class XuguDatabaseFixture : IDisposable
             $"""
             CREATE TABLE {BlogTableName} (
                 ID INTEGER NOT NULL,
-                TITLE VARCHAR(500) NOT NULL
+                TITLE VARCHAR(500) NOT NULL,
+                DESCRIPTION VARCHAR(500)
             )
             """);
         ExecuteNonQuery(

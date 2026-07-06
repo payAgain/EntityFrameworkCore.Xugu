@@ -7,6 +7,7 @@
 
 - Provider 已注册 `XuguExecutionStrategy` / `XuguExecutionStrategyFactory`。
 - 默认策略 **`RetriesOnFailure => false`**，与 Pomelo `MySqlRetryingExecutionStrategy` 不同。
+- **Phase 7 Wave 1（2026-07-06）复验**：驱动层仍无结构化瞬态判定 API，维持 **defer**；已写入 `docs/LIMITATIONS.md` §自动重试。
 
 ## XuguDB / ADO.NET 瞬态错误码调研
 

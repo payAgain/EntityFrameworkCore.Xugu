@@ -268,6 +268,42 @@ public class TranslatorSqlTests
         AssertSql.Contains("LOCATE(", sql);
     }
 
+    [Fact]
+    public void ByteArray_Length_generates_LENGTH()
+    {
+        using var context = CreateContext();
+
+        var sql = context.BinaryItems
+            .Select(b => b.Payload.Length)
+            .ToQueryString();
+
+        AssertSql.Contains("LENGTH(", sql);
+    }
+
+    [Fact]
+    public void Math_Max_generates_GREATEST()
+    {
+        using var context = CreateContext();
+
+        var sql = context.NumericItems
+            .Where(i => Math.Max(i.Id, 1) > 0)
+            .ToQueryString();
+
+        AssertSql.Contains("GREATEST(", sql);
+    }
+
+    [Fact]
+    public void Math_Min_generates_LEAST()
+    {
+        using var context = CreateContext();
+
+        var sql = context.NumericItems
+            .Where(i => Math.Min(i.Id, 10) >= 0)
+            .ToQueryString();
+
+        AssertSql.Contains("LEAST(", sql);
+    }
+
     private static SqlTestContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<SqlTestContext>()

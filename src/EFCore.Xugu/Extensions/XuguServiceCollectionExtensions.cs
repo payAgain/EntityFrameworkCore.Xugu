@@ -77,6 +77,13 @@ public static class XuguServiceCollectionExtensions
 
             .TryAdd<IQuerySqlGeneratorFactory, XuguQuerySqlGeneratorFactory>()
 
+            .TryAdd<IQueryCompilationContextFactory, XuguQueryCompilationContextFactory>()
+            .TryAdd<IQueryTranslationPreprocessorFactory, XuguQueryTranslationPreprocessorFactory>()
+            .TryAdd<IQueryTranslationPostprocessorFactory, XuguQueryTranslationPostprocessorFactory>()
+            .TryAdd<IEvaluatableExpressionFilter, XuguEvaluatableExpressionFilter>()
+
+            .TryAdd<ICompiledQueryCacheKeyGenerator, XuguCompiledQueryCacheKeyGenerator>()
+
             .TryAdd<IQueryableMethodTranslatingExpressionVisitorFactory, XuguQueryableMethodTranslatingExpressionVisitorFactory>()
 
             .TryAdd<IRelationalSqlTranslatingExpressionVisitorFactory, XuguSqlTranslatingExpressionVisitorFactory>()
