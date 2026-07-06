@@ -46,13 +46,13 @@
 | 8.Q4 | `XuguStringMethodTranslator` 增量：`Trim`/`Replace`/`PadLeft`/`PadRight`/`Split` 子集 — **查** 字符串函数文档 | QueryTranslators | — | ✅ | P1 | done |
 | 8.Q5 | `XuguConvertTranslator` 扩展：与 Pomelo `MySqlConvertTranslator` 可对齐的 `Convert.*` 路径 — **查** `reference/sql/expression/type_conversion.md` | QueryTranslators | 8.S2 | ✅ | P1 | done |
 | 8.Q6 | `XuguSqlTranslatingExpressionVisitor` 完整行为（子查询、GroupBy 边缘、nullable） | QueryCore | Phase 7.Q4 | ❌ | P0 | done |
-| 8.Q7 | `XuguHavingExpressionVisitor` | QueryCore | 8.Q6 | ❌ | P1 | todo |
-| 8.Q8 | `XuguBoolOptimizingExpressionVisitor` | QueryCore | 8.Q6 | ❌ | P1 | todo |
-| 8.Q9 | `XuguQueryableMethodNormalizingExpressionVisitor` | QueryCore | Phase 7.Q1 | ❌ | P1 | todo |
-| 8.Q10 | `XuguQueryTranslationPostprocessor` 完整（含 nullability 传播） | QueryCore | Phase 7.Q2 | ❌ | P0 | todo |
+| 8.Q7 | `XuguHavingExpressionVisitor` | QueryCore | 8.Q6 | ❌ | P1 | done |
+| 8.Q8 | `XuguBoolOptimizingExpressionVisitor` | QueryCore | 8.Q6 | ❌ | P1 | done |
+| 8.Q9 | `XuguQueryableMethodNormalizingExpressionVisitor` | QueryCore | Phase 7.Q1 | ❌ | P1 | done |
+| 8.Q10 | `XuguQueryTranslationPostprocessor` 完整（含 nullability 传播） | QueryCore | Phase 7.Q2 | ❌ | P0 | done |
 | 8.Q11 | `BitwiseOperationReturnTypeCorrectingExpressionVisitor`（若 Xugu 位运算返回类型与 CLR 不一致） | QueryCore | 8.Q6 | ❌ | P2 | todo |
 | 8.Q12 | `XuguQuerySqlGenerator` 增量：`FOR UPDATE`、窗口函数子集（若文档支持）— **查** `reference/sql/dml/select.md` | QueryCore | — | ✅ | P2 | todo |
-| 8.Q13 | ExecuteUpdate/Delete 边缘：关联子查询、多表、Owned 类型 — **查** DML 文档 | QueryCore | Phase 7.Q1 | ❌ | P0 | todo |
+| 8.Q13 | ExecuteUpdate/Delete 边缘：关联子查询、多表、Owned 类型 — **查** DML 文档 | QueryCore | Phase 7.Q1 | ❌ | P0 | done |
 | 8.Q14 | `XuguInlinedParameterExpression` + 参数内联优化（对齐 Pomelo 性能路径） | QueryCore | 8.Q6 | ❌ | P2 | todo |
 | 8.Q15 | DbFunctions 增量：`ConvertTimeZone` — **defer/skip** 若无 `CONVERT_TZ`；`IsMatch` 已有 Regex 则补文档 | QueryTranslators | — | ✅ | P2 | todo |
 | 8.Q16 | JSON 相关 Translators / Visitors | — | — | — | **skip** | skip |
@@ -106,7 +106,7 @@
 | 8.M1 | Identity 列 PK 类型变更 / 重建策略 — **查** `reference/object/table/identity.md` | Migrations | 8.S7 | ❌ | P0 | done |
 | 8.M2 | 列重命名、类型变更组合迁移 SQL | Migrations | 8.S7 | ❌ | P0 | done |
 | 8.M3 | 外键 `ON DELETE`/`ON UPDATE` 全动作 — **查** `reference/object/table/foreign-key.md` | Migrations | — | ✅ | P1 | todo |
-| 8.M4 | `XuguMigrationsModelDiffer` 边缘：索引过滤、包含列（若 Xugu 不支持则 skip） | Migrations | — | ✅ | P1 | todo |
+| 8.M4 | `XuguMigrationsModelDiffer` 边缘：索引过滤、包含列（若 Xugu 不支持则 skip） | Migrations | — | ✅ | P1 | done |
 | 8.M5 | `MigrationsModelDifferTests` + `MigrationSqlGeneratorTests` 增量 | Testing | 8.M1–M4 | ✅ | P1 | todo |
 
 ---
@@ -136,8 +136,8 @@
 
 | ID | 描述 | Agent | 依赖 | 可并行? | 优先级 | 状态 |
 |----|------|-------|------|---------|--------|------|
-| 8.VG1 | `XuguSequentialGuidValueGenerator` — **查** GUID 函数 / 默认值文档 | Update | — | ✅ | P1 | todo |
-| 8.VG2 | `XuguValueGeneratorSelector` 注册 SequentialGuid | Update | 8.VG1 | ❌ | P1 | todo |
+| 8.VG1 | `XuguSequentialGuidValueGenerator` — **查** GUID 函数 / 默认值文档 | Update | — | ✅ | P1 | done |
+| 8.VG2 | `XuguValueGeneratorSelector` 注册 SequentialGuid | Update | 8.VG1 | ❌ | P1 | done |
 
 ---
 

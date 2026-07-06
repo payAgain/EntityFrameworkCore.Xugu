@@ -7,18 +7,22 @@ public class XuguQueryTranslationPostprocessorFactory : IQueryTranslationPostpro
 {
     private readonly QueryTranslationPostprocessorDependencies _dependencies;
     private readonly RelationalQueryTranslationPostprocessorDependencies _relationalDependencies;
+    private readonly XuguSqlExpressionFactory _sqlExpressionFactory;
 
     public XuguQueryTranslationPostprocessorFactory(
         QueryTranslationPostprocessorDependencies dependencies,
-        RelationalQueryTranslationPostprocessorDependencies relationalDependencies)
+        RelationalQueryTranslationPostprocessorDependencies relationalDependencies,
+        ISqlExpressionFactory sqlExpressionFactory)
     {
         _dependencies = dependencies;
         _relationalDependencies = relationalDependencies;
+        _sqlExpressionFactory = (XuguSqlExpressionFactory)sqlExpressionFactory;
     }
 
     public virtual QueryTranslationPostprocessor Create(QueryCompilationContext queryCompilationContext)
         => new XuguQueryTranslationPostprocessor(
             _dependencies,
             _relationalDependencies,
-            (XuguQueryCompilationContext)queryCompilationContext);
+            (XuguQueryCompilationContext)queryCompilationContext,
+            _sqlExpressionFactory);
 }

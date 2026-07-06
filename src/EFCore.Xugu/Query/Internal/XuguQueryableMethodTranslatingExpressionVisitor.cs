@@ -74,7 +74,8 @@ public class XuguQueryableMethodTranslatingExpressionVisitor : RelationalQueryab
                 GroupBy: [],
                 Having: null,
                 Orderings: []
-            })
+            }
+            && (selectExpression.Tables.Count == 1 || selectExpression.Limit is null))
         {
             TableExpressionBase table;
             if (selectExpression.Tables.Count == 1)

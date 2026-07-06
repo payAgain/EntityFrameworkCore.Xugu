@@ -38,7 +38,7 @@ public class XuguMigrationsModelDiffer : MigrationsModelDiffer
 
     public override IReadOnlyList<MigrationOperation> GetDifferences(IRelationalModel? source, IRelationalModel? target)
     {
-        var operations = base.GetDifferences(source, target);
+        var operations = PostFilterOperations(base.GetDifferences(source, target)).ToList();
         AssertInternalLocalAnnotations(operations);
         return operations;
     }
@@ -135,6 +135,7 @@ public class XuguMigrationsModelDiffer : MigrationsModelDiffer
             var resultOperation = migrationOperation switch
             {
                 AlterColumnOperation operation => PostFilterOperation(operation),
+                CreateIndexOperation operation => PostFilterIndexOperation(operation),
                 _ => migrationOperation
             };
 
@@ -145,8 +146,47 @@ public class XuguMigrationsModelDiffer : MigrationsModelDiffer
         }
     }
 
+    /// <summary>
+    ///     XuguDB does not support filtered indexes in migration DDL; strip the filter so diff does not emit unsupported ops.
+    /// </summary>
+    private static CreateIndexOperation? PostFilterIndexOperation(CreateIndexOperation operation)
+    {
+        if (operation.Filter is { Length: > 0 })
+        {
+            operation.Filter = null;
+        }
+
+        return operation;
+    }
+
     private AlterColumnOperation? PostFilterOperation(AlterColumnOperation operation)
-        => !Equals(operation.ClrType, operation.OldColumn.ClrType) ||
+    {
+        if (!Equals(operation.Collation, operation.OldColumn.Collation)
+            && Equals(operation.ClrType, operation.OldColumn.ClrType)
+            && Equals(operation.ColumnType, operation.OldColumn.ColumnType)
+            && Equals(operation.IsUnicode, operation.OldColumn.IsUnicode)
+            && Equals(operation.IsFixedLength, operation.OldColumn.IsFixedLength)
+            && Equals(operation.MaxLength, operation.OldColumn.MaxLength)
+            && Equals(operation.Precision, operation.OldColumn.Precision)
+            && Equals(operation.Scale, operation.OldColumn.Scale)
+            && Equals(operation.IsRowVersion, operation.OldColumn.IsRowVersion)
+            && Equals(operation.IsNullable, operation.OldColumn.IsNullable)
+            && Equals(operation.DefaultValue, operation.OldColumn.DefaultValue)
+            && Equals(operation.DefaultValueSql, operation.OldColumn.DefaultValueSql)
+            && Equals(operation.ComputedColumnSql, operation.OldColumn.ComputedColumnSql)
+            && Equals(operation.IsStored, operation.OldColumn.IsStored)
+            && Equals(operation.Comment, operation.OldColumn.Comment)
+            && !HasDifferences(operation.GetAnnotations(), operation.OldColumn.GetAnnotations()))
+        {
+            return null;
+        }
+
+        if (operation.Collation is not null)
+        {
+            operation.Collation = null;
+        }
+
+        return !Equals(operation.ClrType, operation.OldColumn.ClrType) ||
            !Equals(operation.ColumnType, operation.OldColumn.ColumnType) ||
            !Equals(operation.IsUnicode, operation.OldColumn.IsUnicode) ||
            !Equals(operation.IsFixedLength, operation.OldColumn.IsFixedLength) ||
@@ -160,10 +200,10 @@ public class XuguMigrationsModelDiffer : MigrationsModelDiffer
            !Equals(operation.ComputedColumnSql, operation.OldColumn.ComputedColumnSql) ||
            !Equals(operation.IsStored, operation.OldColumn.IsStored) ||
            !Equals(operation.Comment, operation.OldColumn.Comment) ||
-           !Equals(operation.Collation, operation.OldColumn.Collation) ||
            HasDifferences(operation.GetAnnotations(), operation.OldColumn.GetAnnotations())
             ? operation
             : null;
+    }
 
     private static void AssertInternalLocalAnnotations(IReadOnlyList<MigrationOperation> operations)
     {

@@ -414,6 +414,45 @@ public class TranslatorSqlTests
         AssertSql.Contains("-", sql);
     }
 
+    [Fact]
+    public void Bool_column_predicate_generates_equals_true()
+    {
+        using var context = CreateContext();
+
+        var sql = context.FlagItems
+            .Where(f => f.IsActive)
+            .ToQueryString();
+
+        AssertSql.Contains("= TRUE", sql);
+    }
+
+    [Fact]
+    public void GroupBy_having_non_aggregate_generates_subquery()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .GroupBy(e => e.Title)
+            .Where(g => g.Key.Length > 3)
+            .Select(g => g.Count())
+            .ToQueryString();
+
+        AssertSql.Contains("HAVING", sql);
+    }
+
+    [Fact]
+    public void ExecuteDelete_with_limit_generates_limit_clause()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .Where(e => e.Title == "x")
+            .Take(5)
+            .ToQueryString();
+
+        AssertSql.Contains("LIMIT", sql);
+    }
+
     private static SqlTestContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<SqlTestContext>()
@@ -436,6 +475,8 @@ public class TranslatorSqlTests
         public DbSet<AppointmentEntity> Appointments => Set<AppointmentEntity>();
 
         public DbSet<BinaryEntity> BinaryItems => Set<BinaryEntity>();
+
+        public DbSet<FlagEntity> FlagItems => Set<FlagEntity>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -483,6 +524,13 @@ public class TranslatorSqlTests
                 entity.ToTable("EF_TEST_BINARY");
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Payload).HasColumnName("PAYLOAD");
+            });
+
+            modelBuilder.Entity<FlagEntity>(entity =>
+            {
+                entity.ToTable("EF_TEST_FLAGS");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.IsActive).HasColumnName("IS_ACTIVE").HasColumnType("BOOLEAN");
             });
         }
     }
@@ -533,6 +581,13 @@ public class TranslatorSqlTests
         public int Id { get; set; }
 
         public byte[] Payload { get; set; } = [];
+    }
+
+    private sealed class FlagEntity
+    {
+        public int Id { get; set; }
+
+        public bool IsActive { get; set; }
     }
 }
 

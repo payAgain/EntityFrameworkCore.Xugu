@@ -34,6 +34,22 @@ public class XuguQuerySqlGenerator : QuerySqlGenerator
     {
     }
 
+    protected override Expression VisitExtension(Expression extensionExpression)
+        => extensionExpression switch
+        {
+            XuguComplexFunctionArgumentExpression complexFunctionArgument
+                => VisitXuguComplexFunctionArgumentExpression(complexFunctionArgument),
+            XuguColumnAliasReferenceExpression columnAliasReferenceExpression
+                => VisitColumnAliasReference(columnAliasReferenceExpression),
+            _ => base.VisitExtension(extensionExpression)
+        };
+
+    private Expression VisitColumnAliasReference(XuguColumnAliasReferenceExpression columnAliasReferenceExpression)
+    {
+        Sql.Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(columnAliasReferenceExpression.Alias));
+        return columnAliasReferenceExpression;
+    }
+
     protected override Expression VisitSqlUnary(SqlUnaryExpression sqlUnaryExpression)
         => sqlUnaryExpression.OperatorType == ExpressionType.Convert
             ? VisitConvert(sqlUnaryExpression)
@@ -270,7 +286,10 @@ public class XuguQuerySqlGenerator : QuerySqlGenerator
                 Visit(selectExpression.Predicate);
             }
 
-            GenerateLimitOffset(selectExpression);
+            if (selectExpression.Tables.Count == 1)
+            {
+                GenerateLimitOffset(selectExpression);
+            }
 
             return updateExpression;
         }

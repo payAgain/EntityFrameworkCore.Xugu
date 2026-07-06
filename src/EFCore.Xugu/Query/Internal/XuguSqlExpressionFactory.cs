@@ -115,6 +115,13 @@ public class XuguSqlExpressionFactory : SqlExpressionFactory
             typeMapping)!;
     }
 
+    public virtual XuguColumnAliasReferenceExpression ColumnAliasReference(
+        string alias,
+        SqlExpression expression,
+        Type type,
+        RelationalTypeMapping? typeMapping = null)
+        => new XuguColumnAliasReferenceExpression(alias, expression, type, typeMapping);
+
     public override SqlExpression ApplyTypeMapping(SqlExpression sqlExpression, RelationalTypeMapping typeMapping)
         => sqlExpression is not { TypeMapping: null }
             ? sqlExpression

@@ -67,6 +67,22 @@ public class MigrationsModelDifferTests
         Assert.Contains(operations, o => o is AlterColumnOperation);
     }
 
+    [Fact]
+    public void Filtered_index_diff_strips_filter()
+    {
+        using var context = CreateContext();
+        var differ = context.GetInfrastructure().GetRequiredService<IMigrationsModelDiffer>();
+        var sourceModel = BuildIndexModel(hasFilter: false);
+        var targetModel = BuildIndexModel(hasFilter: true);
+
+        var operations = differ.GetDifferences(
+            sourceModel.GetRelationalModel(),
+            targetModel.GetRelationalModel());
+
+        var createIndex = Assert.Single(operations.OfType<CreateIndexOperation>());
+        Assert.Null(createIndex.Filter);
+    }
+
     private static DifferTestContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<DifferTestContext>()
@@ -92,6 +108,25 @@ public class MigrationsModelDifferTests
             entity.Property(e => e.Name)
                 .HasColumnType("VARCHAR(100)")
                 .IsRequired(!nullableName);
+        });
+
+        return initializer.Initialize(modelBuilder.FinalizeModel());
+    }
+
+    private static IModel BuildIndexModel(bool hasFilter)
+    {
+        using var context = CreateContext();
+        var initializer = context.GetInfrastructure().GetRequiredService<IModelRuntimeInitializer>();
+
+        var modelBuilder = new ModelBuilder();
+        modelBuilder.Entity<DifferEntity>(entity =>
+        {
+            entity.ToTable("DifferTest");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnType("INTEGER");
+            entity.Property(e => e.Name).HasColumnType("VARCHAR(100)");
+            entity.HasIndex(e => e.Name)
+                .HasFilter(hasFilter ? "[Name] IS NOT NULL" : null);
         });
 
         return initializer.Initialize(modelBuilder.FinalizeModel());
