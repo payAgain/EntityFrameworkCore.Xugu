@@ -1,5 +1,6 @@
 using System.Data;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Xugu.Scaffolding.Internal;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Storage.Internal;
 
@@ -23,6 +24,14 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
     private static readonly XuguDecimalTypeMapping Decimal = XuguDecimalTypeMapping.Default;
     private static readonly XuguStringTypeMapping VarChar = XuguStringTypeMapping.Default;
     private static readonly XuguDateTimeTypeMapping DateTime = XuguDateTimeTypeMapping.Default;
+
+    private static readonly XuguCodeGenerationServerVersionCreationTypeMapping CodeGenerationServerVersionCreation =
+        XuguCodeGenerationServerVersionCreationTypeMapping.Default;
+
+    private readonly Dictionary<Type, RelationalTypeMapping> _scaffoldingClrTypeMappings = new()
+    {
+        { typeof(XuguCodeGenerationServerVersionCreation), CodeGenerationServerVersionCreation },
+    };
 
     private readonly Dictionary<Type, RelationalTypeMapping> _clrTypeMappings = new()
     {
@@ -142,7 +151,12 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
             return new XuguDecimalTypeMapping(storeTypeName, precision: precision, scale: scale);
         }
 
-        if (clrType is not null && _clrTypeMappings.TryGetValue(clrType, out var mapping))
+        if (clrType is not null && _scaffoldingClrTypeMappings.TryGetValue(clrType, out var mapping))
+        {
+            return mapping;
+        }
+
+        if (clrType is not null && _clrTypeMappings.TryGetValue(clrType, out mapping))
         {
             return mapping;
         }

@@ -560,4 +560,32 @@ public class XuguMigrationsSqlGenerator : MigrationsSqlGenerator
 
         EndStatement(builder);
     }
+
+    /// <summary>
+    ///     XuguDB supports CASCADE, SET NULL, SET DEFAULT, NO ACTION, and RESTRICT
+    ///     (docs: <c>reference/object/constraints.md</c> §key_actions).
+    /// </summary>
+    protected override void ForeignKeyAction(
+        ReferentialAction referentialAction,
+        MigrationCommandListBuilder builder)
+    {
+        switch (referentialAction)
+        {
+            case ReferentialAction.Restrict:
+                builder.Append("RESTRICT");
+                break;
+            case ReferentialAction.Cascade:
+                builder.Append("CASCADE");
+                break;
+            case ReferentialAction.SetNull:
+                builder.Append("SET NULL");
+                break;
+            case ReferentialAction.SetDefault:
+                builder.Append("SET DEFAULT");
+                break;
+            default:
+                builder.Append("NO ACTION");
+                break;
+        }
+    }
 }

@@ -2,12 +2,12 @@
 
 > Orchestrator 维护。仓库：`E:\Work\xuguefcore`
 
-## 当前 Phase: **8**（`in_progress` — Pomelo 9.0.0 功能对等）
+## 当前 Phase: **9**（`planned` — Pomelo 9.0.0 测试对等）
 
-**版本**：**`1.0.0`**（Phase 7 已发布）→ 目标 **`1.1.0`**  
-**测试**：**194/194** PASS（Wave 4 +22）  
-**源码**：Xugu **117** .cs vs Pomelo **194** .cs（~60%）  
-**Wave 指针**：Wave 4 `done` → **Wave 5**（8.E6–E8、8.M3、8.SC3、8.N2）
+**版本**：**`1.0.0`**（Phase 7 已发布）→ 建议 **`1.1.0-preview`**（Phase 8 功能对等完成）  
+**测试**：**207/207** PASS（Wave 5 +13）  
+**源码**：Xugu **120** .cs vs Pomelo **194** .cs（~62%）  
+**Wave 指针**：Phase 8 Wave 5 `done` → **Phase 9** 入口
 
 ---
 
@@ -37,8 +37,8 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 | 5 | Extensions + 高级 | `done` | — | Fluent API E1–E5 |
 | 6 | 测试 + 生产化 | `done` | `0.1.0-preview` | .resx + NuGet pack + 116 测试 |
 | **7** | **1.0.0 生产级发版** | **`done`** | **`1.0.0`** | ExecuteDelete/Update、编译管道、LIMITATIONS、pack |
-| **8** | **Pomelo 功能对等** | **`in_progress`** | **`1.1.0`** | ~150+ .cs；Translators/Storage/Extensions 对齐 |
-| 9 | Pomelo 测试对等 | `planned` | `2.0.0` | FunctionalTests 30%→60%→90% |
+| **8** | **Pomelo 功能对等** | **`done`** | **`1.1.0-preview`** | P1 项完成；120 .cs；defer 见 BACKLOG |
+| **9** | **Pomelo 测试对等** | **`planned`** | `2.0.0` | FunctionalTests 30%→60%→90% |
 
 ### Phase 任务文档
 
@@ -64,20 +64,19 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 
 ---
 
-## Phase 8 摘要（当前）
+## Phase 8 摘要（done）
 
-**目标**：源码功能对齐 Pomelo 9.0.0（skip 项除外）
+**目标**：源码功能对齐 Pomelo 9.0.0（skip 项除外）✓
 
-| 模块 | 缺口 | 代表任务 |
-|------|------|----------|
-| Query | 42 文件 | 8.Q1–Q14 Translators + Visitors |
-| Storage | 36 文件 | 8.S1–S10 TypeMapping |
-| Extensions | 13 文件 | 8.E1–E8 |
-| Migrations/Scaffolding | 8 文件 | 8.M1–M4, 8.SC1–SC4 |
+| 模块 | 状态 | 备注 |
+|------|------|------|
+| Query Core/Translators | done | defer Q11/Q12/Q14/Q15 |
+| Storage TypeMapping | done | defer S8–S10 |
+| Extensions | done | E6–E8 Wave 5；charset skip 文档化 |
+| Migrations/Scaffolding | done | M3 FK 全动作；SC3 CodeGenerator |
+| Native RID | defer | N1–N3 → BACKLOG |
 
-**建议入口**：Wave 1 并行 — `8.Q1`–`8.Q4`、`8.S1`–`8.S6`、`8.E1`、`8.M3`、`8.VG1`、`8.N1`（见 `PARALLEL-EXECUTION-PLAN.md`）
-
-**任务统计**：58 ID（52 todo + 6 skip）
+**Handoff**：`harness/handoffs/phase8-wave5.done.md`
 
 ---
 
@@ -137,6 +136,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 
 | 日期 | 事件 |
 |------|------|
+| 2026-07-06 | **Phase 8 W5 / 关闭**：E6–E8、M3、SC3；**207/207** 测试；Phase 8 → `done` |
 | 2026-07-06 | **Phase 8 W4**：测试扩展 + DI/contract 审计；**194/194** 测试；8.Q11/Q12 defer |
 | 2026-07-06 | **Phase 8 W3**：Query Postprocessor visitors + SequentialGuid；**172/172** 测试 |
 | 2026-07-06 | **Phase 7 关闭**：`1.0.0` 发版、CHANGELOG、`publish-nuget.ps1`；**141/141** 测试 |

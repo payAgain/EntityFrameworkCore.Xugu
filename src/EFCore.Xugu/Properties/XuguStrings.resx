@@ -103,4 +103,7 @@
   <data name="IdentityPrimaryKeyTypeChangeNotSupported" xml:space="preserve">
     <value>Changing the store type of identity primary key column '{0}' on table '{1}' requires manual table rebuild in XuguDB.</value>
   </data>
+  <data name="RetryingExecutionStrategyNotSupported" xml:space="preserve">
+    <value>Automatic retry (EnableRetryOnFailure) is not yet supported for XuguDB. See docs/LIMITATIONS.md.</value>
+  </data>
 </root>

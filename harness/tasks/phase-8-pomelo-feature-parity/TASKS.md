@@ -1,7 +1,7 @@
 # Phase 8：Pomelo 9.0.0 功能对等
 
-> **状态**：`in_progress`  
-> **版本目标**：`1.0.0` → **`1.1.0`**（功能对等里程碑，可打 `-preview` 直至 Phase 9 测试达标）  
+> **状态**：`done`  
+> **版本目标**：`1.0.0` → **`1.1.0-preview`**（功能对等里程碑；Phase 9 测试达标后可发 `1.1.0`）  
 > **前置**：Phase 7 `done`  
 > **差距基线**（2026-07-06）：Xugu **85** .cs vs Pomelo **194** .cs（~44%）；Query **23/65**；Storage **7/43**；Extensions **10/23**
 
@@ -92,9 +92,9 @@
 | 8.E3 | `XuguEntityTypeBuilderExtensions` 增量（存储引擎、注释 — 若 Xugu 支持） | Extensions | — | ✅ | P1 | done |
 | 8.E4 | `XuguPropertyBuilderExtensions` 增量（`HasCollation` 等） | Extensions | — | — | **skip** | skip |
 | 8.E5 | `XuguIndexBuilderExtensions` 增量（全文索引） | Extensions | — | — | **skip** | skip |
-| 8.E6 | `XuguTableBuilderExtensions` | Extensions | — | ✅ | P1 | todo |
-| 8.E7 | `XuguModelBuilderExtensions` 增量（默认字符集 — 连接级替代） | Extensions | — | ✅ | P2 | todo |
-| 8.E8 | `XuguDbContextOptionsBuilder` 增量（ServerVersion 自动探测、Retry 策略入口） | Infra | 7.S2 | ✅ | P1 | todo |
+| 8.E6 | `XuguTableBuilderExtensions` | Extensions | — | ✅ | P1 | done |
+| 8.E7 | `XuguModelBuilderExtensions` 增量（默认字符集 — 连接级替代） | Extensions | — | ✅ | P2 | done |
+| 8.E8 | `XuguDbContextOptionsBuilder` 增量（ServerVersion 自动探测、Retry 策略入口） | Infra | 7.S2 | ✅ | P1 | done |
 | 8.E9 | `XuguServiceCollectionExtensions` 由 Orchestrator 合并 Extension 注册 | Orchestrator | 8.E1–E8 | ❌ | P0 | done |
 
 ---
@@ -105,7 +105,7 @@
 |----|------|-------|------|---------|--------|------|
 | 8.M1 | Identity 列 PK 类型变更 / 重建策略 — **查** `reference/object/table/identity.md` | Migrations | 8.S7 | ❌ | P0 | done |
 | 8.M2 | 列重命名、类型变更组合迁移 SQL | Migrations | 8.S7 | ❌ | P0 | done |
-| 8.M3 | 外键 `ON DELETE`/`ON UPDATE` 全动作 — **查** `reference/object/table/foreign-key.md` | Migrations | — | ✅ | P1 | todo |
+| 8.M3 | 外键 `ON DELETE`/`ON UPDATE` 全动作 — **查** `reference/object/table/foreign-key.md` | Migrations | — | ✅ | P1 | done |
 | 8.M4 | `XuguMigrationsModelDiffer` 边缘：索引过滤、包含列（若 Xugu 不支持则 skip） | Migrations | — | ✅ | P1 | done |
 | 8.M5 | `MigrationsModelDifferTests` + `MigrationSqlGeneratorTests` 增量 | Testing | 8.M1–M4 | ✅ | P1 | done |
 
@@ -117,7 +117,7 @@
 |----|------|-------|------|---------|--------|------|
 | 8.SC1 | `XuguDatabaseModelFactory` 增量：视图、存储过程（若文档支持） | Migrations | — | ✅ | P1 | done |
 | 8.SC2 | `XuguAnnotationCodeGenerator` 增量：Fluent 反向生成 | Migrations | — | ✅ | P1 | done |
-| 8.SC3 | `XuguCodeGenerator` 命名空间/文件布局对齐 Pomelo | Migrations | — | ✅ | P2 | todo |
+| 8.SC3 | `XuguCodeGenerator` 命名空间/文件布局对齐 Pomelo | Migrations | — | ✅ | P2 | done |
 | 8.SC4 | `ScaffoldingIntegrationTests` 扩展（多 schema、复合 PK） | Testing | 8.SC1 | ❌ | P1 | done |
 
 ---

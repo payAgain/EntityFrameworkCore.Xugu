@@ -17,12 +17,9 @@ public class XuguCodeGenerator : ProviderCodeGenerator
         .GetMethod(
             nameof(XuguDbContextOptionsBuilderExtensions.UseXugu),
             BindingFlags.Public | BindingFlags.Static,
-            [
-                typeof(DbContextOptionsBuilder),
-                typeof(string),
-                typeof(ServerVersion),
-                typeof(Action<XuguDbContextOptionsBuilder>)
-            ])!;
+            null,
+            [typeof(DbContextOptionsBuilder), typeof(string), typeof(ServerVersion), typeof(Action<XuguDbContextOptionsBuilder>)],
+            null)!;
 
     private readonly IXuguOptions _options;
 
@@ -38,6 +35,15 @@ public class XuguCodeGenerator : ProviderCodeGenerator
         => new(
             UseXuguMethodInfo,
             providerOptions is null
-                ? [connectionString, _options.ServerVersion]
-                : [connectionString, _options.ServerVersion, new NestedClosureCodeFragment("x", providerOptions)]);
+                ?
+                [
+                    connectionString,
+                    new XuguCodeGenerationServerVersionCreation(_options.ServerVersion)
+                ]
+                :
+                [
+                    connectionString,
+                    new XuguCodeGenerationServerVersionCreation(_options.ServerVersion),
+                    new NestedClosureCodeFragment("x", providerOptions)
+                ]);
 }

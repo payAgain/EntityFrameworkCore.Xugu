@@ -131,6 +131,23 @@ public class MigrationsModelDifferTests
         Assert.Equal("New comment", alterTable.Comment);
     }
 
+    [Fact]
+    public void Foreign_key_delete_action_change_produces_drop_and_add()
+    {
+        using var context = CreateContext();
+        var differ = context.GetInfrastructure().GetRequiredService<IMigrationsModelDiffer>();
+        var sourceModel = BuildForeignKeyModel(DeleteBehavior.Restrict);
+        var targetModel = BuildForeignKeyModel(DeleteBehavior.Cascade);
+
+        var operations = differ.GetDifferences(
+            sourceModel.GetRelationalModel(),
+            targetModel.GetRelationalModel());
+
+        Assert.Contains(operations, o => o is DropForeignKeyOperation);
+        var addFk = Assert.Single(operations.OfType<AddForeignKeyOperation>());
+        Assert.Equal(ReferentialAction.Cascade, addFk.OnDelete);
+    }
+
     private static DifferTestContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<DifferTestContext>()
@@ -235,11 +252,52 @@ public class MigrationsModelDifferTests
         return initializer.Initialize(modelBuilder.FinalizeModel());
     }
 
+    private static IModel BuildForeignKeyModel(DeleteBehavior deleteBehavior)
+    {
+        using var context = CreateContext();
+        var initializer = context.GetInfrastructure().GetRequiredService<IModelRuntimeInitializer>();
+
+        var modelBuilder = new ModelBuilder();
+        modelBuilder.Entity<FkParent>(entity =>
+        {
+            entity.ToTable("FkParent");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnType("INTEGER");
+        });
+        modelBuilder.Entity<FkChild>(entity =>
+        {
+            entity.ToTable("FkChild");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnType("INTEGER");
+            entity.Property(e => e.ParentId).HasColumnType("INTEGER");
+            entity.HasOne(e => e.Parent)
+                .WithMany()
+                .HasForeignKey(e => e.ParentId)
+                .OnDelete(deleteBehavior);
+        });
+
+        return initializer.Initialize(modelBuilder.FinalizeModel());
+    }
+
     private sealed class DifferTestContext(DbContextOptions<DifferTestContext> options) : DbContext(options);
 
     private sealed class DifferEntity
     {
         public int Id { get; set; }
         public string? Name { get; set; }
+    }
+
+    private sealed class FkParent
+    {
+        public int Id { get; set; }
+    }
+
+    private sealed class FkChild
+    {
+        public int Id { get; set; }
+
+        public int ParentId { get; set; }
+
+        public FkParent Parent { get; set; } = null!;
     }
 }

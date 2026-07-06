@@ -4,6 +4,11 @@ using Microsoft.EntityFrameworkCore.Xugu.Metadata.Internal;
 
 namespace Microsoft.EntityFrameworkCore;
 
+/// <summary>
+///     XuguDB-specific extension methods for <see cref="ModelBuilder" />.
+///     XuguDB does not support MySQL-style model/database charset or collation Fluent API;
+///     configure character set via connection string <c>CHAR_SET</c> (see XuguDB connection docs).
+/// </summary>
 public static class XuguModelBuilderExtensions
 {
     /// <summary>

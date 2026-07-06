@@ -115,7 +115,21 @@
 | P3-10 | TimeOnly.AddHours ADDTIME | **done** | — | |
 | P3-11 | DateOnly/TimeOnly SaveChanges 驱动绑定 | **defer** | csharp-driver 无原生类型 | LIMITATIONS |
 | P3-12 | EF.Functions 常量投影 funcletize | **defer** | 需 DbFunction 模型增强 | Phase 8 |
-| P3-13 | linux-x64 native 打包 | **todo** | 驱动 RID 可用性 | 8.N1–N3 |
+| P3-13 | linux-x64 native 打包 | **defer** | 驱动 RID 可用性 | 8.N1–N3 → Phase 9+ |
+
+### Phase 8 Wave 5 defer（转入 Phase 9+）
+
+| ID | 项 | 说明 |
+|----|-----|------|
+| 8.Q11 | BitwiseOperationReturnTypeCorrecting | P2 |
+| 8.Q12 | FOR UPDATE / 窗口函数 | P2 |
+| 8.Q14 | 参数内联 | P2 性能 |
+| 8.Q15 | ConvertTimeZone | 无 CONVERT_TZ |
+| 8.S8–S10 | RelationalCommand/Database 表面 | P2 |
+| 8.N1–N3 | Native Linux RID 打包 | 依赖驱动 |
+| 8.E8 Retry | `EnableRetryOnFailure` | API 入口已暴露，实现 defer（LIMITATIONS） |
+| ConnectionString 校验 | Pomelo validator | defer（连接串格式不同） |
+| Json 变更跟踪 | Pomelo JsonChangeTracking | skip（Xugu 无 JSON 列生态） |
 
 ---
 

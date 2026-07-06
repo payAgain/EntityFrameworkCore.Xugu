@@ -108,9 +108,9 @@
 | Query Core | 65 | ~35 | **done** 核心路径；defer Q11/Q12/Q14 |
 | Query Translators | — | 14 文件 | **done**（无 JSON） |
 | Storage TypeMapping | 43 | 22 | **done** 核心 CLR 映射；defer S8–S10 |
-| Extensions | 23 | ~12 | **partial** E1–E3 done；defer E6–E8 |
-| Migrations | 8 | 5 | **done** 核心；defer M3 FK 全动作 |
-| Scaffolding | 6 | 4 | **done** SC1–SC2/SC4；defer SC3 布局 |
+| Extensions | 23 | ~13 | **done** E1–E8（charset skip）；Wave 5 E6–E8 |
+| Migrations | 8 | 5 | **done** 核心 + M3 FK 全动作 |
+| Scaffolding | 6 | 5 | **done** SC1–SC4 + SC3 CodeGenerator |
 | ValueGeneration | 2 | 2 | **done** |
 | DataAnnotations | 2 | 0 | **skip** DA1–DA2 |
 | Native RID | — | — | **defer** N1–N3 |
@@ -124,9 +124,6 @@
 | 8.Q14 | 参数内联 | P2 性能优化 |
 | 8.Q15 | ConvertTimeZone | 无 CONVERT_TZ |
 | 8.S8–S10 | RelationalCommand/Database 表面 | P2 |
-| 8.E6–E8 | TableBuilder/ModelBuilder/Options 增量 | P1–P2 |
-| 8.M3 | FK 全动作 differ | P1 |
-| 8.SC3 | CodeGenerator 布局 | P2 |
 | 8.N1–N3 | Linux RID 打包 | 依赖驱动发布 |
 
 ### Pomelo 独有、Xugu 不实现

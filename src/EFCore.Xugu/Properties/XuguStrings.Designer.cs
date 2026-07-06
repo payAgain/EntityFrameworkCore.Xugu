@@ -53,6 +53,9 @@ public static class XuguStrings
     public static string IdentityPrimaryKeyTypeChangeNotSupported(string columnName, string tableName)
         => string.Format(CultureInfo.CurrentUICulture, GetString(nameof(IdentityPrimaryKeyTypeChangeNotSupported)), columnName, tableName);
 
+    public static string RetryingExecutionStrategyNotSupported
+        => GetString(nameof(RetryingExecutionStrategyNotSupported));
+
     private static string GetString(string name)
         => ResourceManager.GetString(name, CultureInfo.CurrentUICulture)
            ?? throw new InvalidOperationException($"Missing resource string '{name}'.");
