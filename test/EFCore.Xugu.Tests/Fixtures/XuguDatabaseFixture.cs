@@ -1,0 +1,260 @@
+using XuguClient;
+
+namespace Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
+
+public sealed class XuguDatabaseFixture : IDisposable
+{
+    public const string BlogTableName = "EF_TEST_BLOGS";
+    public const string EventTableName = "EF_TEST_EVENTS";
+    public const string NumericTableName = "EF_TEST_NUMERIC";
+    public const string ScheduleTableName = "EF_TEST_SCHEDULE";
+    public const string AppointmentTableName = "EF_TEST_APPOINTMENTS";
+
+    public XuguDatabaseFixture()
+    {
+        if (!XuguTestConnection.IsAvailable())
+        {
+            return;
+        }
+
+        EnsureBlogTable();
+        EnsureEventTable();
+        EnsureNumericTable();
+        EnsureScheduleTable();
+        EnsureAppointmentTable();
+    }
+
+    public void EnsureBlogTable()
+    {
+        using var connection = OpenConnection();
+
+        TryExecuteNonQuery(connection, $"DROP TABLE {BlogTableName} CASCADE");
+        ExecuteNonQuery(
+            connection,
+            $"""
+            CREATE TABLE {BlogTableName} (
+                ID INTEGER NOT NULL,
+                TITLE VARCHAR(500) NOT NULL
+            )
+            """);
+        ExecuteNonQuery(
+            connection,
+            $"ALTER TABLE {BlogTableName} ALTER COLUMN ID INTEGER IDENTITY(1, 1) PRIMARY KEY");
+    }
+
+    public void ClearBlogs()
+    {
+        using var connection = OpenConnection();
+        ExecuteNonQuery(connection, $"DELETE FROM {BlogTableName}");
+    }
+
+    public void EnsureEventTable()
+    {
+        using var connection = OpenConnection();
+
+        TryExecuteNonQuery(connection, $"DROP TABLE {EventTableName} CASCADE");
+        ExecuteNonQuery(
+            connection,
+            $"""
+            CREATE TABLE {EventTableName} (
+                ID INTEGER NOT NULL,
+                TITLE VARCHAR(500) NOT NULL,
+                CREATED_AT DATETIME NOT NULL
+            )
+            """);
+        ExecuteNonQuery(
+            connection,
+            $"ALTER TABLE {EventTableName} ALTER COLUMN ID INTEGER IDENTITY(1, 1) PRIMARY KEY");
+    }
+
+    public void ClearEvents()
+    {
+        using var connection = OpenConnection();
+        ExecuteNonQuery(connection, $"DELETE FROM {EventTableName}");
+    }
+
+    public void EnsureNumericTable()
+    {
+        using var connection = OpenConnection();
+
+        TryExecuteNonQuery(connection, $"DROP TABLE {NumericTableName} CASCADE");
+        ExecuteNonQuery(
+            connection,
+            $"""
+            CREATE TABLE {NumericTableName} (
+                ID INTEGER NOT NULL,
+                LABEL VARCHAR(100) NOT NULL
+            )
+            """);
+        ExecuteNonQuery(
+            connection,
+            $"ALTER TABLE {NumericTableName} ALTER COLUMN ID INTEGER PRIMARY KEY");
+    }
+
+    public void ClearNumericItems()
+    {
+        using var connection = OpenConnection();
+        ExecuteNonQuery(connection, $"DELETE FROM {NumericTableName}");
+    }
+
+    public void EnsureScheduleTable()
+    {
+        using var connection = OpenConnection();
+
+        TryExecuteNonQuery(connection, $"DROP TABLE {ScheduleTableName} CASCADE");
+        ExecuteNonQuery(
+            connection,
+            $"""
+            CREATE TABLE {ScheduleTableName} (
+                ID INTEGER NOT NULL,
+                EVENT_DATE DATE NOT NULL,
+                STARTS_AT TIME NOT NULL,
+                EVENT_AT DATETIME NOT NULL
+            )
+            """);
+        ExecuteNonQuery(
+            connection,
+            $"ALTER TABLE {ScheduleTableName} ALTER COLUMN ID INTEGER IDENTITY(1, 1) PRIMARY KEY");
+    }
+
+    public void ClearScheduleItems()
+    {
+        using var connection = OpenConnection();
+        ExecuteNonQuery(connection, $"DELETE FROM {ScheduleTableName}");
+    }
+
+    public void EnsureAppointmentTable()
+    {
+        using var connection = OpenConnection();
+
+        TryExecuteNonQuery(connection, $"DROP TABLE {AppointmentTableName} CASCADE");
+        ExecuteNonQuery(
+            connection,
+            $"""
+            CREATE TABLE {AppointmentTableName} (
+                ID INTEGER NOT NULL,
+                SCHEDULED_AT DATETIME WITH TIME ZONE NOT NULL
+            )
+            """);
+        ExecuteNonQuery(
+            connection,
+            $"ALTER TABLE {AppointmentTableName} ALTER COLUMN ID INTEGER IDENTITY(1, 1) PRIMARY KEY");
+    }
+
+    public void ClearAppointments()
+    {
+        using var connection = OpenConnection();
+        ExecuteNonQuery(connection, $"DELETE FROM {AppointmentTableName}");
+    }
+
+    public void InsertNumericItem(int id, string label)
+    {
+        using var connection = OpenConnection();
+        ExecuteNonQuery(
+            connection,
+            $"INSERT INTO {NumericTableName} (ID, LABEL) VALUES ({id}, '{label}')");
+    }
+
+    public void InsertScheduleItem(DateOnly eventDate, TimeOnly startsAt, DateTime eventAt)
+    {
+        using var connection = OpenConnection();
+        ExecuteNonQuery(
+            connection,
+            $"""
+            INSERT INTO {ScheduleTableName} (EVENT_DATE, STARTS_AT, EVENT_AT)
+            VALUES ('{eventDate:yyyy-MM-dd}', '{startsAt:HH:mm:ss}', '{eventAt:yyyy-MM-dd HH:mm:ss}')
+            """);
+    }
+
+    public void InsertAppointment(DateTimeOffset scheduledAt)
+    {
+        using var connection = OpenConnection();
+        var utc = scheduledAt.ToUniversalTime();
+        ExecuteNonQuery(
+            connection,
+            $"""
+            INSERT INTO {AppointmentTableName} (SCHEDULED_AT)
+            VALUES ('{utc:yyyy-MM-dd HH:mm:ss} +00:00')
+            """);
+    }
+
+    public void DropTableIfExists(string tableName)
+    {
+        using var connection = OpenConnection();
+        TryExecuteNonQuery(connection, $"DROP TABLE {tableName} CASCADE");
+    }
+
+    public bool TableExists(string tableName)
+    {
+        using var connection = OpenConnection();
+        using var command = connection.CreateCommand();
+        command.CommandText = $"SELECT COUNT(*) FROM DBA_TABLES WHERE TABLE_NAME = '{tableName}'";
+        var result = command.ExecuteScalar();
+        return Convert.ToInt64(result) > 0;
+    }
+
+    public bool ColumnExists(string tableName, string columnName)
+    {
+        using var connection = OpenConnection();
+        using var command = connection.CreateCommand();
+        command.CommandText = $"""
+            SELECT COUNT(*)
+            FROM SYS_COLUMNS uc
+            JOIN SYS_TABLES ut ON uc.table_id = ut.table_id
+            WHERE ut.table_name = '{tableName}' AND uc.col_name = '{columnName}'
+            """;
+        var result = command.ExecuteScalar();
+        return Convert.ToInt64(result) > 0;
+    }
+
+    public void Dispose()
+    {
+        if (!XuguTestConnection.IsAvailable())
+        {
+            return;
+        }
+
+        try
+        {
+            using var connection = OpenConnection();
+            TryExecuteNonQuery(connection, $"DROP TABLE {BlogTableName} CASCADE");
+            TryExecuteNonQuery(connection, $"DROP TABLE {EventTableName} CASCADE");
+            TryExecuteNonQuery(connection, $"DROP TABLE {NumericTableName} CASCADE");
+            TryExecuteNonQuery(connection, $"DROP TABLE {ScheduleTableName} CASCADE");
+            TryExecuteNonQuery(connection, $"DROP TABLE {AppointmentTableName} CASCADE");
+            TryExecuteNonQuery(connection, "DROP TABLE EF_MIG_TEST_ITEMS CASCADE");
+            TryExecuteNonQuery(connection, "DROP TABLE __EFMigrationsHistory CASCADE");
+            TryExecuteNonQuery(connection, "DROP TABLE __EFMigrationsLock CASCADE");
+        }
+        catch
+        {
+            // Best-effort cleanup for shared test database.
+        }
+    }
+
+    private static void TryExecuteNonQuery(XGConnection connection, string sql)
+    {
+        try
+        {
+            ExecuteNonQuery(connection, sql);
+        }
+        catch
+        {
+            // Table may not exist on first run.
+        }
+    }
+
+    private static void ExecuteNonQuery(XGConnection connection, string sql)
+    {
+        using var command = connection.CreateCommand();
+        command.CommandText = sql;
+        command.ExecuteNonQuery();
+    }
+
+    private static XGConnection OpenConnection()
+    {
+        var connection = new XGConnection(XuguTestConnection.ConnectionString);
+        connection.Open();
+        return connection;
+    }
+}

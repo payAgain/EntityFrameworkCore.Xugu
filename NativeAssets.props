@@ -1,0 +1,12 @@
+<Project>
+  <!--
+    Native xugusql.dll path for build/test/CI packaging.
+    Override via -p:XuguNativeDllPath=... or XUGU_NATIVE_DLL_PATH env (see ci-build.ps1).
+    Document: external/csharp-driver/doc — xugusql.dll must sit beside XuguClient.dll at runtime.
+  -->
+  <PropertyGroup>
+    <XuguNativeDllPath Condition="'$(XuguNativeDllPath)' == '' and '$(XUGU_NATIVE_DLL_PATH)' != ''">$(XUGU_NATIVE_DLL_PATH)</XuguNativeDllPath>
+    <XuguNativeDllPath Condition="'$(XuguNativeDllPath)' == ''">$(MSBuildThisFileDirectory)external\csharp-driver\test_xugusql\64\xugusql.dll</XuguNativeDllPath>
+    <XuguNativeDllExists Condition="Exists('$(XuguNativeDllPath)')">true</XuguNativeDllExists>
+  </PropertyGroup>
+</Project>

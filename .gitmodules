@@ -1,0 +1,6 @@
+[submodule "external/Pomelo.EntityFrameworkCore.MySql"]
+	path = external/Pomelo.EntityFrameworkCore.MySql
+	url = https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql.git
+[submodule "external/csharp-driver"]
+	path = external/csharp-driver
+	url = http://gitlab2.xugu.com/RDB/csharp-driver.git

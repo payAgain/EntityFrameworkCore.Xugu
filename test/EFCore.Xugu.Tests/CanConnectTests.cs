@@ -1,0 +1,38 @@
+using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
+using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
+using Xunit;
+
+namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
+
+public class CanConnectTests
+{
+    [Fact]
+    public void UseXugu_registers_xugu_options_extension()
+    {
+        var options = new DbContextOptionsBuilder<CanConnectTestContext>()
+            .UseXugu(XuguTestConnection.DefaultConnectionString)
+            .Options;
+
+        var extension = options.FindExtension<XuguOptionsExtension>();
+
+        Assert.NotNull(extension);
+        Assert.Equal(XuguTestConnection.DefaultConnectionString, extension!.ConnectionString);
+        Assert.NotNull(extension.ServerVersion);
+    }
+
+    [SkippableFact]
+    public void CanConnect_returns_true_when_database_is_available()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+
+        var options = new DbContextOptionsBuilder<CanConnectTestContext>()
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .Options;
+
+        using var context = new CanConnectTestContext(options);
+
+        Assert.True(context.Database.CanConnect());
+    }
+
+    private sealed class CanConnectTestContext(DbContextOptions<CanConnectTestContext> options) : DbContext(options);
+}

@@ -1,0 +1,17 @@
+<Project>
+  <Import Project="Version.props" />
+  <Import Project="NativeAssets.props" />
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <XuguTargetFramework>net9.0</XuguTargetFramework>
+    <Product>Microsoft.EntityFrameworkCore.Xugu</Product>
+    <Authors>XuguDB</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://gitlab2.xugu.com/RDB/xuguefcore</RepositoryUrl>
+  </PropertyGroup>
+</Project>
