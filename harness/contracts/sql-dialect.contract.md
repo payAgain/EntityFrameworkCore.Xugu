@@ -262,6 +262,13 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | 迁移锁 | `reference/object/table/lock.md` | Migrations | done |
 | Schema diff（ModelDiffer） | EF Core #25899 字符串 NOT NULL | Migrations | done |
 | Scaffolding 元数据 | `reference/system-view/dba/dba_tables.md`, `reference/system-view/all/all_columns.md` | Migrations | partial |
+| 列重命名 | **无 RENAME COLUMN**；`ADD + UPDATE + DROP`  workaround | MySQL 8 `RENAME COLUMN` / `CHANGE` | `XuguMigrationsSqlGenerator` |
+| 表/列备注 | `COMMENT ON TABLE/COLUMN … IS …`；CREATE 内联 `COMMENT '…'` | MySQL `COMMENT=` | `XuguMigrationsSqlGenerator` |
+| Identity PK 类型变更 | **不支持自动 ALTER**；需手工重建表 | Pomelo DropPrimaryKey+recreate | throws `NotSupportedException` |
+| 索引前缀长度 | **无 INDEX(col(N)) 语法** | MySQL `HasPrefixLength` | 注解存储 only（8.E2） |
+| 视图 Scaffolding | `ALL_VIEWS` + `ALL_VIEW_COLUMNS` | `INFORMATION_SCHEMA.VIEWS` | `XuguDatabaseModelFactory` |
+| Convert 扩展 | `CAST(expr AS type)` | 同 | `XuguConvertTranslator` (+ unsigned/float) |
+| SqlTranslatingVisitor | GREATEST/LEAST、byte[]、TimeOnly、string[] Concat/Join | Pomelo 对齐（无 JSON） | `XuguSqlTranslatingExpressionVisitor` |
 
 ## Scaffolding 元数据（DBA 视图）
 
@@ -274,6 +281,7 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | CHAR/VARCHAR | `VARYING` + `SCALE` | `DATA_TYPE` + `CHARACTER_MAXIMUM_LENGTH` | `BuildStoreType()` |
 | NUMERIC 精度 | `SCALE/65536`, `SCALE%65536` | 直接列 | `BuildStoreType()` |
 | 主键/索引/FK | `ALL_INDEXES` + `DBA_CONSTRAINTS` | `INFORMATION_SCHEMA` | `XuguDatabaseModelFactory` |
+| 视图 | `ALL_VIEWS` + `ALL_VIEW_COLUMNS` | `INFORMATION_SCHEMA.VIEWS` | `XuguDatabaseModelFactory`（`DatabaseView`） |
 | 外键动作 | `DELETE_ACTION`/`UPDATE_ACTION` 单字符 (n/c/u/d/r) | RESTRICT/CASCADE 等字符串 | `MapReferentialAction()` |
 | 索引类型 | `INDEX_TYPE` 0–3 (BTREE/RTREE/FULLTEXT/BITMAP) | FULLTEXT/SPATIAL 注解 | `XuguIndexType` Fluent API + Migration DDL |
 | Collation/Charset | **不适用**（连接级 `CHAR_SET`） | 表/列级 HasCharSet | 不实现 Pomelo Collation |
@@ -282,6 +290,7 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-06 | Phase 8 W2：SqlTranslating/Convert 扩展；Migration 列重命名/备注；视图 Scaffolding；Extensions E1–E3 | Orchestrator |
 | 2026-07-06 | Phase 8 W1：StringComparison/Math/TimeSpan Translators；专用 TypeMapping 注册表 | Orchestrator |
 | 2026-07-06 | Phase 7 W1：TypeMapping 专用类（GUID/BOOL/TIME/uint/ulong）；Retry defer 文档化 | Storage |
 | 2026-07-06 | 批次 B：Unhex/ObjectToString Translator；NorthwindDbFunctions + DateOnly/TimeOnly 测试；TypeMapping NUMERIC/BINARY | Orchestrator |

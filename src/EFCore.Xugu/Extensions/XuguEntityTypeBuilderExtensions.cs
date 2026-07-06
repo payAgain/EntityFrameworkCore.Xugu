@@ -58,4 +58,27 @@ public static class XuguEntityTypeBuilderExtensions
 
         return entityTypeBuilder;
     }
+
+    /// <summary>
+    ///     Sets the table comment mapped to XuguDB <c>COMMENT ON TABLE ... IS ...</c>
+    ///     or inline <c>CREATE TABLE ... COMMENT '...'</c>.
+    ///     Docs: <c>reference/sql/ddl/comment.md</c>.
+    /// </summary>
+    public static EntityTypeBuilder HasXuguComment(this EntityTypeBuilder entityTypeBuilder, string? comment)
+    {
+        ArgumentNullException.ThrowIfNull(entityTypeBuilder);
+
+        entityTypeBuilder.ToTable(t => t.HasComment(comment));
+
+        return entityTypeBuilder;
+    }
+
+    /// <summary>
+    ///     Sets the table comment mapped to XuguDB <c>COMMENT ON TABLE ... IS ...</c>.
+    /// </summary>
+    public static EntityTypeBuilder<TEntity> HasXuguComment<TEntity>(
+        this EntityTypeBuilder<TEntity> entityTypeBuilder,
+        string? comment)
+        where TEntity : class
+        => (EntityTypeBuilder<TEntity>)HasXuguComment((EntityTypeBuilder)entityTypeBuilder, comment);
 }

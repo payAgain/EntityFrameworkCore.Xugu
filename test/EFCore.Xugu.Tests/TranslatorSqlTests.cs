@@ -376,6 +376,44 @@ public class TranslatorSqlTests
         AssertSql.Contains("HOUR(", sql);
     }
 
+    [Fact]
+    public void Convert_ToSingle_generates_CAST()
+    {
+        using var context = CreateContext();
+
+        var sql = context.NumericItems
+            .Where(i => Convert.ToSingle(i.Label) > 0f)
+            .ToQueryString();
+
+        AssertSql.Contains("CAST(", sql);
+        AssertSql.Contains("AS DOUBLE", sql);
+    }
+
+    [Fact]
+    public void ByteArray_index_generates_ASCII_and_SUBSTRING()
+    {
+        using var context = CreateContext();
+
+        var sql = context.BinaryItems
+            .Where(b => b.Payload[0] == 0xAB)
+            .ToQueryString();
+
+        AssertSql.Contains("ASCII(", sql);
+        AssertSql.Contains("SUBSTRING(", sql);
+    }
+
+    [Fact]
+    public void TimeOnly_subtract_generates_subtraction()
+    {
+        using var context = CreateContext();
+
+        var sql = context.ScheduleItems
+            .Where(s => s.StartsAt - s.StartsAt == TimeSpan.Zero)
+            .ToQueryString();
+
+        AssertSql.Contains("-", sql);
+    }
+
     private static SqlTestContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<SqlTestContext>()

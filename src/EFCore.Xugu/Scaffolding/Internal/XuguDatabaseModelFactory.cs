@@ -84,6 +84,29 @@ public class XuguDatabaseModelFactory : DatabaseModelFactory
           AND (t.IS_SYS = 'F' OR t.IS_SYS IS NULL)
         """;
 
+    private const string GetViewsSql = """
+        SELECT VIEW_ID, VIEW_NAME, COMMENTS
+        FROM ALL_VIEWS
+        WHERE VALID = 'T'
+          AND (IS_SYS = 'F' OR IS_SYS IS NULL)
+        """;
+
+    private const string GetViewColumnsSql = """
+        SELECT
+            v.VIEW_NAME,
+            c.COL_NAME,
+            c.TYPE_NAME,
+            c.SCALE,
+            c."VARYING" AS IS_VARYING,
+            c.COMMENTS,
+            c.COL_NO
+        FROM ALL_VIEW_COLUMNS c
+        INNER JOIN ALL_VIEWS v ON c.VIEW_ID = v.VIEW_ID
+        WHERE v.VALID = 'T'
+          AND (v.IS_SYS = 'F' OR v.IS_SYS IS NULL)
+        ORDER BY v.VIEW_NAME, c.COL_NO
+        """;
+
     private readonly IDiagnosticsLogger<DbLoggerCategory.Scaffolding> _logger;
     private readonly IRelationalTypeMappingSource _typeMappingSource;
 
@@ -147,10 +170,13 @@ public class XuguDatabaseModelFactory : DatabaseModelFactory
 
         GetPrimaryKeysAndIndexes(connection, tables, tableFilter);
         GetForeignKeys(connection, tables, tablesById, tableFilter);
+        GetViews(connection, databaseModel, tableFilter);
 
+        var viewCount = databaseModel.Tables.Count(t => t is DatabaseView);
         _logger.Logger.LogInformation(
-            "Scaffolded {TableCount} tables from XuguDB catalog (DBA_TABLES/DBA_COLUMNS/ALL_INDEXES/DBA_CONSTRAINTS).",
-            tables.Count);
+            "Scaffolded {TableCount} tables and {ViewCount} views from XuguDB catalog.",
+            tables.Count,
+            viewCount);
 
         return databaseModel;
     }
@@ -235,6 +261,70 @@ public class XuguDatabaseModelFactory : DatabaseModelFactory
         }
 
         return (tables.Values.ToList(), tablesById);
+    }
+
+    private void GetViews(
+        DbConnection connection,
+        DatabaseModel databaseModel,
+        Func<string, string, bool>? filter)
+    {
+        var views = new Dictionary<string, DatabaseView>(StringComparer.OrdinalIgnoreCase);
+
+        using (var command = connection.CreateCommand())
+        {
+            command.CommandText = GetViewsSql;
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                var name = reader.GetString(reader.GetOrdinal("VIEW_NAME"));
+                if (filter is not null && !filter(null!, name))
+                {
+                    continue;
+                }
+
+                var view = new DatabaseView
+                {
+                    Schema = null,
+                    Name = name,
+                    Comment = GetNullableString(reader, "COMMENTS"),
+                    Database = databaseModel
+                };
+
+                views[name] = view;
+                databaseModel.Tables.Add(view);
+            }
+        }
+
+        using (var command = connection.CreateCommand())
+        {
+            command.CommandText = GetViewColumnsSql;
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                var viewName = reader.GetString(reader.GetOrdinal("VIEW_NAME"));
+                if (!views.TryGetValue(viewName, out var view))
+                {
+                    continue;
+                }
+
+                if (filter is not null && !filter(null!, viewName))
+                {
+                    continue;
+                }
+
+                var typeName = reader.GetString(reader.GetOrdinal("TYPE_NAME"));
+                var scale = reader.GetInt32(reader.GetOrdinal("SCALE"));
+                var varying = ReadBooleanAt(reader, 4);
+
+                view.Columns.Add(new DatabaseColumn
+                {
+                    Name = reader.GetString(reader.GetOrdinal("COL_NAME")),
+                    StoreType = BuildStoreType(typeName, scale, varying),
+                    Comment = GetNullableString(reader, "COMMENTS"),
+                    Table = view
+                });
+            }
+        }
     }
 
     private void GetPrimaryKeysAndIndexes(

@@ -44,6 +44,15 @@ public static class XuguStrings
     public static string InternalLocalAnnotationLeaked(string operationTypeName, string annotationName)
         => string.Format(CultureInfo.CurrentUICulture, GetString(nameof(InternalLocalAnnotationLeaked)), operationTypeName, annotationName);
 
+    public static string RenameColumnRequiresModel(string columnName, string tableName)
+        => string.Format(CultureInfo.CurrentUICulture, GetString(nameof(RenameColumnRequiresModel)), columnName, tableName);
+
+    public static string RenameColumnIdentityNotSupported(string columnName, string tableName)
+        => string.Format(CultureInfo.CurrentUICulture, GetString(nameof(RenameColumnIdentityNotSupported)), columnName, tableName);
+
+    public static string IdentityPrimaryKeyTypeChangeNotSupported(string columnName, string tableName)
+        => string.Format(CultureInfo.CurrentUICulture, GetString(nameof(IdentityPrimaryKeyTypeChangeNotSupported)), columnName, tableName);
+
     private static string GetString(string name)
         => ResourceManager.GetString(name, CultureInfo.CurrentUICulture)
            ?? throw new InvalidOperationException($"Missing resource string '{name}'.");

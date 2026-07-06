@@ -94,4 +94,13 @@
   <data name="InternalLocalAnnotationLeaked" xml:space="preserve">
     <value>The migration operation of type '{0}' leaked the internal local annotation '{1}'.</value>
   </data>
+  <data name="RenameColumnRequiresModel" xml:space="preserve">
+    <value>Renaming column '{0}' on table '{1}' requires the target model because XuguDB has no native RENAME COLUMN syntax.</value>
+  </data>
+  <data name="RenameColumnIdentityNotSupported" xml:space="preserve">
+    <value>Renaming identity column '{0}' on table '{1}' is not supported in XuguDB migrations.</value>
+  </data>
+  <data name="IdentityPrimaryKeyTypeChangeNotSupported" xml:space="preserve">
+    <value>Changing the store type of identity primary key column '{0}' on table '{1}' requires manual table rebuild in XuguDB.</value>
+  </data>
 </root>

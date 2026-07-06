@@ -16,4 +16,9 @@ public static class XuguAnnotationNames
     ///     Maps to XuguDB <c>ALL_INDEXES.INDEX_TYPE</c> (BTREE, RTREE, FULLTEXT, BITMAP).
     /// </summary>
     public const string IndexType = Prefix + "IndexType";
+
+    /// <summary>
+    ///     MySQL-compatible prefix length metadata (diagnostic only — XuguDB DDL has no prefix index syntax).
+    /// </summary>
+    public const string IndexPrefixLength = Prefix + "IndexPrefixLength";
 }

@@ -17,12 +17,18 @@ public class XuguConvertTranslator : IMethodCallTranslator
         {
             nameof(Convert.ToBoolean),
             nameof(Convert.ToByte),
+            nameof(Convert.ToChar),
             nameof(Convert.ToDecimal),
             nameof(Convert.ToDouble),
             nameof(Convert.ToInt16),
             nameof(Convert.ToInt32),
             nameof(Convert.ToInt64),
+            nameof(Convert.ToSByte),
+            nameof(Convert.ToSingle),
             nameof(Convert.ToString),
+            nameof(Convert.ToUInt16),
+            nameof(Convert.ToUInt32),
+            nameof(Convert.ToUInt64),
         }
         .SelectMany(t => typeof(Convert).GetTypeInfo().GetDeclaredMethods(t)
             .Where(m => m.GetParameters().Length == 1))

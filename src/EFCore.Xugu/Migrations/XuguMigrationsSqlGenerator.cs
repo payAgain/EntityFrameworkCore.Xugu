@@ -89,21 +89,144 @@ public class XuguMigrationsSqlGenerator : MigrationsSqlGenerator
         IModel? model,
         MigrationCommandListBuilder builder)
     {
-        builder
-            .Append("ALTER TABLE ")
-            .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Table, operation.Schema))
-            .Append(" ALTER COLUMN ");
+        if (IsIdentityPrimaryKeyTypeChange(operation, model))
+        {
+            throw new NotSupportedException(
+                XuguStrings.IdentityPrimaryKeyTypeChangeNotSupported(operation.Name, operation.Table));
+        }
 
-        ColumnDefinition(
-            operation.Schema,
-            operation.Table,
-            operation.Name,
-            operation,
+        var commentChanged = operation.Comment != operation.OldColumn.Comment;
+        var structuralChange = HasStructuralAlterColumnChange(operation);
+
+        if (structuralChange)
+        {
+            builder
+                .Append("ALTER TABLE ")
+                .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Table, operation.Schema))
+                .Append(" ALTER COLUMN ");
+
+            ColumnDefinition(
+                operation.Schema,
+                operation.Table,
+                operation.Name,
+                operation,
+                model,
+                builder);
+
+            builder.AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+            builder.EndCommand();
+        }
+
+        if (commentChanged)
+        {
+            GenerateColumnComment(
+                operation.Schema,
+                operation.Table,
+                operation.Name,
+                operation.Comment,
+                builder);
+        }
+    }
+
+    protected override void Generate(
+        CreateTableOperation operation,
+        IModel? model,
+        MigrationCommandListBuilder builder,
+        bool terminate = true)
+    {
+        base.Generate(operation, model, builder, terminate: false);
+
+        if (!string.IsNullOrEmpty(operation.Comment))
+        {
+            builder
+                .Append(" COMMENT ")
+                .Append(FormatStringLiteral(operation.Comment));
+        }
+
+        if (terminate)
+        {
+            builder.AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+            EndStatement(builder);
+        }
+    }
+
+    protected override void Generate(
+        AlterTableOperation operation,
+        IModel? model,
+        MigrationCommandListBuilder builder)
+    {
+        if (operation.Comment != operation.OldTable.Comment)
+        {
+            GenerateTableComment(operation.Schema, operation.Name, operation.Comment, builder);
+        }
+    }
+
+    protected override void Generate(
+        RenameColumnOperation operation,
+        IModel? model,
+        MigrationCommandListBuilder builder)
+    {
+        if (model is null)
+        {
+            throw new InvalidOperationException(
+                XuguStrings.RenameColumnRequiresModel(operation.Name, operation.Table));
+        }
+
+        var column = model.GetRelationalModel().FindTable(operation.Table, operation.Schema)?.FindColumn(operation.NewName);
+        if (column is null)
+        {
+            throw new InvalidOperationException(
+                XuguStrings.RenameColumnRequiresModel(operation.Name, operation.Table));
+        }
+
+        if (IsIdentityColumn(column))
+        {
+            throw new NotSupportedException(
+                XuguStrings.RenameColumnIdentityNotSupported(operation.Name, operation.Table));
+        }
+
+        var addColumnOperation = new AddColumnOperation
+        {
+            Schema = operation.Schema,
+            Table = operation.Table,
+            Name = operation.NewName,
+            ClrType = column.PropertyMappings.FirstOrDefault()?.TypeMapping?.ClrType.UnwrapNullableType()
+                      ?? typeof(string),
+            ColumnType = (string?)column[RelationalAnnotationNames.ColumnType] ?? column.StoreType,
+            IsUnicode = column.IsUnicode,
+            MaxLength = column.MaxLength,
+            IsFixedLength = column.IsFixedLength,
+            IsRowVersion = column.IsRowVersion,
+            IsNullable = column.IsNullable,
+            DefaultValue = column.DefaultValue,
+            DefaultValueSql = column.DefaultValueSql,
+            ComputedColumnSql = column.ComputedColumnSql,
+            IsStored = column.IsStored,
+            Comment = column.Comment
+        };
+
+        Generate(addColumnOperation, model, builder);
+
+        builder
+            .Append("UPDATE ")
+            .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Table, operation.Schema))
+            .Append(" SET ")
+            .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.NewName))
+            .Append(" = ")
+            .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name))
+            .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+
+        EndStatement(builder);
+
+        Generate(
+            new DropColumnOperation
+            {
+                Schema = operation.Schema,
+                Table = operation.Table,
+                Name = operation.Name
+            },
             model,
             builder);
-
-        builder.AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
-        builder.EndCommand();
     }
 
     protected override void Generate(
@@ -220,6 +343,13 @@ public class XuguMigrationsSqlGenerator : MigrationsSqlGenerator
         if (isIdentity && (bool?)operation[OutputPrimaryKeyConstraintOnIdentityAnnotationName] == true)
         {
             builder.Append(" PRIMARY KEY");
+        }
+
+        if (!string.IsNullOrEmpty(operation.Comment))
+        {
+            builder
+                .Append(" COMMENT ")
+                .Append(FormatStringLiteral(operation.Comment));
         }
     }
 
@@ -345,5 +475,89 @@ public class XuguMigrationsSqlGenerator : MigrationsSqlGenerator
         }
 
         return null;
+    }
+
+    private static bool HasStructuralAlterColumnChange(AlterColumnOperation operation)
+        => !Equals(operation.ClrType, operation.OldColumn.ClrType)
+           || !Equals(operation.ColumnType, operation.OldColumn.ColumnType)
+           || !Equals(operation.IsUnicode, operation.OldColumn.IsUnicode)
+           || !Equals(operation.IsFixedLength, operation.OldColumn.IsFixedLength)
+           || !Equals(operation.MaxLength, operation.OldColumn.MaxLength)
+           || !Equals(operation.Precision, operation.OldColumn.Precision)
+           || !Equals(operation.Scale, operation.OldColumn.Scale)
+           || !Equals(operation.IsRowVersion, operation.OldColumn.IsRowVersion)
+           || !Equals(operation.IsNullable, operation.OldColumn.IsNullable)
+           || !Equals(operation.DefaultValue, operation.OldColumn.DefaultValue)
+           || !Equals(operation.DefaultValueSql, operation.OldColumn.DefaultValueSql)
+           || !Equals(operation.ComputedColumnSql, operation.OldColumn.ComputedColumnSql)
+           || !Equals(operation.IsStored, operation.OldColumn.IsStored);
+
+    private bool IsIdentityPrimaryKeyTypeChange(AlterColumnOperation operation, IModel? model)
+    {
+        if (model is null
+            || operation.ColumnType == operation.OldColumn.ColumnType)
+        {
+            return false;
+        }
+
+        var table = model.GetRelationalModel().FindTable(operation.Table, operation.Schema);
+        var column = table?.FindColumn(operation.Name);
+        if (column is null || table!.PrimaryKey?.Columns.All(c => c != column) != true)
+        {
+            return false;
+        }
+
+        return IsIdentityColumn(column);
+    }
+
+    private bool IsIdentityColumn(IColumn column)
+    {
+        var property = column.PropertyMappings.FirstOrDefault()?.Property;
+        if (property is null)
+        {
+            return false;
+        }
+
+        return property.GetValueGenerationStrategy(
+            StoreObjectIdentifier.Table(column.Table.Name, column.Table.Schema))
+            == XuguValueGenerationStrategy.IdentityColumn;
+    }
+
+    private string FormatStringLiteral(string? value)
+        => Dependencies.TypeMappingSource.GetMapping(typeof(string)).GenerateSqlLiteral(value ?? string.Empty);
+
+    private void GenerateTableComment(
+        string? schema,
+        string table,
+        string? comment,
+        MigrationCommandListBuilder builder)
+    {
+        builder
+            .Append("COMMENT ON TABLE ")
+            .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(table, schema))
+            .Append(" IS ")
+            .Append(FormatStringLiteral(comment))
+            .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+
+        EndStatement(builder);
+    }
+
+    private void GenerateColumnComment(
+        string? schema,
+        string table,
+        string column,
+        string? comment,
+        MigrationCommandListBuilder builder)
+    {
+        builder
+            .Append("COMMENT ON COLUMN ")
+            .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(table, schema))
+            .Append(".")
+            .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(column))
+            .Append(" IS ")
+            .Append(FormatStringLiteral(comment))
+            .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+
+        EndStatement(builder);
     }
 }

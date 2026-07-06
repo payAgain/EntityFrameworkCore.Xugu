@@ -4,9 +4,11 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Utilities;
 using Microsoft.EntityFrameworkCore.Xugu.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Query.Internal;
+using Microsoft.EntityFrameworkCore.Xugu.Storage.Internal;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Query.ExpressionVisitors.Internal;
 
@@ -14,6 +16,12 @@ public class XuguSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExpre
 {
     private readonly QueryCompilationContext _queryCompilationContext;
     private readonly XuguSqlExpressionFactory _sqlExpressionFactory;
+
+    private static readonly MethodInfo[] NewArrayExpressionSupportMethodInfos =
+    [
+        ..typeof(string).GetRuntimeMethods().Where(m => m.Name is nameof(string.Concat) or nameof(string.Join))
+            .Where(m => m.GetParameters().Any(p => p.ParameterType.IsArray))
+    ];
 
     private static readonly MethodInfo ElementAtMethodInfo = typeof(Enumerable)
         .GetRuntimeMethods()
@@ -44,7 +52,8 @@ public class XuguSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExpre
                 return QueryCompilationContext.NotTranslatedExpression;
             }
 
-            if (sqlOperand.Type == typeof(byte[]))
+            if (sqlOperand.Type == typeof(byte[])
+                && sqlOperand.TypeMapping is null or XuguByteArrayTypeMapping)
             {
                 return _sqlExpressionFactory.NullableFunction(
                     "LENGTH",
@@ -87,6 +96,31 @@ public class XuguSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExpre
         return base.VisitBinary(binaryExpression);
     }
 
+    protected virtual Expression VisitMethodCallNewArray(NewArrayExpression newArrayExpression)
+    {
+        if (newArrayExpression.Type == typeof(string[]))
+        {
+            return _sqlExpressionFactory.ComplexFunctionArgument(
+                newArrayExpression.Expressions.Select(e => (SqlExpression)Visit(e)).ToArray(),
+                ", ",
+                typeof(string[]));
+        }
+
+        if (newArrayExpression.Type == typeof(object[]))
+        {
+            var stringMapping = Dependencies.TypeMappingSource.GetMapping(typeof(string));
+            return _sqlExpressionFactory.ComplexFunctionArgument(
+                newArrayExpression.Expressions
+                    .Select(e => Dependencies.SqlExpressionFactory.ApplyTypeMapping((SqlExpression)Visit(e), stringMapping))
+                    .ToArray(),
+                ", ",
+                typeof(object[]),
+                stringMapping);
+        }
+
+        return base.VisitNewArray(newArrayExpression);
+    }
+
     protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression)
     {
         if (methodCallExpression.Method.IsGenericMethod
@@ -96,6 +130,31 @@ public class XuguSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExpre
             return TranslateByteArrayElementAccess(
                 methodCallExpression.Arguments[0],
                 methodCallExpression.Arguments[1]);
+        }
+
+        if (NewArrayExpressionSupportMethodInfos.Contains(methodCallExpression.Method))
+        {
+            var arguments = new Expression[methodCallExpression.Arguments.Count];
+            for (var i = 0; i < arguments.Length; i++)
+            {
+                var argument = methodCallExpression.Arguments[i];
+
+                if (argument is NewArrayExpression newArrayExpression)
+                {
+                    if (TranslationFailed(argument, VisitMethodCallNewArray(newArrayExpression), out var sqlExpression))
+                    {
+                        return QueryCompilationContext.NotTranslatedExpression;
+                    }
+
+                    arguments[i] = sqlExpression;
+                }
+                else
+                {
+                    arguments[i] = argument;
+                }
+            }
+
+            methodCallExpression = methodCallExpression.Update(methodCallExpression.Object, arguments);
         }
 
         return CallBaseVisitMethodCall(methodCallExpression);

@@ -5,8 +5,9 @@
 ## 当前 Phase: **8**（`in_progress` — Pomelo 9.0.0 功能对等）
 
 **版本**：**`1.0.0`**（Phase 7 已发布）→ 目标 **`1.1.0`**  
-**测试**：**160/160** PASS（Wave 1 +19）  
-**源码**：Xugu **~120** .cs vs Pomelo **194** .cs
+**测试**：**166/166** PASS（Wave 2 +6）  
+**源码**：Xugu **~111** .cs vs Pomelo **194** .cs  
+**Wave 指针**：Wave 2 `done` → **Wave 3**（8.Q7–Q10、8.Q13、8.M4）
 
 ---
 

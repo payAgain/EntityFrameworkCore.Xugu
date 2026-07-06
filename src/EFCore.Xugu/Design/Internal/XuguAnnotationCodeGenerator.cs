@@ -25,6 +25,12 @@ public class XuguAnnotationCodeGenerator : AnnotationCodeGenerator
             BindingFlags.Public | BindingFlags.Static,
             [typeof(PropertyBuilder)])!;
 
+    private static readonly MethodInfo IndexHasIndexTypeMethodInfo =
+        typeof(XuguIndexBuilderExtensions).GetMethod(
+            nameof(XuguIndexBuilderExtensions.HasIndexType),
+            BindingFlags.Public | BindingFlags.Static,
+            [typeof(IndexBuilder), typeof(XuguIndexType)])!;
+
     private static readonly MethodInfo ModelHasAnnotationMethodInfo =
         typeof(ModelBuilder).GetMethod(
             nameof(ModelBuilder.HasAnnotation),
@@ -45,6 +51,21 @@ public class XuguAnnotationCodeGenerator : AnnotationCodeGenerator
         if (GenerateValueGenerationStrategy(annotations, onModel: true) is { } valueGenerationStrategy)
         {
             fragments.Add(valueGenerationStrategy);
+        }
+
+        return fragments;
+    }
+
+    public override IReadOnlyList<MethodCallCodeFragment> GenerateFluentApiCalls(
+        IIndex index,
+        IDictionary<string, IAnnotation> annotations)
+    {
+        var fragments = new List<MethodCallCodeFragment>(base.GenerateFluentApiCalls(index, annotations));
+
+        if (TryGetAndRemove(annotations, XuguAnnotationNames.IndexType, out XuguIndexType indexType)
+            && indexType != XuguIndexType.BTree)
+        {
+            fragments.Add(new MethodCallCodeFragment(IndexHasIndexTypeMethodInfo, indexType));
         }
 
         return fragments;

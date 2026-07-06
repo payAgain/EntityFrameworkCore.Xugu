@@ -44,8 +44,8 @@
 | 8.Q2 | `XuguTimeSpanMemberTranslator` + `XuguTimeSpanMethodTranslator` — **查** 日期时间函数文档 | QueryTranslators | Phase 7 | ✅ | P0 | done |
 | 8.Q3 | Math 全量：`Floor`/`Ceiling`/`Round`/`Truncate`/`Abs`/`Pow`/`Sqrt`/`Sin`/`Cos`/`Tan`/`Atan2`/`Log`/`Exp` 等 — **查** `reference/function/mathematical-functions/` | QueryTranslators | Phase 7 | ✅ | P0 | done |
 | 8.Q4 | `XuguStringMethodTranslator` 增量：`Trim`/`Replace`/`PadLeft`/`PadRight`/`Split` 子集 — **查** 字符串函数文档 | QueryTranslators | — | ✅ | P1 | done |
-| 8.Q5 | `XuguConvertTranslator` 扩展：与 Pomelo `MySqlConvertTranslator` 可对齐的 `Convert.*` 路径 — **查** `reference/sql/expression/type_conversion.md` | QueryTranslators | 8.S2 | ✅ | P1 | todo |
-| 8.Q6 | `XuguSqlTranslatingExpressionVisitor` 完整行为（子查询、GroupBy 边缘、nullable） | QueryCore | Phase 7.Q4 | ❌ | P0 | todo |
+| 8.Q5 | `XuguConvertTranslator` 扩展：与 Pomelo `MySqlConvertTranslator` 可对齐的 `Convert.*` 路径 — **查** `reference/sql/expression/type_conversion.md` | QueryTranslators | 8.S2 | ✅ | P1 | done |
+| 8.Q6 | `XuguSqlTranslatingExpressionVisitor` 完整行为（子查询、GroupBy 边缘、nullable） | QueryCore | Phase 7.Q4 | ❌ | P0 | done |
 | 8.Q7 | `XuguHavingExpressionVisitor` | QueryCore | 8.Q6 | ❌ | P1 | todo |
 | 8.Q8 | `XuguBoolOptimizingExpressionVisitor` | QueryCore | 8.Q6 | ❌ | P1 | todo |
 | 8.Q9 | `XuguQueryableMethodNormalizingExpressionVisitor` | QueryCore | Phase 7.Q1 | ❌ | P1 | todo |
@@ -87,9 +87,9 @@
 
 | ID | 描述 | Agent | 依赖 | 可并行? | 优先级 | 状态 |
 |----|------|-------|------|---------|--------|------|
-| 8.E1 | `XuguMigrationBuilderExtensions`（`Annotation`、列操作 helper） | Extensions | Phase 7 | ✅ | P0 | todo |
-| 8.E2 | `XuguKeyBuilderExtensions`（主键集群/长度注释） | Extensions | — | ✅ | P1 | todo |
-| 8.E3 | `XuguEntityTypeBuilderExtensions` 增量（存储引擎、注释 — 若 Xugu 支持） | Extensions | — | ✅ | P1 | todo |
+| 8.E1 | `XuguMigrationBuilderExtensions`（`Annotation`、列操作 helper） | Extensions | Phase 7 | ✅ | P0 | done |
+| 8.E2 | `XuguKeyBuilderExtensions`（主键集群/长度注释） | Extensions | — | ✅ | P1 | done |
+| 8.E3 | `XuguEntityTypeBuilderExtensions` 增量（存储引擎、注释 — 若 Xugu 支持） | Extensions | — | ✅ | P1 | done |
 | 8.E4 | `XuguPropertyBuilderExtensions` 增量（`HasCollation` 等） | Extensions | — | — | **skip** | skip |
 | 8.E5 | `XuguIndexBuilderExtensions` 增量（全文索引） | Extensions | — | — | **skip** | skip |
 | 8.E6 | `XuguTableBuilderExtensions` | Extensions | — | ✅ | P1 | todo |
@@ -103,8 +103,8 @@
 
 | ID | 描述 | Agent | 依赖 | 可并行? | 优先级 | 状态 |
 |----|------|-------|------|---------|--------|------|
-| 8.M1 | Identity 列 PK 类型变更 / 重建策略 — **查** `reference/object/table/identity.md` | Migrations | 8.S7 | ❌ | P0 | todo |
-| 8.M2 | 列重命名、类型变更组合迁移 SQL | Migrations | 8.S7 | ❌ | P0 | todo |
+| 8.M1 | Identity 列 PK 类型变更 / 重建策略 — **查** `reference/object/table/identity.md` | Migrations | 8.S7 | ❌ | P0 | done |
+| 8.M2 | 列重命名、类型变更组合迁移 SQL | Migrations | 8.S7 | ❌ | P0 | done |
 | 8.M3 | 外键 `ON DELETE`/`ON UPDATE` 全动作 — **查** `reference/object/table/foreign-key.md` | Migrations | — | ✅ | P1 | todo |
 | 8.M4 | `XuguMigrationsModelDiffer` 边缘：索引过滤、包含列（若 Xugu 不支持则 skip） | Migrations | — | ✅ | P1 | todo |
 | 8.M5 | `MigrationsModelDifferTests` + `MigrationSqlGeneratorTests` 增量 | Testing | 8.M1–M4 | ✅ | P1 | todo |
@@ -115,8 +115,8 @@
 
 | ID | 描述 | Agent | 依赖 | 可并行? | 优先级 | 状态 |
 |----|------|-------|------|---------|--------|------|
-| 8.SC1 | `XuguDatabaseModelFactory` 增量：视图、存储过程（若文档支持） | Migrations | — | ✅ | P1 | todo |
-| 8.SC2 | `XuguAnnotationCodeGenerator` 增量：Fluent 反向生成 | Migrations | — | ✅ | P1 | todo |
+| 8.SC1 | `XuguDatabaseModelFactory` 增量：视图、存储过程（若文档支持） | Migrations | — | ✅ | P1 | done |
+| 8.SC2 | `XuguAnnotationCodeGenerator` 增量：Fluent 反向生成 | Migrations | — | ✅ | P1 | done |
 | 8.SC3 | `XuguCodeGenerator` 命名空间/文件布局对齐 Pomelo | Migrations | — | ✅ | P2 | todo |
 | 8.SC4 | `ScaffoldingIntegrationTests` 扩展（多 schema、复合 PK） | Testing | 8.SC1 | ❌ | P1 | todo |
 
@@ -128,7 +128,7 @@
 |----|------|-------|------|---------|--------|------|
 | 8.DA1 | `XuguCharsetAttribute` / 连接级字符集文档化 | Metadata | — | — | **skip** | skip |
 | 8.DA2 | `XuguCollationAttribute` | Metadata | — | — | **skip** | skip |
-| 8.DA3 | 通用 DataAnnotations 约定（`[Comment]`、`[Column(TypeName)]` 映射） | Metadata | 8.S7 | ✅ | P1 | todo |
+| 8.DA3 | 通用 DataAnnotations 约定（`[Comment]`、`[Column(TypeName)]` 映射） | Metadata | 8.S7 | ✅ | P1 | done |
 
 ---
 
