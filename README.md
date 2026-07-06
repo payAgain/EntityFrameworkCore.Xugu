@@ -48,8 +48,8 @@ dotnet build Xugu.EFCore.Xugu.sln
 
 ## 开发状态
 
-Phase 2 已完成（CRUD 5/5 通过）。Phase 3 Query 管道进行中：QueryCore + 基础 Translators + QueryTests。
+**Phase 0–6 已完成**（72/72 测试通过）：Infrastructure、Storage、Metadata/Update、Query、Migrations、Extensions、测试与 NuGet 打包。
 
 Pomelo 参考：**tag 9.0.0**（`harness/references/pomelo-version.md`）。
 
-详见 `harness/tasks/ROADMAP.md`。
+后续 backlog 见 `harness/tasks/BACKLOG.md` 与 `harness/tasks/ROADMAP.md`。

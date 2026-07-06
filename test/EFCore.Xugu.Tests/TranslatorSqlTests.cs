@@ -116,6 +116,42 @@ public class TranslatorSqlTests
         AssertSql.Contains("SYSTIMESTAMP()", sql);
     }
 
+    [Fact]
+    public void DateDiffDay_generates_TIMESTAMPDIFF()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .Where(e => XuguDbFunctionsExtensions.DateDiffDay(EF.Functions, e.CreatedAt, DateTime.UtcNow) > 0)
+            .ToQueryString();
+
+        AssertSql.Contains("TIMESTAMPDIFF(DAY,", sql);
+    }
+
+    [Fact]
+    public void DbFunctions_Like_generates_LIKE()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .Where(e => XuguDbFunctionsExtensions.Like(EF.Functions, e.Title, "%test%"))
+            .ToQueryString();
+
+        AssertSql.Contains("LIKE", sql);
+    }
+
+    [Fact]
+    public void ByteArray_Contains_generates_LOCATE()
+    {
+        using var context = CreateContext();
+
+        var sql = context.BinaryItems
+            .Where(b => b.Payload.Contains((byte)0xAB))
+            .ToQueryString();
+
+        AssertSql.Contains("LOCATE(", sql);
+    }
+
     private static SqlTestContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<SqlTestContext>()
@@ -134,6 +170,8 @@ public class TranslatorSqlTests
         public DbSet<ScheduleEntity> ScheduleItems => Set<ScheduleEntity>();
 
         public DbSet<AppointmentEntity> Appointments => Set<AppointmentEntity>();
+
+        public DbSet<BinaryEntity> BinaryItems => Set<BinaryEntity>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -167,6 +205,13 @@ public class TranslatorSqlTests
                 entity.ToTable("EF_TEST_APPOINTMENTS");
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.ScheduledAt).HasColumnName("SCHEDULED_AT");
+            });
+
+            modelBuilder.Entity<BinaryEntity>(entity =>
+            {
+                entity.ToTable("EF_TEST_BINARY");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Payload).HasColumnName("PAYLOAD");
             });
         }
     }
@@ -203,6 +248,13 @@ public class TranslatorSqlTests
         public int Id { get; set; }
 
         public DateTimeOffset ScheduledAt { get; set; }
+    }
+
+    private sealed class BinaryEntity
+    {
+        public int Id { get; set; }
+
+        public byte[] Payload { get; set; } = [];
     }
 }
 

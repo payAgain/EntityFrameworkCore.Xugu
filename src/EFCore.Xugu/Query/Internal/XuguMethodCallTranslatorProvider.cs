@@ -17,6 +17,9 @@ public class XuguMethodCallTranslatorProvider : RelationalMethodCallTranslatorPr
             new XuguDateTimeMethodTranslator(sqlExpressionFactory),
             new XuguNewGuidTranslator(sqlExpressionFactory),
             new XuguConvertTranslator(sqlExpressionFactory),
+            new XuguDateDiffFunctionsTranslator(sqlExpressionFactory),
+            new XuguByteArrayMethodTranslator(sqlExpressionFactory),
+            new XuguDbFunctionsExtensionsMethodTranslator(sqlExpressionFactory),
         ]);
     }
 }

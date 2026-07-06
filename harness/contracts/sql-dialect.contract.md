@@ -154,6 +154,10 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | `TimeOnly.AddHours/Minutes` | `TIME(TIMESTAMPADD(...))` | `DATE_ADD` / `ADDTIME` | QueryTranslators | done |
 | `DateOnly.ToDateTime(time)` | `MAKE_TIMESTAMP(...)` | `ADDTIME(CAST(...), time)` | QueryTranslators | done |
 | `DateOnly.DayNumber` | `TO_DAYS(d) - 366` | 同左 | QueryTranslators | done |
+| `XuguDbFunctionsExtensions.DateDiff*` | `TIMESTAMPDIFF(unit, start, end)` | 同左 | QueryTranslators | done |
+| `byte[].Contains(b)` | `LOCATE(b, arr) > 0` | 同左 | QueryTranslators | done |
+| `Enumerable.First(byte[])` | `ASCII(arr)` | 同左 | QueryTranslators | done |
+| `XuguDbFunctionsExtensions.Like` | `LIKE` | 同左 | QueryTranslators | done |
 
 ## 索引 DDL
 
@@ -185,6 +189,11 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | DateOnly.ToDateTime | `MAKE_TIMESTAMP(Y,M,D,h,m,s)` | `ADDTIME(CAST(date AS datetime), time)` | DateTimeMethodTranslator |
 | TimeOnly.Add* | `TIME(TIMESTAMPADD(unit,n,CAST(t AS DATETIME)))` | `DATE_ADD` / `ADDTIME` | DateTimeMethodTranslator |
 | DateTimeOffset.Now | `SYSTIMESTAMP()` | `UTC_TIMESTAMP()` | DateTimeMemberTranslator |
+| DateDiff (DbFunctions) | `TIMESTAMPDIFF(unit, …)` | 同左 | XuguDateDiffFunctionsTranslator |
+| byte[] Contains | `LOCATE(sub, src) > 0` | 同左 | XuguByteArrayMethodTranslator |
+| byte[] First | `ASCII(blob)` | 同左 | XuguByteArrayMethodTranslator |
+| DbFunctions.Like | `LIKE … [ESCAPE …]` | 同左 | XuguDbFunctionsExtensionsMethodTranslator |
+| HasTables | `DBA_TABLES`（`VALID='T'`, `IS_SYS='F'`） | `information_schema.tables` | XuguDatabaseCreator |
 
 ## DDL 差异
 
@@ -217,6 +226,7 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-06 | 波次 7：DateDiff/ByteArray/DbFunctions.Like Translator；HasTables via DBA_TABLES | Orchestrator |
 | 2026-07-06 | 波次 6：实库索引 create/rename/drop 验收；`ALL_INDEXES.VALID=1` 用于集成测试断言 | Orchestrator |
 | 2026-07-06 | 波次 5：Git 追踪 + Index DDL + Scaffolding 集成测试 + CI 打包脚本 | Orchestrator |
 | 2026-07-06 | Phase 4：IDENTITY(1,1) MigrationsSqlGenerator、LOCK TABLE 迁移锁、HistoryRepository | Agent-Migrations |

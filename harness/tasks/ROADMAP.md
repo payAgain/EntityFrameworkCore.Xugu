@@ -11,7 +11,7 @@
 | 0 | Harness + 骨架 | `done` | sln 编译、Pomelo 已 clone |
 | 1 | Infrastructure + Storage | `done` | CanConnect() |
 | 2 | Metadata + Update | `done` | CRUD 5/5 通过 |
-| 3 | Query | `done` | 基础 LINQ + DateTime Translators（13/13 测试） |
+| 3 | Query | `done` | 基础 LINQ + Translators（Query/DateTime/TranslatorSql 等 20+ 测试） |
 | 4 | Migrations + Design | `done` | dotnet ef 实跑验收 |
 | 5 | Extensions + 高级 | `done` | Fluent API E1–E5 |
 | 6 | 测试 + 生产化 | `done` | .resx + NuGet pack + 规范测试增量；**defer**: RetryingStrategy、Pomelo FunctionalTests 全量 |
@@ -48,12 +48,33 @@ Handoffs: `harness/handoffs/phase2-closed.md`, `agent-testing.done.md`
 |----|-------|------|
 | 4.M* | Agent-Migrations | done |
 | 4.T1 | Agent-Testing MigrationTests | done |
+
+## Phase 5 任务
+
+详见 `harness/tasks/phase-5-extensions/TASKS.md`（若存在）或 Phase 5 handoff。
+
+| ID | Agent | 状态 |
+|----|-------|------|
 | 5.E* | Agent-Extensions Fluent API | done |
+
+## Phase 7+ 后续 / Backlog
+
+详见 `harness/tasks/BACKLOG.md`。已知 defer / 缺口：
+
+| 项 | 状态 | 说明 |
+|----|------|------|
+| `XuguRetryingExecutionStrategy` | defer | 驱动层瞬态错误码未稳定映射，见 `harness/references/retrying-execution-strategy.md` |
+| Pomelo FunctionalTests 全量移植 | backlog | 按模块分批移植，见 BACKLOG P2 |
+| Query Translator 增量 | done | DateDiff、ByteArray、DbFunctions.Like（P1） |
+| `XuguDatabaseCreator.HasTables` | done | DBA_TABLES 查询（P1） |
+| CREATE/DROP DATABASE | defer | 文档支持但 EF 层保持 NotSupported（权限/运维边界） |
+| Collation / FULLTEXT / CONVERT_TZ | defer | Xugu 无列级 Collation；无 CONVERT_TZ |
 
 ## 进度日志
 
 | 日期 | 事件 |
 |------|------|
+| 2026-07-06 | 波次 7：P0 文档同步 + P1 Query Translator 增量 + HasTables 实装 |
 | 2026-07-06 | 波次 6：Phase 6 关闭；NuGet pack 本地验证；ComplexQuery + MigrationEdge 测试；resx 收尾 |
 | 2026-07-06 | 波次 5：Git 初始化；Index DDL；Scaffolding 集成测试；6.S2 CI 打包；RetryingStrategy 调研 defer |
 | 2026-07-06 | 波次 4：Phase 5 done；Scaffolding PK/FK；6.T1 子集 + 6.T2 第二批 resx；54/54 测试 |

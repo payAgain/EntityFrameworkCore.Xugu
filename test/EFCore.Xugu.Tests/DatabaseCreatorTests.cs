@@ -1,0 +1,43 @@
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
+using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
+using Microsoft.Extensions.DependencyInjection;
+using Xunit;
+
+namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
+
+public class DatabaseCreatorTests
+{
+    [SkippableFact]
+    public void HasTables_returns_true_when_system_has_user_tables()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+
+        var options = new DbContextOptionsBuilder<DatabaseCreatorTestContext>()
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .Options;
+
+        using var context = new DatabaseCreatorTestContext(options);
+        var creator = context.GetInfrastructure().GetRequiredService<IRelationalDatabaseCreator>();
+
+        Assert.True(creator.HasTables());
+    }
+
+    [Fact]
+    public void Create_throws_NotSupportedException()
+    {
+        var options = new DbContextOptionsBuilder<DatabaseCreatorTestContext>()
+            .UseXugu(XuguTestConnection.DefaultConnectionString)
+            .Options;
+
+        using var context = new DatabaseCreatorTestContext(options);
+        var creator = context.GetInfrastructure().GetRequiredService<IRelationalDatabaseCreator>();
+
+        var exception = Assert.Throws<NotSupportedException>(() => creator.Create());
+        Assert.Contains("not supported", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private sealed class DatabaseCreatorTestContext(DbContextOptions<DatabaseCreatorTestContext> options)
+        : DbContext(options);
+}
