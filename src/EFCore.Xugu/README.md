@@ -42,4 +42,5 @@ Driver reference strategy (local vs NuGet): [docs/xuguclient-dependency-strategy
 |----------|-------------|
 | [GETTING-STARTED.md](../../docs/GETTING-STARTED.md) | Quick start |
 | [LIMITATIONS.md](../../docs/LIMITATIONS.md) | Known limitations |
+| [CHANGELOG.md](../../docs/CHANGELOG.md) | Release notes |
 | [xuguclient-dependency-strategy.md](../../docs/xuguclient-dependency-strategy.md) | `Xuguclient` dependency policy |

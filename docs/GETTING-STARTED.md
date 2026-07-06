@@ -1,10 +1,10 @@
 # XuguDB EF Core Provider — 快速开始
 
-> 当前版本：`0.1.0-preview`（Phase 7 目标：`1.0.0`）  
+> 当前版本：**`1.0.0`**  
 > 包名：`Microsoft.EntityFrameworkCore.Xugu`  
 > 目标框架：.NET 9.0
 
-本文介绍如何在应用中使用 XuguDB EF Core Provider：连接串、`UseXugu`、迁移与常见排错。已知限制见 [LIMITATIONS.md](LIMITATIONS.md)。
+本文介绍如何在应用中使用 XuguDB EF Core Provider：连接串、`UseXugu`、迁移与常见排错。已知限制见 [LIMITATIONS.md](LIMITATIONS.md)；版本历史见 [CHANGELOG.md](CHANGELOG.md)。
 
 ---
 
@@ -168,6 +168,7 @@ dotnet ef dbcontext scaffold $env:XUGU_CONNECTION Microsoft.EntityFrameworkCore.
 | 文档 | 说明 |
 |------|------|
 | [LIMITATIONS.md](LIMITATIONS.md) | 已知限制、skip/defer 清单 |
-| [xuguclient-dependency-strategy.md](xuguclient-dependency-strategy.md) | 驱动依赖与 CI 打包 |
+| [CHANGELOG.md](CHANGELOG.md) | 版本变更摘要 |
+| [xuguclient-dependency-strategy.md](xuguclient-dependency-strategy.md) | 驱动依赖、CI 与 NuGet 发布 |
 | `harness/references/csharp-driver-analysis.md` | ADO.NET 驱动分析 |
 | `E:\BaiduSyncdisk\docs\content\ecosystem\orm\dotnet\efcore.md` | XuguDB 官方 EF Core 生态文档 |

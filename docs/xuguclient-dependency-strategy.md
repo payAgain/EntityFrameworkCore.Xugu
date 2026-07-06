@@ -95,7 +95,32 @@ dotnet pack src/EFCore.Xugu/EFCore.Xugu.csproj -c Release -o artifacts -p:UseLoc
    - `external/csharp-driver` 子模块指针
    - 本文档版本表
 
-### 内部 GitLab feed（Phase 7.R3 后续）
+### 内部 GitLab feed（7.R3）
+
+`harness/scripts/publish-nuget.ps1` 提供 pack / 可选 push 流程：
+
+```powershell
+# 默认 dry-run：打印版本、输出路径与命令，不写包
+harness/scripts/publish-nuget.ps1
+
+# 产出 artifacts/Microsoft.EntityFrameworkCore.Xugu.{version}.nupkg
+harness/scripts/publish-nuget.ps1 -Pack
+
+# 构建 + 测试 + verify + pack（与 CI 一致）
+harness/scripts/publish-nuget.ps1 -Pack -UseCiBuild
+
+# 推送到内部 feed（需环境变量；本地发版默认不 push）
+$env:GITLAB_NUGET_FEED_URL = "https://gitlab.example.com/api/v4/projects/.../packages/nuget/index.json"
+$env:GITLAB_NUGET_API_KEY = "<token>"
+harness/scripts/publish-nuget.ps1 -Pack -Push
+```
+
+| 参数 | 说明 |
+|------|------|
+| 默认 | Dry-run，不写入 `artifacts/` |
+| `-Pack` | `dotnet pack` 且 `-p:UseLocalXuguDriver=false` |
+| `-UseCiBuild` | 改调 `ci-build.ps1 -Pack`（含 build/test/verify） |
+| `-Push` | 需 `GITLAB_NUGET_FEED_URL` + `GITLAB_NUGET_API_KEY` |
 
 稳定版 `Xuguclient` 若发布到内部 GitLab NuGet feed，消费方应：
 
@@ -163,7 +188,7 @@ CI 实库测试通过环境变量 `XUGU_CONNECTION_STRING` 配置连接；无数
 |------|------|
 | Phase 0 | 引入 `UseLocalXuguDriver` 双模式 |
 | Phase 6 | CI `-Pack` 强制 `UseLocalXuguDriver=false`；`3.3.6-bionic` override |
-| Phase 7.R4 | 本文档正式化策略；内部 feed 脚本留待 7.R3 |
+| Phase 7.R4 | 本文档正式化策略；7.R3 `publish-nuget.ps1` |
 
 ---
 
@@ -175,4 +200,5 @@ CI 实库测试通过环境变量 `XUGU_CONNECTION_STRING` 配置连接；无数
 | `Directory.Packages.props` | `XuguClientVersion` |
 | `Directory.Build.props` / `NativeAssets.props` | 原生 DLL 检测 |
 | `harness/scripts/ci-build.ps1` | CI build/test/pack |
+| `harness/scripts/publish-nuget.ps1` | NuGet dry-run / pack / optional push |
 | `external/csharp-driver/XGCSClient/XGCSClient.csproj` | 本地驱动工程 |

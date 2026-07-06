@@ -1,7 +1,7 @@
 # Phase 7：1.0.0 生产级发版
 
-> **状态**：`active`（当前 Phase）  
-> **版本目标**：`0.1.0-preview` → **`1.0.0`**（移除 `VersionSuffix`）  
+> **状态**：`done`  
+> **版本目标**：`0.1.0-preview` → **`1.0.0`**（已发布，无 `VersionSuffix`）  
 > **负责 Agent**：Orchestrator、QueryCore、Storage、Testing、Infra  
 > **前置**：Phase 0–6 `done`
 
@@ -38,20 +38,20 @@
 |----|------|-------|------|---------|--------|------|
 | 7.R1 | 发版文档：`docs/GETTING-STARTED.md` + 用户快速开始（连接串、兼容模式、迁移、常见错误） | Infra | — | ✅ | P0 | **done** |
 | 7.R2 | README / ROADMAP / BACKLOG 数字同步（116 测试、85 .cs、Phase 7 指针） | Orchestrator | — | ✅ | P0 | **done** |
-| 7.R3 | GitLab NuGet feed 发布脚本 `harness/scripts/publish-nuget.ps1`（仅本地 dry-run，**不 push**） | Infra | 7.R4 | ✅ | P1 | todo |
+| 7.R3 | GitLab NuGet feed 发布脚本 `harness/scripts/publish-nuget.ps1`（仅本地 dry-run，**不 push**） | Infra | 7.R4 | ✅ | P1 | **done** |
 | 7.R4 | `docs/xuguclient-dependency-strategy.md`：本地 ProjectReference vs NuGet `Xuguclient` 版本锁定策略 | Infra | — | ✅ | P0 | **done** |
 | 7.Q1 | 自定义 `XuguQueryableMethodTranslatingExpressionVisitor`（ExecuteDelete / ExecuteUpdate 核心路径） | QueryCore | 7.Q2 | ❌ | P0 | **done** |
 | 7.Q2 | Query 编译管道：`XuguQueryCompilationContext` + Factory、`XuguQueryTranslationPreprocessor`/`Postprocessor`、Factory 注册 | QueryCore | — | ✅ | P0 | done |
 | 7.Q3 | `XuguEvaluatableExpressionFilter`（对齐 Pomelo `IMySqlEvaluatableExpressionFilter` 子集） | QueryCore | 7.Q2 | ❌ | P1 | **done**（7.Q2 已含） |
 | 7.Q4 | `XuguSqlTranslatingExpressionVisitor` 实体（当前仅 Factory；从 Pomelo 移植骨架并接 DI） | QueryCore | 7.Q2 | ❌ | P0 | **done** |
 | 7.S1 | TypeMapping 增量：核心 CLR 类型（`decimal` 精度、`TimeSpan`、`uint`/`ulong`、枚举存储等）— **必先查** `E:\BaiduSyncdisk\docs\content\reference\data-type\` | Storage | — | ✅ | P0 | done |
-| 7.S2 | `XuguRetryingExecutionStrategy` 实装 **或** 在 `docs/LIMITATIONS.md` 正式文档化驱动阻塞（见 `harness/references/retrying-execution-strategy.md`） | Storage | — | ✅ | P1 | defer |
+| 7.S2 | `XuguRetryingExecutionStrategy` 实装 **或** 在 `docs/LIMITATIONS.md` 正式文档化驱动阻塞（见 `harness/references/retrying-execution-strategy.md`） | Storage | — | ✅ | P1 | **defer**（LIMITATIONS 已确认） |
 | 7.S3 | `XuguCompiledQueryCacheKeyGenerator`（编译查询缓存键，对齐 Pomelo 子集） | QueryCore | 7.Q2 | ❌ | P1 | **done** |
 | 7.T1 | 生产级冒烟测试：`ExecuteDeleteTests`、`ExecuteUpdateTests`、`CompiledQueryTests`（SkippableFact + 实库） | Testing | 7.Q1, 7.Q4 | ❌ | P0 | **done** |
 | 7.T2 | `docs/LIMITATIONS.md`：已知限制、skip 能力、驱动依赖 defer 项 | Orchestrator | 7.S2, 7.R1 | ❌ | P0 | **done** |
-| 7.T3 | `docs/CHANGELOG.md`：0.1.0-preview → 1.0.0 变更摘要 | Infra | 7.T1 | ❌ | P1 | todo |
+| 7.T3 | `docs/CHANGELOG.md`：0.1.0-preview → 1.0.0 变更摘要 | Infra | 7.T1 | ❌ | P1 | **done** |
 | 7.O1 | Orchestrator：合并 `XuguServiceCollectionExtensions.cs` DI（Q1–Q4、S3 注册） | Orchestrator | 7.Q1–Q4, 7.S3 | ❌ | P0 | **done**（W1+W2 DI 已合并） |
-| 7.V1 | `Version.props` 升至 `1.0.0`、移除 suffix；`ci-build.ps1` 验证 | Orchestrator | 7.O1, 7.T1, 7.T2 | ❌ | P0 | todo |
+| 7.V1 | `Version.props` 升至 `1.0.0`、移除 suffix；`ci-build.ps1` 验证 | Orchestrator | 7.O1, 7.T1, 7.T2 | ❌ | P0 | **done** |
 
 ## SQL / 文档要求
 
@@ -101,4 +101,4 @@ harness/scripts/verify-module.ps1 -Module Storage
 
 ## Handoff
 
-完工提交 `harness/handoffs/phase7-release-1.0.0.done.md`，注明文档路径与测试数。
+完工提交 `harness/handoffs/phase7-wave4-5-release.done.md`，注明文档路径与测试数。

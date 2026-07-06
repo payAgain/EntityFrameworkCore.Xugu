@@ -50,13 +50,13 @@ dotnet build Xugu.EFCore.Xugu.sln
 
 | 项 | 值 |
 |----|-----|
-| **当前版本** | `0.1.0-preview`（`Version.props`） |
-| **当前 Phase** | **7** — 1.0.0 生产级发版（`harness/tasks/phase-7-release-1.0.0/TASKS.md`） |
-| **测试** | **116/116** PASS |
-| **Provider 规模** | **85** .cs（Pomelo 9.0.0：**194** .cs，~44%） |
-| **已完成** | Phase 0–6：Infrastructure、Storage、Metadata/Update、Query、Migrations、Extensions、NuGet 本地 pack |
+| **当前版本** | **`1.0.0`**（`Version.props`） |
+| **当前 Phase** | **7 done** → Phase 8 Pomelo 功能对等（`harness/tasks/phase-8-pomelo-feature-parity/TASKS.md`） |
+| **测试** | **141/141** PASS |
+| **Provider 规模** | **105** .cs（Pomelo 9.0.0：**194** .cs，~54%） |
+| **已完成** | Phase 0–7：生产级 1.0.0（ExecuteDelete/Update、编译管道、文档、NuGet 脚本） |
 
-**四级里程碑**：`0.1.0-preview` → Phase 7 **`1.0.0`** → Phase 8 Pomelo 功能对等 → Phase 9 Pomelo 测试对等
+**四级里程碑**：`0.1.0-preview` → **`1.0.0`** ✓ → Phase 8 Pomelo 功能对等 → Phase 9 Pomelo 测试对等
 
 Pomelo 参考：**tag 9.0.0**（`harness/references/pomelo-version.md`）。
 
@@ -68,4 +68,5 @@ Pomelo 参考：**tag 9.0.0**（`harness/references/pomelo-version.md`）。
 |------|------|
 | [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md) | 连接串、`UseXugu`、迁移、常见错误 |
 | [docs/LIMITATIONS.md](docs/LIMITATIONS.md) | 已知限制与 defer/skip 清单 |
+| [docs/CHANGELOG.md](docs/CHANGELOG.md) | 版本变更摘要 |
 | [docs/xuguclient-dependency-strategy.md](docs/xuguclient-dependency-strategy.md) | `UseLocalXuguDriver` vs NuGet `Xuguclient` |
