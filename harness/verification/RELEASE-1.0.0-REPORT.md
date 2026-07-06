@@ -117,6 +117,104 @@
 
 ---
 
+## 实库与 EF Core 集成审计
+
+> 回应「测试是否使用真实数据库？是否真正接入 EF Core 框架？」——基于 `test/EFCore.Xugu.Tests/` 全量源码审计（2026-07-06）。
+
+### A. 真实数据库
+
+#### 探测与跳过策略
+
+| 机制 | 实现 |
+|------|------|
+| 可用性探测 | `XuguTestConnection.IsAvailable()` → `XGConnection.Open()` |
+| 连接串 | 默认 `127.0.0.1:5138 SYSTEM/SYSDBA`；`XUGU_CONNECTION_STRING` 可覆盖 |
+| 跳过 | `[SkippableFact]` + `XuguTestConnection.SkipIfUnavailable()`（`Xunit.SkippableFact`） |
+| 表隔离 | `XuguDatabaseFixture` 预建 `EF_TEST_*` 表；`[Collection("XuguDatabase")]` 串行共享 fixture |
+
+**无 DB 时**：62 个 SkippableFact 全部 skip，79 个单元/SQL 断言用例仍 PASS → CI 可在无 XuguDB 环境通过。  
+**有 DB 时**：报告执行环境 XuguDB 可用，62 SkippableFact **0 skip**，141/141 PASS — 与源码统计一致。
+
+#### 数量统计
+
+| 属性 | 方法数 | 展开后用例数 | 说明 |
+|------|--------|-------------|------|
+| `[SkippableFact]` | **62** | 62 | 需实库；DB 不可用时 skip |
+| `[Fact]` | **46** | 46 | 无 DB 依赖 |
+| `[Theory]` | 5 | **33** | InlineData 展开 |
+| **合计** | 113 | **141** | 与 `dotnet test` 报告一致 |
+
+#### 测试分类表
+
+| 测试类 | 类型 | 用例数 | 说明 |
+|--------|------|--------|------|
+| **实库 — DbContext + LINQ 物化 + SaveChanges** | | **62** | |
+| `CrudTests` | 实库 | 3 | Insert/Update/Delete + 读回 |
+| `QueryTests` | 实库 | 4 | Where/OrderBy/Skip-Take/Count |
+| `ComplexQueryTests` | 实库 | 5 | Join/GroupBy/子查询等 |
+| `ExtensionQueryTests` | 实库 | 4 | Provider 扩展 LINQ |
+| `NorthwindStyleQueryTests` | 实库 | 2 | 关联查询 |
+| `NorthwindFunctionsQueryTests` | 实库 | 7 | 字符串/数学函数 |
+| `NorthwindDbFunctionsQueryTests` | 实库 | 6 | EF.Functions |
+| `DbFunctionsQueryTests` | 实库 | 3 | 内置函数 |
+| `DateTimeQueryTests` | 实库 | 4 | DateTime 读写 |
+| `DateOnlyQueryTests` | 实库 | 4 | DateOnly 查询（写入 defer） |
+| `TimeOnlyQueryTests` | 实库 | 5 | TimeOnly 查询 |
+| `BuiltInDataTypesTests` | 实库 | 2 | 多类型 round-trip |
+| `ExecuteDeleteTests` | 实库 | 2 | Phase 7 P0 |
+| `ExecuteUpdateTests` | 实库 | 2 | Phase 7 P0 |
+| `CompiledQueryTests` | 实库 | 1 | 编译查询 |
+| `MigrationTests` | 实库 | 3 | DDL + `__EFMigrationsHistory` |
+| `MigrationIntegrationEdgeTests` | 实库 | 2 | 索引/边缘迁移 |
+| `ScaffoldingIntegrationTests` | 实库 | 1 | 读 catalog PK/FK/Index |
+| `CanConnectTests` | 实库 | 1 | `Database.CanConnect()` |
+| `DatabaseCreatorTests` | 实库 | 1 | `HasTables()` |
+| **仅 SQL 断言 — 无实库执行** | | **33** | |
+| `TranslatorSqlTests` | SQL 断言 | 24 | `ToQueryString()` 方言片段 |
+| `MigrationIndexSqlTests` | SQL 断言 | 5 | `IMigrationsSqlGenerator` 输出 |
+| `MigrationsModelDifferTests` | SQL 断言 | 4 | 内存模型 diff，无 DDL 执行 |
+| **纯单元 — 无 DB、无 SQL 执行** | | **46** | |
+| `CanConnectTests` | 纯单元 | 1 | `UseXugu` 扩展注册 |
+| `DatabaseCreatorTests` | 纯单元 | 1 | `Create()` → NotSupported |
+| `ExecutionStrategyTests` | 纯单元 | 2 | Strategy 类型 |
+| `FluentApiExtensionTests` | 纯单元 | 5 | ModelBuilder 注解 |
+| `TypeMappingSourceTests` | 纯单元 | 23 | 3 Fact + 20 Theory |
+| `ScaffoldingMetadataTests` | 纯单元 | 10 | 1 Fact + 9 Theory |
+| `ScaffoldingStoreTypeTests` | 纯单元 | 4 | 4 Theory |
+
+> **关键结论**：约 **44%**（62/141）用例在 DB 可用时走完整 ADO.NET 驱动 + EF Core 查询/变更管道；**23%**（33/141）仅验证 SQL 生成正确性，**不**证明方言在实库可执行。
+
+### B. EF Core 框架接入深度
+
+| 层级 | 证据 | 评估 |
+|------|------|------|
+| **DI 注册** | `AddEntityFrameworkXugu()` → `EntityFrameworkRelationalServicesBuilder` 注册 Query/Migrations/Storage/Update/ValueGeneration 等 20+ 服务 | ✅ 官方 Relational Provider 扩展点 |
+| **应用配置** | `UseXugu()` → `XuguOptionsExtension` + `XuguDbContextOptionsBuilder` | ✅ 标准 `DbContextOptionsBuilder` 模式 |
+| **设计时** | `XuguDesignTimeServices : IDesignTimeServices` + `EntityFrameworkRelationalDesignServicesBuilder` | ✅ `dotnet ef` 可加载 |
+| **运行时 DbContext** | 62 SkippableFact：`DbContext` + `UseXugu` + LINQ 物化 + `SaveChanges` / `ExecuteDelete` / `ExecuteUpdate` | ✅ 真实 EF Core 管道 |
+| **SQL 翻译（离线）** | 24× `TranslatorSqlTests` 用 `ToQueryString()` | ⚠️ 只测编译器，不测执行 |
+| **迁移** | 实库：`IMigrator`/`IHistoryRepository` 操作级测试；样本：`EfDesignSample` + `dotnet ef migrations list` | ⚠️ 未测 `Database.Migrate()` 全链路 |
+| **Scaffolding** | 实库读 catalog；纯单元解析 metadata | ✅ 设计时 + 读库 |
+
+`EfDesignSample` 算**设计时 EF Core 集成**：含 `IDesignTimeDbContextFactory`、`UseXugu()`、已生成 `Migrations/InitialCreate`，报告已验证 `dotnet ef migrations list` 列出 Pending 迁移。
+
+### C. 生产级验证缺口与建议（Phase 8+）
+
+| 缺口 | 当前状态 | 建议 |
+|------|----------|------|
+| `Database.Migrate()` / `dotnet ef database update` 端到端 | 样本 README 有步骤；自动化测试未覆盖 | 增加 SkippableFact：`Migrate()` + 查 `__EFMigrationsHistory` |
+| `EnsureCreated` vs Migrations | 未测 | 文档明确推荐 Migrations；可选 smoke |
+| 连接池 / 长连接 | 未测 | 压力脚本或集成测试 |
+| 显式事务 / 并发 | 未测 | `BeginTransaction` + 两 DbContext 竞争 |
+| `TranslatorSqlTests` 实库对照 | 24 条仅字符串断言 | 抽样「生成 SQL → 实库执行」回归 |
+| CI 强制实库 | 无；skip 策略允许无 DB PASS | 内部 CI 矩阵：有 DB job 必跑 62 SkippableFact |
+| DateOnly/TimeOnly SaveChanges | 查询已测；写入 defer | LIMITATIONS + 实库写入测试 |
+| Retry / 瞬态故障 | defer | `XuguRetryingExecutionStrategy` |
+
+**CRITERIA 覆盖度**：原 1.1–1.8 矩阵覆盖构建/测试数量/冒烟，**未**单独要求实库分层与 EF 集成深度；本次已增 **§1.9 真实数据库集成**、**§1.10 EF Core 运行时/设计时集成**。
+
+---
+
 ## 最终判定
 
 ### **CONDITIONAL PASS**（可打 `v1.0.0` tag）
