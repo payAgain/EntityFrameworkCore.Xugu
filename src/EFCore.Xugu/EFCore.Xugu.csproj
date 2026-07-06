@@ -5,7 +5,7 @@
     <TargetFramework>$(XuguTargetFramework)</TargetFramework>
     <AssemblyName>Microsoft.EntityFrameworkCore.Xugu</AssemblyName>
     <RootNamespace>Microsoft.EntityFrameworkCore.Xugu</RootNamespace>
-    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <NoWarn>$(NoWarn);CS1591;EF9100</NoWarn>
     <IsPackable>true</IsPackable>
     <PackageId>Microsoft.EntityFrameworkCore.Xugu</PackageId>
     <PackageReadmeFile>README.md</PackageReadmeFile>

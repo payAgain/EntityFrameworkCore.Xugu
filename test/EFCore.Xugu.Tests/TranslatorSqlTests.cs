@@ -193,7 +193,7 @@ public class TranslatorSqlTests
     }
 
     [Fact]
-    public void TimeOnly_AddHours_generates_TIMESTAMPADD()
+    public void TimeOnly_AddHours_generates_ADDTIME()
     {
         using var context = CreateContext();
 
@@ -201,7 +201,47 @@ public class TranslatorSqlTests
             .Where(s => s.StartsAt.AddHours(1) > s.StartsAt)
             .ToQueryString();
 
-        AssertSql.Contains("TIMESTAMPADD(HOUR,", sql);
+        AssertSql.Contains("ADDTIME(", sql);
+        AssertSql.Contains("INTERVAL", sql);
+        AssertSql.Contains("HOUR", sql);
+    }
+
+    [Fact]
+    public void TimeOnly_AddHours_Hour_generates_ADDTIME_and_HOUR()
+    {
+        using var context = CreateContext();
+
+        var sql = context.ScheduleItems
+            .Where(s => s.StartsAt.AddHours(2).Hour == 10)
+            .ToQueryString();
+
+        AssertSql.Contains("ADDTIME(", sql);
+        AssertSql.Contains("INTERVAL 2 HOUR", sql);
+        AssertSql.Contains("HOUR(", sql);
+    }
+
+    [Fact]
+    public void Double_RadiansToDegrees_generates_DEGREES()
+    {
+        using var context = CreateContext();
+
+        var sql = context.NumericItems
+            .Where(i => double.RadiansToDegrees(i.Id) > 0)
+            .ToQueryString();
+
+        AssertSql.Contains("DEGREES(", sql);
+    }
+
+    [Fact]
+    public void Double_DegreesToRadians_generates_RADIANS()
+    {
+        using var context = CreateContext();
+
+        var sql = context.NumericItems
+            .Where(i => double.DegreesToRadians(i.Id) > 0)
+            .ToQueryString();
+
+        AssertSql.Contains("RADIANS(", sql);
     }
 
     [Fact]

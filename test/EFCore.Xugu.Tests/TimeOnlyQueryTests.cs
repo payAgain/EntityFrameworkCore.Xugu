@@ -12,6 +12,42 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 public class TimeOnlyQueryTests(XuguDatabaseFixture fixture)
 {
     [SkippableFact]
+    public void AddHours_shifts_stored_time()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ClearScheduleItems();
+        fixture.InsertScheduleItem(
+            new DateOnly(2024, 6, 1),
+            new TimeOnly(8, 0),
+            new DateTime(2024, 6, 1, 8, 0, 0));
+
+        using var context = CreateContext();
+
+        var count = context.ScheduleItems.Count(
+            s => s.StartsAt.AddHours(2).Hour == 10);
+
+        Assert.Equal(1, count);
+    }
+
+    [SkippableFact]
+    public void AddMinutes_shifts_stored_time()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ClearScheduleItems();
+        fixture.InsertScheduleItem(
+            new DateOnly(2024, 6, 1),
+            new TimeOnly(14, 30),
+            new DateTime(2024, 6, 1, 14, 30, 0));
+
+        using var context = CreateContext();
+
+        var count = context.ScheduleItems.Count(
+            s => s.StartsAt.AddMinutes(30).Hour == 15);
+
+        Assert.Equal(1, count);
+    }
+
+    [SkippableFact]
     public void FromDateTime_matches_stored_time()
     {
         XuguTestConnection.SkipIfUnavailable();

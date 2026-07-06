@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore.Xugu.Query.Internal;
 namespace Microsoft.EntityFrameworkCore.Xugu.Query.ExpressionTranslators.Internal;
 
 /// <summary>
-/// XuguDbFunctionsExtensions.Like → SQL LIKE; Hex → HEX(); Unhex → UNHEX().
-/// Docs: reference/sql/select/where.md, reference/function/uncategorized-functions/hex.md, unhex.md
+/// XuguDbFunctionsExtensions.Like → SQL LIKE; Hex → HEX(); Unhex → UNHEX(); Degrees/Radians.
+/// Docs: where.md, hex.md, unhex.md, degrees.md, radians.md
 /// </summary>
 public class XuguDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
 {
@@ -52,6 +52,26 @@ public class XuguDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
             nameof(XuguDbFunctionsExtensions.Unhex),
             [typeof(DbFunctions), typeof(string)])!;
 
+    private static readonly MethodInfo DegreesDoubleMethodInfo
+        = typeof(XuguDbFunctionsExtensions).GetRuntimeMethod(
+            nameof(XuguDbFunctionsExtensions.Degrees),
+            [typeof(DbFunctions), typeof(double)])!;
+
+    private static readonly MethodInfo DegreesFloatMethodInfo
+        = typeof(XuguDbFunctionsExtensions).GetRuntimeMethod(
+            nameof(XuguDbFunctionsExtensions.Degrees),
+            [typeof(DbFunctions), typeof(float)])!;
+
+    private static readonly MethodInfo RadiansDoubleMethodInfo
+        = typeof(XuguDbFunctionsExtensions).GetRuntimeMethod(
+            nameof(XuguDbFunctionsExtensions.Radians),
+            [typeof(DbFunctions), typeof(double)])!;
+
+    private static readonly MethodInfo RadiansFloatMethodInfo
+        = typeof(XuguDbFunctionsExtensions).GetRuntimeMethod(
+            nameof(XuguDbFunctionsExtensions.Radians),
+            [typeof(DbFunctions), typeof(float)])!;
+
     private readonly XuguSqlExpressionFactory _sqlExpressionFactory;
 
     public XuguDbFunctionsExtensionsMethodTranslator(XuguSqlExpressionFactory sqlExpressionFactory)
@@ -83,6 +103,22 @@ public class XuguDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
                 [arguments[1]],
                 typeof(string),
                 onlyNullWhenAnyNullPropagatingArgumentIsNull: false);
+        }
+
+        if (DegreesDoubleMethodInfo.Equals(method) || DegreesFloatMethodInfo.Equals(method))
+        {
+            return _sqlExpressionFactory.NullableFunction(
+                "DEGREES",
+                [arguments[1]],
+                method.ReturnType);
+        }
+
+        if (RadiansDoubleMethodInfo.Equals(method) || RadiansFloatMethodInfo.Equals(method))
+        {
+            return _sqlExpressionFactory.NullableFunction(
+                "RADIANS",
+                [arguments[1]],
+                method.ReturnType);
         }
 
         if (method.Name != nameof(XuguDbFunctionsExtensions.Like)

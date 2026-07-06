@@ -16,9 +16,9 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Query.ExpressionTranslators.Interna
 
 /// <summary>
 
-/// DateTime Add* methods via TIMESTAMPADD; TimeOnly via TIME(TIMESTAMPADD(...)).
+/// DateTime Add* methods via TIMESTAMPADD; TimeOnly via ADDTIME(..., INTERVAL n unit).
 
-/// Docs: E:\BaiduSyncdisk\docs\content\reference\function\date-and-time-functions\timestampadd.md
+/// Docs: timestampadd.md, addtime.md
 
 /// </summary>
 
@@ -172,16 +172,13 @@ public class XuguDateTimeMethodTranslator : IMethodCallTranslator
 
 
 
-            var interval = BuildInterval(unit, arguments[0]);
-
-
+            var interval = method.DeclaringType == typeof(TimeOnly)
+                ? arguments[0]
+                : BuildInterval(unit, arguments[0]);
 
             if (method.DeclaringType == typeof(TimeOnly))
-
             {
-
-                return TranslateTimeOnlyTimestampAdd(instance, unit, interval, method.ReturnType);
-
+                return TranslateTimeOnlyAddTime(instance, unit, interval, method.ReturnType);
             }
 
 
@@ -399,7 +396,7 @@ public class XuguDateTimeMethodTranslator : IMethodCallTranslator
 
 
 
-    private SqlExpression TranslateTimeOnlyTimestampAdd(
+    private SqlExpression TranslateTimeOnlyAddTime(
 
         SqlExpression instance,
 
@@ -411,29 +408,57 @@ public class XuguDateTimeMethodTranslator : IMethodCallTranslator
 
     {
 
-        var asDateTime = _sqlExpressionFactory.Convert(instance, typeof(DateTime));
-
-
-
-        var shifted = _sqlExpressionFactory.NullableFunction(
-            "TIMESTAMPADD",
+        var intervalExpression = _sqlExpressionFactory.ComplexFunctionArgument(
             [
+                _sqlExpressionFactory.Fragment("INTERVAL"),
+                BuildAddTimeInterval(interval),
                 _sqlExpressionFactory.Fragment(unit),
-                interval,
-                asDateTime
             ],
-            typeof(DateTime),
-            typeMapping: null,
-            onlyNullWhenAnyNullPropagatingArgumentIsNull: true,
-            argumentsPropagateNullability: [false, true, true]);
+            " ",
+            typeof(string));
 
         return _sqlExpressionFactory.NullableFunction(
-            "TIME",
-            [shifted],
+            "ADDTIME",
+            [instance, intervalExpression],
             returnType,
             typeMapping: null,
-            onlyNullWhenAnyNullPropagatingArgumentIsNull: true);
+            onlyNullWhenAnyNullPropagatingArgumentIsNull: true,
+            argumentsPropagateNullability: [true, false]);
 
+    }
+
+    private SqlExpression BuildAddTimeInterval(SqlExpression argument)
+    {
+        if (argument is SqlConstantExpression { Value: int intValue })
+        {
+            return _sqlExpressionFactory.Constant(intValue);
+        }
+
+        if (argument is SqlConstantExpression { Value: long longValue })
+        {
+            return _sqlExpressionFactory.Constant(Convert.ToInt32(longValue));
+        }
+
+        if (argument is SqlConstantExpression { Value: double doubleValue })
+        {
+            return _sqlExpressionFactory.Constant(Convert.ToInt32(doubleValue));
+        }
+
+        if (argument is SqlConstantExpression { Value: float floatValue })
+        {
+            return _sqlExpressionFactory.Constant(Convert.ToInt32(floatValue));
+        }
+
+        if (argument is SqlConstantExpression { Value: int or long or short })
+        {
+            return argument;
+        }
+
+        return _sqlExpressionFactory.NullableFunction(
+            "TRUNC",
+            [argument, _sqlExpressionFactory.Constant(0)],
+            typeof(int),
+            onlyNullWhenAnyNullPropagatingArgumentIsNull: true);
     }
 
 

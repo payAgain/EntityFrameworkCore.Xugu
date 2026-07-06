@@ -36,7 +36,7 @@
 | done | `NorthwindDbFunctionsQueryMySqlTest` | `NorthwindDbFunctionsQueryTests` | DateDiff、Like、Hex/Unhex 组合查询 |
 | done | `DateOnlyQueryMySqlTest` | `DateOnlyQueryTests` | DateOnly 边界、比较、排序、DayNumber |
 | done | `TimeOnlyQueryMySqlTest` | `TimeOnlyQueryTests` | TimeOnly 算术、比较 |
-| planned | `NorthwindFunctionsQueryMySqlTest` | `FunctionTranslationTests` | string/math/date 函数组合 |
+| done | `NorthwindFunctionsQueryMySqlTest` | `NorthwindFunctionsQueryTests` | string/math/date 函数组合 |
 
 #### 批次 C — 低优先级 / 已有替代
 
@@ -45,18 +45,20 @@
 | skip | Scaffolding Baselines 全量 | 已有 `ScaffoldingIntegrationTests` |
 | skip | NTS / JSON 扩展包测试 | Xugu 无对应扩展 |
 | skip | `MatchQueryMySqlTest` (FULLTEXT) | Xugu 无 MATCH AGAINST |
-| defer | `ConvertToProviderTypesMySqlTest` | 需确认 Xugu 类型强制转换语义 |
+| defer | `ConvertToProviderTypesMySqlTest` | Xugu `CAST AS type` 语义与 Pomelo `CONVERT` 映射表不同；见 `reference/sql/expression/type_conversion.md`；待最小 AssertSql 或驱动层类型物化确认 |
 
 ## P3 — 后续实现
 
 | ID | 任务 | 状态 | 依赖 |
 |----|------|------|------|
 | P3-1 | `XuguRetryingExecutionStrategy` 实装 | defer | 驱动异常码稳定 |
-| P3-2 | CREATE/DROP DATABASE（可选） | planned | 运维策略确认 |
+| P3-2 | CREATE/DROP DATABASE（可选） | defer | 文档 `reference/object/database.md` 支持 `CREATE/DROP DATABASE`；EF EnsureCreated 仍用 schema 级 DDL；DatabaseCreator 维持 NotSupported，运维手工建库 |
 | P3-3 | `ConvertTimeZone` / `IsMatch` / `Hex` / `Unhex` DbFunctions | partial | Hex+Regex+Unhex done；ConvertTimeZone defer |
 | P3-4 | Pomelo FunctionalTests 高优先级子集移植 | done | 批次 A |
 | P3-5 | 列级 Collation Fluent API | skip | Xugu 不支持，**不实现** |
 | P3-6 | Pomelo FunctionalTests 批次 B | done | NorthwindDbFunctions + DateOnly/TimeOnly |
+| P3-9 | Pomelo FunctionalTests 批次 C（NorthwindFunctions 子集） | done | string/math/date + Degrees/Radians |
+| P3-10 | TimeOnly.AddHours 实库 ADDTIME 路径 | done | addtime.md |
 | P3-7 | `ObjectToStringTranslator` | done | CAST AS VARCHAR |
 | P3-8 | TypeMapping NUMERIC/BINARY 增量 | done | XuguTypeMappingSource |
 

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Xugu.Query.Expressions.Internal;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Query.Internal;
 
@@ -96,4 +97,32 @@ public class XuguSqlExpressionFactory : SqlExpressionFactory
 
         return result;
     }
+
+    public virtual XuguComplexFunctionArgumentExpression ComplexFunctionArgument(
+        IEnumerable<SqlExpression> argumentParts,
+        string delimiter,
+        Type argumentType,
+        RelationalTypeMapping? typeMapping = null)
+    {
+        var typeMappedArgumentParts = argumentParts.Select(ApplyDefaultTypeMapping).ToList();
+
+        return (XuguComplexFunctionArgumentExpression)ApplyTypeMapping(
+            new XuguComplexFunctionArgumentExpression(
+                typeMappedArgumentParts,
+                delimiter,
+                argumentType,
+                typeMapping),
+            typeMapping)!;
+    }
+
+    public override SqlExpression ApplyTypeMapping(SqlExpression sqlExpression, RelationalTypeMapping typeMapping)
+        => sqlExpression is not { TypeMapping: null }
+            ? sqlExpression
+            : sqlExpression is XuguComplexFunctionArgumentExpression complex
+                ? new XuguComplexFunctionArgumentExpression(
+                    complex.ArgumentParts,
+                    complex.Delimiter,
+                    complex.Type,
+                    typeMapping)
+                : base.ApplyTypeMapping(sqlExpression, typeMapping);
 }

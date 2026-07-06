@@ -12,5 +12,5 @@ public class XuguParameterBasedSqlProcessorFactory : IRelationalParameterBasedSq
 
     public virtual RelationalParameterBasedSqlProcessor Create(
         RelationalParameterBasedSqlProcessorParameters parameters)
-        => new(_dependencies, parameters);
+        => new XuguParameterBasedSqlProcessor(_dependencies, parameters);
 }

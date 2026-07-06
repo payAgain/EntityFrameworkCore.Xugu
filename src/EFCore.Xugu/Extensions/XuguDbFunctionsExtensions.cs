@@ -1150,4 +1150,48 @@ public static class XuguDbFunctionsExtensions
             => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Unhex)));
 
         #endregion Unhex
+
+        #region Degrees
+
+        /// <summary>
+        ///     Converts radians to degrees. Corresponds to <c>DEGREES(radians)</c>.
+        /// </summary>
+        [DbFunction(name: "DEGREES", IsBuiltIn = true)]
+        public static double Degrees(
+            this DbFunctions _,
+            double radians)
+            => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Degrees)));
+
+        /// <summary>
+        ///     Converts radians to degrees. Corresponds to <c>DEGREES(radians)</c>.
+        /// </summary>
+        [DbFunction(name: "DEGREES", IsBuiltIn = true)]
+        public static float Degrees(
+            this DbFunctions _,
+            float radians)
+            => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Degrees)));
+
+        #endregion Degrees
+
+        #region Radians
+
+        /// <summary>
+        ///     Converts degrees to radians. Corresponds to <c>RADIANS(degrees)</c>.
+        /// </summary>
+        [DbFunction(name: "RADIANS", IsBuiltIn = true)]
+        public static double Radians(
+            this DbFunctions _,
+            double degrees)
+            => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Radians)));
+
+        /// <summary>
+        ///     Converts degrees to radians. Corresponds to <c>RADIANS(degrees)</c>.
+        /// </summary>
+        [DbFunction(name: "RADIANS", IsBuiltIn = true)]
+        public static float Radians(
+            this DbFunctions _,
+            float degrees)
+            => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Radians)));
+
+        #endregion Radians
 }

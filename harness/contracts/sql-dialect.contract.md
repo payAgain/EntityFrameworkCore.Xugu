@@ -151,7 +151,9 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | `DateTimeOffset.UtcNow` | `UTC_TIMESTAMP()` | `UTC_TIMESTAMP()` | QueryTranslators | done |
 | `DateTimeOffset.ToUnixTime*` | `TIMESTAMPDIFF(...)` | 同左 | QueryTranslators | done |
 | `TimeOnly.FromDateTime(dt)` | `TIME(dt)` | `TIME(dt)` | QueryTranslators | done |
-| `TimeOnly.AddHours/Minutes` | `TIME(TIMESTAMPADD(...))` | `DATE_ADD` / `ADDTIME` | QueryTranslators | done |
+| `TimeOnly.AddHours/Minutes` | `ADDTIME(CAST(t AS TIME), INTERVAL n unit)` | `DATE_ADD` / `ADDTIME` | QueryTranslators | done |
+| `EF.Functions.Degrees/Radians` | `DEGREES()` / `RADIANS()` | 同左 | QueryTranslators | done |
+| `double.RadiansToDegrees/DegreesToRadians` | `DEGREES()` / `RADIANS()` | 同左 | QueryTranslators | done |
 | `DateOnly.ToDateTime(time)` | `MAKE_TIMESTAMP(...)` | `ADDTIME(CAST(...), time)` | QueryTranslators | done |
 | `DateOnly.DayNumber` | `TO_DAYS(d) - 366` | 同左 | QueryTranslators | done |
 | `XuguDbFunctionsExtensions.DateDiff*` | `TIMESTAMPDIFF(unit, start, end)` | 同左 | QueryTranslators | done |
@@ -191,7 +193,9 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | 类型转换 | `CAST(expr AS type)` 标准 SQL | MySQL CAST 映射表 | QuerySqlGenerator |
 | DateTimeOffset.LocalDateTime | **无 CONVERT_TZ** | `CONVERT_TZ(..., @@session.time_zone)` | 不翻译（客户端求值） |
 | DateOnly.ToDateTime | `MAKE_TIMESTAMP(Y,M,D,h,m,s)` | `ADDTIME(CAST(date AS datetime), time)` | DateTimeMethodTranslator |
-| TimeOnly.Add* | `TIME(TIMESTAMPADD(unit,n,CAST(t AS DATETIME)))` | `DATE_ADD` / `ADDTIME` | DateTimeMethodTranslator |
+| TimeOnly.Add* | `ADDTIME(CAST(t AS TIME), INTERVAL n unit)` | `DATE_ADD` / `ADDTIME` | DateTimeMethodTranslator |
+| EF.Functions.Degrees/Radians | `DEGREES()` / `RADIANS()` | 同左 | DbFunctionsExtensionsMethodTranslator |
+| double.RadiansToDegrees | `DEGREES()` | 同左 | MathMethodTranslator |
 | DateTimeOffset.Now | `SYSTIMESTAMP()` | `UTC_TIMESTAMP()` | DateTimeMemberTranslator |
 | DateDiff (DbFunctions) | `TIMESTAMPDIFF(unit, …)` | 同左 | XuguDateDiffFunctionsTranslator |
 | byte[] Contains | `LOCATE(sub, src) > 0` | 同左 | XuguByteArrayMethodTranslator |
@@ -236,6 +240,7 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-06 | 批次 C：NorthwindFunctions 组合测试；TimeOnly ADDTIME 实库修复；Degrees/Radians Translator | Orchestrator |
 | 2026-07-06 | 批次 B：Unhex/ObjectToString Translator；NorthwindDbFunctions + DateOnly/TimeOnly 测试；TypeMapping NUMERIC/BINARY | Orchestrator |
 | 2026-07-06 | 波次 7：DateDiff/ByteArray/DbFunctions.Like Translator；HasTables via DBA_TABLES | Orchestrator |
 | 2026-07-06 | 波次 6：实库索引 create/rename/drop 验收；`ALL_INDEXES.VALID=1` 用于集成测试断言 | Orchestrator |

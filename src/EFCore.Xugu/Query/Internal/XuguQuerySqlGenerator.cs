@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Xugu.Query.Expressions.Internal;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Query.Internal;
 
@@ -95,5 +96,21 @@ public class XuguQuerySqlGenerator : QuerySqlGenerator
             Sql.Append(" OFFSET ");
             Visit(selectExpression.Offset);
         }
+    }
+
+    public virtual Expression VisitXuguComplexFunctionArgumentExpression(
+        XuguComplexFunctionArgumentExpression expression)
+    {
+        for (var i = 0; i < expression.ArgumentParts.Count; i++)
+        {
+            if (i > 0)
+            {
+                Sql.Append(expression.Delimiter);
+            }
+
+            Visit(expression.ArgumentParts[i]);
+        }
+
+        return expression;
     }
 }
