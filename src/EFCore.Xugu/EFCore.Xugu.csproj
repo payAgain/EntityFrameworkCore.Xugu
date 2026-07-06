@@ -6,6 +6,11 @@
     <AssemblyName>Microsoft.EntityFrameworkCore.Xugu</AssemblyName>
     <RootNamespace>Microsoft.EntityFrameworkCore.Xugu</RootNamespace>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <IsPackable>true</IsPackable>
+    <PackageId>Microsoft.EntityFrameworkCore.Xugu</PackageId>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +25,8 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(UseLocalXuguDriver)' == 'false'">
-    <PackageReference Include="Xuguclient" />
+    <!-- Public nuget.org only ships prerelease builds; override for release pack validation -->
+    <PackageReference Include="Xuguclient" VersionOverride="3.3.6-bionic" />
   </ItemGroup>
 
   <!-- Native xugusql.dll: copy to output + NuGet runtimes folder when present (6.S2) -->
@@ -31,6 +37,10 @@
       <Pack>true</Pack>
       <PackagePath>runtimes/win-x64/native/</PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>

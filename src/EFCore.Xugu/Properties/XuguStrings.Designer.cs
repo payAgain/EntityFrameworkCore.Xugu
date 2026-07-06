@@ -38,6 +38,12 @@ public static class XuguStrings
     public static string FilteredIndexesNotSupported
         => GetString(nameof(FilteredIndexesNotSupported));
 
+    public static string ScaffoldingColumnNotFound(string columnName, string tableName)
+        => string.Format(CultureInfo.CurrentUICulture, GetString(nameof(ScaffoldingColumnNotFound)), columnName, tableName);
+
+    public static string InternalLocalAnnotationLeaked(string operationTypeName, string annotationName)
+        => string.Format(CultureInfo.CurrentUICulture, GetString(nameof(InternalLocalAnnotationLeaked)), operationTypeName, annotationName);
+
     private static string GetString(string name)
         => ResourceManager.GetString(name, CultureInfo.CurrentUICulture)
            ?? throw new InvalidOperationException($"Missing resource string '{name}'.");

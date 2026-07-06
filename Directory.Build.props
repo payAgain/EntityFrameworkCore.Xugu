@@ -12,6 +12,10 @@
     <Product>Microsoft.EntityFrameworkCore.Xugu</Product>
     <Authors>XuguDB</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://gitlab2.xugu.com/RDB/xuguefcore</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://gitlab2.xugu.com/RDB/xuguefcore</RepositoryUrl>
+    <PackageTags>xugudb;虚谷;Entity Framework Core;entity-framework-core;ef;efcore;ef core;orm;sql</PackageTags>
+    <DebugType Condition="'$(DebugType)' == ''">portable</DebugType>
   </PropertyGroup>
 </Project>

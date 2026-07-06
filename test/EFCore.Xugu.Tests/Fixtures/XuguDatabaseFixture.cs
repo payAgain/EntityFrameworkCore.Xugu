@@ -223,6 +223,10 @@ public sealed class XuguDatabaseFixture : IDisposable
             TryExecuteNonQuery(connection, $"DROP TABLE {ScheduleTableName} CASCADE");
             TryExecuteNonQuery(connection, $"DROP TABLE {AppointmentTableName} CASCADE");
             TryExecuteNonQuery(connection, "DROP TABLE EF_MIG_TEST_ITEMS CASCADE");
+            TryExecuteNonQuery(connection, "DROP TABLE EF_MIG_IDX_EDGE CASCADE");
+            TryExecuteNonQuery(connection, "DROP TABLE EF_MIG_IDX_EDGE_CHILD CASCADE");
+            TryExecuteNonQuery(connection, "DROP TABLE EF_COMPLEX_POSTS CASCADE");
+            TryExecuteNonQuery(connection, "DROP TABLE EF_COMPLEX_AUTHORS CASCADE");
             TryExecuteNonQuery(connection, "DROP TABLE __EFMigrationsHistory CASCADE");
             TryExecuteNonQuery(connection, "DROP TABLE __EFMigrationsLock CASCADE");
         }

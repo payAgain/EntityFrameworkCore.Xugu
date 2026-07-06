@@ -2,7 +2,7 @@
 
 > Orchestrator 维护。仓库：`E:\Work\xuguefcore`
 
-## 当前 Phase: 6（in_progress，核心项基本完成）
+## 当前 Phase: 6（done）
 
 ## Phase 概览
 
@@ -14,7 +14,7 @@
 | 3 | Query | `done` | 基础 LINQ + DateTime Translators（13/13 测试） |
 | 4 | Migrations + Design | `done` | dotnet ef 实跑验收 |
 | 5 | Extensions + 高级 | `done` | Fluent API E1–E5 |
-| 6 | 测试 + 生产化 | `in_progress` | .resx + CI 打包 + 索引 DDL + 规范测试子集；**defer**: RetryingStrategy、NuGet 发布、Pomelo FunctionalTests |
+| 6 | 测试 + 生产化 | `done` | .resx + NuGet pack + 规范测试增量；**defer**: RetryingStrategy、Pomelo FunctionalTests 全量 |
 
 ## Phase 2 任务（已完成）
 
@@ -54,6 +54,7 @@ Handoffs: `harness/handoffs/phase2-closed.md`, `agent-testing.done.md`
 
 | 日期 | 事件 |
 |------|------|
+| 2026-07-06 | 波次 6：Phase 6 关闭；NuGet pack 本地验证；ComplexQuery + MigrationEdge 测试；resx 收尾 |
 | 2026-07-06 | 波次 5：Git 初始化；Index DDL；Scaffolding 集成测试；6.S2 CI 打包；RetryingStrategy 调研 defer |
 | 2026-07-06 | 波次 4：Phase 5 done；Scaffolding PK/FK；6.T1 子集 + 6.T2 第二批 resx；54/54 测试 |
 | 2026-07-06 | Phase 4 Scaffolding 骨架 + EfDesignSample；Phase 5 Fluent API 启动 |

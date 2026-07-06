@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Xugu.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.Xugu.Properties;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Internal;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
@@ -173,7 +174,7 @@ public class XuguMigrationsModelDiffer : MigrationsModelDiffer
                 if (annotation.Name.StartsWith(InternalLocalAnnotationNames.InternalLocalPrefix, StringComparison.Ordinal))
                 {
                     throw new InvalidOperationException(
-                        $"The migration operation of type '{operation.GetType().Name}' leaked the internal local annotation '{annotation.Name}'.");
+                        XuguStrings.InternalLocalAnnotationLeaked(operation.GetType().Name, annotation.Name));
                 }
             }
         }

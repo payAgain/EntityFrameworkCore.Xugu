@@ -217,6 +217,7 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-06 | 波次 6：实库索引 create/rename/drop 验收；`ALL_INDEXES.VALID=1` 用于集成测试断言 | Orchestrator |
 | 2026-07-06 | 波次 5：Git 追踪 + Index DDL + Scaffolding 集成测试 + CI 打包脚本 | Orchestrator |
 | 2026-07-06 | Phase 4：IDENTITY(1,1) MigrationsSqlGenerator、LOCK TABLE 迁移锁、HistoryRepository | Agent-Migrations |
 | 2026-07-06 | Phase 3 扩展：Convert/DateTimeOffset/TimeOnly/DateOnly Translator + AssertSql 测试 | Agent-QueryExtensions |

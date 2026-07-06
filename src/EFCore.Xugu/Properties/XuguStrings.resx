@@ -88,4 +88,10 @@
   <data name="FilteredIndexesNotSupported" xml:space="preserve">
     <value>Filtered indexes are not supported in XuguDB migration DDL.</value>
   </data>
+  <data name="ScaffoldingColumnNotFound" xml:space="preserve">
+    <value>Column '{0}' not found on table '{1}'.</value>
+  </data>
+  <data name="InternalLocalAnnotationLeaked" xml:space="preserve">
+    <value>The migration operation of type '{0}' leaked the internal local annotation '{1}'.</value>
+  </data>
 </root>

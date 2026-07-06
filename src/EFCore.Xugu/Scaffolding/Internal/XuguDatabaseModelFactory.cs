@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Scaffolding;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Xugu.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.Xugu.Properties;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Scaffolding.Internal;
@@ -481,7 +482,7 @@ public class XuguDatabaseModelFactory : DatabaseModelFactory
     private static DatabaseColumn GetColumn(DatabaseTable table, string columnName)
         => table.Columns.FirstOrDefault(c => string.Equals(c.Name, columnName, StringComparison.OrdinalIgnoreCase))
            ?? throw new InvalidOperationException(
-               $"Column '{columnName}' not found on table '{table.Name}'.");
+               XuguStrings.ScaffoldingColumnNotFound(columnName, table.Name));
 
     private static bool ReadBooleanAt(DbDataReader reader, int ordinal)
     {

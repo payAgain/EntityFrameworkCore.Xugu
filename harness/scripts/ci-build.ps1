@@ -42,7 +42,10 @@ if ($LASTEXITCODE -ne 0) { throw "verify.ps1 failed" }
 
 if ($Pack) {
     $proj = Join-Path $Root "src\EFCore.Xugu\EFCore.Xugu.csproj"
-    $packArgs = @("pack", $proj, "-c", $Configuration, "--no-build", "-o", (Join-Path $Root "artifacts"))
+    $artifacts = Join-Path $Root "artifacts"
+    New-Item -ItemType Directory -Force -Path $artifacts | Out-Null
+    Write-Host "Packing NuGet (UseLocalXuguDriver=false)..." -ForegroundColor Yellow
+    $packArgs = @("pack", $proj, "-c", $Configuration, "-o", $artifacts, "-p:UseLocalXuguDriver=false")
     if ($NativeDllPath) {
         $packArgs += @("-p:XuguNativeDllPath=$NativeDllPath")
     }
