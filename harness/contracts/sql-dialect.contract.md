@@ -159,6 +159,8 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | `Enumerable.First(byte[])` | `ASCII(arr)` | 同左 | QueryTranslators | done |
 | `XuguDbFunctionsExtensions.Like` | `LIKE` | 同左 | QueryTranslators | done |
 | `XuguDbFunctionsExtensions.Hex` | `HEX(expr)` | 同左 | QueryTranslators | done |
+| `XuguDbFunctionsExtensions.Unhex` | `UNHEX(expr)` | 同左 | QueryTranslators | done |
+| `object.ToString()` | `CAST(expr AS VARCHAR)` | 同左 | QueryTranslators | done |
 | `Regex.IsMatch(s, pattern)` | `REGEXP_LIKE(expr, pattern)` | `expr REGEXP pattern` | QueryTranslators | done |
 
 ## 索引 DDL
@@ -196,6 +198,8 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | byte[] First | `ASCII(blob)` | 同左 | XuguByteArrayMethodTranslator |
 | DbFunctions.Like | `LIKE … [ESCAPE …]` | 同左 | XuguDbFunctionsExtensionsMethodTranslator |
 | DbFunctions.Hex | `HEX(expr)` | 同左 | XuguDbFunctionsExtensionsMethodTranslator |
+| DbFunctions.Unhex | `UNHEX(expr)` | 同左 | XuguDbFunctionsExtensionsMethodTranslator |
+| object.ToString() | `CAST(expr AS VARCHAR)` | 同左 | XuguObjectToStringTranslator |
 | Regex.IsMatch | `REGEXP_LIKE(expr, pattern)` | `expr REGEXP pattern` | XuguRegexIsMatchTranslator |
 | ConvertTimeZone | **无 CONVERT_TZ** | `CONVERT_TZ(dt, from, to)` | **不实现**（defer） |
 | FULLTEXT IsMatch | **无 MATCH AGAINST** | `MATCH … AGAINST` | **不实现** |
@@ -232,7 +236,7 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
-| 2026-07-06 | P2/P3 波次：Hex/REGEXP_LIKE Translator；BuiltInDataTypes + Northwind 子集测试；RetryingStrategy 维持 defer | Orchestrator |
+| 2026-07-06 | 批次 B：Unhex/ObjectToString Translator；NorthwindDbFunctions + DateOnly/TimeOnly 测试；TypeMapping NUMERIC/BINARY | Orchestrator |
 | 2026-07-06 | 波次 7：DateDiff/ByteArray/DbFunctions.Like Translator；HasTables via DBA_TABLES | Orchestrator |
 | 2026-07-06 | 波次 6：实库索引 create/rename/drop 验收；`ALL_INDEXES.VALID=1` 用于集成测试断言 | Orchestrator |
 | 2026-07-06 | 波次 5：Git 追踪 + Index DDL + Scaffolding 集成测试 + CI 打包脚本 | Orchestrator |

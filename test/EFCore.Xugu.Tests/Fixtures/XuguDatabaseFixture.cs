@@ -78,6 +78,17 @@ public sealed class XuguDatabaseFixture : IDisposable
         ExecuteNonQuery(connection, $"DELETE FROM {EventTableName}");
     }
 
+    public void InsertEvent(string title, DateTime createdAt)
+    {
+        using var connection = OpenConnection();
+        ExecuteNonQuery(
+            connection,
+            $"""
+            INSERT INTO {EventTableName} (TITLE, CREATED_AT)
+            VALUES ('{title}', '{createdAt:yyyy-MM-dd HH:mm:ss}')
+            """);
+    }
+
     public void EnsureNumericTable()
     {
         using var connection = OpenConnection();

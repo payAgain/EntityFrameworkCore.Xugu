@@ -154,6 +154,57 @@ public class TranslatorSqlTests
     }
 
     [Fact]
+    public void DbFunctions_Unhex_generates_UNHEX()
+    {
+        using var context = CreateContext();
+
+        var sql = context.NumericItems
+            .Where(i => XuguDbFunctionsExtensions.Unhex(
+                EF.Functions,
+                XuguDbFunctionsExtensions.Hex(EF.Functions, i.Label)) == "abc")
+            .ToQueryString();
+
+        AssertSql.Contains("UNHEX(", sql);
+        AssertSql.Contains("HEX(", sql);
+    }
+
+    [Fact]
+    public void Int_ToString_generates_CAST()
+    {
+        using var context = CreateContext();
+
+        var sql = context.NumericItems
+            .Where(i => i.Id.ToString() == "1")
+            .ToQueryString();
+
+        AssertSql.Contains("CAST(", sql);
+    }
+
+    [Fact]
+    public void DateOnly_DayNumber_generates_TO_DAYS()
+    {
+        using var context = CreateContext();
+
+        var sql = context.ScheduleItems
+            .Where(s => s.EventDate.DayNumber > 0)
+            .ToQueryString();
+
+        AssertSql.Contains("TO_DAYS(", sql);
+    }
+
+    [Fact]
+    public void TimeOnly_AddHours_generates_TIMESTAMPADD()
+    {
+        using var context = CreateContext();
+
+        var sql = context.ScheduleItems
+            .Where(s => s.StartsAt.AddHours(1) > s.StartsAt)
+            .ToQueryString();
+
+        AssertSql.Contains("TIMESTAMPADD(HOUR,", sql);
+    }
+
+    [Fact]
     public void Regex_IsMatch_generates_REGEXP_LIKE()
     {
         using var context = CreateContext();

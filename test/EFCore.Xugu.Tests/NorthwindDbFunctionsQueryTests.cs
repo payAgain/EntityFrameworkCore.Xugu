@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
@@ -6,61 +5,106 @@ using Xunit;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
+/// <summary>
+/// Pomelo NorthwindDbFunctionsQueryMySqlTest 子集：DateDiff、Like、Hex/Unhex 组合查询。
+/// </summary>
 [Collection("XuguDatabase")]
-public class DbFunctionsQueryTests(XuguDatabaseFixture fixture)
+public class NorthwindDbFunctionsQueryTests(XuguDatabaseFixture fixture)
 {
     [SkippableFact]
-    public void Hex_translates_and_filters()
+    public void DateDiff_Day_filters_events()
     {
         XuguTestConnection.SkipIfUnavailable();
-        fixture.ClearNumericItems();
-        fixture.InsertNumericItem(1, "abc");
+        fixture.ClearEvents();
+        fixture.InsertEvent("Past", new DateTime(2020, 1, 1));
+        fixture.InsertEvent("Recent", DateTime.UtcNow.AddDays(-1));
 
         using var context = CreateContext();
 
-        var count = context.NumericItems.Count(
-            i => XuguDbFunctionsExtensions.Hex(EF.Functions, i.Label) == "616263");
+        var count = context.Events.Count(
+            e => XuguDbFunctionsExtensions.DateDiffDay(EF.Functions, e.CreatedAt, DateTime.UtcNow) <= 7);
 
         Assert.Equal(1, count);
     }
 
     [SkippableFact]
-    public void Unhex_translates_and_roundtrips()
+    public void DateDiff_Month_filters_events()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ClearEvents();
+        fixture.InsertEvent("Old", new DateTime(2020, 6, 1));
+        fixture.InsertEvent("ThisMonth", DateTime.UtcNow.Date);
+
+        using var context = CreateContext();
+
+        var count = context.Events.Count(
+            e => XuguDbFunctionsExtensions.DateDiffMonth(EF.Functions, e.CreatedAt, DateTime.UtcNow) == 0);
+
+        Assert.Equal(1, count);
+    }
+
+    [SkippableFact]
+    public void Like_with_pattern_filters_labels()
     {
         XuguTestConnection.SkipIfUnavailable();
         fixture.ClearNumericItems();
-        fixture.InsertNumericItem(1, "abc");
+        fixture.InsertNumericItem(1, "Order42");
+        fixture.InsertNumericItem(2, "Other");
+
+        using var context = CreateContext();
+
+        var count = context.NumericItems.Count(
+            i => XuguDbFunctionsExtensions.Like(EF.Functions, i.Label, "%42%"));
+
+        Assert.Equal(1, count);
+    }
+
+    [SkippableFact]
+    public void Like_with_escape_character()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ClearNumericItems();
+        fixture.InsertNumericItem(1, "100%");
+        fixture.InsertNumericItem(2, "100X");
+
+        using var context = CreateContext();
+
+        var count = context.NumericItems.Count(
+            i => XuguDbFunctionsExtensions.Like(EF.Functions, i.Label, "100!%", "!"));
+
+        Assert.Equal(1, count);
+    }
+
+    [SkippableFact]
+    public void Hex_filters_by_hexadecimal_code()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ClearNumericItems();
+        fixture.InsertNumericItem(1, "VINET");
+        fixture.InsertNumericItem(2, "FOLKO");
+
+        using var context = CreateContext();
+
+        var count = context.NumericItems.Count(
+            i => XuguDbFunctionsExtensions.Hex(EF.Functions, i.Label) == "56494E4554");
+
+        Assert.Equal(1, count);
+    }
+
+    [SkippableFact]
+    public void Unhex_of_Hex_roundtrips_string_code()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ClearNumericItems();
+        fixture.InsertNumericItem(1, "VINET");
+        fixture.InsertNumericItem(2, "FOLKO");
 
         using var context = CreateContext();
 
         var count = context.NumericItems.Count(
             i => XuguDbFunctionsExtensions.Unhex(
                 EF.Functions,
-                XuguDbFunctionsExtensions.Hex(EF.Functions, i.Label)) == "abc");
-
-        Assert.Equal(1, count);
-    }
-
-    [SkippableFact]
-    public void Regex_IsMatch_translates_and_filters()
-    {
-        XuguTestConnection.SkipIfUnavailable();
-        fixture.ClearEvents();
-
-        using var connection = OpenConnection();
-        ExecuteNonQuery(
-            connection,
-            $"INSERT INTO {XuguDatabaseFixture.EventTableName} (TITLE, CREATED_AT) VALUES ('Order42', CURRENT_TIMESTAMP)");
-        ExecuteNonQuery(
-            connection,
-            $"INSERT INTO {XuguDatabaseFixture.EventTableName} (TITLE, CREATED_AT) VALUES ('Other', CURRENT_TIMESTAMP)");
-        ExecuteNonQuery(
-            connection,
-            $"INSERT INTO {XuguDatabaseFixture.EventTableName} (TITLE, CREATED_AT) VALUES ('Other', CURRENT_TIMESTAMP)");
-
-        using var context = CreateContext();
-
-        var count = context.Events.Count(e => Regex.IsMatch(e.Title, @"^Order\d+$"));
+                XuguDbFunctionsExtensions.Hex(EF.Functions, i.Label)) == "VINET");
 
         Assert.Equal(1, count);
     }
@@ -72,20 +116,6 @@ public class DbFunctionsQueryTests(XuguDatabaseFixture fixture)
             .Options;
 
         return new DbFunctionsContext(options);
-    }
-
-    private static XuguClient.XGConnection OpenConnection()
-    {
-        var connection = new XuguClient.XGConnection(XuguTestConnection.ConnectionString);
-        connection.Open();
-        return connection;
-    }
-
-    private static void ExecuteNonQuery(XuguClient.XGConnection connection, string sql)
-    {
-        using var command = connection.CreateCommand();
-        command.CommandText = sql;
-        command.ExecuteNonQuery();
     }
 
     private sealed class NumericItem

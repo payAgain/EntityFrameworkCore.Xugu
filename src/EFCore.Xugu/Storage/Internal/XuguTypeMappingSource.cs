@@ -54,7 +54,12 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
             { DoubleTypeName, Double },
             { FloatTypeName, Float },
             { DecimalTypeName, Decimal },
+            { "NUMERIC", Decimal },
+            { "DECIMAL", Decimal },
             { BlobTypeName, new ByteArrayTypeMapping(BlobTypeName) },
+            { "BINARY", new ByteArrayTypeMapping("BINARY") },
+            { "DATE", new DateOnlyTypeMapping("DATE") },
+            { "TIME", new TimeOnlyTypeMapping("TIME") },
         };
 
     public XuguTypeMappingSource(

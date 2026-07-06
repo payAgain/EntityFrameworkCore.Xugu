@@ -1134,4 +1134,20 @@ public static class XuguDbFunctionsExtensions
             => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Hex)));
 
         #endregion Hex
+
+        #region Unhex
+
+        /// <summary>
+        ///     Converts a hexadecimal string to its ASCII representation via <c>UNHEX(expr)</c>.
+        ///     Docs: reference/function/uncategorized-functions/unhex.md
+        /// </summary>
+        /// <param name="_">The DbFunctions instance.</param>
+        /// <param name="value">The hexadecimal string to convert.</param>
+        /// <returns>The decoded string, or <see langword="null" />.</returns>
+        public static string Unhex(
+            this DbFunctions _,
+            string value)
+            => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Unhex)));
+
+        #endregion Unhex
 }

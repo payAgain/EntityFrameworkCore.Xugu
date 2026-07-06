@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore.Xugu.Query.Internal;
 namespace Microsoft.EntityFrameworkCore.Xugu.Query.ExpressionTranslators.Internal;
 
 /// <summary>
-/// XuguDbFunctionsExtensions.Like → SQL LIKE; Hex → HEX().
-/// Docs: reference/sql/select/where.md, reference/function/uncategorized-functions/hex.md
+/// XuguDbFunctionsExtensions.Like → SQL LIKE; Hex → HEX(); Unhex → UNHEX().
+/// Docs: reference/sql/select/where.md, reference/function/uncategorized-functions/hex.md, unhex.md
 /// </summary>
 public class XuguDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
 {
@@ -47,6 +47,11 @@ public class XuguDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
             .SelectMany(method => SupportedHexTypes.Select(type => method.MakeGenericMethod(type)))
             .ToArray();
 
+    private static readonly MethodInfo UnhexMethodInfo
+        = typeof(XuguDbFunctionsExtensions).GetRuntimeMethod(
+            nameof(XuguDbFunctionsExtensions.Unhex),
+            [typeof(DbFunctions), typeof(string)])!;
+
     private readonly XuguSqlExpressionFactory _sqlExpressionFactory;
 
     public XuguDbFunctionsExtensionsMethodTranslator(XuguSqlExpressionFactory sqlExpressionFactory)
@@ -69,6 +74,15 @@ public class XuguDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
                 "HEX",
                 [arguments[1]],
                 typeof(string));
+        }
+
+        if (UnhexMethodInfo.Equals(method))
+        {
+            return _sqlExpressionFactory.NullableFunction(
+                "UNHEX",
+                [arguments[1]],
+                typeof(string),
+                onlyNullWhenAnyNullPropagatingArgumentIsNull: false);
         }
 
         if (method.Name != nameof(XuguDbFunctionsExtensions.Like)
