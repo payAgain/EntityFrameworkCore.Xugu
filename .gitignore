@@ -30,6 +30,9 @@ credentials.json
 tmp_cols.cs
 test_diag*.txt
 test_out*.txt
+test-out*.txt
+test-run*.txt
+test-results.txt
 
 ## Native driver binaries (obtain from XuguDB SDK; path configured in Directory.Build.props)
 external/csharp-driver/test_xugusql/

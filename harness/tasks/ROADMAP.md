@@ -2,12 +2,12 @@
 
 > Orchestrator 维护。仓库：`E:\Work\xuguefcore`
 
-## 当前 Phase: **9**（`done` — Pomelo 9.0.0 测试对等）
+## 当前 Phase: **10**（`planned` — 维护 / 剩余对等）
 
 **版本**：**`2.0.0`**（Phase 9 测试对等稳定版）  
-**测试**：**676** 列测（M3 达标 ~64% Pomelo）；W6 Query/AdHoc +252  
+**测试**：**676** 列测（M3 达标 ~64% Pomelo）；剩余 ~374 → Phase 10  
 **源码**：Xugu **120** .cs vs Pomelo **194** .cs（~62%）  
-**Wave 指针**：Phase 9 `done` → **Phase 10**（维护 / 剩余对等）
+**Wave 指针**：Phase 9 `done` → **Phase 10 P0**（10.001 CI + 10.003 发布 + 10.005 triage）
 
 ---
 
@@ -39,7 +39,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 | **7** | **1.0.0 生产级发版** | **`done`** | **`1.0.0`** | ExecuteDelete/Update、编译管道、LIMITATIONS、pack |
 | **8** | **Pomelo 功能对等** | **`done`** | **`1.1.0-preview`** | P1 项完成；120 .cs；defer 见 BACKLOG |
 | **9** | **Pomelo 测试对等** | **`done`** | **`2.0.0`** | FunctionalTests M1–M3 达标；676 列测 |
-| **10** | **维护 / 剩余对等** | `planned` | — | Monster/Specification 子集；~374 剩余测试 |
+| **10** | **维护 / 剩余对等** | `planned` | 2.0.x | CI 实库；~374 剩余测试；defer 解锁 |
 
 ### Phase 任务文档
 
@@ -48,6 +48,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 | 7 | `harness/tasks/phase-7-release-1.0.0/TASKS.md` |
 | 8 | `harness/tasks/phase-8-pomelo-feature-parity/TASKS.md` |
 | 9 | `harness/tasks/phase-9-pomelo-test-parity/TASKS.md` |
+| **10** | **`harness/tasks/phase-10-maintenance-and-parity/TASKS.md`** |
 | 并行指南 | `harness/tasks/PARALLEL-EXECUTION-PLAN.md` |
 
 ---
@@ -95,13 +96,17 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 
 ## Phase 10 摘要（planned）
 
-**目标**：剩余 ~374 Pomelo 测试 / 可选性能宿主
+**目标**：2.0.x 维护线 + 剩余 ~374 Pomelo 测试 + defer 项与发布
 
-| 项 | 说明 |
-|----|------|
-| Monster / Specification | 按需子集 |
-| 9.IT2 defer | ASP.NET 性能宿主 |
-| Retry Strategy | 驱动瞬态码稳定后 |
+| 优先级 | 范围 | 任务 ID |
+|--------|------|---------|
+| **P0** | CI 实库矩阵、NuGet 发布、用户文档、测试 triage | 10.001–10.005 |
+| **P1** | Monster/Specification 子集、Query +80~120、9.T defer、ROW_COUNT、Retry | 10.101–10.108 |
+| **P2** | 8.Q11/Q12/Q14、Linux RID、9.IT2、DateOnly SaveChanges | 10.201–10.210 |
+
+**用户对比文档**：`docs/XUGU-VS-MYSQL.md`
+
+**Handoff 入口**：`harness/tasks/phase-10-maintenance-and-parity/TASKS.md`
 
 ---
 
@@ -147,6 +152,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 
 | 日期 | 事件 |
 |------|------|
+| 2026-07-07 | **Phase 10 规划**：TASKS.md 10.xxx；`docs/XUGU-VS-MYSQL.md`；当前 Phase → 10 |
 | 2026-07-07 | **Phase 9 关闭**：676 列测；M1–M3 达标；**2.0.0**；handoff 9.O3 done |
 | 2026-07-07 | **Phase 9 W2/W3**：9.I2/I3/I5 done；Northwind seed；`QueryNorthwindExtensionTests` 15 条；**229/229** 测试 |
 | 2026-07-06 | **Phase 8 W5 / 关闭**：E6–E8、M3、SC3；**207/207** 测试；Phase 8 → `done` |
