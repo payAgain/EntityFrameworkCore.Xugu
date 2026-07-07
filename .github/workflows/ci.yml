@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+    paths-ignore:
+      - '**.md'
+      - 'harness/**'
+      - 'docs/**'
+  pull_request:
+    branches: ['**']
+    paths-ignore:
+      - '**.md'
+      - 'harness/**'
+      - 'docs/**'
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  Configuration: Release
+
+jobs:
+  build:
+    name: Build & test (no DB required)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore Xugu.EFCore.Xugu.sln
+
+      - name: Build
+        run: dotnet build Xugu.EFCore.Xugu.sln -c ${{ env.Configuration }} --no-restore
+
+      - name: Harness verify
+        shell: pwsh
+        run: harness/scripts/verify.ps1
+
+      - name: Test (SkippableFact skips when DB unavailable)
+        run: dotnet test Xugu.EFCore.Xugu.sln -c ${{ env.Configuration }} --no-build --verbosity minimal
+
+  integration:
+    name: Integration (real XuguDB)
+    runs-on: windows-latest
+    needs: build
+    # Enable via repo variable XUGU_CI_INTEGRATION=true + secret XUGU_CONNECTION_STRING
+    if: vars.XUGU_CI_INTEGRATION == 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore & build
+        run: |
+          dotnet restore Xugu.EFCore.Xugu.sln
+          dotnet build Xugu.EFCore.Xugu.sln -c ${{ env.Configuration }} --no-restore
+
+      - name: Full gate (676 tests, 0 FAIL)
+        shell: pwsh
+        env:
+          XUGU_CONNECTION_STRING: ${{ secrets.XUGU_CONNECTION_STRING }}
+          XUGU_NATIVE_DLL_PATH: ${{ secrets.XUGU_NATIVE_DLL_PATH }}
+        run: harness/scripts/verify.ps1 -RunTests
+
+      - name: List-tests baseline check
+        shell: pwsh
+        run: |
+          $count = (dotnet test test/EFCore.Xugu.Tests -c Release --no-build --list-tests | Select-String '^\s+[A-Za-z]' | Measure-Object).Count
+          Write-Host "Listed tests: $count (baseline 676)"
+          if ($count -lt 676) { throw "Test count regressed below 676" }
+
+  pack:
+    name: NuGet pack (dry validation)
+    runs-on: windows-latest
+    needs: build
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Pack 2.0.x
+        shell: pwsh
+        env:
+          XUGU_NATIVE_DLL_PATH: ${{ secrets.XUGU_NATIVE_DLL_PATH }}
+        run: harness/scripts/publish-nuget.ps1 -Pack
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkg
+          path: artifacts/*.nupkg

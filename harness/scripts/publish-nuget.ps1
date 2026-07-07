@@ -35,9 +35,13 @@ param(
 
 $ErrorActionPreference = "Stop"
 $Root = Resolve-Path (Join-Path $PSScriptRoot "..\..")
-$proj = Join-Path $Root "src\EFCore.Xugu\EFCore.Xugu.csproj"
-$artifacts = if ($OutputPath) { Resolve-Path -Path $OutputPath -ErrorAction SilentlyContinue } else { Join-Path $Root "artifacts" }
-if (-not $OutputPath) { $artifacts = Join-Path $Root "artifacts" }
+
+if ($null -eq (Get-Command dotnet -ErrorAction SilentlyContinue)) {
+    $dotnetFallback = "C:\Program Files\dotnet\dotnet.exe"
+    if (Test-Path $dotnetFallback) {
+        $env:PATH = "C:\Program Files\dotnet;$env:PATH"
+    }
+}
 
 # Read version from Version.props
 $versionProps = Join-Path $Root "Version.props"
@@ -45,6 +49,9 @@ $versionProps = Join-Path $Root "Version.props"
 $prefix = $versionXml.Project.PropertyGroup.VersionPrefix
 $suffix = $versionXml.Project.PropertyGroup.VersionSuffix
 $version = if ([string]::IsNullOrWhiteSpace($suffix)) { $prefix } else { "$prefix-$suffix" }
+$proj = Join-Path $Root "src\EFCore.Xugu\EFCore.Xugu.csproj"
+$artifacts = if ($OutputPath) { Resolve-Path -Path $OutputPath -ErrorAction SilentlyContinue } else { Join-Path $Root "artifacts" }
+if (-not $OutputPath) { $artifacts = Join-Path $Root "artifacts" }
 $packageId = "Microsoft.EntityFrameworkCore.Xugu"
 $nupkgName = "$packageId.$version.nupkg"
 $snupkgName = "$packageId.$version.snupkg"

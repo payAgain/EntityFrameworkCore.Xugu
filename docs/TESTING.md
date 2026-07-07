@@ -76,13 +76,38 @@ XuguTestConnection.SkipIfUnavailable();
 
 新移植的 Pomelo FunctionalTests 应优先使用 `XuguTestStore` 模式；逐步迁移 legacy fixture 表。
 
-## CI 矩阵（规划）
+## CI 矩阵
 
-| Job | 实库 | 说明 |
-|-----|------|------|
-| `build` | 否 | `dotnet build` + 单元/SQL 断言测试 |
-| `test-integration` | 是（可选） | 需 `XUGU_CONNECTION_STRING` + `xugusql.dll` |
-| `pack` | 否 | `dotnet pack` |
+| Job | 配置文件 | 实库 | 说明 |
+|-----|----------|------|------|
+| `build` | `.github/workflows/ci.yml` / `.gitlab-ci.yml` | 否 | `dotnet build` + `verify.ps1` + `dotnet test`（无库时 SkippableFact 跳过） |
+| `integration` | 同上 | 是 | 需 secrets/variables；`verify.ps1 -RunTests` 全量 **676** 列测 **0 FAIL** |
+| `pack` | tag `v*` | 否 | `publish-nuget.ps1 -Pack` → `Microsoft.EntityFrameworkCore.Xugu.2.0.0.nupkg` |
+
+### GitHub Actions
+
+| 名称 | 类型 | 用途 |
+|------|------|------|
+| `XUGU_CONNECTION_STRING` | Secret | 实库连接串 |
+| `XUGU_NATIVE_DLL_PATH` | Secret | 可选；CI 无子模块内 DLL 时覆盖 |
+| `XUGU_CI_INTEGRATION` | Repository variable | 设为 `true` 启用 `integration` job |
+
+### GitLab CI
+
+| 名称 | 类型 | 用途 |
+|------|------|------|
+| `XUGU_CONNECTION_STRING` | CI/CD Variable (masked) | 存在时自动跑 `test-integration` |
+| `XUGU_NATIVE_DLL_PATH` | CI/CD Variable | 可选原生库路径 |
+| `GITLAB_NUGET_FEED_URL` / `GITLAB_NUGET_API_KEY` | CI/CD Variable | `publish-nuget` manual job |
+
+### 本地门禁（Phase 10 Wave 1）
+
+```powershell
+dotnet build Xugu.EFCore.Xugu.sln -c Release
+harness/scripts/verify.ps1 -RunTests          # build + 676 全量
+harness/scripts/publish-nuget.ps1             # dry-run 2.0.0
+harness/scripts/publish-nuget.ps1 -Pack       # 产出 artifacts/
+```
 
 ## 参考
 

@@ -2,12 +2,12 @@
 
 > Orchestrator 维护。仓库：`E:\Work\xuguefcore`
 
-## 当前 Phase: **10**（`planned` — 维护 / 剩余对等）
+## 当前 Phase: **10**（`in_progress` — Wave 1 done）
 
 **版本**：**`2.0.0`**（Phase 9 测试对等稳定版）  
 **测试**：**676** 列测（M3 达标 ~64% Pomelo）；剩余 ~374 → Phase 10  
 **源码**：Xugu **120** .cs vs Pomelo **194** .cs（~62%）  
-**Wave 指针**：Phase 9 `done` → **Phase 10 P0**（10.001 CI + 10.003 发布 + 10.005 triage）
+**Wave 指针**：**Wave 1 done** → **Wave 2**（10.103 Query + 10.104 defer）
 
 ---
 
@@ -39,7 +39,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 | **7** | **1.0.0 生产级发版** | **`done`** | **`1.0.0`** | ExecuteDelete/Update、编译管道、LIMITATIONS、pack |
 | **8** | **Pomelo 功能对等** | **`done`** | **`1.1.0-preview`** | P1 项完成；120 .cs；defer 见 BACKLOG |
 | **9** | **Pomelo 测试对等** | **`done`** | **`2.0.0`** | FunctionalTests M1–M3 达标；676 列测 |
-| **10** | **维护 / 剩余对等** | `planned` | 2.0.x | CI 实库；~374 剩余测试；defer 解锁 |
+| **10** | **维护 / 剩余对等** | `in_progress` | 2.0.x | Wave 1 CI/文档/triage done；Wave 2 Query+defer |
 
 ### Phase 任务文档
 
@@ -94,18 +94,24 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 
 **Handoff**：`harness/handoffs/phase9-m3-test-parity-2026-07-07.md`
 
-## Phase 10 摘要（planned）
+## Phase 10 摘要（in_progress — Wave 1 done）
 
 **目标**：2.0.x 维护线 + 剩余 ~374 Pomelo 测试 + defer 项与发布
 
+| Wave | 范围 | 状态 |
+|------|------|------|
+| **Wave 1** | 10.001–10.005 CI + verify + NuGet + 文档 + triage | **done** |
+| **Wave 2** | 10.103 Query +80~120 + 10.104 defer | planned |
+| Wave 3–6 | Monster/Spec、驱动项、平台、JSON | planned |
+
 | 优先级 | 范围 | 任务 ID |
 |--------|------|---------|
-| **P0** | CI 实库矩阵、NuGet 发布、用户文档、测试 triage | 10.001–10.005 |
+| **P0** | CI 实库矩阵、NuGet 发布、用户文档、测试 triage | 10.001–10.005 ✅ |
 | **P1** | Monster/Specification 子集、Query +80~120、9.T defer、ROW_COUNT、Retry | 10.101–10.108 |
 | **P2** | 8.Q11/Q12/Q14、Linux RID、9.IT2、DateOnly SaveChanges | 10.201–10.210 |
 
-**用户对比文档**：`docs/XUGU-VS-MYSQL.md`
-
+**用户对比文档**：`docs/XUGU-VS-MYSQL.md`  
+**Triage**：`harness/references/phase-10-test-triage.md`  
 **Handoff 入口**：`harness/tasks/phase-10-maintenance-and-parity/TASKS.md`
 
 ---
@@ -152,6 +158,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 
 | 日期 | 事件 |
 |------|------|
+| 2026-07-07 | **Phase 10 Wave 1**：CI（GitHub + GitLab）、`verify.ps1 -RunTests`、GETTING-STARTED 2.0.0、test triage |
 | 2026-07-07 | **Phase 10 规划**：TASKS.md 10.xxx；`docs/XUGU-VS-MYSQL.md`；当前 Phase → 10 |
 | 2026-07-07 | **Phase 9 关闭**：676 列测；M1–M3 达标；**2.0.0**；handoff 9.O3 done |
 | 2026-07-07 | **Phase 9 W2/W3**：9.I2/I3/I5 done；Northwind seed；`QueryNorthwindExtensionTests` 15 条；**229/229** 测试 |

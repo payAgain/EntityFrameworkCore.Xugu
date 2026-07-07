@@ -1,9 +1,17 @@
 param(
-    [string]$Module = "All"
+    [string]$Module = "All",
+    [switch]$RunTests
 )
 
 $ErrorActionPreference = "Stop"
 $Root = Resolve-Path (Join-Path $PSScriptRoot "..\..")
+
+if ($null -eq (Get-Command dotnet -ErrorAction SilentlyContinue)) {
+    $dotnetFallback = "C:\Program Files\dotnet\dotnet.exe"
+    if (Test-Path $dotnetFallback) {
+        $env:PATH = "C:\Program Files\dotnet;$env:PATH"
+    }
+}
 
 Write-Host "=== XuguDB EF Core Provider Verify ===" -ForegroundColor Cyan
 Write-Host "Root: $Root"
@@ -51,9 +59,16 @@ if ($null -ne $sln) {
         Write-Warning "[WARN] dotnet CLI not found in PATH; skip build"
     } else {
         Write-Host "Building $($sln.Name)..." -ForegroundColor Yellow
-        dotnet build $sln.FullName
+        dotnet build $sln.FullName -c Release
         if ($LASTEXITCODE -ne 0) { throw "Build failed" }
         Write-Host "[OK] Build succeeded" -ForegroundColor Green
+
+        if ($RunTests) {
+            Write-Host "Running full test gate (Release)..." -ForegroundColor Yellow
+            dotnet test $sln.FullName -c Release --no-build --verbosity minimal
+            if ($LASTEXITCODE -ne 0) { throw "dotnet test failed" }
+            Write-Host "[OK] Tests passed (0 FAIL expected when XuguDB available)" -ForegroundColor Green
+        }
     }
 } else {
     Write-Host "[SKIP] No .sln yet (Phase 0)" -ForegroundColor Yellow

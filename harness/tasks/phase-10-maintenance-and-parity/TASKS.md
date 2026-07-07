@@ -1,6 +1,6 @@
 # Phase 10 — 维护与剩余对等
 
-> **状态**：`planned`  
+> **状态**：`in_progress`（Wave 1 **done**）  
 > **前置**：Phase 9 `done`（676 列测，~64% Pomelo，**2.0.0**）  
 > **目标**：巩固 2.0.0 维护线、补齐高价值剩余测试、落地 defer 项与发布/CI
 
@@ -19,11 +19,11 @@
 
 | ID | 任务 | 模块 | 依赖 | 状态 | 说明 |
 |----|------|------|------|------|------|
-| 10.001 | **CI/CD 实库矩阵** | Infra | 9.I6 | todo | GitLab：`build`（无库）+ `test-integration`（`XUGU_CONNECTION_STRING` + `xugusql.dll`）；文档化 secrets |
-| 10.002 | **全量门禁回归** | Testing | Phase 9 | todo | 每 Wave 跑 `verify.ps1` + 676 全量；保持 0 FAIL |
-| 10.003 | **NuGet 发布流水线** | Release | 7.R3 | todo | `publish-nuget.ps1` 对接 GitLab Package Registry；版本策略 2.0.x |
-| 10.004 | **用户文档刷新** | Docs | 10.003 | todo | `GETTING-STARTED.md` 版本 → 2.0.0；链到 `docs/XUGU-VS-MYSQL.md` |
-| 10.005 | **剩余测试 triage** | Testing | 9.O3 | todo | 盘点 ~374 Pomelo 差距：Monster / Specification / 9.T defer 子集；输出 Wave 计划 |
+| 10.001 | **CI/CD 实库矩阵** | Infra | 9.I6 | **done** | `.github/workflows/ci.yml` + `.gitlab-ci.yml`；secrets 见 `docs/TESTING.md` |
+| 10.002 | **全量门禁回归** | Testing | Phase 9 | **done** | `verify.ps1 -RunTests`；CI integration job |
+| 10.003 | **NuGet 发布流水线** | Release | 7.R3 | **done** | dry-run 验证 **2.0.0**；GitLab `publish-nuget` manual job |
+| 10.004 | **用户文档刷新** | Docs | 10.003 | **done** | `GETTING-STARTED.md` → 2.0.0；链到 `XUGU-VS-MYSQL.md` |
+| 10.005 | **剩余测试 triage** | Testing | 9.O3 | **done** | `harness/references/phase-10-test-triage.md`；Wave 2–6 计划 |
 
 ---
 
@@ -85,7 +85,7 @@
 ## Wave 建议顺序
 
 ```
-Wave 1（P0）: 10.001–10.005 — CI + 文档 + triage
+Wave 1（P0）: 10.001–10.005 — CI + 文档 + triage  ✅ done
 Wave 2（P1）: 10.103 + 10.104 — Query defer 补全
 Wave 3（P1）: 10.101 + 10.102 — Monster/Specification
 Wave 4（P1）: 10.105 + 10.106 — 驱动依赖项（并行调研）
@@ -111,5 +111,6 @@ dotnet test Xugu.EFCore.Xugu.sln -c Release                   # 0 FAIL
 - `harness/tasks/ROADMAP.md` — Phase 10 摘要
 - `harness/handoffs/phase9-m3-test-parity-2026-07-07.md`
 - `harness/references/test-parity-matrix.md`
+- `harness/references/phase-10-test-triage.md`
 - `docs/XUGU-VS-MYSQL.md`
 - `harness/tasks/BACKLOG.md`
