@@ -1,6 +1,6 @@
 # Phase 10 — 维护与剩余对等
 
-> **状态**：`in_progress`（Wave 2 **done**）  
+> **状态**：`in_progress`（Wave 3 **done**）  
 > **前置**：Phase 9 `done`（676 列测，~64% Pomelo，**2.0.0**）  
 > **目标**：巩固 2.0.0 维护线、补齐高价值剩余测试、落地 defer 项与发布/CI
 
@@ -11,7 +11,7 @@
 | 10.M1 | 维护基线稳定 | 676 列测实库 **0 FAIL**；CI build 绿 |
 | 10.M2 | 测试 +80~120 | 列测 ≥ **750**（~71% Pomelo）— **795 done** |
 | 10.M3 | 发布就绪 | NuGet 可发布；用户文档与 XUGU-VS-MYSQL 同步 |
-| 10.M4 | 可选深度对等 | 列测 ≥ **850** 或 Monster/Spec 子集 done |
+| 10.M4 | 可选深度对等 | 列测 ≥ **850** 或 Monster/Spec 子集 done — **850 done（Wave 3）** |
 
 ---
 
@@ -31,8 +31,8 @@
 
 | ID | 任务 | Pomelo 参考 | 依赖 | 状态 | 说明 |
 |----|------|-------------|------|------|------|
-| 10.101 | **Monster Fixup 子集** | `MonsterFixup*MySqlTest` | 10.005, 9.I4 | todo | 变更跟踪/fixup 高价值用例；表前缀隔离 |
-| 10.102 | **Specification Tests 子集** | `EFCore.Specification.Tests` 数据库相关 | 10.005 | todo | 与 Xugu 能力交集；skip JSON/Spatial |
+| 10.101 | **Monster Fixup 子集** | `MonsterFixup*MySqlTest` | 10.005, 9.I4 | **done** | `MonsterFixupXuguTests` + `StoreGeneratedFixupXuguTests`（手写 Xugu 兼容模型） |
+| 10.102 | **Specification Tests 子集** | `EFCore.Specification.Tests` 数据库相关 | 10.005 | **done** | `DesignTimeXuguTest` + `KeysWithConverters` + `TransactionBasics` 子集 |
 | 10.103 | **Query 深覆盖 Wave** | 剩余 Northwind/AdHoc | 9.W6 | **done** | +119 列测；FromSql/TPH/Deep/Functions/ComplexNav |
 | 10.104 | **9.T defer 补全** | 见下表 | 9.T* | **done** | SaveChangesInterception +6、ConvertToProvider +10、Seeding +3 |
 | 10.105 | **ROW_COUNT 乐观并发** | `OptimisticConcurrencyMySqlTest` | 驱动/方言 | todo | 解锁 `Stale_concurrency_token_throws_*`；需回归 CRUD |
@@ -100,7 +100,7 @@ Wave 6（可选）: 10.108 JSON — 文档确认后
 ```powershell
 dotnet build Xugu.EFCore.Xugu.sln -c Release
 harness/scripts/verify.ps1
-dotnet test test/EFCore.Xugu.Tests -c Release --list-tests   # 基线 795（Wave 2 done）
+dotnet test test/EFCore.Xugu.Tests -c Release --list-tests   # 基线 850（Wave 3 done）
 dotnet test Xugu.EFCore.Xugu.sln -c Release                   # 0 FAIL
 ```
 

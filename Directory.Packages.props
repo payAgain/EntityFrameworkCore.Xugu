@@ -3,9 +3,9 @@
     <EFCoreVersion>9.0.0</EFCoreVersion>
     <XuguClientVersion>3.3.5</XuguClientVersion>
   </PropertyGroup>
-
   <ItemGroup Label="Dependencies">
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="$(EFCoreVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational.Specification.Tests" Version="$(EFCoreVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(EFCoreVersion)" />
     <PackageVersion Include="Xuguclient" Version="$(XuguClientVersion)" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
