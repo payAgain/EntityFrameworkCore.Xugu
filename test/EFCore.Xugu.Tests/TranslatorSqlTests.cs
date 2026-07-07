@@ -221,6 +221,20 @@ public class TranslatorSqlTests
     }
 
     [Fact]
+    public void TimeOnly_AddMinutes_Hour_generates_ADDTIME_and_HOUR()
+    {
+        using var context = CreateContext();
+
+        var sql = context.ScheduleItems
+            .Where(s => s.StartsAt.AddMinutes(30).Hour == 15)
+            .ToQueryString();
+
+        AssertSql.Contains("ADDTIME(", sql);
+        AssertSql.Contains("INTERVAL 30 MINUTE", sql);
+        AssertSql.Contains("HOUR(", sql);
+    }
+
+    [Fact]
     public void Double_RadiansToDegrees_generates_DEGREES()
     {
         using var context = CreateContext();

@@ -15,8 +15,8 @@ public class TimeOnlyQueryTests(XuguDatabaseFixture fixture)
     public void AddHours_shifts_stored_time()
     {
         XuguTestConnection.SkipIfUnavailable();
-        fixture.ClearScheduleItems();
-        fixture.InsertScheduleItem(
+        fixture.ClearTimeOnlyScheduleItems();
+        fixture.InsertTimeOnlyScheduleItem(
             new DateOnly(2024, 6, 1),
             new TimeOnly(8, 0),
             new DateTime(2024, 6, 1, 8, 0, 0));
@@ -33,8 +33,8 @@ public class TimeOnlyQueryTests(XuguDatabaseFixture fixture)
     public void AddMinutes_shifts_stored_time()
     {
         XuguTestConnection.SkipIfUnavailable();
-        fixture.ClearScheduleItems();
-        fixture.InsertScheduleItem(
+        fixture.ClearTimeOnlyScheduleItems();
+        fixture.InsertTimeOnlyScheduleItem(
             new DateOnly(2024, 6, 1),
             new TimeOnly(14, 30),
             new DateTime(2024, 6, 1, 14, 30, 0));
@@ -51,8 +51,8 @@ public class TimeOnlyQueryTests(XuguDatabaseFixture fixture)
     public void FromDateTime_matches_stored_time()
     {
         XuguTestConnection.SkipIfUnavailable();
-        fixture.ClearScheduleItems();
-        fixture.InsertScheduleItem(
+        fixture.ClearTimeOnlyScheduleItems();
+        fixture.InsertTimeOnlyScheduleItem(
             new DateOnly(2024, 6, 1),
             new TimeOnly(8, 0),
             new DateTime(2024, 6, 1, 8, 0, 0));
@@ -69,10 +69,10 @@ public class TimeOnlyQueryTests(XuguDatabaseFixture fixture)
     public void Can_compare_times_by_hour()
     {
         XuguTestConnection.SkipIfUnavailable();
-        fixture.ClearScheduleItems();
-        fixture.InsertScheduleItem(
+        fixture.ClearTimeOnlyScheduleItems();
+        fixture.InsertTimeOnlyScheduleItem(
             new DateOnly(2024, 6, 1), new TimeOnly(9, 0), new DateTime(2024, 6, 1, 9, 0, 0));
-        fixture.InsertScheduleItem(
+        fixture.InsertTimeOnlyScheduleItem(
             new DateOnly(2024, 6, 1), new TimeOnly(14, 30), new DateTime(2024, 6, 1, 14, 30, 0));
 
         using var context = CreateContext();
@@ -91,8 +91,8 @@ public class TimeOnlyQueryTests(XuguDatabaseFixture fixture)
     public void Can_filter_by_time_parts_from_database()
     {
         XuguTestConnection.SkipIfUnavailable();
-        fixture.ClearScheduleItems();
-        fixture.InsertScheduleItem(
+        fixture.ClearTimeOnlyScheduleItems();
+        fixture.InsertTimeOnlyScheduleItem(
             new DateOnly(2024, 6, 15),
             new TimeOnly(10, 30, 45),
             new DateTime(2024, 6, 15, 10, 30, 45));
@@ -134,7 +134,7 @@ public class TimeOnlyQueryTests(XuguDatabaseFixture fixture)
         {
             modelBuilder.Entity<ScheduleItem>(entity =>
             {
-                entity.ToTable(XuguDatabaseFixture.ScheduleTableName);
+                entity.ToTable(XuguDatabaseFixture.TimeOnlyScheduleTableName);
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).HasColumnName("ID");
                 entity.Property(e => e.EventDate).HasColumnName("EVENT_DATE");

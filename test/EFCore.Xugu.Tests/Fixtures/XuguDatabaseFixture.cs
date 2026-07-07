@@ -8,6 +8,7 @@ public sealed class XuguDatabaseFixture : IDisposable
     public const string EventTableName = "EF_TEST_EVENTS";
     public const string NumericTableName = "EF_TEST_NUMERIC";
     public const string ScheduleTableName = "EF_TEST_SCHEDULE";
+    public const string TimeOnlyScheduleTableName = "EF_TEST_TIMEONLY_SCHEDULE";
     public const string AppointmentTableName = "EF_TEST_APPOINTMENTS";
     public const string BuiltinTypesTableName = "EF_TEST_BUILTIN_TYPES";
     public const string CustomerTableName = "EF_TEST_CUSTOMERS";
@@ -24,6 +25,7 @@ public sealed class XuguDatabaseFixture : IDisposable
         EnsureEventTable();
         EnsureNumericTable();
         EnsureScheduleTable();
+        EnsureTimeOnlyScheduleTable();
         EnsureAppointmentTable();
         EnsureBuiltinTypesTable();
         EnsureCustomerOrderTables();
@@ -299,6 +301,43 @@ public sealed class XuguDatabaseFixture : IDisposable
             """);
     }
 
+    public void EnsureTimeOnlyScheduleTable()
+    {
+        using var connection = OpenConnection();
+
+        TryExecuteNonQuery(connection, $"DROP TABLE {TimeOnlyScheduleTableName} CASCADE");
+        ExecuteNonQuery(
+            connection,
+            $"""
+            CREATE TABLE {TimeOnlyScheduleTableName} (
+                ID INTEGER NOT NULL,
+                EVENT_DATE DATE NOT NULL,
+                STARTS_AT TIME NOT NULL,
+                EVENT_AT DATETIME NOT NULL
+            )
+            """);
+        ExecuteNonQuery(
+            connection,
+            $"ALTER TABLE {TimeOnlyScheduleTableName} ALTER COLUMN ID INTEGER IDENTITY(1, 1) PRIMARY KEY");
+    }
+
+    public void ClearTimeOnlyScheduleItems()
+    {
+        using var connection = OpenConnection();
+        ExecuteNonQuery(connection, $"DELETE FROM {TimeOnlyScheduleTableName}");
+    }
+
+    public void InsertTimeOnlyScheduleItem(DateOnly eventDate, TimeOnly startsAt, DateTime eventAt)
+    {
+        using var connection = OpenConnection();
+        ExecuteNonQuery(
+            connection,
+            $"""
+            INSERT INTO {TimeOnlyScheduleTableName} (EVENT_DATE, STARTS_AT, EVENT_AT)
+            VALUES ('{eventDate:yyyy-MM-dd}', '{startsAt:HH:mm:ss}', '{eventAt:yyyy-MM-dd HH:mm:ss}')
+            """);
+    }
+
     public void InsertAppointment(DateTimeOffset scheduledAt)
     {
         using var connection = OpenConnection();
@@ -354,6 +393,7 @@ public sealed class XuguDatabaseFixture : IDisposable
             TryExecuteNonQuery(connection, $"DROP TABLE {EventTableName} CASCADE");
             TryExecuteNonQuery(connection, $"DROP TABLE {NumericTableName} CASCADE");
             TryExecuteNonQuery(connection, $"DROP TABLE {ScheduleTableName} CASCADE");
+            TryExecuteNonQuery(connection, $"DROP TABLE {TimeOnlyScheduleTableName} CASCADE");
             TryExecuteNonQuery(connection, $"DROP TABLE {AppointmentTableName} CASCADE");
             TryExecuteNonQuery(connection, $"DROP TABLE {BuiltinTypesTableName} CASCADE");
             TryExecuteNonQuery(connection, $"DROP TABLE {OrderTableName} CASCADE");
@@ -392,9 +432,5 @@ public sealed class XuguDatabaseFixture : IDisposable
     }
 
     private static XGConnection OpenConnection()
-    {
-        var connection = new XGConnection(XuguTestConnection.ConnectionString);
-        connection.Open();
-        return connection;
-    }
+        => XuguTestConnection.OpenConnection();
 }
