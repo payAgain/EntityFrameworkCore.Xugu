@@ -7,6 +7,55 @@ Known limitations and deferred features: [LIMITATIONS.md](LIMITATIONS.md).
 
 ---
 
+## [2.0.0] — 2026-07-07
+
+Phase 9 **Pomelo 9.0.0 测试对等**里程碑（M3 达标；skip/defer 项见 [LIMITATIONS.md](LIMITATIONS.md)）。
+
+### Added
+
+- **676 列测** — 自 Phase 8 的 207 扩展；W6 Northwind Query/AdHoc **+252** 批次。
+- **测试基础设施** — `XuguTestStore` 全量 adoption、Northwind seed、`XuguQueryTestBase`、`AssertSql`、20+ Collection fixtures。
+- **连接稳定性** — `XuguRelationalConnection` 瞬态 open 重试；测试 `OpenConnection` 串行化；`DisableTestParallelization`。
+
+### Changed
+
+- **版本** — `1.1.0-preview` → **`2.0.0`**。
+- **Pomelo 可比覆盖率** — **~64%**（676 ÷ 1050 测试方法）。
+- **测试套件** — M1/M2/M3 里程碑（≥200 / ≥400 / ≥600）全部达标。
+
+### Deferred (documented)
+
+- ~374 剩余 Pomelo 测试（Monster、Specification、JSON/NTS）→ Phase 10。
+- ROW_COUNT 乐观并发异常、LazyLoad 代理、optional complex — 见 [LIMITATIONS.md](LIMITATIONS.md)。
+
+---
+
+## [1.1.0-preview] — 2026-07-06
+
+Phase 8 **Pomelo 9.0.0 功能对等**里程碑（skip/defer 项见 [LIMITATIONS.md](LIMITATIONS.md)）。
+
+### Added
+
+- **Query Translators 全量 P0/P1** — StringComparison、TimeSpan、Math 全量、Convert、Regex `IsMatch`（`REGEXP_LIKE`）等。
+- **ExpressionVisitors** — SqlTranslating、Having、BoolOptimizing、QueryableMethodNormalizing、QueryTranslationPostprocessor。
+- **Storage TypeMapping** — 专用 Bool/Decimal/Double/Float/String/DateTime/DateOnly/TimeOnly/ByteArray/Guid 映射与 `XuguRelationalTypeMappingSource` 注册表模式。
+- **Extensions** — MigrationBuilder、Key/Entity/Table/Model Builder 增量；`ServerVersion.AutoDetect`；`EnableRetryOnFailure` API 入口（实现 defer）。
+- **Migrations** — Identity PK 类型变更 NotSupported、FK 全动作、列重命名/类型变更、Scaffolding CodeGenerator 对齐 Pomelo。
+- **SequentialGuid** — `XuguSequentialGuidValueGenerator` + Selector 注册。
+- **Phase 9 测试基础设施（起步）** — `XuguTestStore`、`XuguTestStoreFactory`、`XuguSharedStoreFixture`；`docs/TESTING.md`。
+
+### Changed
+
+- **版本** — `1.0.0` → **`1.1.0-preview`**。
+- **Provider 规模** — **120** `.cs`（~62% Pomelo 9.0.0 文件数；JSON/NTS/Collation intentionally skip）。
+- **测试套件** — **207** 测试（Phase 7: 141 → Phase 8 Wave 5: 207）。
+
+### Deferred (documented)
+
+- `XuguRetryingExecutionStrategy`、`ConvertTimeZone`、Native Linux RID、参数内联（8.Q14）、DateOnly/TimeOnly SaveChanges 驱动绑定 — 见 [LIMITATIONS.md](LIMITATIONS.md)。
+
+---
+
 ## [1.0.0] — 2026-07-06
 
 First **production-ready** release. Builds on `0.1.0-preview` (Phase 0–6) with Phase 7 query pipeline, storage mappings, documentation, and release tooling.

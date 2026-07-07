@@ -54,12 +54,12 @@
 | 8.Q12 | `XuguQuerySqlGenerator` 增量：`FOR UPDATE`、窗口函数子集（若文档支持）— **查** `reference/sql/dml/select.md` | QueryCore | — | ✅ | P2 | defer |
 | 8.Q13 | ExecuteUpdate/Delete 边缘：关联子查询、多表、Owned 类型 — **查** DML 文档 | QueryCore | Phase 7.Q1 | ❌ | P0 | done |
 | 8.Q14 | `XuguInlinedParameterExpression` + 参数内联优化（对齐 Pomelo 性能路径） | QueryCore | 8.Q6 | ❌ | P2 | todo |
-| 8.Q15 | DbFunctions 增量：`ConvertTimeZone` — **defer/skip** 若无 `CONVERT_TZ`；`IsMatch` 已有 Regex 则补文档 | QueryTranslators | — | ✅ | P2 | todo |
+| 8.Q15 | DbFunctions：`IsMatch` → `XuguRegexIsMatchTranslator`（REGEXP_LIKE）**done**；`ConvertTimeZone` — **skip**（无 CONVERT_TZ） | QueryTranslators | — | ✅ | P2 | done |
 | 8.Q16 | JSON 相关 Translators / Visitors | — | — | — | **skip** | skip |
 | 8.Q17 | Pomelo `MySqlJson*` 全套 | — | — | — | **skip** | skip |
 | 8.Q18 | Query 模块单元测试：每 Translator 至少 1 条 `TranslatorSqlTests` 断言 | Testing | 各 Q* | ✅ | P1 | done |
 
-**8.Q15 说明**：`ConvertTimeZone` → **defer**（无 `CONVERT_TZ`，见 BACKLOG）；`IsMatch` 若已覆盖 `REGEXP_LIKE` 则标 done 并写 contract。
+**8.Q15 说明**：`IsMatch` → **done**（`XuguRegexIsMatchTranslator` → `REGEXP_LIKE`，见 contract）；`ConvertTimeZone` → **skip**（无 `CONVERT_TZ`，见 BACKLOG）。
 
 ---
 
