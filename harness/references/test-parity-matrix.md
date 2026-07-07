@@ -10,9 +10,23 @@
 |--------|-----------|-------------------|-------------------|------|
 | M1（30%） | ≥200 | 337 | ~32% | done |
 | M2（60%） | ≥400 | 401 | ~38% | done |
-| M3（90%） | ≥600 | **676** | **~64%** | **done** |
+| M3（90%） | ≥600 | **795** | **~76%** | **done**（Wave 2 扩展） |
 
-> **门禁（2026-07-07 收口）**：全量 **676** 实库 **0 FAIL**（5 条显式 Skip）；W6 隔离 **0 FAIL**；连接稳定性加固（`XuguRelationalConnection` 重试 + 测试串行化）。`verify.ps1` PASS。
+> **门禁（2026-07-07 Wave 2）**：全量 **795** 列测；Wave 2 新增 **129** 方法实库 **0 FAIL**（子集验证）；全量偶发 1 条既有用例瞬态失败（连接争用）。`verify.ps1` build PASS。
+
+## Wave 2 增量（10.103 + 10.104）— 10.M2 达标
+
+| 文件 | 新增（list-tests） | 说明 |
+|------|-------------------|------|
+| `FromSqlQueryTests.cs` | 19 | FromSqlRaw/参数/组合 LINQ |
+| `TPHInheritanceQueryTests.cs` | 18 | TPH OfType/派生属性/鉴别器 |
+| `QueryNorthwindDeepCoverageTests.cs` | 27 | 子查询/EXISTS/GroupJoin/聚合 |
+| `NorthwindFunctionsExtensionQueryTests.cs` | 15 | 字符串/数学/日期函数扩展 |
+| `AdHocComplexNavigationQueryTests.cs` | 16 | 复杂导航/Include/SelectMany |
+| `SaveChangesInterceptionTests.cs` | +6 | sync/update/delete/suppress/异常 |
+| `ConvertToProviderTypesTests.cs` | +10 | 扩展标量/enum/nullable 往返 |
+| `SeedingTests.cs` | +3 | 多实体 seed/键值；EnsureCreated skip |
+| **Wave 2 小计** | **+119** | 676 → **795** |
 
 ## W6 增量（AdHoc + Query 扩展）— M3 达标
 
@@ -86,5 +100,5 @@
 
 ```powershell
 dotnet test Xugu.EFCore.Xugu.sln -c Release
-dotnet test test/EFCore.Xugu.Tests -c Release --list-tests   # 676
+dotnet test test/EFCore.Xugu.Tests -c Release --list-tests   # 795
 ```

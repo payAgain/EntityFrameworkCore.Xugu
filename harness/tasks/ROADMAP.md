@@ -2,12 +2,12 @@
 
 > Orchestrator 维护。仓库：`E:\Work\xuguefcore`
 
-## 当前 Phase: **10**（`in_progress` — Wave 1 done）
+## 当前 Phase: **10**（`in_progress` — Wave 2 done）
 
 **版本**：**`2.0.0`**（Phase 9 测试对等稳定版）  
-**测试**：**676** 列测（M3 达标 ~64% Pomelo）；剩余 ~374 → Phase 10  
+**测试**：**795** 列测（Wave 2 达标 ~76% Pomelo）；剩余 ~255 → Phase 10  
 **源码**：Xugu **120** .cs vs Pomelo **194** .cs（~62%）  
-**Wave 指针**：**Wave 1 done** → **Wave 2**（10.103 Query + 10.104 defer）
+**Wave 指针**：**Wave 2 done** → **Wave 3**（10.101 Monster + 10.102 Specification）
 
 ---
 
@@ -39,7 +39,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 | **7** | **1.0.0 生产级发版** | **`done`** | **`1.0.0`** | ExecuteDelete/Update、编译管道、LIMITATIONS、pack |
 | **8** | **Pomelo 功能对等** | **`done`** | **`1.1.0-preview`** | P1 项完成；120 .cs；defer 见 BACKLOG |
 | **9** | **Pomelo 测试对等** | **`done`** | **`2.0.0`** | FunctionalTests M1–M3 达标；676 列测 |
-| **10** | **维护 / 剩余对等** | `in_progress` | 2.0.x | Wave 1 CI/文档/triage done；Wave 2 Query+defer |
+| **10** | **维护 / 剩余对等** | `in_progress` | 2.0.x | Wave 2 Query+defer done；795 列测 |
 
 ### Phase 任务文档
 
@@ -101,7 +101,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 | Wave | 范围 | 状态 |
 |------|------|------|
 | **Wave 1** | 10.001–10.005 CI + verify + NuGet + 文档 + triage | **done** |
-| **Wave 2** | 10.103 Query +80~120 + 10.104 defer | planned |
+| **Wave 2** | 10.103 Query +119 + 10.104 defer | **done** |
 | Wave 3–6 | Monster/Spec、驱动项、平台、JSON | planned |
 
 | 优先级 | 范围 | 任务 ID |
@@ -158,6 +158,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 
 | 日期 | 事件 |
 |------|------|
+| 2026-07-07 | **Phase 10 Wave 2**：10.103 Query +119（FromSql/TPH/Deep/Functions/ComplexNav）+ 10.104 defer；**795** 列测；10.M2 ✅ |
 | 2026-07-07 | **Phase 10 Wave 1**：CI（GitHub + GitLab）、`verify.ps1 -RunTests`、GETTING-STARTED 2.0.0、test triage |
 | 2026-07-07 | **Phase 10 规划**：TASKS.md 10.xxx；`docs/XUGU-VS-MYSQL.md`；当前 Phase → 10 |
 | 2026-07-07 | **Phase 9 关闭**：676 列测；M1–M3 达标；**2.0.0**；handoff 9.O3 done |

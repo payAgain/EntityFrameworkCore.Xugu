@@ -88,6 +88,120 @@ public class SaveChangesInterceptionTests(SaveChangesInterceptionFixture fixture
         Assert.Contains("Second.SavedChanges", second.Events);
     }
 
+    [SkippableFact]
+    public async Task Interceptor_SavingChanges_sync_is_invoked()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ResetStore();
+        var interceptor = new SyncSaveChangesInterceptor();
+
+        await using (var context = CreateContextWith(interceptor))
+        {
+            context.InterceptedItems.Add(new InterceptedEntity { Name = "Sync" });
+            context.SaveChanges();
+        }
+
+        Assert.Contains("SavingChanges", interceptor.Events);
+        Assert.Contains("SavedChanges", interceptor.Events);
+    }
+
+    [SkippableFact]
+    public async Task Interceptor_runs_on_update()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ResetStore();
+        var interceptor = new TestSaveChangesInterceptor();
+
+        await using (var context = CreateContextWith(interceptor))
+        {
+            context.InterceptedItems.Add(new InterceptedEntity { Name = "Original" });
+            await context.SaveChangesAsync();
+        }
+
+        interceptor.Events.Clear();
+
+        await using (var context = CreateContextWith(interceptor))
+        {
+            var entity = await context.InterceptedItems.SingleAsync();
+            entity.Name = "Updated";
+            await context.SaveChangesAsync();
+        }
+
+        Assert.Contains("SavingChanges", interceptor.Events);
+        Assert.Contains("SavedChanges", interceptor.Events);
+    }
+
+    [SkippableFact]
+    public async Task Interceptor_runs_on_delete()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ResetStore();
+        var interceptor = new TestSaveChangesInterceptor();
+
+        await using (var context = CreateContextWith(interceptor))
+        {
+            context.InterceptedItems.Add(new InterceptedEntity { Name = "DeleteMe" });
+            await context.SaveChangesAsync();
+        }
+
+        interceptor.Events.Clear();
+
+        await using (var context = CreateContextWith(interceptor))
+        {
+            var entity = await context.InterceptedItems.SingleAsync();
+            context.InterceptedItems.Remove(entity);
+            await context.SaveChangesAsync();
+        }
+
+        Assert.Contains("SavingChanges", interceptor.Events);
+        Assert.Contains("SavedChanges", interceptor.Events);
+    }
+
+    [SkippableFact]
+    public async Task Interceptor_SavingChangesAsync_receives_context_event_data()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ResetStore();
+        var interceptor = new ContextCaptureInterceptor();
+
+        await using (var context = CreateContextWith(interceptor))
+        {
+            context.InterceptedItems.Add(new InterceptedEntity { Name = "Ctx" });
+            await context.SaveChangesAsync();
+        }
+
+        Assert.NotNull(interceptor.ContextType);
+        Assert.Contains("InterceptionContext", interceptor.ContextType);
+    }
+
+    [SkippableFact]
+    public async Task Interceptor_suppresses_save_when_result_set()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ResetStore();
+        var interceptor = new SuppressSaveInterceptor();
+
+        await using var context = CreateContextWith(interceptor);
+        context.InterceptedItems.Add(new InterceptedEntity { Name = "Suppressed" });
+        var result = await context.SaveChangesAsync();
+
+        Assert.Equal(0, result);
+        Assert.Empty(await context.InterceptedItems.ToListAsync());
+    }
+
+    [SkippableFact]
+    public async Task Interceptor_exception_in_saved_changes_propagates()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ResetStore();
+        var interceptor = new FailSavedChangesInterceptor();
+
+        await using var context = CreateContextWith(interceptor);
+        context.InterceptedItems.Add(new InterceptedEntity { Name = "FailAfter" });
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => context.SaveChangesAsync());
+    }
+
     private sealed class TestSaveChangesInterceptor : SaveChangesInterceptor
     {
         public List<string> Events { get; } = [];
@@ -158,6 +272,55 @@ public class SaveChangesInterceptionTests(SaveChangesInterceptionFixture fixture
             Events.Add($"{name}.SavedChanges");
             return base.SavedChangesAsync(eventData, result, cancellationToken);
         }
+    }
+
+    private sealed class SyncSaveChangesInterceptor : SaveChangesInterceptor
+    {
+        public List<string> Events { get; } = [];
+
+        public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
+        {
+            Events.Add("SavingChanges");
+            return base.SavingChanges(eventData, result);
+        }
+
+        public override int SavedChanges(SaveChangesCompletedEventData eventData, int result)
+        {
+            Events.Add("SavedChanges");
+            return base.SavedChanges(eventData, result);
+        }
+    }
+
+    private sealed class ContextCaptureInterceptor : SaveChangesInterceptor
+    {
+        public string? ContextType { get; private set; }
+
+        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
+            DbContextEventData eventData,
+            InterceptionResult<int> result,
+            CancellationToken cancellationToken = default)
+        {
+            ContextType = eventData.Context?.GetType().Name;
+            return base.SavingChangesAsync(eventData, result, cancellationToken);
+        }
+    }
+
+    private sealed class SuppressSaveInterceptor : SaveChangesInterceptor
+    {
+        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
+            DbContextEventData eventData,
+            InterceptionResult<int> result,
+            CancellationToken cancellationToken = default)
+            => ValueTask.FromResult(InterceptionResult<int>.SuppressWithResult(0));
+    }
+
+    private sealed class FailSavedChangesInterceptor : SaveChangesInterceptor
+    {
+        public override ValueTask<int> SavedChangesAsync(
+            SaveChangesCompletedEventData eventData,
+            int result,
+            CancellationToken cancellationToken = default)
+            => throw new InvalidOperationException("SavedChanges failed.");
     }
 
     public sealed class InterceptedEntity

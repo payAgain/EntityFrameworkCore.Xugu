@@ -1,8 +1,8 @@
 # Phase 10 剩余测试 Triage（10.005）
 
-> **状态**：`done`（Wave 1）  
+> **状态**：`done`（Wave 2）  
 > **更新**：2026-07-07  
-> **基线**：Xugu **676** 列测 vs Pomelo FunctionalTests ~**1050** → 差距 **~374**（~36%）
+> **基线**：Xugu **795** 列测 vs Pomelo FunctionalTests ~**1050** → 差距 **~255**（~24%）
 
 ## 摘要
 
@@ -17,7 +17,7 @@
 | G. 永久 skip | ~80–100 | — | — | JSON/Spatial/FULLTEXT/Scaffolding |
 | H. IntegrationTests / 低价值 | ~15–20 | P2 | P2 | 10.206 defer |
 
-**Wave 2 目标**：+80~120 列测 → **≥750**（~71% Pomelo，10.M2）
+**Wave 2 目标**：+80~120 列测 → **≥750**（~71% Pomelo，10.M2）— **done：795（+119）**
 
 ---
 
@@ -135,7 +135,7 @@ Pomelo 引用 `Microsoft.EntityFrameworkCore.Specification.Tests` + `Relational.
 
 ```
 Wave 1 (done): 10.001 CI + 10.002 verify 门禁 + 10.003 NuGet 验证 + 10.004 文档 + 10.005 本文
-Wave 2:        10.103 Query +80~120 + 10.104 defer 首批 → 目标 ≥750 列测
+Wave 2 (done): 10.103 Query +119 + 10.104 defer 首批 → 795 列测（10.M2 ✅）
 Wave 3:        10.101 Monster + 10.102 Specification 子集
 Wave 4:        10.105 ROW_COUNT + 10.106 Retry（驱动并行）
 Wave 5:        10.205 Linux RID + 10.201 参数内联
@@ -147,7 +147,7 @@ Wave 6:        10.108 JSON（文档确认后，可选）
 ## 门禁
 
 ```powershell
-dotnet test test/EFCore.Xugu.Tests -c Release --list-tests   # 基线 676，Wave 2 后递增
+dotnet test test/EFCore.Xugu.Tests -c Release --list-tests   # 795（Wave 2 done）
 dotnet test Xugu.EFCore.Xugu.sln -c Release                   # 0 FAIL
 harness/scripts/verify.ps1 -RunTests
 ```
