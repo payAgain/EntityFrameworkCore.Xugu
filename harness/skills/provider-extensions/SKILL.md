@@ -12,4 +12,4 @@ description: 'Implement XuguDB Fluent API extensions. Use when working on src/EF
 
 ## 状态
 
-Phase 5 pending — Phase 1 仅实现 `UseXugu()` 入口。
+Phase 8 **done** — Extensions E1–E9 完整；charset/collation skip 文档化。当前 Phase 9。

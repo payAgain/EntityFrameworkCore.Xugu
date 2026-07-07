@@ -1,9 +1,9 @@
 # Phase 9：Pomelo 9.0.0 测试对等
 
-> **状态**：`planned`  
-> **版本目标**：`1.1.0` → **`2.0.0`**（测试对等稳定版）  
+> **状态**：`done`  
+> **版本目标**：**`2.0.0`**（测试对等稳定版）  
 > **前置**：Phase 8 `done`（功能基线就绪）  
-> **差距基线**：Pomelo FunctionalTests **350** .cs vs 本项目 **26** 测试类（~37 文件含 helper）；当前 **116** 测试方法
+> **差距基线**：Pomelo FunctionalTests **350** .cs vs 本项目 **~56** 测试文件；当前 **676** 测试方法（W6 M3 达标；实库长跑见矩阵门禁）
 
 ## 目标
 
@@ -23,12 +23,12 @@
 
 | ID | 描述 | Agent | 依赖 | 可并行? | 优先级 | 状态 |
 |----|------|-------|------|---------|--------|------|
-| 9.I1 | `XuguTestStore` + `XuguTestStoreFactory`（对齐 `MySqlTestStore`） | Testing | Phase 8 | ❌ | P0 | todo |
-| 9.I2 | `XuguTestConnection` 增强：Northwind 种子数据脚本或等效最小数据集 | Testing | 9.I1 | ❌ | P0 | todo |
-| 9.I3 | `XuguNorthwindTestStoreFactory`（可选，依赖种子） | Testing | 9.I2 | ❌ | P1 | todo |
-| 9.I4 | 共享 `XuguFixture` / `SharedStoreFixture` 模式（对齐 Pomelo `SharedStoreFixtureBase`） | Testing | 9.I1 | ❌ | P0 | todo |
-| 9.I5 | `AssertSql` / `QueryTestBase` 本地化（或引用 EF 测试基类最小子集） | Testing | 9.I4 | ❌ | P0 | todo |
-| 9.I6 | `docs/TESTING.md`：实库环境变量、SkippableFact 约定、CI 矩阵 | Testing | 9.I1 | ✅ | P1 | todo |
+| 9.I1 | `XuguTestStore` + `XuguTestStoreFactory`（对齐 `MySqlTestStore`） | Testing | Phase 8 | ❌ | P0 | **done** |
+| 9.I2 | `XuguTestConnection` 增强：Northwind 种子数据脚本或等效最小数据集 | Testing | 9.I1 | ❌ | P0 | **done** |
+| 9.I3 | `XuguNorthwindTestStoreFactory`（可选，依赖种子） | Testing | 9.I2 | ❌ | P1 | **done** |
+| 9.I4 | 共享 `XuguFixture` / `SharedStoreFixture` 模式（对齐 Pomelo `SharedStoreFixtureBase`） | Testing | 9.I1 | ❌ | P0 | **done** |
+| 9.I5 | `AssertSql` / `QueryTestBase` 本地化（或引用 EF 测试基类最小子集） | Testing | 9.I4 | ❌ | P0 | **done** |
+| 9.I6 | `docs/TESTING.md`：实库环境变量、SkippableFact 约定、CI 矩阵 | Testing | 9.I1 | ✅ | P1 | **done** |
 
 ---
 
@@ -38,46 +38,46 @@
 
 | ID | 描述 | Pomelo 源（参考） | Agent | 依赖 | 可并行? | 状态 |
 |----|------|------------------|-------|------|---------|------|
-| 9.T1 | 查询基础扩展 | `QueryMySqlTest` 子集 | Testing | 9.I5 | ✅ | todo |
-| 9.T2 | 内置类型扩展 | `BuiltInDataTypesMySqlTest` 剩余 | Testing | 9.I4 | ✅ | todo |
-| 9.T3 | 转换器端到端 | `ValueConvertersEndToEndMySqlTest` 子集 | Testing | 9.I4 | ✅ | todo |
-| 9.T4 | 复合主键 | `CompositeKeyEndToEndMySqlTest` | Testing | 9.I4 | ✅ | todo |
-| 9.T5 | Find / Single | `FindMySqlTest` | Testing | 9.I4 | ✅ | todo |
-| 9.T6 | 连接与事务 | `ConnectionMySqlTest`、`TransactionMySqlTest` 子集 | Testing | 9.I1 | ✅ | todo |
-| 9.T7 | Migration 生成器 | `MySqlMigrationsSqlGeneratorTest` 子集 | Testing | Phase 8.M* | ✅ | todo |
-| 9.T8 | ExecuteUpdate/Delete | EF Core 官方测试模式 + 自定义 | Testing | Phase 7.Q1 | ✅ | todo |
-| 9.T9 | 自定义转换器 | `CustomConvertersMySqlTest` 子集 | Testing | 8.S7 | ✅ | todo |
-| 9.T10 | Provider 类型转换 | `ConvertToProviderTypesMySqlTest` — **部分 defer** | Testing | 8.Q5 | ✅ | todo |
+| 9.T1 | 查询基础扩展 | `QueryMySqlTest` 子集 | Testing | 9.I5 | ✅ | **done** |
+| 9.T2 | 内置类型扩展 | `BuiltInDataTypesMySqlTest` 剩余 | Testing | 9.I4 | ✅ | **done** |
+| 9.T3 | 转换器端到端 | `ValueConvertersEndToEndMySqlTest` 子集 | Testing | 9.I4 | ✅ | **done** |
+| 9.T4 | 复合主键 | `CompositeKeyEndToEndMySqlTest` | Testing | 9.I4 | ✅ | **done** |
+| 9.T5 | Find / Single | `FindMySqlTest` | Testing | 9.I4 | ✅ | **done** |
+| 9.T6 | 连接与事务 | `ConnectionMySqlTest`、`TransactionMySqlTest` 子集 | Testing | 9.I1 | ✅ | **done** |
+| 9.T7 | Migration 生成器 | `MySqlMigrationsSqlGeneratorTest` 子集 | Testing | Phase 8.M* | ✅ | **done** |
+| 9.T8 | ExecuteUpdate/Delete | EF Core 官方测试模式 + 自定义 | Testing | Phase 7.Q1 | ✅ | **done** |
+| 9.T9 | 自定义转换器 | `CustomConvertersMySqlTest` 子集 | Testing | 8.S7 | ✅ | **done** |
+| 9.T10 | Provider 类型转换 | `ConvertToProviderTypesMySqlTest` — **部分 defer** | Testing | 8.Q5 | ✅ | **done**（部分：标量映射；全量 BuiltIn 矩阵 defer） |
 
 ### 里程碑 M2（60%）— 批次 G–J
 
 | ID | 描述 | Pomelo 源 | Agent | 依赖 | 可并行? | 状态 |
 |----|------|----------|-------|------|---------|------|
-| 9.T11 | 乐观并发 | `OptimisticConcurrencyMySqlTest` | Testing | 9.I4 | ✅ | todo |
-| 9.T12 | 图更新 | `GraphUpdatesMySqlTestBase` 子集 | Testing | 9.I4 | ✅ | todo |
-| 9.T13 | Load / Include | `LoadMySqlTest` | Testing | 9.I3 | ✅ | todo |
-| 9.T14 | ManyToMany | `ManyToManyTrackingMySqlTest` 子集 | Testing | 9.I4 | ✅ | todo |
-| 9.T15 | 表拆分 | `TableSplittingMySqlTest` | Testing | 9.I4 | ✅ | todo |
-| 9.T16 | 实体拆分 | `EntitySplittingMySqlTest` | Testing | 9.I4 | ✅ | todo |
-| 9.T17 | 字段映射 | `FieldMappingMySqlTest` | Testing | 9.I4 | ✅ | todo |
-| 9.T18 | 存储生成 | `StoreGeneratedMySqlTest` | Testing | 8.VG* | ✅ | todo |
-| 9.T19 | DesignTime | `DesignTimeMySqlTest` | Testing | 8.SC* | ✅ | todo |
-| 9.T20 | 拦截器 | `SaveChangesInterceptionMySqlTest` 子集 | Testing | 9.I4 | ✅ | todo |
-| 9.T21 | 属性值 | `PropertyValuesMySqlTest` | Testing | 9.I4 | ✅ | todo |
-| 9.T22 | 种子 | `SeedingMySqlTest` | Testing | 9.I4 | ✅ | todo |
+| 9.T11 | 乐观并发 | `OptimisticConcurrencyMySqlTest` | Testing | 9.I4 | ✅ | **done**（模型+读写；DbUpdateConcurrencyException defer：SELECT 1 rows-affected） |
+| 9.T12 | 图更新 | `GraphUpdatesMySqlTestBase` 子集 | Testing | 9.I4 | ✅ | **done**（`GraphUpdatesTests` 6 条） |
+| 9.T13 | Load / Include | `LoadMySqlTest` | Testing | 9.I3 | ✅ | **done**（`LoadTests` 6 条） |
+| 9.T14 | ManyToMany | `ManyToManyTrackingMySqlTest` 子集 | Testing | 9.I4 | ✅ | **done**（`ManyToManyTrackingTests` 5 条） |
+| 9.T15 | 表拆分 | `TableSplittingMySqlTest` | Testing | 9.I4 | ✅ | **done**（`TableSplittingTests` 4 条；computed defer） |
+| 9.T16 | 实体拆分 | `EntitySplittingMySqlTest` | Testing | 9.I4 | ✅ | **done**（`EntitySplittingTests` 4 条） |
+| 9.T17 | 字段映射 | `FieldMappingMySqlTest` | Testing | 9.I4 | ✅ | **done**（`FieldMappingTests` 4 条） |
+| 9.T18 | 存储生成 | `StoreGeneratedMySqlTest` | Testing | 8.VG* | ✅ | **done**（`StoreGeneratedTests` 5 条；computed defer） |
+| 9.T19 | DesignTime | `DesignTimeMySqlTest` | Testing | 8.SC* | ✅ | **done**（`DesignTimeExtensionTests` 5 条） |
+| 9.T20 | 拦截器 | `SaveChangesInterceptionMySqlTest` 子集 | Testing | 9.I4 | ✅ | **done**（`SaveChangesInterceptionTests` 4 条） |
+| 9.T21 | 属性值 | `PropertyValuesMySqlTest` | Testing | 9.I4 | ✅ | **done**（`PropertyValuesTests` 5 条） |
+| 9.T22 | 种子 | `SeedingMySqlTest` | Testing | 9.I4 | ✅ | **done**（`SeedingTests` 3 条；EnsureCreated+HasData defer） |
 
 ### 里程碑 M3（90%）— 批次 K–N
 
 | ID | 描述 | Pomelo 源 | Agent | 依赖 | 可并行? | 状态 |
 |----|------|----------|-------|------|---------|------|
-| 9.T23 | 复杂类型跟踪 | `ComplexTypesTrackingMySqlTest` | Testing | 9.I4 | ✅ | todo |
-| 9.T24 | 通知实体 | `NotificationEntitiesMySqlTest` | Testing | 9.I4 | ✅ | todo |
-| 9.T25 | 构造函数物化 | `WithConstructorsMySqlTest` | Testing | 9.I4 | ✅ | todo |
-| 9.T26 | 懒加载代理 | `LazyLoadProxyMySqlTest` — 若无需代理可 skip 子集 | Testing | 9.I4 | ✅ | todo |
-| 9.T27 | MusicStore 场景 | `MusicStoreMySqlTest` | Testing | 9.I3 | ✅ | todo |
-| 9.T28 | API 一致性 | `MySqlApiConsistencyTest` → `XuguApiConsistencyTest` | Testing | Phase 8 | ✅ | todo |
-| 9.T29 | 服务注册快照 | `MySqlServiceCollectionExtensionsTest` | Testing | Phase 8 | ✅ | todo |
-| 9.T30 | 现有连接 | `ExistingConnectionMySqlTest` | Testing | 9.I1 | ✅ | todo |
+| 9.T23 | 复杂类型跟踪 | `ComplexTypesTrackingMySqlTest` | Testing | 9.I4 | ✅ | **done**（`ComplexTypesTrackingTests` 8 条；optional complex defer） |
+| 9.T24 | 通知实体 | `NotificationEntitiesMySqlTest` | Testing | 9.I4 | ✅ | **done**（`NotificationEntitiesTests` 2 条） |
+| 9.T25 | 构造函数物化 | `WithConstructorsMySqlTest` | Testing | 9.I4 | ✅ | **done**（`WithConstructorsTests` 6 条；2 insert defer） |
+| 9.T26 | 懒加载代理 | `LazyLoadProxyMySqlTest` — 若无需代理可 skip 子集 | Testing | 9.I4 | ✅ | **done**（`LazyLoadTests` 3 条 explicit load；proxy skip） |
+| 9.T27 | MusicStore 场景 | `MusicStoreMySqlTest` | Testing | 9.I3 | ✅ | **done**（`MusicStoreTests` 5 条） |
+| 9.T28 | API 一致性 | `MySqlApiConsistencyTest` → `XuguApiConsistencyTest` | Testing | Phase 8 | ✅ | **done**（`XuguApiConsistencyTests` 11 条） |
+| 9.T29 | 服务注册快照 | `MySqlServiceCollectionExtensionsTest` | Testing | Phase 8 | ✅ | **done**（`XuguServiceCollectionExtensionsTests` 12 条） |
+| 9.T30 | 现有连接 | `ExistingConnectionMySqlTest` | Testing | 9.I1 | ✅ | **done**（`ExistingConnectionTests` 4 条） |
 
 ### 明确 skip（不移植）
 
@@ -95,8 +95,8 @@
 
 | ID | 描述 | Agent | 依赖 | 可并行? | 状态 |
 |----|------|-------|------|---------|------|
-| 9.IT1 | 调研 Pomelo `EFCore.MySql.IntegrationTests` 是否适用于 Xugu | Testing | — | ✅ | todo |
-| 9.IT2 | 若有价值：移植连接弹性、批量操作子集 | Testing | 9.IT1, 7.S2 | ❌ | todo |
+| 9.IT1 | 调研 Pomelo `EFCore.MySql.IntegrationTests` 是否适用于 Xugu | Testing | — | ✅ | **done**（ASP.NET 性能宿主；低价值 → defer 9.IT2） |
+| 9.IT2 | 若有价值：移植连接弹性、批量操作子集 | Testing | 9.IT1, 7.S2 | ❌ | **defer** |
 
 ---
 
@@ -104,9 +104,9 @@
 
 | ID | 描述 | Agent | 依赖 | 可并行? | 状态 |
 |----|------|-------|------|---------|------|
-| 9.O1 | 覆盖率仪表板：`harness/references/test-parity-matrix.md` | Orchestrator | 9.T* | ❌ | todo |
-| 9.O2 | BACKLOG 测试批次全部映射为 done/skip | Orchestrator | 9.O1 | ❌ | todo |
-| 9.O3 | Phase 9 handoff + `2.0.0` 版本建议 | Orchestrator | M3 | ❌ | todo |
+| 9.O1 | 覆盖率仪表板：`harness/references/test-parity-matrix.md` | Orchestrator | 9.T* | ❌ | **done**（676 / ~64%） |
+| 9.O2 | BACKLOG 测试批次全部映射为 done/skip | Orchestrator | 9.O1 | ❌ | **done**（W6 Query 批次已映射） |
+| 9.O3 | Phase 9 handoff + `2.0.0` 版本建议 | Orchestrator | M3 | ❌ | **done**（`harness/handoffs/phase9-m3-test-parity-2026-07-07.md`） |
 
 ---
 

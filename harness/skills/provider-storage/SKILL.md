@@ -25,6 +25,10 @@ description: 'Implement XuguDB EF Core Storage: Connection, TypeMapping, SqlGene
 
 **注意**：XuguDB 自增用 `IDENTITY(1,1)` 不是 AUTO_INCREMENT。
 
+## 状态
+
+Phase 8 **done** — Storage S1–S7 + SqlGenerationHelper 完整；S8–S10 defer。当前 Phase 9。
+
 ## SqlGenerationHelper
 
 MYSQL 兼容模式下标识符用反引号，见 `identifier.md`。

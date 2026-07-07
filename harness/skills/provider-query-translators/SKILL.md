@@ -29,6 +29,10 @@ description: 'Implement XuguDB EF Core Query Translators. MUST read XuguDB docs 
 | `XuguDateTimeMemberTranslator.cs` | `MySqlDateTimeMemberTranslator.cs` |
 | `XuguMathTranslator.cs` | `MySqlMathTranslator.cs` |
 
+## 状态
+
+Phase 8 **done** — Translators P0/P1 完整；`XuguRegexIsMatchTranslator`（IsMatch）已交付。当前 Phase 9 测试移植。
+
 ## XuguDB 文档
 
 | Translator | 必读文档 |

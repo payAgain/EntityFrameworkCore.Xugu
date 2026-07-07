@@ -23,6 +23,10 @@ description: 'Implement XuguDB EF Core Migrations and DesignTime. MUST read Xugu
 | `XuguHistoryRepository.cs` | `Migrations/Internal/MySqlHistoryRepository.cs` |
 | `XuguDesignTimeServices.cs` | `Design/Internal/MySqlDesignTimeServices.cs` |
 
+## 状态
+
+Phase 8 **done** — Migrations M1–M5、Scaffolding SC1–SC4 完整。当前 Phase 9 测试移植。
+
 ## XuguDB 关键差异
 
 - CREATE TABLE 自增列：`INTEGER IDENTITY(1, 1)` 非 `AUTO_INCREMENT`

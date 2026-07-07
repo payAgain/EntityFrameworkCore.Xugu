@@ -24,6 +24,10 @@ description: 'Implement XuguDB EF Core Infrastructure: ServerVersion, OptionsExt
 | `UseXugu()` | `Extensions/MySqlDbContextOptionsBuilderExtensions.cs` |
 | `AddEntityFrameworkXugu()` | `Extensions/MySqlServiceCollectionExtensions.cs` |
 
+## 状态
+
+Phase 8 **done** — Infrastructure（ServerVersion、Options、UseXugu、Retry API defer）完整。当前 Phase 9。
+
 ## XuguDB 特有
 
 - 连接串格式：`IP=...; DB=...; USER=...; PWD=...; PORT=...; CHARSET=...;`

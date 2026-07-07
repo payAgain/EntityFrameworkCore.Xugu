@@ -25,13 +25,13 @@
 | `IDatabaseModelFactory` | `XuguDatabaseModelFactory` | Scoped | Migrations | done |
 | `IAnnotationCodeGenerator` | `XuguAnnotationCodeGenerator` | Scoped | Extensions | done |
 | `IProviderConfigurationCodeGenerator` | `XuguCodeGenerator` | Scoped | Migrations | done |
-| `ICompiledQueryCacheKeyGenerator` | `XuguCompiledQueryCacheKeyGenerator` | Singleton | QueryCore | pending |
-| `IQueryableMethodTranslatingExpressionVisitorFactory` | `XuguQueryableMethodTranslatingExpressionVisitorFactory` | Scoped | QueryCore | pending |
-| `IMethodCallTranslatorProvider` | `XuguMethodCallTranslatorProvider` | Scoped | QueryCore | pending |
-| `IMemberTranslatorProvider` | `XuguMemberTranslatorProvider` | Scoped | QueryCore | pending |
-| `IQuerySqlGeneratorFactory` | `XuguQuerySqlGeneratorFactory` | Singleton | QueryCore | pending |
-| `ISqlExpressionFactory` | `XuguSqlExpressionFactory` | Scoped | QueryCore | pending |
-| `IRelationalSqlTranslatingExpressionVisitorFactory` | `XuguSqlTranslatingExpressionVisitorFactory` | Scoped | QueryCore | pending |
+| `ICompiledQueryCacheKeyGenerator` | `XuguCompiledQueryCacheKeyGenerator` | Singleton | QueryCore | done |
+| `IQueryableMethodTranslatingExpressionVisitorFactory` | `XuguQueryableMethodTranslatingExpressionVisitorFactory` | Scoped | QueryCore | done |
+| `IMethodCallTranslatorProvider` | `XuguMethodCallTranslatorProvider` | Scoped | QueryCore | done |
+| `IMemberTranslatorProvider` | `XuguMemberTranslatorProvider` | Scoped | QueryCore | done |
+| `IQuerySqlGeneratorFactory` | `XuguQuerySqlGeneratorFactory` | Singleton | QueryCore | done |
+| `ISqlExpressionFactory` | `XuguSqlExpressionFactory` | Scoped | QueryCore | done |
+| `IRelationalSqlTranslatingExpressionVisitorFactory` | `XuguSqlTranslatingExpressionVisitorFactory` | Scoped | QueryCore | done |
 | `IExecutionStrategyFactory` | `XuguExecutionStrategyFactory` | Singleton | Storage | done |
 | `ISingletonOptions` / `IXuguOptions` | `XuguOptions` | Singleton | Infra | done |
 

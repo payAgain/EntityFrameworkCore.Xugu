@@ -16,4 +16,4 @@ description: 'Implement XuguDB EF Core Update pipeline. Use when working on src/
 
 ## 状态
 
-Phase 2 done — Update 模块已实现并验收（CRUD 5/5）。
+Phase 8 **done** — Update + SequentialGuid 完整。当前 Phase 9。
