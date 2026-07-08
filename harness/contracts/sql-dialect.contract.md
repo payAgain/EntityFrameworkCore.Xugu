@@ -365,3 +365,9 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | 2026-07-06 | Phase 3：DateTime/TimestampAdd/CAST/SYS_GUID 函数映射；DateTimeQueryTests | Agent-Query |
 | 2026-07-06 | Phase 3：LENGTH/ABS/CONCAT/LIKE 函数映射；Query DI 注册 | Agent-Query |
 | 2026-07-06 | 初稿，基于 XuguDB 官方文档整理 | Orchestrator |
+| 2026-07-07 | 来源血缘校验脚本 `harness/scripts/verify-source-lineage.ps1`（禁止 AUTO_INCREMENT/INFORMATION_SCHEMA 等） | Orchestrator |
+| 2026-07-07 | Phase 9 M3 关闭：`XuguTestStore` 全量 adoption、Northwind seed、`XuguQueryTestBase`、`AssertSql` 基线、20+ Collection fixtures；676 列测；2.0.0 发版 | Testing / Orchestrator |
+| 2026-07-07 | Phase 10 Wave 1：CI 实库矩阵（GitHub + GitLab）+ `verify.ps1 -RunTests` 全量门禁；`docs/GETTING-STARTED.md` → 2.0.0；`docs/XUGU-VS-MYSQL.md` 用户对比文档；`harness/references/phase-10-test-triage.md` 剩余 ~374 测试 triage | Infra / Docs / Testing |
+| 2026-07-07 | Phase 10 Wave 2：Query 深覆盖 +119（FromSql / TPH / Deep nested / DbFunctions / ComplexNav）对齐 Pomelo `NorthwindQueryMySqlTest` + `AdHocQueryMySqlTest` 子集；9.T defer 补全（SaveChangesInterception +6 / ConvertToProviderTypes +10 / Seeding +3 / WithConstructors insert ×2）；795 列测；10.M2 ✅ | Testing |
+| 2026-07-08 | Phase 10 Wave 3：`MonsterFixupXuguTests` + `StoreGeneratedFixupXuguTests`（手写 Xugu 兼容模型，对齐 Pomelo `MonsterFixup*MySqlTest`）；`DesignTimeXuguTest` + `KeysWithConverters` + `TransactionBasics` 子集（对齐 `EFCore.Specification.Tests` 数据库相关）；850 列测；10.M4 ✅；~81% Pomelo 覆盖 | Testing |
+| 2026-07-08 | defer 登记：10.105 ROW_COUNT 乐观并发（解锁 `Stale_concurrency_token_throws_*`，需驱动 / 方言确认）、10.106 `XuguRetryingExecutionStrategy`（前置驱动 `IsTransient` 契约）、10.107 EF 版本矩阵（net8.0 评估）、10.108 JSON 列调研（可选，待 XuguDB 文档确认） | Orchestrator |

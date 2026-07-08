@@ -30,6 +30,9 @@ foreach ($f in $required) {
 }
 Write-Host "[OK] Harness files present" -ForegroundColor Green
 
+& (Join-Path $PSScriptRoot "verify-source-lineage.ps1")
+if ($LASTEXITCODE -ne 0) { throw "Source lineage verification failed" }
+
 $pomeloPath = Join-Path $Root "external\Pomelo.EntityFrameworkCore.MySql\src\EFCore.MySql"
 if (-not (Test-Path $pomeloPath)) {
     Write-Warning "[WARN] Pomelo reference not cloned"

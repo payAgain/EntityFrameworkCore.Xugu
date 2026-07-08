@@ -4,70 +4,88 @@
 > 目标路径根：`src/EFCore.Xugu/`  
 > 命名替换：`MySql` → `Xugu`，`Pomelo.EntityFrameworkCore.MySql` → `Xugu.EntityFrameworkCore.Xugu`
 
+## 来源图例（Source Lineage）
+
+| 值 | 含义 |
+|----|------|
+| **Pomelo-port** | 结构镜像 Pomelo，方言已适配 XuguDB |
+| **Xugu-native** | 无 Pomelo 对等实现；XuguDB 特有（Scaffolding 目录视图、连接层、DBA_* 等） |
+| **EF-base-only** | 仅继承 EF Core 基类，几乎无 Pomelo 模式（如 `XuguMigrator`） |
+| **skip** | Pomelo 模块有意不移植（JSON、NTS、Collation/Charset 等） |
+| **defer** | 计划后续阶段实现 |
+
+> 自动化校验：`harness/scripts/verify-source-lineage.ps1`（由 `verify.ps1` 调用）
+
 ## 模块级映射
 
-| Pomelo 目录 | 文件数 | XuguDB 目标目录 | 负责 Agent |
-|------------|--------|----------------|-----------|
-| `Extensions/` | 23 | `Extensions/` | Infra + Extensions |
-| `Infrastructure/` | 13 | `Infrastructure/` | Infra |
-| `Storage/` | 43 | `Storage/` | Storage |
-| `Metadata/` | 13 | `Metadata/` | Metadata |
-| `Query/` | 65 | `Query/` | QueryCore + QueryTranslators |
-| `Update/` | 6 | `Update/` | Update |
-| `Migrations/` | 8 | `Migrations/` | Migrations |
-| `Scaffolding/` | 6 | `Scaffolding/` | Migrations |
-| `Design/` | 3 | `Design/` | Migrations |
-| `ValueGeneration/` | 2 | `ValueGeneration/` | Update |
-| `Diagnostics/` | 2 | `Diagnostics/` | Infra |
-| `Internal/` | 4 | `Internal/` | 各模块 |
-| `DataAnnotations/` | 2 | `DataAnnotations/` | Metadata |
-| `Properties/` | 3 | `Properties/` | Infra |
+| Pomelo 目录 | 文件数 | XuguDB 目标目录 | 负责 Agent | 来源 |
+|------------|--------|----------------|-----------|------|
+| `Extensions/` | 23 | `Extensions/` | Infra + Extensions | Pomelo-port |
+| `Infrastructure/` | 13 | `Infrastructure/` | Infra | Pomelo-port |
+| `Storage/` | 43 | `Storage/` | Storage | Pomelo-port |
+| `Metadata/` | 13 | `Metadata/` | Metadata | Pomelo-port |
+| `Query/` | 65 | `Query/` | QueryCore + QueryTranslators | Pomelo-port |
+| `Update/` | 6 | `Update/` | Update | Pomelo-port |
+| `Migrations/` | 8 | `Migrations/` | Migrations | Pomelo-port |
+| `Scaffolding/` | 6 | `Scaffolding/` | Migrations | Xugu-native |
+| `Design/` | 3 | `Design/` | Migrations | Pomelo-port |
+| `ValueGeneration/` | 2 | `ValueGeneration/` | Update | Pomelo-port |
+| `Diagnostics/` | 2 | `Diagnostics/` | Infra | Pomelo-port |
+| `Internal/` | 4 | `Internal/` | 各模块 | Pomelo-port |
+| `DataAnnotations/` | 2 | `DataAnnotations/` | Metadata | skip |
+| `Properties/` | 3 | `Properties/` | Infra | Pomelo-port |
 
 ## 核心文件映射
 
-| Pomelo 文件 | XuguDB 文件 | 模块 |
-|------------|------------|------|
-| `Extensions/MySqlServiceCollectionExtensions.cs` | `Extensions/XuguServiceCollectionExtensions.cs` | Infra |
-| `Extensions/MySqlDbContextOptionsBuilderExtensions.cs` | `Extensions/XuguDbContextOptionsBuilderExtensions.cs` | Infra |
-| `Infrastructure/Internal/MySqlOptionsExtension.cs` | `Infrastructure/Internal/XuguOptionsExtension.cs` | Infra |
-| `Infrastructure/ServerVersion.cs` | `Infrastructure/ServerVersion.cs` | Infra |
-| `Infrastructure/MySqlServerVersion.cs` | `Infrastructure/XuguServerVersion.cs` | Infra |
-| `Infrastructure/MySqlDbContextOptionsBuilder.cs` | `Infrastructure/XuguDbContextOptionsBuilder.cs` | Infra |
-| `Storage/Internal/MySqlRelationalConnection.cs` | `Storage/Internal/XuguRelationalConnection.cs` | Storage |
-| `Storage/Internal/MySqlTypeMappingSource.cs` | `Storage/Internal/XuguTypeMappingSource.cs` | Storage |
-| `Storage/Internal/MySqlSqlGenerationHelper.cs` | `Storage/Internal/XuguSqlGenerationHelper.cs` | Storage |
-| `Storage/Internal/MySqlDatabaseCreator.cs` | `Storage/Internal/XuguDatabaseCreator.cs` | Storage |
-| `Metadata/Conventions/MySqlConventionSetBuilder.cs` | `Metadata/Conventions/XuguConventionSetBuilder.cs` | Metadata |
-| `Metadata/Internal/MySqlAnnotationProvider.cs` | `Metadata/Internal/XuguAnnotationProvider.cs` | Metadata |
-| `Metadata/MySqlValueGenerationStrategy.cs` | `Metadata/XuguValueGenerationStrategy.cs` | Metadata |
-| `Update/Internal/MySqlUpdateSqlGenerator.cs` | `Update/Internal/XuguUpdateSqlGenerator.cs` | Update |
-| `Migrations/MySqlMigrationsSqlGenerator.cs` | `Migrations/XuguMigrationsSqlGenerator.cs` | Migrations |
-| `Migrations/Internal/MySqlHistoryRepository.cs` | `Migrations/Internal/XuguHistoryRepository.cs` | Migrations |
-| `Migrations/Internal/MySqlMigrationsModelDiffer.cs` | `Migrations/Internal/XuguMigrationsModelDiffer.cs` | Migrations |
-| `Migrations/Internal/MySqlMigrator.cs` | `Migrations/Internal/XuguMigrator.cs` | Migrations |
-| `Query/Internal/MySqlQuerySqlGenerator.cs` | `Query/Internal/XuguQuerySqlGenerator.cs` | QueryCore |
-| `Query/Internal/MySqlSqlExpressionFactory.cs` | `Query/Internal/XuguSqlExpressionFactory.cs` | QueryCore |
-| `Query/Internal/MySqlMethodCallTranslatorProvider.cs` | `Query/Internal/XuguMethodCallTranslatorProvider.cs` | QueryCore |
-| `Query/Internal/MySqlMemberTranslatorProvider.cs` | `Query/Internal/XuguMemberTranslatorProvider.cs` | QueryCore |
-| `Query/ExpressionVisitors/Internal/MySqlSqlTranslatingExpressionVisitor.cs` | `Query/ExpressionVisitors/Internal/XuguSqlTranslatingExpressionVisitor.cs` | QueryCore |
-| `Query/ExpressionVisitors/Internal/MySqlQueryableMethodTranslatingExpressionVisitor.cs` | `Query/ExpressionVisitors/Internal/XuguQueryableMethodTranslatingExpressionVisitor.cs` | QueryCore |
-| `Design/Internal/MySqlDesignTimeServices.cs` | `Design/Internal/XuguDesignTimeServices.cs` | Migrations |
-| `Scaffolding/Internal/MySqlDatabaseModelFactory.cs` | `Scaffolding/Internal/XuguDatabaseModelFactory.cs` | Migrations |
-| `MySqlRetryingExecutionStrategy.cs` | `XuguRetryingExecutionStrategy.cs` | Storage |
+| Pomelo 文件 | XuguDB 文件 | 模块 | 来源 |
+|------------|------------|------|------|
+| `Extensions/MySqlServiceCollectionExtensions.cs` | `Extensions/XuguServiceCollectionExtensions.cs` | Infra | Pomelo-port |
+| `Extensions/MySqlDbContextOptionsBuilderExtensions.cs` | `Extensions/XuguDbContextOptionsBuilderExtensions.cs` | Infra | Pomelo-port |
+| `Infrastructure/Internal/MySqlOptionsExtension.cs` | `Infrastructure/Internal/XuguOptionsExtension.cs` | Infra | Pomelo-port |
+| `Infrastructure/ServerVersion.cs` | `Infrastructure/ServerVersion.cs` | Infra | Pomelo-port |
+| `Infrastructure/MySqlServerVersion.cs` | `Infrastructure/XuguServerVersion.cs` | Infra | Pomelo-port |
+| `Infrastructure/MySqlDbContextOptionsBuilder.cs` | `Infrastructure/XuguDbContextOptionsBuilder.cs` | Infra | Pomelo-port |
+| `Storage/Internal/MySqlRelationalConnection.cs` | `Storage/Internal/XuguRelationalConnection.cs` | Storage | Xugu-native |
+| `Storage/Internal/MySqlTypeMappingSource.cs` | `Storage/Internal/XuguTypeMappingSource.cs` | Storage | Pomelo-port |
+| `Storage/Internal/MySqlSqlGenerationHelper.cs` | `Storage/Internal/XuguSqlGenerationHelper.cs` | Storage | Pomelo-port |
+| `Storage/Internal/MySqlDatabaseCreator.cs` | `Storage/Internal/XuguDatabaseCreator.cs` | Storage | Xugu-native |
+| `Metadata/Conventions/MySqlConventionSetBuilder.cs` | `Metadata/Conventions/XuguConventionSetBuilder.cs` | Metadata | Pomelo-port |
+| `Metadata/Internal/MySqlAnnotationProvider.cs` | `Metadata/Internal/XuguAnnotationProvider.cs` | Metadata | Pomelo-port |
+| `Metadata/MySqlValueGenerationStrategy.cs` | `Metadata/XuguValueGenerationStrategy.cs` | Metadata | Pomelo-port |
+| `Update/Internal/MySqlUpdateSqlGenerator.cs` | `Update/Internal/XuguUpdateSqlGenerator.cs` | Update | Pomelo-port |
+| `Migrations/MySqlMigrationsSqlGenerator.cs` | `Migrations/XuguMigrationsSqlGenerator.cs` | Migrations | Pomelo-port |
+| `Migrations/Internal/MySqlHistoryRepository.cs` | `Migrations/Internal/XuguHistoryRepository.cs` | Migrations | Xugu-native |
+| `Migrations/Internal/MySqlMigrationsModelDiffer.cs` | `Migrations/Internal/XuguMigrationsModelDiffer.cs` | Migrations | Pomelo-port |
+| `Migrations/Internal/MySqlMigrator.cs` | `Migrations/Internal/XuguMigrator.cs` | Migrations | EF-base-only |
+| `Query/Internal/MySqlQuerySqlGenerator.cs` | `Query/Internal/XuguQuerySqlGenerator.cs` | QueryCore | Pomelo-port |
+| `Query/Internal/MySqlSqlExpressionFactory.cs` | `Query/Internal/XuguSqlExpressionFactory.cs` | QueryCore | Pomelo-port |
+| `Query/Internal/MySqlMethodCallTranslatorProvider.cs` | `Query/Internal/XuguMethodCallTranslatorProvider.cs` | QueryCore | Pomelo-port |
+| `Query/Internal/MySqlMemberTranslatorProvider.cs` | `Query/Internal/XuguMemberTranslatorProvider.cs` | QueryCore | Pomelo-port |
+| `Query/ExpressionVisitors/Internal/MySqlSqlTranslatingExpressionVisitor.cs` | `Query/ExpressionVisitors/Internal/XuguSqlTranslatingExpressionVisitor.cs` | QueryCore | Pomelo-port |
+| `Query/ExpressionVisitors/Internal/MySqlQueryableMethodTranslatingExpressionVisitor.cs` | `Query/ExpressionVisitors/Internal/XuguQueryableMethodTranslatingExpressionVisitor.cs` | QueryCore | Pomelo-port |
+| `Design/Internal/MySqlDesignTimeServices.cs` | `Design/Internal/XuguDesignTimeServices.cs` | Migrations | Pomelo-port |
+| `Scaffolding/Internal/MySqlDatabaseModelFactory.cs` | `Scaffolding/Internal/XuguDatabaseModelFactory.cs` | Migrations | Xugu-native |
+| `MySqlRetryingExecutionStrategy.cs` | `XuguRetryingExecutionStrategy.cs` | Storage | defer |
 
 ## Query Translators 映射（ExpressionTranslators/Internal/）
 
-| Pomelo Translator | Xugu Translator |
-|------------------|----------------|
-| `MySqlStringMethodTranslator.cs` | `XuguStringMethodTranslator.cs` |
-| `MySqlDateTimeMethodTranslator.cs` | `XuguDateTimeMethodTranslator.cs` |
-| `MySqlDateTimeMemberTranslator.cs` | `XuguDateTimeMemberTranslator.cs` |
-| `MySqlMathTranslator.cs` | `XuguMathTranslator.cs` |
-| `MySqlConvertTranslator.cs` | `XuguConvertTranslator.cs` |
-| `MySqlByteArrayMethodTranslator.cs` | `XuguByteArrayMethodTranslator.cs` |
-| `MySqlNewGuidTranslator.cs` | `XuguNewGuidTranslator.cs` |
-| `MySqlDateDiffFunctionsTranslator.cs` | `XuguDateDiffFunctionsTranslator.cs` |
-| ... | 完整列表见 `pomelo-files-list.txt` |
+| Pomelo Translator | Xugu Translator | 来源 |
+|------------------|----------------|------|
+| `MySqlStringMethodTranslator.cs` | `XuguStringMethodTranslator.cs` | Pomelo-port |
+| `MySqlDateTimeMethodTranslator.cs` | `XuguDateTimeMethodTranslator.cs` | Pomelo-port |
+| `MySqlDateTimeMemberTranslator.cs` | `XuguDateTimeMemberTranslator.cs` | Pomelo-port |
+| `MySqlMathTranslator.cs` | `XuguMathMethodTranslator.cs` | Pomelo-port |
+| `MySqlConvertTranslator.cs` | `XuguConvertTranslator.cs` | Pomelo-port |
+| `MySqlByteArrayMethodTranslator.cs` | `XuguByteArrayMethodTranslator.cs` | Pomelo-port |
+| `MySqlNewGuidTranslator.cs` | `XuguNewGuidTranslator.cs` | Pomelo-port |
+| `MySqlDateDiffFunctionsTranslator.cs` | `XuguDateDiffFunctionsTranslator.cs` | Pomelo-port |
+| `MySqlStringComparisonMethodTranslator.cs` | `XuguStringComparisonMethodTranslator.cs` | Pomelo-port |
+| `MySqlStringMemberTranslator.cs` | `XuguStringMemberTranslator.cs` | Pomelo-port |
+| `MySqlTimeSpanMemberTranslator.cs` | `XuguTimeSpanMemberTranslator.cs` | Pomelo-port |
+| `MySqlObjectToStringTranslator.cs` | `XuguObjectToStringTranslator.cs` | Pomelo-port |
+| `MySqlDbFunctionsExtensionsMethodTranslator.cs` | `XuguDbFunctionsExtensionsMethodTranslator.cs` | Pomelo-port |
+| `MySqlRegexIsMatchTranslator.cs` | `XuguRegexIsMatchTranslator.cs` | Pomelo-port |
+| ... | 完整列表见 `pomelo-files-list.txt` | Pomelo-port |
 
 ## 完整 Pomelo 文件列表
 
@@ -95,44 +113,44 @@
 
 ### 状态汇总
 
-| 状态 | 数量 | 说明 |
-|------|------|------|
-| **done** | ~45 任务 ID | W1–W4 核心 Query/Storage/Migrations/Scaffolding/Extensions |
-| **skip** | 6 | JSON/NTS、Collation/Charset DataAnnotations、FULLTEXT |
-| **defer** | 11 | 见下表 |
+| 状态 | 数量 | 说明 | 来源 |
+|------|------|------|------|
+| **done** | ~45 任务 ID | W1–W4 核心 Query/Storage/Migrations/Scaffolding/Extensions | Pomelo-port |
+| **skip** | 6 | JSON/NTS、Collation/Charset DataAnnotations、FULLTEXT | skip |
+| **defer** | 11 | 见下表 | defer |
 
 ### 模块 done/skip/defer
 
-| 模块 | Pomelo | Xugu | 状态 |
-|------|--------|------|------|
-| Query Core | 65 | ~35 | **done** 核心路径；defer Q11/Q12/Q14 |
-| Query Translators | — | 14 文件 | **done**（无 JSON） |
-| Storage TypeMapping | 43 | 22 | **done** 核心 CLR 映射；defer S8–S10 |
-| Extensions | 23 | ~13 | **done** E1–E8（charset skip）；Wave 5 E6–E8 |
-| Migrations | 8 | 5 | **done** 核心 + M3 FK 全动作 |
-| Scaffolding | 6 | 5 | **done** SC1–SC4 + SC3 CodeGenerator |
-| ValueGeneration | 2 | 2 | **done** |
-| DataAnnotations | 2 | 0 | **skip** DA1–DA2 |
-| Native RID | — | — | **defer** N1–N3 |
+| 模块 | Pomelo | Xugu | 状态 | 来源 |
+|------|--------|------|------|------|
+| Query Core | 65 | ~35 | **done** 核心路径；defer Q11/Q12/Q14 | Pomelo-port |
+| Query Translators | — | 14 文件 | **done**（无 JSON） | Pomelo-port |
+| Storage TypeMapping | 43 | 22 | **done** 核心 CLR 映射；defer S8–S10 | Pomelo-port |
+| Extensions | 23 | ~13 | **done** E1–E8（charset skip）；Wave 5 E6–E8 | Pomelo-port |
+| Migrations | 8 | 5 | **done** 核心 + M3 FK 全动作 | Pomelo-port |
+| Scaffolding | 6 | 5 | **done** SC1–SC4 + SC3 CodeGenerator | Xugu-native |
+| ValueGeneration | 2 | 2 | **done** | Pomelo-port |
+| DataAnnotations | 2 | 0 | **skip** DA1–DA2 | skip |
+| Native RID | — | — | **defer** N1–N3 | defer |
 
 ### defer 清单（Phase 8 剩余）
 
-| ID | 项 | 原因 |
-|----|-----|------|
-| 8.Q11 | BitwiseOperationReturnTypeCorrecting | P2；Xugu 整数位运算返回 BIGINT，暂无 EF 翻译失败报告 |
-| 8.Q12 | FOR UPDATE / 窗口函数 | P2；文档支持 `FOR UPDATE` 但 EF Core 无标准 API |
-| 8.Q14 | 参数内联 | P2 性能优化 |
-| 8.Q15 | ConvertTimeZone | 无 CONVERT_TZ |
-| 8.S8–S10 | RelationalCommand/Database 表面 | P2 |
-| 8.N1–N3 | Linux RID 打包 | 依赖驱动发布 |
+| ID | 项 | 原因 | 来源 |
+|----|-----|------|------|
+| 8.Q11 | BitwiseOperationReturnTypeCorrecting | P2；Xugu 整数位运算返回 BIGINT，暂无 EF 翻译失败报告 | defer |
+| 8.Q12 | FOR UPDATE / 窗口函数 | P2；文档支持 `FOR UPDATE` 但 EF Core 无标准 API | defer |
+| 8.Q14 | 参数内联 | P2 性能优化 | defer |
+| 8.Q15 | ConvertTimeZone | 无 CONVERT_TZ | defer |
+| 8.S8–S10 | RelationalCommand/Database 表面 | P2 | defer |
+| 8.N1–N3 | Linux RID 打包 | 依赖驱动发布 | defer |
 
 ### Pomelo 独有、Xugu 不实现
 
-| Pomelo 文件/功能 | 处理 |
-|-----------------|------|
-| `MySqlJson*` 全套 | **skip** |
-| `MySqlQueryStringFactory` | EF Core 默认 `IRelationalQueryStringFactory` 足够 |
-| `MySqlConnectionStringOptionsValidator` | **defer**（连接串格式不同） |
-| `BitwiseOperationReturnTypeCorrectingExpressionVisitor` | **defer** 8.Q11 |
-| Collation/Charset Fluent + DataAnnotations | **skip** |
-| FULLTEXT/SPATIAL 索引 | **skip** |
+| Pomelo 文件/功能 | 处理 | 来源 |
+|-----------------|------|------|
+| `MySqlJson*` 全套 | **skip** | skip |
+| `MySqlQueryStringFactory` | EF Core 默认 `IRelationalQueryStringFactory` 足够 | EF-base-only |
+| `MySqlConnectionStringOptionsValidator` | **defer**（连接串格式不同） | defer |
+| `BitwiseOperationReturnTypeCorrectingExpressionVisitor` | **defer** 8.Q11 | defer |
+| Collation/Charset Fluent + DataAnnotations | **skip** | skip |
+| FULLTEXT/SPATIAL 索引 | **skip** | skip |

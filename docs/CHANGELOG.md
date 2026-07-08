@@ -7,6 +7,54 @@ Known limitations and deferred features: [LIMITATIONS.md](LIMITATIONS.md).
 
 ---
 
+## [2.0.x] — 2026-07-07 / 2026-07-08 (Phase 10 Wave 1/2/3)
+
+Phase 10 **维护与剩余对等**前三个 Wave 落地，稳固 2.0.0 维护线并扩展 Pomelo 测试对等到 **850 列测**（~81% 覆盖）。skip/defer 项见 [LIMITATIONS.md](LIMITATIONS.md)。
+
+### Wave 1 — 2026-07-07（10.001–10.005，CI + 文档 + triage）
+
+#### Added
+
+- **CI/CD 实库矩阵** — `.github/workflows/ci.yml` + `.gitlab-ci.yml`；secrets 与运行说明见 `docs/TESTING.md`。
+- **全量门禁回归** — `harness/scripts/verify.ps1 -RunTests` 模式；CI integration job 调用。
+- **NuGet 发布流水线 2.0.0** — `publish-nuget.ps1` dry-run 验证 **2.0.0**；GitLab `publish-nuget` manual job。
+- **用户文档刷新** — `docs/GETTING-STARTED.md` → 2.0.0；链到新增 `docs/XUGU-VS-MYSQL.md`。
+- **剩余测试 triage** — `harness/references/phase-10-test-triage.md`；Wave 2–6 计划。
+
+### Wave 2 — 2026-07-07（10.103 / 10.104，795 列测）
+
+#### Added
+
+- **Query 深覆盖 +119 列测** — FromSql / TPH / Deep nested / DbFunctions / ComplexNav 全量补齐；Pomelo `NorthwindQueryMySqlTest`、`AdHocQueryMySqlTest` 子集对等。
+- **9.T defer 补全** — `SaveChangesInterceptionTests` +6、`ConvertToProviderTypesMySqlTest` +10、`SeedingTests` +3；`WithConstructorsTests` insert ×2。
+
+#### Changed
+
+- **测试套件** — 676 → **795**（Phase 10 Wave 2 达标 10.M2）。
+- **Pomelo 可比覆盖率** — ~64% → ~76%。
+
+### Wave 3 — 2026-07-08（10.101 / 10.102，850 列测）
+
+#### Added
+
+- **Monster Fixup 子集** — `MonsterFixupXuguTests` + `StoreGeneratedFixupXuguTests`（手写 Xugu 兼容模型；对齐 Pomelo `MonsterFixup*MySqlTest`）。
+- **Specification Tests 子集** — `DesignTimeXuguTest` + `KeysWithConverters` + `TransactionBasics` 子集（对齐 `EFCore.Specification.Tests` 数据库相关条目）。
+
+#### Changed
+
+- **测试套件** — 795 → **850**（Phase 10 Wave 3 达标 10.M4）。
+- **Pomelo 可比覆盖率** — ~76% → **~81%**（850 ÷ 1050 测试方法）。
+
+### Deferred (documented, Phase 10 Wave 4–6)
+
+- **10.105 ROW_COUNT 乐观并发** — 解锁 `Stale_concurrency_token_throws_*`；需驱动 / 方言确认后回归 CRUD。
+- **10.106 `XuguRetryingExecutionStrategy`** — 前置：驱动 `IsTransient` 或 Message 码契约稳定。
+- **10.107 EF 版本矩阵** — 评估 net8.0 目标；与 EF Core 9 对齐策略。
+- **10.108 JSON 列调研** — 可选；若 XuguDB 官方支持 JSON 类型再开 10.109 实现。
+- **10.205 Linux x64 RID 打包**、**10.201 参数内联**、**10.202 FOR UPDATE / 窗口函数**、**10.203 位运算返回类型**、**10.204 RelationalCommand 表面** — 见 [LIMITATIONS.md](LIMITATIONS.md)。
+
+---
+
 ## [2.0.0] — 2026-07-07
 
 Phase 9 **Pomelo 9.0.0 测试对等**里程碑（M3 达标；skip/defer 项见 [LIMITATIONS.md](LIMITATIONS.md)）。
@@ -124,5 +172,7 @@ Initial preview spanning Phase 0–6.
 | [LIMITATIONS.md](LIMITATIONS.md) | Known limits and defer/skip list |
 | [xuguclient-dependency-strategy.md](xuguclient-dependency-strategy.md) | Local driver vs NuGet `Xuguclient` |
 
+[2.0.x]: https://github.com/your-org/xuguefcore/compare/v2.0.0...v2.0.x
+[2.0.0]: https://github.com/your-org/xuguefcore/compare/v1.1.0-preview...v2.0.0
 [1.0.0]: https://github.com/your-org/xuguefcore/compare/v0.1.0-preview...v1.0.0
 [0.1.0-preview]: https://github.com/your-org/xuguefcore/releases/tag/v0.1.0-preview
