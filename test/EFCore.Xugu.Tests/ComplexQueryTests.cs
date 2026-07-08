@@ -171,7 +171,7 @@ public class ComplexQueryTests(XuguDatabaseFixture fixture)
     private static BlogContext CreateBlogContext()
     {
         var options = new DbContextOptionsBuilder<BlogContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new BlogContext(options);
@@ -180,7 +180,7 @@ public class ComplexQueryTests(XuguDatabaseFixture fixture)
     private static JoinContext CreateJoinContext()
     {
         var options = new DbContextOptionsBuilder<JoinContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new JoinContext(options);

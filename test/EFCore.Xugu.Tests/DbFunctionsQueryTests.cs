@@ -68,7 +68,7 @@ public class DbFunctionsQueryTests(XuguDatabaseFixture fixture)
     private static DbFunctionsContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<DbFunctionsContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new DbFunctionsContext(options);

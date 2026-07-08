@@ -32,5 +32,5 @@ public class XuguOptions : IXuguOptions
 
     public ServerVersion ServerVersion { get; private set; } = XuguServerVersion.Default;
 
-    public bool SetCompatibleModeOnOpen { get; private set; } = true;
+    public bool SetCompatibleModeOnOpen { get; private set; }
 }

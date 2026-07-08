@@ -6,7 +6,7 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 9.T2 â€” remaining BuiltInDataTypesMySqlTest scenarios (date/time/binary/null filtering).
+/// Phase 9.T2 â€?remaining BuiltInDataTypesMySqlTest scenarios (date/time/binary/null filtering).
 /// </summary>
 [Collection("XuguDatabase")]
 public class BuiltInDataTypesExtensionTests(XuguDatabaseFixture fixture)
@@ -169,7 +169,7 @@ public class BuiltInDataTypesExtensionTests(XuguDatabaseFixture fixture)
     private static BuiltinTypesContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<BuiltinTypesContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new BuiltinTypesContext(options);

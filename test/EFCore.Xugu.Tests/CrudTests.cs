@@ -68,11 +68,9 @@ public class CrudTests(XuguDatabaseFixture fixture)
 
     private static BlogContext CreateContext()
     {
-        var options = new DbContextOptionsBuilder<BlogContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
-            .Options;
-
-        return new BlogContext(options);
+        var optionsBuilder = new DbContextOptionsBuilder<BlogContext>();
+        TestUtilities.XuguDialectTestConfiguration.ConfigureDialect(optionsBuilder);
+        return new BlogContext(optionsBuilder.Options);
     }
 
     private sealed class Blog

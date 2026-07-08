@@ -15,12 +15,13 @@ optionsBuilder.UseXugu(
     "IP=127.0.0.1; DB=SYSTEM; USER=SYSDBA; PWD=SYSDBA; PORT=5138; AUTO_COMMIT=on; CHAR_SET=UTF8");
 ```
 
-With provider-specific options (MySQL compatible mode is enabled on connection open by default):
+With provider-specific options (**native dialect is the default**; enable MySQL compat only when needed):
 
 ```csharp
-optionsBuilder.UseXugu(
-    connectionString,
-    xugu => xugu.SetCompatibleModeOnOpen());
+optionsBuilder.UseXugu(connectionString);
+
+// Optional: MySQL compatible mode for legacy script comparison
+optionsBuilder.UseXugu(connectionString, xugu => xugu.EnableCompatibleModeOnOpen());
 ```
 
 ## Migrations

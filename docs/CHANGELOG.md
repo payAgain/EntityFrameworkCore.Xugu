@@ -7,6 +7,35 @@ Known limitations and deferred features: [LIMITATIONS.md](LIMITATIONS.md).
 
 ---
 
+## [2.1.0] — 2026-07-08 (Phase 11 — Xugu 原生方言)
+
+Phase 11 完成：**Xugu 原生方言优先**、JSON Provider、RETURNING identity 回读、双 CI 矩阵、NuGet 2.1.0 门禁。
+
+### Added
+
+- **JSON 列 Provider** — `XuguJsonTypeMapping`、`HasXuguJsonColumn()`、JSON 路径/函数 LINQ 翻译与实库测试。
+- **Native INSERT … RETURNING** — 原生模式（默认）identity 回读主路径；`LAST_INSERT_ID()` 仅 compat 回退。
+- **连接串校验器** — `XuguConnectionStringOptionsValidator`；`UseXugu` 在配置时校验 `IP`/`DB`/`USER`/`PWD`/`PORT`。
+- **双 CI 矩阵** — `XUGU_DIALECT_MODE=compat`（全量回归）与 `native`（`Category=NativeDialect` 核心子集）。
+- **集成样本** — `test/integration-sample/MinimalApi` Web API CRUD 冒烟。
+- **测试扩展** — `NativeDialectIdentityTests`、`SpecificationPhase2XuguTests` 等。
+
+### Changed
+
+- **默认方言** — 连接打开时 **不再** 默认执行 `SET compatible_mode TO 'MYSQL'`；需显式 `EnableCompatibleModeOnOpen()`。
+- **版本** — `2.0.0` → **`2.1.0`**。
+- **测试套件** — **880+** 列测（compat 矩阵）；native 核心子集独立验收。
+
+### Breaking
+
+- 依赖隐式 MySQL compat 的应用须调用 `options.UseXugu(cs, x => x.EnableCompatibleModeOnOpen())` 或连接串会话级设置。
+
+### Deferred (documented)
+
+- ROW_COUNT / Linux RID / DateOnly SaveChanges / net8.0 TFM — 驱动解锁后 2.1.x / 2.2。
+
+---
+
 ## [2.0.x] — 2026-07-07 / 2026-07-08 (Phase 10 Wave 1/2/3)
 
 Phase 10 **维护与剩余对等**前三个 Wave 落地，稳固 2.0.0 维护线并扩展 Pomelo 测试对等到 **850 列测**（~81% 覆盖）。skip/defer 项见 [LIMITATIONS.md](LIMITATIONS.md)。

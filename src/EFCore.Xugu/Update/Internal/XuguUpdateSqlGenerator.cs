@@ -9,11 +9,22 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Update.Internal;
 
 public class XuguUpdateSqlGenerator : UpdateAndSelectSqlGenerator, IXuguUpdateSqlGenerator
 {
+    private readonly IXuguOptions _options;
+
     public XuguUpdateSqlGenerator(
         UpdateSqlGeneratorDependencies dependencies,
         IXuguOptions options)
         : base(dependencies)
-        => _ = options;
+        => _options = options;
+
+    public override ResultSetMapping AppendInsertOperation(
+        StringBuilder commandStringBuilder,
+        IReadOnlyModificationCommand command,
+        int commandPosition,
+        out bool requiresTransaction)
+        => UsesReturningClause()
+            ? AppendInsertReturningOperation(commandStringBuilder, command, commandPosition, out requiresTransaction)
+            : base.AppendInsertOperation(commandStringBuilder, command, commandPosition, out requiresTransaction);
 
     public virtual ResultSetMapping AppendBulkInsertOperation(
         StringBuilder commandStringBuilder,
@@ -120,6 +131,8 @@ public class XuguUpdateSqlGenerator : UpdateAndSelectSqlGenerator, IXuguUpdateSq
 
         return isIdentityOperation;
     }
+
+    private bool UsesReturningClause() => !_options.SetCompatibleModeOnOpen;
 
     private static (string? tableName, string? schema) GetTableNameAndSchema(
         IColumnModification modification,

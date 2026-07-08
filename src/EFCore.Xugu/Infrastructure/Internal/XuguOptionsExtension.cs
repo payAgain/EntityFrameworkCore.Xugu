@@ -12,7 +12,7 @@ public class XuguOptionsExtension : RelationalOptionsExtension
 
     public XuguOptionsExtension()
     {
-        SetCompatibleModeOnOpen = true;
+        SetCompatibleModeOnOpen = false;
     }
 
     public XuguOptionsExtension(XuguOptionsExtension copyFrom)

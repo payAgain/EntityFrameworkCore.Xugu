@@ -6,7 +6,7 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Pomelo BuiltInDataTypesMySqlTest 高优先级子集：核心 CLR 类型往返。
+/// Pomelo BuiltInDataTypesMySqlTest 高优先级子集：核�?CLR 类型往返�?
 /// </summary>
 [Collection("XuguDatabase")]
 public class BuiltInDataTypesTests(XuguDatabaseFixture fixture)
@@ -74,7 +74,7 @@ public class BuiltInDataTypesTests(XuguDatabaseFixture fixture)
     private static BuiltinTypesContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<BuiltinTypesContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new BuiltinTypesContext(options);

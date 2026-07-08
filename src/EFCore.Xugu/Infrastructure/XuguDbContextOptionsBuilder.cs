@@ -10,11 +10,18 @@ public class XuguDbContextOptionsBuilder
     {
     }
 
+    /// <summary>
+    ///     Enables executing <c>SET compatible_mode TO 'MYSQL'</c> when a connection is opened.
+    ///     Opt-in legacy convenience for MySQL script comparison; not the product default.
+    /// </summary>
+    public virtual XuguDbContextOptionsBuilder EnableCompatibleModeOnOpen(bool enable = true)
+        => WithOption(extension => extension.WithSetCompatibleModeOnOpen(enable));
+
     public virtual XuguDbContextOptionsBuilder SetCompatibleModeOnOpen(bool setCompatibleModeOnOpen = true)
-        => WithOption(extension => extension.WithSetCompatibleModeOnOpen(setCompatibleModeOnOpen));
+        => EnableCompatibleModeOnOpen(setCompatibleModeOnOpen);
 
     /// <summary>
-    ///     Disables executing <c>SET compatible_mode TO 'MYSQL'</c> when a connection is opened.
+    ///     Disables executing <c>SET compatible_mode TO 'MYSQL'</c> when a connection is opened (native dialect default).
     /// </summary>
     public virtual XuguDbContextOptionsBuilder DisableCompatibleModeOnOpen(bool disable = true)
         => WithOption(extension => extension.WithSetCompatibleModeOnOpen(!disable));

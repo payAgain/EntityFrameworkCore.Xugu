@@ -11,7 +11,7 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 9.T19 â€” DesignTimeMySqlTest subset (design-time service registration).
+/// Phase 9.T19 â€?DesignTimeMySqlTest subset (design-time service registration).
 /// </summary>
 public class DesignTimeExtensionTests
 {
@@ -68,7 +68,7 @@ public class DesignTimeExtensionTests
     public void UseXugu_registers_provider_options_extension()
     {
         var options = new DbContextOptionsBuilder()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         Assert.NotNull(options.FindExtension<XuguOptionsExtension>());

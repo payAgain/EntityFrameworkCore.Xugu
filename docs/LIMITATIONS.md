@@ -1,6 +1,15 @@
 # Microsoft.EntityFrameworkCore.Xugu — 已知限制
 
-> Phase 7 Wave 1 初稿；Phase 8 / gap analysis 补全。完整路线图见 `harness/tasks/ROADMAP.md`。
+> Phase 7 Wave 1 初稿；Phase 8 / gap analysis 补全；**2.1.0 frozen（Phase 11）**。完整路线图见 `harness/tasks/ROADMAP.md`。
+
+## 方言模式（2.1.0 frozen）
+
+| 模式 | 默认 | Identity 回读 | 说明 |
+|------|------|---------------|------|
+| **Xugu 原生** | **是** | `INSERT … RETURNING` | 产品默认；见 `insert.md` |
+| **MySQL compat** | 否（opt-in） | `LAST_INSERT_ID()` + SELECT | `EnableCompatibleModeOnOpen()`；遗留对照便利 |
+
+`COMPATIBLE_MODE=MYSQL` **不是**产品目标或迁移承诺。Pomelo 移植测试在 CI 中通过 `XUGU_DIALECT_MODE=compat` 运行。
 
 ## 自动重试（Execution Strategy）
 

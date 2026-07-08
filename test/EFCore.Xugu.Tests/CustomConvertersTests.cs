@@ -6,7 +6,7 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 9.T9 â€” CustomConvertersMySqlTest subset (enum / custom value converters).
+/// Phase 9.T9 â€?CustomConvertersMySqlTest subset (enum / custom value converters).
 /// </summary>
 [Collection("XuguDatabase")]
 public class CustomConvertersTests(XuguDatabaseFixture fixture)
@@ -136,7 +136,7 @@ public class CustomConvertersTests(XuguDatabaseFixture fixture)
     private static CustomConvertersContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<CustomConvertersContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new CustomConvertersContext(options);

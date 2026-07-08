@@ -6,7 +6,7 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Pomelo NorthwindFunctionsQueryMySqlTest 子集：string/math/date 函数组合（仅 Xugu 文档支持的函数）。
+/// Pomelo NorthwindFunctionsQueryMySqlTest 子集：string/math/date 函数组合（仅 Xugu 文档支持的函数）�?
 /// </summary>
 [Collection("XuguDatabase")]
 public class NorthwindFunctionsQueryTests(XuguDatabaseFixture fixture)
@@ -157,7 +157,7 @@ public class NorthwindFunctionsQueryTests(XuguDatabaseFixture fixture)
     private static FunctionsContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<FunctionsContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new FunctionsContext(options);

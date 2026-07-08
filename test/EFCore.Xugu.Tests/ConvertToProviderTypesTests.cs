@@ -6,7 +6,7 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 9.T10 / 10.104 â€” ConvertToProviderTypesMySqlTest partial (HasConversion to provider types).
+/// Phase 9.T10 / 10.104 â€?ConvertToProviderTypesMySqlTest partial (HasConversion to provider types).
 /// </summary>
 [Collection("XuguDatabase")]
 public class ConvertToProviderTypesTests(XuguDatabaseFixture fixture)
@@ -291,7 +291,7 @@ public class ConvertToProviderTypesTests(XuguDatabaseFixture fixture)
     private static ExtendedProviderTypesContext CreateExtendedContext()
     {
         var options = new DbContextOptionsBuilder<ExtendedProviderTypesContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new ExtendedProviderTypesContext(options);
@@ -323,7 +323,7 @@ public class ConvertToProviderTypesTests(XuguDatabaseFixture fixture)
     private static ProviderTypesContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<ProviderTypesContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new ProviderTypesContext(options);

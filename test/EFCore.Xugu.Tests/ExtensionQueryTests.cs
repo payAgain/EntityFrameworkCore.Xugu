@@ -82,7 +82,7 @@ public class ExtensionQueryTests(XuguDatabaseFixture fixture)
     private static ExtensionContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<ExtensionContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new ExtensionContext(options);

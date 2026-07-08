@@ -114,7 +114,7 @@ public class MigrationTests(XuguDatabaseFixture fixture)
     private static MigrationTestContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<MigrationTestContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new MigrationTestContext(options);

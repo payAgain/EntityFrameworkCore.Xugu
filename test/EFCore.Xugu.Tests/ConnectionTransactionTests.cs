@@ -95,11 +95,15 @@ public class ConnectionTransactionTests(XuguDatabaseFixture fixture)
 
     private static ConnectionContext CreateContext(string connectionString)
     {
-        var options = new DbContextOptionsBuilder<ConnectionContext>()
-            .UseXugu(connectionString, XuguServerVersion.Default)
-            .Options;
-
-        return new ConnectionContext(options);
+        var builder = new DbContextOptionsBuilder<ConnectionContext>();
+        builder.UseXugu(connectionString, XuguServerVersion.Default, x =>
+        {
+            if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode)
+            {
+                x.SetCompatibleModeOnOpen();
+            }
+        });
+        return new ConnectionContext(builder.Options);
     }
 
     private sealed class BlogRow

@@ -1,6 +1,6 @@
 # XuguDB EF Core Provider — 快速开始
 
-> 当前版本：**`2.0.0`**（Phase 10 维护线已关闭）  
+> 当前版本：**`2.1.0`**（Phase 11 — Xugu 原生方言发布）  
 > 包名：`Microsoft.EntityFrameworkCore.Xugu`  
 > 目标框架：.NET 9.0
 
@@ -75,21 +75,23 @@ services.AddDbContext<AppDbContext>(options =>
         "IP=127.0.0.1; DB=SYSTEM; USER=SYSDBA; PWD=SYSDBA; PORT=5138; AUTO_COMMIT=on; CHAR_SET=UTF8"));
 ```
 
-### 兼容模式（MySQL 方言）
+### 兼容模式（MySQL 方言，可选）
 
-Provider 在连接打开后默认执行：
+**2.1.0 起默认使用 Xugu 原生方言**（连接打开时 **不** 自动设置 `compatible_mode`）。  
+若需与 MySQL 脚本对照或跑 Pomelo 移植测试，显式启用：
+
+```csharp
+options.UseXugu(connectionString, xugu => xugu.EnableCompatibleModeOnOpen());
+```
+
+等价于会话级：
 
 ```sql
 SET compatible_mode TO 'MYSQL'
 ```
 
-以启用 MySQL 兼容 SQL 方言（自增、`LIMIT` 等）。若需关闭：
-
-```csharp
-options.UseXugu(connectionString, xugu => xugu.DisableCompatibleModeOnOpen());
-```
-
-依据：XuguDB 文档 `reference/system-configuration-parameter/session-parameter/compatible_mode.md`。
+依据：XuguDB 文档 `reference/system-configuration-parameter/session-parameter/compatible_mode.md`。  
+**注意**：compat 为遗留便利，**不是**产品目标；新应用应编写 Xugu 原生 SQL。
 
 ### 设计时工厂（`dotnet ef`）
 

@@ -6,7 +6,7 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Pomelo NorthwindQueryMySqlTest 高优先级子集：Join / GroupBy / 聚合。
+/// Pomelo NorthwindQueryMySqlTest 高优先级子集：Join / GroupBy / 聚合�?
 /// </summary>
 [Collection("XuguDatabase")]
 public class NorthwindStyleQueryTests(XuguDatabaseFixture fixture)
@@ -70,7 +70,7 @@ public class NorthwindStyleQueryTests(XuguDatabaseFixture fixture)
     private static CustomerOrderContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<CustomerOrderContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new CustomerOrderContext(options);

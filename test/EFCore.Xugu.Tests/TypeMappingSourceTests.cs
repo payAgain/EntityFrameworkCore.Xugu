@@ -167,7 +167,7 @@ public class TypeMappingSourceTests
     private static DbContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<DbContext>()
-            .UseXugu("Server=localhost;Port=5138;Database=SYSTEM;User=SYSDBA;Password=SYSDBA", XuguServerVersion.Default)
+            .UseXugu("IP=127.0.0.1; DB=SYSTEM; USER=SYSDBA; PWD=SYSDBA; PORT=5138", XuguServerVersion.Default)
             .Options;
 
         return new DbContext(options);

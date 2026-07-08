@@ -6,7 +6,7 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 9.T8 â€” ExecuteUpdate/Delete extension scenarios.
+/// Phase 9.T8 â€?ExecuteUpdate/Delete extension scenarios.
 /// </summary>
 [Collection("XuguDatabase")]
 public class ExecuteBulkOperationExtensionTests(XuguDatabaseFixture fixture)
@@ -77,7 +77,7 @@ public class ExecuteBulkOperationExtensionTests(XuguDatabaseFixture fixture)
     private static BulkContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<BulkContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new BulkContext(options);

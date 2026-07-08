@@ -151,7 +151,7 @@ public class MigrationsModelDifferTests
     private static DifferTestContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<DifferTestContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new DifferTestContext(options);

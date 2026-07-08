@@ -9,7 +9,7 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 9.T22 / 10.104 â€” SeedingMySqlTest subset (HasData model + manual seed roundtrip).
+/// Phase 9.T22 / 10.104 â€?SeedingMySqlTest subset (HasData model + manual seed roundtrip).
 /// </summary>
 public class SeedingTests
 {
@@ -60,7 +60,7 @@ public class SeedingTests
         var ex = Assert.Throws<InvalidOperationException>(() =>
         {
             var options = new DbContextOptionsBuilder<KeylessSeedingContext>()
-                .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+                .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
                 .Options;
             using var context = new KeylessSeedingContext(options);
             _ = context.Model;

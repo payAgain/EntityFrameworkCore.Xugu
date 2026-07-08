@@ -225,7 +225,7 @@ public class ScaffoldingIntegrationTests(XuguDatabaseFixture fixture)
     private static ScaffoldingTestContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<ScaffoldingTestContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new ScaffoldingTestContext(options);

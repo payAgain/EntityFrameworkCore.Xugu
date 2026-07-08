@@ -20,7 +20,7 @@ public class XuguCompiledQueryCacheKeyGenerator : RelationalCompiledQueryCacheKe
         return new XuguCompiledQueryCacheKey(
             GenerateCacheKeyCore(query, async),
             extension?.ServerVersion,
-            extension?.SetCompatibleModeOnOpen ?? true);
+            extension?.SetCompatibleModeOnOpen ?? false);
     }
 
     private readonly struct XuguCompiledQueryCacheKey(

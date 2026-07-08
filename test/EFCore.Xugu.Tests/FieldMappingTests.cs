@@ -7,7 +7,7 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 9.T17 â€” FieldMappingMySqlTest subset (backing fields / PropertyAccessMode.Field).
+/// Phase 9.T17 â€?FieldMappingMySqlTest subset (backing fields / PropertyAccessMode.Field).
 /// </summary>
 [Collection("XuguDatabase")]
 public class FieldMappingTests(XuguDatabaseFixture fixture)
@@ -107,7 +107,7 @@ public class FieldMappingTests(XuguDatabaseFixture fixture)
     private FieldContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<FieldContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
         return new FieldContext(options);
     }

@@ -43,13 +43,15 @@ jobs:
         run: harness/scripts/verify.ps1
 
       - name: Test (SkippableFact skips when DB unavailable)
+        shell: pwsh
+        env:
+          XUGU_DIALECT_MODE: compat
         run: dotnet test Xugu.EFCore.Xugu.sln -c ${{ env.Configuration }} --no-build --verbosity minimal
 
-  integration:
-    name: Integration (real XuguDB)
+  integration-compat:
+    name: Integration compat (full suite)
     runs-on: windows-latest
     needs: build
-    # Enable via repo variable XUGU_CI_INTEGRATION=true + secret XUGU_CONNECTION_STRING
     if: vars.XUGU_CI_INTEGRATION == 'true'
     steps:
       - uses: actions/checkout@v4
@@ -65,19 +67,50 @@ jobs:
           dotnet restore Xugu.EFCore.Xugu.sln
           dotnet build Xugu.EFCore.Xugu.sln -c ${{ env.Configuration }} --no-restore
 
-      - name: Full gate (676 tests, 0 FAIL)
+      - name: Full compat gate
         shell: pwsh
         env:
           XUGU_CONNECTION_STRING: ${{ secrets.XUGU_CONNECTION_STRING }}
           XUGU_NATIVE_DLL_PATH: ${{ secrets.XUGU_NATIVE_DLL_PATH }}
+          XUGU_DIALECT_MODE: compat
         run: harness/scripts/verify.ps1 -RunTests
 
       - name: List-tests baseline check
         shell: pwsh
+        env:
+          XUGU_DIALECT_MODE: compat
         run: |
           $count = (dotnet test test/EFCore.Xugu.Tests -c Release --no-build --list-tests | Select-String '^\s+[A-Za-z]' | Measure-Object).Count
-          Write-Host "Listed tests: $count (baseline 676)"
-          if ($count -lt 676) { throw "Test count regressed below 676" }
+          Write-Host "Listed tests: $count (baseline >= 880)"
+          if ($count -lt 880) { throw "Test count regressed below 880" }
+
+  integration-native:
+    name: Integration native (core subset)
+    runs-on: windows-latest
+    needs: build
+    if: vars.XUGU_CI_INTEGRATION == 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore & build
+        run: |
+          dotnet restore Xugu.EFCore.Xugu.sln
+          dotnet build Xugu.EFCore.Xugu.sln -c ${{ env.Configuration }} --no-restore
+
+      - name: Native dialect core subset
+        shell: pwsh
+        env:
+          XUGU_CONNECTION_STRING: ${{ secrets.XUGU_CONNECTION_STRING }}
+          XUGU_NATIVE_DLL_PATH: ${{ secrets.XUGU_NATIVE_DLL_PATH }}
+          XUGU_DIALECT_MODE: native
+        run: |
+          dotnet test test/EFCore.Xugu.Tests -c Release --no-build --filter "Category=NativeDialect" --verbosity minimal
 
   pack:
     name: NuGet pack (dry validation)
@@ -93,7 +126,7 @@ jobs:
         with:
           global-json-file: global.json
 
-      - name: Pack 2.0.x
+      - name: Pack 2.1.x
         shell: pwsh
         env:
           XUGU_NATIVE_DLL_PATH: ${{ secrets.XUGU_NATIVE_DLL_PATH }}

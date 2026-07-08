@@ -44,15 +44,14 @@ public sealed class XuguTestStore : IDisposable
         => XuguTestStoreFactory.Instance.FormatTableName(Name, logicalName);
 
     public DbContextOptionsBuilder AddProviderOptions(DbContextOptionsBuilder builder)
-        => builder
-            .UseXugu(ConnectionString, XuguServerVersion.Default)
-            .ReplaceService<IModelCacheKeyFactory, XuguTestStoreModelCacheKeyFactory>();
+    {
+        XuguDialectTestConfiguration.ConfigureDialect(builder);
+        return builder.ReplaceService<IModelCacheKeyFactory, XuguTestStoreModelCacheKeyFactory>();
+    }
 
     public DbContextOptionsBuilder<TContext> AddProviderOptions<TContext>(DbContextOptionsBuilder<TContext> builder)
         where TContext : DbContext
-        => builder
-            .UseXugu(ConnectionString, XuguServerVersion.Default)
-            .ReplaceService<IModelCacheKeyFactory, XuguTestStoreModelCacheKeyFactory>();
+        => (DbContextOptionsBuilder<TContext>)AddProviderOptions((DbContextOptionsBuilder)builder);
 
     public void TrackTable(string tableName)
     {

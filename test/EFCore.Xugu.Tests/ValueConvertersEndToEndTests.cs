@@ -7,7 +7,7 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 9.T3 â€” ValueConvertersEndToEndMySqlTest subset (column mapping + roundtrip).
+/// Phase 9.T3 â€?ValueConvertersEndToEndMySqlTest subset (column mapping + roundtrip).
 /// </summary>
 [Collection("XuguDatabase")]
 public class ValueConvertersEndToEndTests(XuguDatabaseFixture fixture)
@@ -187,7 +187,7 @@ public class ValueConvertersEndToEndTests(XuguDatabaseFixture fixture)
     private static ConvertersContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<ConvertersContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new ConvertersContext(options);

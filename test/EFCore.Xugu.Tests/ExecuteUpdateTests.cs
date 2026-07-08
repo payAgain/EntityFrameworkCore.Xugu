@@ -72,7 +72,7 @@ public class ExecuteUpdateTests(XuguDatabaseFixture fixture)
     private static BlogContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<BlogContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new BlogContext(options);

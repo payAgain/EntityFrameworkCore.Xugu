@@ -16,6 +16,17 @@ public static class XuguTestConnection
     public static string ConnectionString =>
         Environment.GetEnvironmentVariable("XUGU_CONNECTION_STRING") ?? DefaultConnectionString;
 
+    /// <summary>
+    /// Applies provider options for tests (respects <c>XUGU_DIALECT_MODE</c>: compat by default).
+    /// </summary>
+    public static DbContextOptionsBuilder ConfigureProviderOptions(DbContextOptionsBuilder builder)
+        => TestUtilities.XuguDialectTestConfiguration.ConfigureDialect(builder);
+
+    public static DbContextOptionsBuilder<TContext> ConfigureProviderOptions<TContext>(
+        DbContextOptionsBuilder<TContext> builder)
+        where TContext : DbContext
+        => TestUtilities.XuguDialectTestConfiguration.ConfigureDialect(builder);
+
     public static bool IsAvailable()
     {
         lock (AvailabilityLock)

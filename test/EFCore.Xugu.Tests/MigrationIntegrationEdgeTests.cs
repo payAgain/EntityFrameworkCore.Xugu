@@ -192,7 +192,7 @@ public class MigrationIntegrationEdgeTests(XuguDatabaseFixture fixture)
     private static MigrationEdgeContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<MigrationEdgeContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new MigrationEdgeContext(options);

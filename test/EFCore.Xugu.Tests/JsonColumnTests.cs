@@ -11,7 +11,7 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 11.109 â€” Xugu native JSON column type mapping, DDL, and LINQ SQL translation.
+/// Phase 11.109 â€?Xugu native JSON column type mapping, DDL, and LINQ SQL translation.
 /// </summary>
 public class JsonColumnTests
 {
@@ -99,7 +99,7 @@ public class JsonColumnTests
     private static JsonColumnContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<JsonColumnContext>()
-            .UseXugu(XuguTestConnection.DefaultConnectionString)
+            .UseXugu(XuguTestConnection.DefaultConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new JsonColumnContext(options);
@@ -108,7 +108,7 @@ public class JsonColumnTests
     private static JsonFluentContext CreateFluentContext()
     {
         var options = new DbContextOptionsBuilder<JsonFluentContext>()
-            .UseXugu(XuguTestConnection.DefaultConnectionString)
+            .UseXugu(XuguTestConnection.DefaultConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new JsonFluentContext(options);

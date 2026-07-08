@@ -10,7 +10,7 @@ public class CanConnectTests
     public void UseXugu_registers_xugu_options_extension()
     {
         var options = new DbContextOptionsBuilder<CanConnectTestContext>()
-            .UseXugu(XuguTestConnection.DefaultConnectionString)
+            .UseXugu(XuguTestConnection.DefaultConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         var extension = options.FindExtension<XuguOptionsExtension>();
@@ -26,7 +26,7 @@ public class CanConnectTests
         XuguTestConnection.SkipIfUnavailable();
 
         var options = new DbContextOptionsBuilder<CanConnectTestContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         using var context = new CanConnectTestContext(options);

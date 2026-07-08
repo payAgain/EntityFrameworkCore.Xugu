@@ -6,7 +6,7 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Pomelo AdHocQueryFiltersQuery 子集：全局查询过滤器。
+/// Pomelo AdHocQueryFiltersQuery 子集：全局查询过滤器�?
 /// </summary>
 [Collection("XuguDatabase")]
 public class AdHocQueryFilterTests(XuguDatabaseFixture fixture)
@@ -150,7 +150,7 @@ public class AdHocQueryFilterTests(XuguDatabaseFixture fixture)
     private static SoftDeleteContext CreateSoftDeleteContext()
     {
         var options = new DbContextOptionsBuilder<SoftDeleteContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
         return new SoftDeleteContext(options);
     }
@@ -158,7 +158,7 @@ public class AdHocQueryFilterTests(XuguDatabaseFixture fixture)
     private static TenantFilterContext CreateTenantContext(string tenant)
     {
         var options = new DbContextOptionsBuilder<TenantFilterContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
         return new TenantFilterContext(options, tenant);
     }
@@ -166,7 +166,7 @@ public class AdHocQueryFilterTests(XuguDatabaseFixture fixture)
     private static CombinedFilterContext CreateCombinedContext(string tenant)
     {
         var options = new DbContextOptionsBuilder<CombinedFilterContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
         return new CombinedFilterContext(options, tenant);
     }
@@ -174,7 +174,7 @@ public class AdHocQueryFilterTests(XuguDatabaseFixture fixture)
     private static OrderFilterContext CreateOrderFilterContext()
     {
         var options = new DbContextOptionsBuilder<OrderFilterContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
         return new OrderFilterContext(options);
     }

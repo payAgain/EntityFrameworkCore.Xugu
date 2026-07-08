@@ -10,7 +10,7 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 9.T7 â€” MySqlMigrationsSqlGeneratorTest subset (unit SQL assertions).
+/// Phase 9.T7 â€?MySqlMigrationsSqlGeneratorTest subset (unit SQL assertions).
 /// </summary>
 public class MigrationSqlGeneratorExtensionTests
 {
@@ -131,7 +131,7 @@ public class MigrationSqlGeneratorExtensionTests
     private static MigrationGenContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<MigrationGenContext>()
-            .UseXugu(XuguTestConnection.DefaultConnectionString)
+            .UseXugu(XuguTestConnection.DefaultConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new MigrationGenContext(options);

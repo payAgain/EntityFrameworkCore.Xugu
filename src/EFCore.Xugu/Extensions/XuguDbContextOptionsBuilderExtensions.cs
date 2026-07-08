@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
+using Microsoft.EntityFrameworkCore.Xugu.Storage.Internal;
 
 namespace Microsoft.EntityFrameworkCore;
 
@@ -26,6 +27,8 @@ public static class XuguDbContextOptionsBuilderExtensions
         ArgumentNullException.ThrowIfNull(optionsBuilder);
         ArgumentNullException.ThrowIfNull(connectionString);
         ArgumentNullException.ThrowIfNull(serverVersion);
+
+        new XuguConnectionStringOptionsValidator().Validate(connectionString);
 
         var extension = (GetOrCreateExtension(optionsBuilder)
                 .WithServerVersion(serverVersion))

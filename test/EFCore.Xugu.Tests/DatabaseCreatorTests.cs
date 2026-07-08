@@ -15,7 +15,7 @@ public class DatabaseCreatorTests
         XuguTestConnection.SkipIfUnavailable();
 
         var options = new DbContextOptionsBuilder<DatabaseCreatorTestContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         using var context = new DatabaseCreatorTestContext(options);
@@ -28,7 +28,7 @@ public class DatabaseCreatorTests
     public void Create_throws_NotSupportedException()
     {
         var options = new DbContextOptionsBuilder<DatabaseCreatorTestContext>()
-            .UseXugu(XuguTestConnection.DefaultConnectionString)
+            .UseXugu(XuguTestConnection.DefaultConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         using var context = new DatabaseCreatorTestContext(options);

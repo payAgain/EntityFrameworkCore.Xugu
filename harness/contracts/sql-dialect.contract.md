@@ -34,15 +34,15 @@
 
 > 文档：`reference/system-configuration-parameter/session-parameter/compatible_mode.md`
 
-**产品定位**：`COMPATIBLE_MODE=MYSQL` 是 **可选** 会话参数，用于开发对照与遗留脚本调试；**不是** Provider 的产品目标，**不是**「MySQL 语法即 Xugu 语法」的声明。Provider 默认在连接打开后执行 `SET compatible_mode TO 'MYSQL'`（可用 `DisableCompatibleModeOnOpen()` 关闭），但 **生成的 SQL 与验收标准仍以 Xugu 官方文档为准**。
+**产品定位**：`COMPATIBLE_MODE=MYSQL` 是 **可选** 会话参数，用于开发对照与遗留脚本调试；**不是** Provider 的产品目标。**2.1.0 起默认关闭**（连接打开时不执行 `SET compatible_mode`）；显式 `EnableCompatibleModeOnOpen()` 启用。
 
-| COMPATIBLE_MODE | 标识符处理 |
-|-----------------|-----------|
-| NONE / ORACLE | 词法阶段转大写 |
-| **MYSQL** | **不做大小写转换**（开发对照便利；非产品语义） |
-| POSTGRESQL | 词法阶段转小写 |
+| COMPATIBLE_MODE | 标识符处理 | Provider 默认（2.1.0+） |
+|-----------------|-----------|-------------------------|
+| NONE / ORACLE | 词法阶段转大写 | **默认（compat off）** |
+| **MYSQL** | **不做大小写转换** | opt-in via `EnableCompatibleModeOnOpen()` |
+| POSTGRESQL | 词法阶段转小写 | opt-in |
 
-Provider 可在连接建立后设置 MySQL 兼容模式（便于与 MySQL 脚本对照）；**默认产品路径应编写 Xugu 原生 SQL**，不以「零改动 MySQL 迁移」为设计目标。
+Provider 生成的 SQL 与验收标准仍以 **Xugu 官方文档** 为准，不以「零改动 MySQL 迁移」为设计目标。
 
 ## 标识符
 
@@ -208,8 +208,11 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 **Provider 实现要点**：
 
 - 模型约定：映射为 `IDENTITY(1,1)`，不是 `AUTO_INCREMENT`
-- SaveChanges 回读：需查 XuguDB 文档确认等效于 `LAST_INSERT_ID()` 的方式
+- **SaveChanges 回读（2.1.0）**：
+  - **原生模式（默认）**：`INSERT … RETURNING {identity_col}`（`insert.md` §`returning_clause`）
+  - **Compat 模式**：`INSERT` + `SELECT … WHERE id = LAST_INSERT_ID()`（`EnableCompatibleModeOnOpen()`）
 - 与 Pomelo 差异：**必须在 MigrationsSqlGenerator 和 Convention 中单独实现**
+- **ROW_COUNT**：仍 **blocked**（10.105 / E10049）；RETURNING 路径 **不** 依赖 `ROW_COUNT()`
 
 ## 数据类型映射（CLR → XuguDB）
 
@@ -247,7 +250,14 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 - INSERT IGNORE INTO
 - RETURNING 子句（XuguDB 特有，见 insert.md）
 
-**与 Pomelo/MySQL 差异**：XuguDB 有 RETURNING，Provider 可利用此特性做 INSERT 回读（需查文档确认语法）。
+**Provider 实现（2.1.0）**：
+
+| 模式 | INSERT identity 回读 SQL |
+|------|-------------------------|
+| Native（默认） | `INSERT INTO t (…) VALUES (…) RETURNING id` |
+| Compat（opt-in） | `INSERT` + `SELECT … WHERE id = LAST_INSERT_ID()` |
+
+**与 Pomelo/MySQL 差异**：XuguDB 原生 `RETURNING` 为主路径；`LAST_INSERT_ID()` 仅 compat 回退。
 
 ## 函数映射表
 

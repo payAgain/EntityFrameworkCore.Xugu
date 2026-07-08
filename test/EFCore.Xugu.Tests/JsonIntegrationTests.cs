@@ -6,7 +6,7 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 11.109d â€” JSON column CRUD and query against a live XuguDB instance.
+/// Phase 11.109d â€?JSON column CRUD and query against a live XuguDB instance.
 /// </summary>
 [Collection("XuguDatabase")]
 public class JsonIntegrationTests(XuguDatabaseFixture _)
@@ -76,7 +76,7 @@ public class JsonIntegrationTests(XuguDatabaseFixture _)
     private static JsonDocumentContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<JsonDocumentContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new JsonDocumentContext(options);

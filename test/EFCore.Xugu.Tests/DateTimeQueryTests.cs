@@ -96,7 +96,7 @@ public class DateTimeQueryTests(XuguDatabaseFixture fixture)
     private static EventContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<EventContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new EventContext(options);

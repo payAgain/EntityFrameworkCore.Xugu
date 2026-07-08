@@ -6,7 +6,7 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Pomelo DateOnlyQueryMySqlTest 子集：DayNumber、比较、排序。
+/// Pomelo DateOnlyQueryMySqlTest 子集：DayNumber、比较、排序�?
 /// </summary>
 [Collection("XuguDatabase")]
 public class DateOnlyQueryTests(XuguDatabaseFixture fixture)
@@ -86,7 +86,7 @@ public class DateOnlyQueryTests(XuguDatabaseFixture fixture)
     private static DateOnlyContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<DateOnlyContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default)
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
             .Options;
 
         return new DateOnlyContext(options);

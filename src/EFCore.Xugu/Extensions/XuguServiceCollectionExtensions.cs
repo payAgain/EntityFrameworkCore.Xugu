@@ -122,6 +122,8 @@ public static class XuguServiceCollectionExtensions
 
                 .TryAddSingleton<IXuguOptions, XuguOptions>()
 
+                .TryAddSingleton<IXuguConnectionStringOptionsValidator, XuguConnectionStringOptionsValidator>()
+
                 .TryAddScoped<IXuguRelationalConnection, XuguRelationalConnection>()
 
                 .TryAddScoped<IXuguUpdateSqlGenerator, XuguUpdateSqlGenerator>());
