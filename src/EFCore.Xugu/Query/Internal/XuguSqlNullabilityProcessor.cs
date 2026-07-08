@@ -24,6 +24,10 @@ public class XuguSqlNullabilityProcessor : SqlNullabilityProcessor
                 => VisitComplexFunctionArgument(complexFunctionArgument, allowOptimizedExpansion, out nullable),
             XuguColumnAliasReferenceExpression columnAliasReferenceExpression
                 => VisitColumnAliasReference(columnAliasReferenceExpression, allowOptimizedExpansion, out nullable),
+            XuguJsonTraversalExpression jsonTraversalExpression
+                => VisitJsonTraversal(jsonTraversalExpression, allowOptimizedExpansion, out nullable),
+            XuguJsonArrayIndexExpression jsonArrayIndexExpression
+                => VisitJsonArrayIndex(jsonArrayIndexExpression, allowOptimizedExpansion, out nullable),
             _ => base.VisitCustomSqlExpression(sqlExpression, allowOptimizedExpansion, out nullable)
         };
 
@@ -59,5 +63,31 @@ public class XuguSqlNullabilityProcessor : SqlNullabilityProcessor
         }
 
         return complexFunctionArgument.Update(argumentParts, complexFunctionArgument.Delimiter);
+    }
+
+    private SqlExpression VisitJsonTraversal(
+        XuguJsonTraversalExpression jsonTraversalExpression,
+        bool allowOptimizedExpansion,
+        out bool nullable)
+    {
+        var expression = Visit(jsonTraversalExpression.Expression, allowOptimizedExpansion, out nullable);
+
+        var path = new SqlExpression[jsonTraversalExpression.Path.Count];
+        for (var i = 0; i < path.Length; i++)
+        {
+            path[i] = Visit(jsonTraversalExpression.Path[i], allowOptimizedExpansion, out var pathNullable);
+            nullable |= pathNullable;
+        }
+
+        return jsonTraversalExpression.Update(expression, path);
+    }
+
+    private SqlExpression VisitJsonArrayIndex(
+        XuguJsonArrayIndexExpression jsonArrayIndexExpression,
+        bool allowOptimizedExpansion,
+        out bool nullable)
+    {
+        var expression = Visit(jsonArrayIndexExpression.Expression, allowOptimizedExpansion, out nullable);
+        return jsonArrayIndexExpression.Update(expression);
     }
 }

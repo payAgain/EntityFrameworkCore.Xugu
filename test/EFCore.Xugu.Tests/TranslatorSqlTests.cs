@@ -626,6 +626,44 @@ public class TranslatorSqlTests
         AssertSql.Contains("MINUTE(", sql);
     }
 
+    [Fact]
+    public void JsonValue_string_generates_JSON_VALUE()
+    {
+        using var context = CreateContext();
+
+        var sql = context.JsonDocuments
+            .Where(d => EF.Functions.JsonValue<string>(d.Payload, "$.name") == "Alice")
+            .ToQueryString();
+
+        AssertSql.Contains("JSON_VALUE(", sql);
+        AssertSql.Contains("$.name", sql);
+    }
+
+    [Fact]
+    public void JsonValue_int_generates_JSON_VALUE_RETURNING()
+    {
+        using var context = CreateContext();
+
+        var sql = context.JsonDocuments
+            .Select(d => EF.Functions.JsonValue<int>(d.Payload, "$.age"))
+            .ToQueryString();
+
+        AssertSql.Contains("JSON_VALUE(", sql);
+        AssertSql.Contains("RETURNING INTEGER", sql);
+    }
+
+    [Fact]
+    public void JsonType_generates_JSON_TYPE()
+    {
+        using var context = CreateContext();
+
+        var sql = context.JsonDocuments
+            .Select(d => EF.Functions.JsonType(d.Payload))
+            .ToQueryString();
+
+        AssertSql.Contains("JSON_TYPE(", sql);
+    }
+
     private static SqlTestContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<SqlTestContext>()
@@ -650,6 +688,8 @@ public class TranslatorSqlTests
         public DbSet<BinaryEntity> BinaryItems => Set<BinaryEntity>();
 
         public DbSet<FlagEntity> FlagItems => Set<FlagEntity>();
+
+        public DbSet<JsonDocumentEntity> JsonDocuments => Set<JsonDocumentEntity>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -704,6 +744,13 @@ public class TranslatorSqlTests
                 entity.ToTable("EF_TEST_FLAGS");
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.IsActive).HasColumnName("IS_ACTIVE").HasColumnType("BOOLEAN");
+            });
+
+            modelBuilder.Entity<JsonDocumentEntity>(entity =>
+            {
+                entity.ToTable("EF_TEST_JSON_DOCS");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Payload).HasColumnName("PAYLOAD").HasColumnType("JSON");
             });
         }
     }
@@ -761,6 +808,13 @@ public class TranslatorSqlTests
         public int Id { get; set; }
 
         public bool IsActive { get; set; }
+    }
+
+    private sealed class JsonDocumentEntity
+    {
+        public int Id { get; set; }
+
+        public string Payload { get; set; } = "{}";
     }
 }
 

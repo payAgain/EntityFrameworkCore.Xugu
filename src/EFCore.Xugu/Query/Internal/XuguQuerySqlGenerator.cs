@@ -11,6 +11,7 @@ public class XuguQuerySqlGenerator : QuerySqlGenerator
 {
     private const ulong LimitUpperBound = 18446744073709551610;
 
+    private readonly IRelationalTypeMappingSource _typeMappingSource;
     private string? _removeTableAliasOld;
     private string? _removeTableAliasNew;
 
@@ -27,12 +28,14 @@ public class XuguQuerySqlGenerator : QuerySqlGenerator
             ["TIME"] = ["time"],
             ["TIMESTAMP"] = ["timestamp", "datetime with time zone"],
             ["VARCHAR(255)"] = ["varchar", "char", "text", "clob"],
+            ["JSON"] = ["json"],
         };
 
-    public XuguQuerySqlGenerator(QuerySqlGeneratorDependencies dependencies)
+    public XuguQuerySqlGenerator(
+        QuerySqlGeneratorDependencies dependencies,
+        IRelationalTypeMappingSource typeMappingSource)
         : base(dependencies)
-    {
-    }
+        => _typeMappingSource = typeMappingSource;
 
     protected override Expression VisitExtension(Expression extensionExpression)
         => extensionExpression switch
@@ -43,6 +46,8 @@ public class XuguQuerySqlGenerator : QuerySqlGenerator
                 => VisitColumnAliasReference(columnAliasReferenceExpression),
             XuguInlinedParameterExpression inlinedParameterExpression
                 => VisitInlinedParameterExpression(inlinedParameterExpression),
+            XuguJsonTraversalExpression jsonTraversalExpression
+                => VisitJsonPathTraversal(jsonTraversalExpression),
             _ => base.VisitExtension(extensionExpression)
         };
 
@@ -322,5 +327,284 @@ public class XuguQuerySqlGenerator : QuerySqlGenerator
         }
 
         return expression;
+    }
+
+    protected override Expression VisitJsonScalar(JsonScalarExpression jsonScalarExpression)
+    {
+        var path = jsonScalarExpression.Path;
+        if (path.Count == 0)
+        {
+            Visit(jsonScalarExpression.Json);
+            return jsonScalarExpression;
+        }
+
+        if (!JsonPathNeedsConcat(path))
+        {
+            Visit(jsonScalarExpression.Json);
+            return VisitJsonScalarWithPathOperators(jsonScalarExpression);
+        }
+
+        var castStoreType = GetCastStoreType(jsonScalarExpression.TypeMapping);
+
+        if (castStoreType is not null)
+        {
+            Sql.Append("CAST(");
+        }
+
+        Sql.Append("JSON_VALUE(");
+        Visit(jsonScalarExpression.Json);
+        Sql.Append(", ");
+        GenerateJsonPath(path);
+        Sql.Append(")");
+
+        if (castStoreType is not null)
+        {
+            Sql.Append(" AS ");
+            Sql.Append(castStoreType);
+            Sql.Append(")");
+        }
+
+        return jsonScalarExpression;
+    }
+
+    private Expression VisitJsonScalarWithPathOperators(JsonScalarExpression jsonScalarExpression)
+    {
+        var path = jsonScalarExpression.Path;
+        var inJsonPathString = false;
+
+        for (var i = 0; i < path.Count; i++)
+        {
+            var pathSegment = path[i];
+            var isLast = i == path.Count - 1;
+
+            switch (pathSegment)
+            {
+                case { PropertyName: { } propertyName }:
+                    if (inJsonPathString)
+                    {
+                        Sql.Append(".").Append(propertyName);
+                        continue;
+                    }
+
+                    Sql.Append(" ->> ");
+
+                    if (isLast || path[i + 1] is { ArrayIndex: not null and not SqlConstantExpression })
+                    {
+                        Sql.Append("'").Append(propertyName).Append("'");
+                        continue;
+                    }
+
+                    Sql.Append("'$.").Append(propertyName);
+                    inJsonPathString = true;
+                    continue;
+
+                case { ArrayIndex: SqlConstantExpression arrayIndex }:
+                    if (inJsonPathString)
+                    {
+                        Sql.Append("[");
+                        Visit(pathSegment.ArrayIndex);
+                        Sql.Append("]");
+                        continue;
+                    }
+
+                    Sql.Append(" ->> ");
+
+                    if (isLast || path[i + 1] is { ArrayIndex: not null and not SqlConstantExpression })
+                    {
+                        Sql.Append("'$[");
+                        Visit(arrayIndex);
+                        Sql.Append("]'");
+                        continue;
+                    }
+
+                    Sql.Append("'$[");
+                    Visit(arrayIndex);
+                    Sql.Append("]");
+                    inJsonPathString = true;
+                    continue;
+
+                default:
+                    if (inJsonPathString)
+                    {
+                        Sql.Append("'");
+                        inJsonPathString = false;
+                    }
+
+                    Sql.Append(" ->> ");
+
+                    var requiresParentheses = RequiresParentheses(jsonScalarExpression, pathSegment.ArrayIndex!);
+                    if (requiresParentheses)
+                    {
+                        Sql.Append("(");
+                    }
+
+                    Visit(pathSegment.ArrayIndex!);
+
+                    if (requiresParentheses)
+                    {
+                        Sql.Append(")");
+                    }
+
+                    continue;
+            }
+        }
+
+        if (inJsonPathString)
+        {
+            Sql.Append("'");
+        }
+
+        return jsonScalarExpression;
+    }
+
+    protected virtual Expression VisitJsonPathTraversal(XuguJsonTraversalExpression expression)
+    {
+        var isSimplePath = expression.Path.All(
+            location => location is SqlConstantExpression ||
+                        location is XuguJsonArrayIndexExpression arrayIndex &&
+                        arrayIndex.Expression is SqlConstantExpression);
+
+        if (isSimplePath && expression.Path.Count > 0)
+        {
+            Visit(expression.Expression);
+            Sql.Append(expression.ReturnsText ? " ->> " : " -> ");
+            Sql.Append("'$");
+
+            foreach (var location in expression.Path)
+            {
+                if (location is XuguJsonArrayIndexExpression arrayIndexExpression)
+                {
+                    Sql.Append("[");
+                    Visit(arrayIndexExpression.Expression);
+                    Sql.Append("]");
+                }
+                else
+                {
+                    Sql.Append(".");
+                    Visit(location);
+                }
+            }
+
+            Sql.Append("'");
+            return expression;
+        }
+
+        if (expression.ReturnsText)
+        {
+            Sql.Append("JSON_VALUE(");
+        }
+        else
+        {
+            Sql.Append("JSON_EXTRACT(");
+        }
+
+        Visit(expression.Expression);
+        Sql.Append(", ");
+
+        if (!isSimplePath)
+        {
+            Sql.Append("CONCAT(");
+        }
+
+        Sql.Append("'$");
+
+        foreach (var location in expression.Path)
+        {
+            if (location is XuguJsonArrayIndexExpression arrayIndexExpression)
+            {
+                var isConstantExpression = arrayIndexExpression.Expression is SqlConstantExpression;
+
+                Sql.Append("[");
+
+                if (!isConstantExpression)
+                {
+                    Sql.Append("', ");
+                }
+
+                Visit(arrayIndexExpression.Expression);
+
+                if (!isConstantExpression)
+                {
+                    Sql.Append(", '");
+                }
+
+                Sql.Append("]");
+            }
+            else
+            {
+                Sql.Append(".");
+                Visit(location);
+            }
+        }
+
+        Sql.Append("'");
+
+        if (!isSimplePath)
+        {
+            Sql.Append(")");
+        }
+
+        Sql.Append(")");
+
+        return expression;
+    }
+
+    protected virtual bool JsonPathNeedsConcat(IReadOnlyList<PathSegment> path)
+        => path.Any(segment => segment.ArrayIndex is not null && segment.ArrayIndex is not SqlConstantExpression);
+
+    protected virtual void GenerateJsonPath(IReadOnlyList<PathSegment> path, bool? needsConcat = null)
+    {
+        needsConcat ??= JsonPathNeedsConcat(path);
+
+        if (needsConcat.Value)
+        {
+            Sql.Append("CONCAT(");
+        }
+
+        Sql.Append("'$");
+
+        foreach (var pathSegment in path)
+        {
+            switch (pathSegment)
+            {
+                case { PropertyName: string propertyName }:
+                    Sql.Append(".").Append(propertyName);
+                    break;
+
+                case { ArrayIndex: SqlExpression arrayIndex }:
+                    Sql.Append("[");
+
+                    if (arrayIndex is SqlConstantExpression)
+                    {
+                        Visit(arrayIndex);
+                    }
+                    else
+                    {
+                        Sql.Append("', ");
+
+                        Visit(
+                            new SqlUnaryExpression(
+                                ExpressionType.Convert,
+                                arrayIndex,
+                                typeof(string),
+                                _typeMappingSource.GetMapping(typeof(string))));
+
+                        Sql.Append(", '");
+                    }
+
+                    Sql.Append("]");
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(path));
+            }
+        }
+
+        Sql.Append("'");
+
+        if (needsConcat.Value)
+        {
+            Sql.Append(")");
+        }
     }
 }

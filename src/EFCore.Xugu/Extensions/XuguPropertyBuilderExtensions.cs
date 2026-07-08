@@ -24,6 +24,25 @@ public static class XuguPropertyBuilderExtensions
     public static PropertyBuilder<TProperty> UseXuguIdentityColumn<TProperty>(this PropertyBuilder<TProperty> propertyBuilder)
         => (PropertyBuilder<TProperty>)UseXuguIdentityColumn((PropertyBuilder)propertyBuilder);
 
+    /// <summary>
+    ///     Maps the property to XuguDB native <c>JSON</c> store type.
+    ///     Docs: <c>reference/sql/datatype/json.md</c>.
+    /// </summary>
+    public static PropertyBuilder HasXuguJsonColumn(this PropertyBuilder propertyBuilder)
+    {
+        ArgumentNullException.ThrowIfNull(propertyBuilder);
+
+        propertyBuilder.HasColumnType("JSON");
+
+        return propertyBuilder;
+    }
+
+    /// <summary>
+    ///     Maps the property to XuguDB native <c>JSON</c> store type.
+    /// </summary>
+    public static PropertyBuilder<TProperty> HasXuguJsonColumn<TProperty>(this PropertyBuilder<TProperty> propertyBuilder)
+        => (PropertyBuilder<TProperty>)HasXuguJsonColumn((PropertyBuilder)propertyBuilder);
+
     public static IConventionPropertyBuilder HasValueGenerationStrategy(
         this IConventionPropertyBuilder propertyBuilder,
         XuguValueGenerationStrategy? valueGenerationStrategy,

@@ -1,4 +1,3 @@
-using System.Data;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -7,13 +6,12 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Storage.Internal;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 11.109a — Xugu native JSON column type mapping and migration DDL.
+/// Phase 11.109 — Xugu native JSON column type mapping, DDL, and LINQ SQL translation.
 /// </summary>
 public class JsonColumnTests
 {
@@ -50,6 +48,54 @@ public class JsonColumnTests
         Assert.Contains("PAYLOAD", sql, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public void HasXuguJsonColumn_sets_json_store_type()
+    {
+        using var context = CreateFluentContext();
+        var property = context.Model.FindEntityType(typeof(JsonFluentEntity))!
+            .FindProperty(nameof(JsonFluentEntity.Data))!;
+
+        Assert.Equal("JSON", property.GetColumnType());
+    }
+
+    [Fact]
+    public void JsonValue_generates_JSON_VALUE()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Payloads
+            .Where(e => EF.Functions.JsonValue<string>(e.Payload, "$.name") == "Alice")
+            .ToQueryString();
+
+        Assert.Contains("JSON_VALUE(", sql, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("$.name", sql, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void JsonExtract_generates_JSON_EXTRACT()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Payloads
+            .Select(e => EF.Functions.JsonExtract<string>(e.Payload, "$.tags"))
+            .ToQueryString();
+
+        Assert.Contains("JSON_EXTRACT(", sql, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("$.tags", sql, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void JsonContains_generates_JSON_CONTAINS()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Payloads
+            .Where(e => EF.Functions.JsonContains(e.Payload, "{\"active\":true}"))
+            .ToQueryString();
+
+        Assert.Contains("JSON_CONTAINS(", sql, StringComparison.OrdinalIgnoreCase);
+    }
+
     private static JsonColumnContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<JsonColumnContext>()
@@ -57,6 +103,15 @@ public class JsonColumnTests
             .Options;
 
         return new JsonColumnContext(options);
+    }
+
+    private static JsonFluentContext CreateFluentContext()
+    {
+        var options = new DbContextOptionsBuilder<JsonFluentContext>()
+            .UseXugu(XuguTestConnection.DefaultConnectionString)
+            .Options;
+
+        return new JsonFluentContext(options);
     }
 
     private sealed class JsonColumnContext(DbContextOptions options) : DbContext(options)
@@ -80,5 +135,26 @@ public class JsonColumnTests
         public int Id { get; set; }
 
         public string Payload { get; set; } = "{}";
+    }
+
+    private sealed class JsonFluentContext(DbContextOptions options) : DbContext(options)
+    {
+        public DbSet<JsonFluentEntity> Items => Set<JsonFluentEntity>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<JsonFluentEntity>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Data).HasXuguJsonColumn();
+            });
+        }
+    }
+
+    private sealed class JsonFluentEntity
+    {
+        public int Id { get; set; }
+
+        public string Data { get; set; } = "{}";
     }
 }

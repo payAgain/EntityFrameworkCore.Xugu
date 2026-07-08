@@ -122,6 +122,27 @@ public class XuguSqlExpressionFactory : SqlExpressionFactory
         RelationalTypeMapping? typeMapping = null)
         => new XuguColumnAliasReferenceExpression(alias, expression, type, typeMapping);
 
+    public virtual XuguJsonTraversalExpression JsonTraversal(
+        SqlExpression expression,
+        bool returnsText,
+        Type type,
+        RelationalTypeMapping? typeMapping = null)
+        => new XuguJsonTraversalExpression(
+            ApplyDefaultTypeMapping(expression),
+            returnsText,
+            type,
+            typeMapping);
+
+    public virtual XuguJsonArrayIndexExpression JsonArrayIndex(SqlExpression expression)
+        => JsonArrayIndex(expression, typeof(int));
+
+    public virtual XuguJsonArrayIndexExpression JsonArrayIndex(
+        SqlExpression expression,
+        Type type,
+        RelationalTypeMapping? typeMapping = null)
+        => (XuguJsonArrayIndexExpression)ApplyDefaultTypeMapping(
+            new XuguJsonArrayIndexExpression(expression, type, typeMapping))!;
+
     public override SqlExpression ApplyTypeMapping(SqlExpression sqlExpression, RelationalTypeMapping typeMapping)
         => sqlExpression is not { TypeMapping: null }
             ? sqlExpression
