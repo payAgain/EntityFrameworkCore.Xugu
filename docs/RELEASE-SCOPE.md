@@ -2,7 +2,7 @@
 
 > **当前稳定版**：2.0.0（Phase 10 维护线已关闭）  
 > **下一功能版**：**2.1.0**（Phase 11 — Xugu 原生方言与可发布）  
-> **更新**：2026-07-08（Phase 11 Wave 1 冻结）
+> **更新**：2026-07-08（Phase 11 Wave 1 冻结；W3–5 偏差修复轨纳入 Release Gate）
 
 > **⚠️ 产品立场（必读）**  
 > 本 Provider 是 **Xugu 原生方言** 产品：SQL 语法、函数、DDL/DML 以 **XuguDB 官方文档** 为唯一权威。  
@@ -29,7 +29,7 @@
 |------|------|------|
 | **2.0.0** | 稳定维护基线 | Phase 9–10：~861 列测、CRUD/LINQ/迁移/Scaffolding 主路径、Retry、参数内联 |
 | **2.0.1** | 补丁（按需） | 仅严重缺陷修复；**不**承载新功能 |
-| **2.1.0** | 功能发布（Phase 11 目标） | JSON Provider、方言文档冻结、NuGet/集成门禁、连接串校验 |
+| **2.1.0** | 功能发布（Phase 11 目标） | JSON Provider、**偏差修复轨 W3–5**（RETURNING / compat opt-in / 双矩阵）、方言文档冻结、NuGet/集成门禁、连接串校验 |
 | **2.1.x / 2.2** | 后续 | 驱动解锁项（ROW_COUNT、Linux RID、DateOnly SC、net8.0）独立并入 |
 
 ---
@@ -86,7 +86,8 @@ Phase 11 **done** 当且仅当以下全部满足（与 `harness/tasks/phase-11-x
 - [ ] `dotnet build Xugu.EFCore.Xugu.sln -c Release` — PASS
 - [ ] `harness/scripts/verify.ps1` — PASS
 - [ ] `dotnet test Xugu.EFCore.Xugu.sln -c Release` — **0 FAIL**
-- [ ] 列测基线 ≥ **861**（目标 ≥ **880** 若 W5 完成）
+- [ ] 列测基线 ≥ **861**（compat 矩阵；目标 ≥ **880** 若 **W8** 完成）
+- [ ] **native** CI 核心子集 0 FAIL（**W4–W5 偏差修复轨**；见 `NATIVE-DIALECT-ROADMAP.md`）
 
 ### 功能
 

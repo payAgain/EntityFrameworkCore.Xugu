@@ -82,8 +82,8 @@
 | 11.002 | **方言契约审计** | Contract | 11.001 | **done** | `sql-dialect.contract.md`：权威优先级、JSON §11.109 脚手架、COMPATIBLE_MODE 标注 |
 | 11.003 | **XUGU-VS-MYSQL 定位修正** | Docs | 11.001 | **done** | 文首「对照参考·非迁移目标·非虚谷方言定义」；禁止 MySQL 语法首要依据 |
 | 11.109 | **JSON Provider 实现** | Storage + Query | 10.108 | **in_progress**（11.109a done） | 见下表「11.109 子任务」 |
-| 11.301 | **NuGet 打包门禁** | Release | 11.109 | todo | `test-nuget-pack.ps1` 全流程 |
-| 11.302 | **LIMITATIONS 冻结** | Docs | 11.109, 11.301 | todo | 2.1.0 已知限制终稿 |
+| 11.301 | **NuGet 打包门禁** | Release | W5 done（建议） | todo | `test-nuget-pack.ps1` 全流程 |
+| 11.302 | **LIMITATIONS 冻结** | Docs | 11.109, 11.301, W5 | todo | 2.1.0 已知限制终稿 |
 | 11.303 | **版本与 CHANGELOG** | Release | 11.301–11.302 | todo | `Version.props` → 2.1.0 |
 
 ### 11.109 JSON Provider 子任务
@@ -190,7 +190,7 @@ Phase 11 **done** 当且仅当以下全部满足：
 - [ ] `dotnet build Xugu.EFCore.Xugu.sln -c Release` — PASS
 - [ ] `harness/scripts/verify.ps1` — PASS
 - [ ] `dotnet test Xugu.EFCore.Xugu.sln -c Release` — **0 FAIL**
-- [ ] 列测基线 ≥ **861**（目标 ≥ **880** 若 W8 完成）
+- [ ] 列测基线 ≥ **861**（compat 矩阵；目标 ≥ **880** 若 **W8** 完成）
 - [ ] **native** CI 核心子集 0 FAIL（W4–W5 偏差修复轨）
 
 ### 功能

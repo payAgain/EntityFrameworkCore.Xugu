@@ -321,7 +321,8 @@ harness/scripts/publish-nuget.ps1 -Pack
 |------|------|
 | 2026-07-08 | **Phase 11 偏差修复轨规划**：W3–5（11.501–11.705）插入 W2 与发布轨之间；11.M5–M7；`NATIVE-DIALECT-ROADMAP.md`；原 W3–W6 重编号为 W6–W9 |
 | 2026-07-08 | **Phase 11 ROADMAP 完整规划**：W1–W6、11.M1–M4、2.1.0 发布门禁、永久 OUT OF SCOPE、可选驱动轨；BACKLOG/README/AGENTS/ORCHESTRATION 同步；强调 Pomelo=架构参考 only |
-| 2026-07-08 | **Phase 11 Wave 1 done**：11.001–11.003 发布范围/方言契约/XUGU-VS-MYSQL 定位冻结；11.109 JSON 调研脚手架；W2 待开工 |
+| 2026-07-08 | **Phase 11 文档对齐**：BACKLOG / PACKAGING / RELEASE-SCOPE 同步 W3–5 偏差修复轨；原 W3–W6 重编号为 W6–W9 |
+| 2026-07-08 | **Phase 11 Wave 2 进行中**：11.109a `XuguJsonTypeMapping` done；867 列测；11.109b–d todo |
 | 2026-07-08 | **Phase 11 规划**：TASKS.md + RELEASE-SCOPE + PACKAGING-AND-INTEGRATION；`test-nuget-pack.ps1`；integration-sample 骨架；当前 Phase → 11 |
 | 2026-07-08 | **Phase 10 Wave 6 / closure**：10.108 JSON 调研 done（XuguDB 原生 JSON + 28 函数；Provider defer 10.109）；10.M3 NuGet pack + 文档同步；Phase 10 → **done** |
 | 2026-07-08 | **Phase 10 Wave 5**：10.201 `XuguInlinedParameterExpression` + OFFSET 参数内联 done；10.205 Linux RID **blocked**（驱动仓库无 `libxugusql.so`）；10.107 net8.0 assessed defer；**861** 列测 |

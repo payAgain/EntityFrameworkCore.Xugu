@@ -37,7 +37,7 @@ harness/scripts/test-nuget-pack.ps1
 ### 1.3 与 CI 的关系
 
 - **PR 门禁**：`ci-build.ps1`（build + test + verify）— 沿用 Phase 10
-- **发布门禁**：`test-nuget-pack.ps1` — Phase 11 W3 起加入 manual / release job
+- **发布门禁**：`test-nuget-pack.ps1` — Phase 11 **W6** 起加入 manual / release job（建议 W5 偏差修复轨完成后）
 - **实库**：依赖 `XUGU_CONNECTION` / CI secrets（见 `docs/TESTING.md`）
 
 ---
@@ -121,8 +121,8 @@ test/integration-sample/
 ### 3.4 分阶段测试路线图
 
 ```
-Phase 11（2.1.0）: 维持 861+ 列测 0 FAIL + JSON 测试 + NuGet 冒烟
-Phase 11 W5（P2）: FunctionalTests +20~40（非 skip、非 MySQL 专有）
+Phase 11（2.1.0）: compat ≥861 列测 0 FAIL + native CI 核心子集 0 FAIL + JSON 测试 + NuGet 冒烟（W6）
+Phase 11 W8（P2）: FunctionalTests +20~40（非 skip、非 MySQL 专有）
 Phase 12+（可选）: Specification 再扩展 50~100 方法
 长期（非承诺）: 随 EF Core 版本升级跟进 Specification 增量
 ```
