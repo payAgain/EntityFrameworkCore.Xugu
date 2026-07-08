@@ -1,11 +1,23 @@
-# XuguDB EF Core Provider vs MySQL（Pomelo）对比指南
+# XuguDB EF Core Provider 与 MySQL/Pomelo 对照参考
 
-> **版本**：Microsoft.EntityFrameworkCore.Xugu **2.0.0**  
-> **对照基准**：Pomelo.EntityFrameworkCore.MySql **9.0.0**（EF Core 9）  
-> **更新**：2026-07-08（Phase 10 Wave 6 closure）
+## 对照参考 · 非迁移目标 · 非虚谷方言定义
 
-本文面向从 MySQL/Pomelo 迁移或并列评估 XuguDB 的开发者，说明功能对等、SQL 方言差异、测试覆盖与选型建议。技术细节以 [LIMITATIONS.md](LIMITATIONS.md) 与 `harness/contracts/sql-dialect.contract.md` 为准。
+> **版本**：Microsoft.EntityFrameworkCore.Xugu **2.0.0**（Phase 11 目标 **2.1.0**）  
+> **对照基准**：Pomelo.EntityFrameworkCore.MySql **9.0.0**（EF Core 9）— **仅 C# 架构参考**  
+> **更新**：2026-07-08（Phase 11 Wave 1）
 
+> **⚠️ 本文档定位（必读）**
+>
+> | 本文 **是** | 本文 **不是** |
+> |------------|--------------|
+> | 熟悉 MySQL/Pomelo 的开发者的 **技术对照参考** | XuguDB SQL 方言的 **权威定义** |
+> | 能力差异与选型边界的 **说明** | 「零改动迁移到 Xugu」的 **目标清单** |
+> | Pomelo 测试覆盖差距的 **速查** | 应以 MySQL 语法 **首要编写** 应用的指南 |
+>
+> **SQL 方言唯一权威**：`E:\BaiduSyncdisk\docs\content\` → [RELEASE-SCOPE.md](RELEASE-SCOPE.md) → `harness/contracts/sql-dialect.contract.md`  
+> `COMPATIBLE_MODE=MYSQL` 仅为开发/对照便利，**不是**产品承诺。新应用请编写 **Xugu 原生 SQL** 与 EF 映射。
+
+本文面向并列评估 XuguDB 与 MySQL/Pomelo 的开发者，说明能力差异、SQL 方言、测试覆盖与选型建议。技术细节以 [LIMITATIONS.md](LIMITATIONS.md)、[RELEASE-SCOPE.md](RELEASE-SCOPE.md) 与 `harness/contracts/sql-dialect.contract.md` 为准。
 ---
 
 ## 执行摘要
@@ -17,7 +29,7 @@
 | FunctionalTests | **861** 列测（~**82%** Pomelo ~1050） | ~1050 |
 | 核心 CRUD / LINQ / 迁移 | **支持** | 支持 |
 | ExecuteDelete / ExecuteUpdate | **核心路径支持** | 支持 |
-| JSON / Spatial / FULLTEXT | **不实现** | 支持 |
+| JSON / Spatial / FULLTEXT | JSON **2.1.0 目标**（11.109）；Spatial/FULLTEXT **不实现** | 支持 |
 | 自动重试（Retry） | **支持**（10.106 — Message 解析 XGCI 码） | `EnableRetryOnFailure` |
 | 乐观并发异常检测 | **blocked**（10.105 — `ROW_COUNT()` E10049） | `ROW_COUNT()` |
 | 连接串 | Xugu 键值对（`IP=…; DB=…`） | MySQL 标准 URI/键值 |
@@ -34,7 +46,7 @@
 
 | 类别 | MySQL / Pomelo | Xugu 处置 | 原因 / 文档依据 |
 |------|----------------|-----------|----------------|
-| JSON 列 / `Json*` Fluent API | 原生 JSON 类型 + 序列化 | **defer**（10.109） | XuguDB **支持**原生 JSON + 28 函数（`json.md`）；EF Provider **未实现** |
+| JSON 列 / `Json*` Fluent API | 原生 JSON 类型 + 序列化 | **2.1.0 目标**（11.109） | XuguDB **支持**原生 JSON + 28 函数（`json.md`）；EF Provider **2.0.x 未实现** |
 | NetTopologySuite / Spatial | `geometry` / `geography` | **skip** | 无 NTS 集成 |
 | FULLTEXT 索引 / `Match` / `IsMatch` | `MATCH … AGAINST` | **skip** | 文档无对外 FULLTEXT；用 `REGEXP_LIKE` 替代文本匹配 |
 | 列级 / 表级 Collation / `HasCharSet` | Fluent + 迁移 ALTER | **skip** | 连接级 `CHAR_SET`；见 `compatible_mode.md` |
@@ -118,8 +130,8 @@
 |------------------|------|------------|
 | `SpatialMySqlTest` / NTS | 无空间类型生态 | 永久 skip |
 | `MatchQueryMySqlTest` / FULLTEXT | 无 `MATCH AGAINST` | 永久 skip |
-| `BadDataJsonDeserializationMySqlTest` | 无 EF JSON Provider | 永久 skip（10.109 Phase 11） |
-| `MySqlJson*` 全套 | 无 JSON Fluent / TypeMapping | 永久 skip（2.0.x）；DB 层 JSON 已确认 |
+| `BadDataJsonDeserializationMySqlTest` | 无 EF JSON Provider | skip（2.0.x）；**2.1.0 解锁**（11.109d） |
+| `MySqlJson*` 全套 | 无 JSON Fluent / TypeMapping | skip（2.0.x）；**2.1.0 目标**（11.109） |
 | Collation / Charset DataAnnotations | 连接级 `CHAR_SET` | 永久 skip（8.E4/DA2） |
 | Scaffolding Baselines 快照 | 维护成本 | 永久 skip（10.209） |
 | Lazy loading proxies 宿主 | 无 Proxies 测试基础设施 | 永久 skip |
@@ -173,7 +185,7 @@
 | `EnableRetryOnFailure` | ✅ supported | Wave 4 — 10.106 |
 | Monster / Specification 子集 | ✅ supported | Wave 3 — 10.101/10.102 |
 | Collation / `HasCharSet` Fluent | ❌ skip | 连接串 `CHAR_SET` |
-| JSON / Spatial / FULLTEXT | ❌ skip | — |
+| JSON / Spatial / FULLTEXT | JSON ⚠️ **2.1.0**；Spatial/FULLTEXT ❌ skip | — |
 
 图例：**✅ supported** · **⚠️ partial** · **❌ skip/defer/blocked**
 
@@ -250,7 +262,7 @@
 | Pomelo 类别 | 处置 |
 |-------------|------|
 | Spatial / Match | 永久 skip |
-| JSON EF Provider（`Json*MySqlTest`） | defer — 10.109 Phase 11 |
+| JSON EF Provider（`Json*MySqlTest`） | **2.1.0 目标**（11.109） |
 | ROW_COUNT 乐观并发异常 | blocked（10.105） |
 | IntegrationTests（Vegeta/ASP.NET） | defer（10.206） |
 | Linux RID | blocked（10.205） |
@@ -307,7 +319,7 @@ options.UseXugu(connectionString, xugu => xugu.EnableRetryOnFailure(
 |------|------|
 | ROW_COUNT 乐观并发 | 业务层版本检查；等待驱动 `RecordsAffected` 或 XuguDB 等价 API |
 | DateOnly/TimeOnly SaveChanges | 查询可用；写入用 `DateTime` 或 raw SQL |
-| 无 EF JSON Provider | 应用 `VARCHAR`/`CLOB` + 序列化；或 raw SQL `JSON_EXTRACT`/`->`；Phase 11 10.109 |
+| 无 EF JSON Provider（2.0.x） | 应用 `VARCHAR`/`CLOB` + 序列化；或 raw SQL `JSON_EXTRACT`/`->`；**2.1.0** 见 11.109 |
 | 无 FULLTEXT | 应用层搜索；或 `LIKE` / `REGEXP_LIKE` |
 | Identity PK 类型变更 | 手工迁移 |
 | 仅 Windows x64 原生包 | Linux 待 10.205 |
@@ -334,13 +346,24 @@ options.UseXugu(connectionString, xugu => xugu.EnableRetryOnFailure(
 
 ### 从 Pomelo 迁移检查清单
 
+> **注意**：以下清单帮助评估迁移工作量；**不是**承诺逐项可零改动完成。每项须对照 Xugu 官方文档与实库验证。
+
 1. 改写连接串与 `UseXugu`
-2. 确认 `COMPATIBLE_MODE=MYSQL` 与 `CHAR_SET`
+2. 确认 `COMPATIBLE_MODE=MYSQL` 与 `CHAR_SET`（**对照便利**，非产品语义）
 3. `Guid` 存储（二进制 vs 字符串）
 4. `AUTO_INCREMENT` → `IDENTITY`
-5. 移除 `HasCollation` / JSON / Spatial
+5. 移除 `HasCollation` / Spatial；JSON 按 11.109 或 VARCHAR 变通
 6. 评估 Retry（已支持）、ROW_COUNT 并发（仍 blocked）、DateOnly SaveChanges
 7. 集成测试 — [TESTING.md](TESTING.md)
+
+### 请勿以 MySQL 语法作为首要依据
+
+| 场景 | 错误做法 | 正确做法 |
+|------|---------|---------|
+| 新功能 SQL 实现 | 复制 Pomelo 生成的 MySQL SQL | 查 `E:\BaiduSyncdisk\docs\content\` + 更新 contract |
+| 迁移验收 | 「MYSQL 模式下能跑就算完成」 | 以 Xugu 原生文档 + 实库测试为准 |
+| JSON 路径 | 假设与 MySQL JSONPath 100% 一致 | 查 `json.md` §JSONPath（含 `last`、`**` 等 Xugu 扩展） |
+| 函数映射 | 沿用 MySQL 函数名 | 查 `reference/function/` 目录 |
 
 ---
 

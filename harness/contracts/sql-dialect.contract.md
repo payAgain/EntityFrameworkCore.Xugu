@@ -1,8 +1,22 @@
 # XuguDB SQL 方言契约（Living Document）
 
-> **权威来源**：`E:\BaiduSyncdisk\docs\content\`  
+> **SQL 唯一权威**：`E:\BaiduSyncdisk\docs\content\`（XuguDB 官方文档）  
 > 所有 Agent 实现 SQL 相关代码前必须阅读本文档 + 对应官方文档。  
 > 发现新差异时更新本文档并注明文档路径。
+
+> **⚠️ 非权威来源（禁止作为 SQL 依据）**  
+> - Pomelo / MySQL 语法与行为 — **仅** C# 架构、DI、Translator 模式参考  
+> - `COMPATIBLE_MODE=MYSQL` 下的偶然兼容 — **不是**产品语义（见下文）  
+> - 本文「与 MySQL/Pomelo 差异」列 — 帮助对照，**不**定义 Xugu 应实现的 SQL
+
+## 参考源优先级
+
+```
+1. E:\BaiduSyncdisk\docs\content\              ← SQL 方言、类型、函数（唯一权威）
+2. harness/contracts/sql-dialect.contract.md   ← 项目内已登记规则
+3. docs/LIMITATIONS.md / RELEASE-SCOPE.md      ← 产品范围
+4. external/Pomelo.EntityFrameworkCore.MySql     ← C# 架构参考（MySqlJson* 等命名可借鉴，SQL 不可照搬）
+```
 
 ## 数据库信息
 
@@ -13,20 +27,22 @@
 | 连接 API | `UseXugu(connectionString)` |
 | 连接串示例 | `IP=127.0.0.1; DB=SYSTEM; USER=SYSDBA; PWD=SYSDBA; PORT=5138; AUTO_COMMIT=on; CHAR_SET=UTF8` |
 | ADO.NET 驱动 | `XuguClient.dll` + 原生 `xugusql.dll`（见 `external/csharp-driver/`） |
-| 兼容模式 | `SET compatible_mode TO 'MYSQL';`（开发对照 MySQL 时使用） |
+| 兼容模式 | `SET compatible_mode TO 'MYSQL';`（**可选开发/对照便利**；产品 SQL 以 Xugu 原生文档为准，见 `docs/RELEASE-SCOPE.md`） |
 | 文档根目录 | `E:\BaiduSyncdisk\docs\content\` |
 
 ## 兼容模式行为
 
 > 文档：`reference/system-configuration-parameter/session-parameter/compatible_mode.md`
 
+**产品定位**：`COMPATIBLE_MODE=MYSQL` 是 **可选** 会话参数，用于开发对照与遗留脚本调试；**不是** Provider 的产品目标，**不是**「MySQL 语法即 Xugu 语法」的声明。Provider 默认在连接打开后执行 `SET compatible_mode TO 'MYSQL'`（可用 `DisableCompatibleModeOnOpen()` 关闭），但 **生成的 SQL 与验收标准仍以 Xugu 官方文档为准**。
+
 | COMPATIBLE_MODE | 标识符处理 |
 |-----------------|-----------|
 | NONE / ORACLE | 词法阶段转大写 |
-| **MYSQL** | **不做大小写转换** |
+| **MYSQL** | **不做大小写转换**（开发对照便利；非产品语义） |
 | POSTGRESQL | 词法阶段转小写 |
 
-Provider 默认应在连接建立后确保 MySQL 兼容模式（若目标场景为 MySQL 方言开发）。
+Provider 可在连接建立后设置 MySQL 兼容模式（便于与 MySQL 脚本对照）；**默认产品路径应编写 Xugu 原生 SQL**，不以「零改动 MySQL 迁移」为设计目标。
 
 ## 标识符
 
@@ -138,26 +154,41 @@ SELECT TOP {n} * FROM t ORDER BY ...;
 
 **参数内联（10.201）**：`Skip` 生成的 `OFFSET` 子句在参数值已知时内联为字面量（`XuguParameterInliningExpressionVisitor`），对齐 Pomelo `MySqlInlinedParameterExpression` 模式；当前范围限于 `OFFSET`；JSON 路径内联 defer（10.109 Provider 未实现）。
 
-## JSON 列（10.108 调研 — DB 支持 / Provider defer）
+## JSON 列（Phase 11 — 11.109 实现中）
 
-> 文档：`reference/sql/datatype/json.md`；运算符 `reference/sql/operators/json-operators/`；函数 `reference/function/json-functions/`
+> **权威文档**（Wave 2 实现前必读）：  
+> - 类型：`reference/sql/datatype/json.md`  
+> - 运算符：`reference/sql/operators/json-operators/column_path.md`（`->`）、`inline_path.md`（`->>`）  
+> - 函数：`reference/function/json-functions/`（28+ 函数）、`reference/function/aggregate-functions/json_*agg.md`
 
-| 项 | XuguDB | Provider（2.0.x） |
-|----|--------|-------------------|
-| 原生 `JSON` 列类型 | **支持**（LOB，最大 2GB） | **未映射** — defer 10.109 |
-| `->` / `->>` 路径运算符 | **支持**（MySQL 风格 JSONPath，`$` 前缀） | 未翻译 `JsonScalarExpression` |
-| `JSON_EXTRACT` / `JSON_VALUE` 等 | **28+ 函数**（见 `json.md` §预览表） | 未实现 Translator |
-| `JSON_ARRAYAGG` / `JSON_OBJECTAGG` | 支持 | 未实现 |
-| EF `ToJson()` / owned JSON 列 | — | **不实现**（2.0.x）；需 TypeMapping + SqlGenerator + 可选 Microsoft/Newtonsoft 分包 |
-| Pomelo `Json*MySqlTest` | — | **永久 skip**（2.0.x）；解锁需 10.109 + Phase 11 |
+| 项 | XuguDB（官方文档） | Provider 2.0.x | Provider 2.1.0 目标（11.109） |
+|----|-------------------|----------------|------------------------------|
+| 原生 `JSON` 列类型 | **支持**（LOB，最大 2GB；Java `String` 绑定） | **未映射** | `XuguJsonTypeMapping` + DDL `JSON` |
+| `->` / `->>` 路径运算符 | **支持**（JSONPath，`$` 前缀；含 `last`、`**`、`[M to N]` 扩展） | 未翻译 | `JsonScalarExpression` + 路径遍历 |
+| `JSON_EXTRACT` / `JSON_VALUE` 等 | **28+ 函数**（见 `json.md` §预览表） | 未实现 | 按需 Translator（以文档为准） |
+| `JSON_ARRAYAGG` / `JSON_OBJECTAGG` | 支持 | 未实现 | P2 / 按需 |
+| EF `ToJson()` / owned JSON 列 | — | **不实现** | **不承诺** Pomelo 全矩阵；基础 JSON 列映射优先 |
+| Pomelo `Json*MySqlTest` | — | **skip**（2.0.x） | 手写 Xugu 兼容断言子集（11.109d） |
 
-**与 MySQL/Pomelo 差异**：
+**与 MySQL/Pomelo 差异（实现时以 Xugu 文档为准，非 MySQL 字节级兼容）**：
 
-- XuguDB JSON 比较/排序有独立类型优先级规则（`json.md` §JSON比较与排序），非 MySQL 完全一致。
-- 路径语法支持 `last`、`**` 深度查找、`[M to N]` 切片等扩展（见 `json.md` §JSONPath）。
-- ADO.NET 驱动映射为 `java.sql.String`（文档 §特性表）；EF Provider 需确认 `XuguClient` 参数绑定与反序列化策略。
+- XuguDB JSON 比较/排序有独立类型优先级（BOOL > ARRAY > OBJECT > STRING > NUMBER > NULL；见 `json.md` §JSON比较与排序）。
+- 路径语法支持 `last`、`**` 深度查找、`[M to N]` 切片等 Xugu 扩展（见 `json.md` §JSONPath）。
+- `->` 返回 JSON 文本；`->>` 取消 JSON 类型引用（见 `column_path.md` / `inline_path.md`）。
+- ADO.NET 驱动映射为 `java.sql.String`（`json.md` §特性表）；EF 需确认 `XuguClient` 参数绑定与反序列化策略。
 
-**10.109 可行性（Phase 11 候选）**：方言层已具备 JSON 类型与 MySQL 兼容函数；实现成本对标 Pomelo `EFCore.MySql.Json.*`（TypeMapping、Traversal、Poco/DOM Translators、Migrations `JSON` DDL、Scaffolding）。**不在 Phase 10 范围实现**。
+### 11.109 实现脚手架（Wave 2 入口）
+
+| 子任务 | Provider 模块 | Pomelo 架构参考（仅 C#） | Xugu 文档锚点 |
+|--------|--------------|-------------------------|--------------|
+| 11.109a | `Storage/Internal/XuguJsonTypeMapping.cs` | `MySqlJsonTypeMapping` | `json.md` §JSON存储类型、DDL 示例 |
+| 11.109b | Query Translators（`JsonScalarExpression` 遍历） | `MySqlJson*` translators | `json-operators/`、`json-functions/json_extract.md` |
+| 11.109c | Fluent API（若需要） | `MySqlEntityTypeBuilderExtensions` | 以 Xugu 文档为准，非照搬 Pomelo |
+| 11.109d | 实库测试 | `JsonQueryMySqlTest` 可跑子集 | 手写断言；验收 **不** 追求 MySQL JSON 字节级一致 |
+
+**验收原则**：实库 PASS + `verify-module.ps1` Storage/Query PASS；**不以**「与 MySQL JSON 行为完全一致」为门禁。
+
+**2.0.x 状态**：10.108 调研确认 DB 层支持；Provider defer → Phase 11 Wave 2。
 
 ## 自增主键（IDENTITY）
 
@@ -396,4 +427,5 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | 2026-07-08 | Phase 10 Wave 5：OFFSET 参数内联（`XuguInlinedParameterExpression`）；Linux RID blocked 登记 | QueryCore |
 | 2026-07-08 | Phase 10 Wave 4：`XuguRetryingExecutionStrategy` + `XuguTransientExceptionDetector`（10.106 ✅）；10.105 ROW_COUNT **blocked**（实库 E10049：`ROW_COUNT()` 不存在）；860 列测 | Storage / Testing |
 | 2026-07-08 | defer 登记：10.105 ROW_COUNT 乐观并发（E10049 blocked）、10.107 EF 版本矩阵、10.108 JSON 列调研 | Orchestrator |
+| 2026-07-08 | Phase 11 W1：方言权威声明强化；JSON § 扩展为 11.109 实现脚手架；COMPATIBLE_MODE 标注为可选开发便利 | Docs |
 | 2026-07-08 | Phase 10 Wave 6（10.108）：JSON 原生类型 + 函数已确认；Provider defer 10.109 → Phase 11 | Orchestrator |

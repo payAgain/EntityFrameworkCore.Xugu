@@ -2,12 +2,12 @@
 
 > Orchestrator 维护。仓库：`E:\Work\xuguefcore`
 
-## 当前 Phase: **10**（`done` — Wave 6 / closure）
+## 当前 Phase: **11**（`in_progress` — Wave 1 done；Wave 2 JSON Provider 待开工）
 
-**版本**：**`2.0.0`**（Phase 9 测试对等稳定版；Phase 10 维护线已关闭）  
+**版本**：**`2.0.0`** 稳定基线 → Phase 11 目标 **`2.1.0`**  
 **测试**：**861** 列测（~82% Pomelo 覆盖）  
 **源码**：Xugu **133** .cs vs Pomelo **194** .cs（~69%）  
-**Wave 指针**：**Wave 6 done** — 10.108 JSON 调研 ✅ / Phase 10 closure → **Phase 11 规划**
+**Wave 指针**：Phase 10 closure ✅ → **Phase 11 W1 done** → **W2 待开工**（11.109 JSON Provider）
 
 ---
 
@@ -17,10 +17,14 @@
 0.1.0-preview (Phase 0–6 done)
         ↓ Phase 7 ✓
     1.0.0 生产级
-        ↓ Phase 8 (current)
+        ↓ Phase 8 ✓
 Pomelo 9.0.0 功能对等 (~1.1.0)
-        ↓ Phase 9
-Pomelo 9.0.0 测试对等 (~2.0.0)
+        ↓ Phase 9 ✓
+Pomelo 9.0.0 测试对等 (2.0.0)
+        ↓ Phase 10 ✓
+维护 / 剩余对等 (2.0.x)
+        ↓ Phase 11 (current)
+Xugu 原生方言 + 可发布 2.1.0
 ```
 
 ---
@@ -40,6 +44,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 | **8** | **Pomelo 功能对等** | **`done`** | **`1.1.0-preview`** | P1 项完成；120 .cs；defer 见 BACKLOG |
 | **9** | **Pomelo 测试对等** | **`done`** | **`2.0.0`** | FunctionalTests M1–M3 达标；676 列测 |
 | **10** | **维护 / 剩余对等** | **`done`** | 2.0.x | Wave 1–6 done；861 列测；10.M3 发布就绪 |
+| **11** | **Xugu 原生方言 / 2.1.0** | **`in_progress`** | **2.1.0** | JSON Provider、发布门禁、非 MySQL 替代定位 |
 
 ### Phase 任务文档
 
@@ -48,7 +53,8 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 | 7 | `harness/tasks/phase-7-release-1.0.0/TASKS.md` |
 | 8 | `harness/tasks/phase-8-pomelo-feature-parity/TASKS.md` |
 | 9 | `harness/tasks/phase-9-pomelo-test-parity/TASKS.md` |
-| **10** | **`harness/tasks/phase-10-maintenance-and-parity/TASKS.md`** |
+| 10 | `harness/tasks/phase-10-maintenance-and-parity/TASKS.md` |
+| **11** | **`harness/tasks/phase-11-xugu-native-release/TASKS.md`** |
 | 并行指南 | `harness/tasks/PARALLEL-EXECUTION-PLAN.md` |
 
 ---
@@ -114,11 +120,146 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 | **P1** | ROW_COUNT（blocked）、JSON 调研 | 10.105 blocked / 10.108 ✅ |
 | **P2** | 参数内联、Linux RID（blocked）、EF 版本矩阵（assessed） | 10.201 ✅ / 10.205 blocked / 10.107 assessed |
 | **P2 todo** | FOR UPDATE、位运算、RelationalCommand、IntegrationTests | 10.202–10.204 / 10.206 → Phase 11 |
-| **Phase 11 候选** | JSON Provider 实现（10.109） | defer — 方言已确认 |
+**Handoff 入口**：`harness/handoffs/phase10-closure-2026-07-08.done.md`
 
-**用户对比文档**：`docs/XUGU-VS-MYSQL.md`  
-**Triage**：`harness/references/phase-10-test-triage.md`  
-**Handoff 入口**：`harness/tasks/phase-10-maintenance-and-parity/TASKS.md`
+---
+
+## Phase 11 — Xugu 原生方言与 2.1.0 发布（`in_progress` — W1 done）
+
+> **任务详情**：`harness/tasks/phase-11-xugu-native-release/TASKS.md`  
+> **打包与集成门禁**：`harness/tasks/phase-11-xugu-native-release/PACKAGING-AND-INTEGRATION.md`  
+> **前置**：Phase 10 `done`（**2.0.0**；861 列测；~82% Pomelo 测试覆盖）
+
+### Phase 目标
+
+将 Provider 从「Pomelo/MySQL 对等维护线」升级为 **Xugu 原生方言、Pomelo 架构对齐、可公开发布** 的产品形态：
+
+1. **方言立场（反复强调）**：SQL 实现与文档以 **XuguDB 官方文档**（`E:\BaiduSyncdisk\docs\content\`）为唯一权威；`COMPATIBLE_MODE=MYSQL` 仅作开发/对照便利，**不是**产品目标、**不是**迁移承诺、**与虚谷原生能力无关**。
+2. **架构参考（反复强调）**：Pomelo/MySQL 仅用于 **C# 架构与模块划分**（见 `pomelo-file-map.md`）；**禁止**将 MySQL 语法、Pomelo 测试矩阵或「与 MySQL 字节级兼容」作为验收标准。
+3. **可发布 2.1.0**：在永久 OUT OF SCOPE 前提下，完成 P0 能力、冻结 `LIMITATIONS.md`、通过 NuGet 打包与集成冒烟门禁。
+
+### 里程碑
+
+| ID | 名称 | 验收标准 | 关联 Wave |
+|----|------|----------|-----------|
+| **11.M1** | 方言与发布范围冻结 | `docs/RELEASE-SCOPE.md` + `sql-dialect.contract.md` 更新；`XUGU-VS-MYSQL.md` 定位为**对照参考**（非迁移目标） | W1 |
+| **11.M2** | P0 功能完成 | JSON Provider（**11.109**）+ 连接串校验（**11.208**）；实库 **0 FAIL** | W2 + W4 |
+| **11.M3** | 测试与打包门禁 | `PACKAGING-AND-INTEGRATION.md` 全流程 PASS；列测 ≥ **861** 且 0 FAIL（W5 完成时目标 ≥ **880**） | W3 + W5 |
+| **11.M4** | **2.1.0 发布** | `Version.props` → 2.1.0；`publish-nuget.ps1 -Pack`；CHANGELOG / GETTING-STARTED 同步 | W3 |
+
+### Wave 计划（W1–W6）
+
+```
+Wave 1（P0 基础）: 11.001–11.003 — 发布范围 + 方言立场 + 文档修正
+Wave 2（P0 核心）: 11.109a→d — JSON Provider（Xugu 原生 JSON，非 MySQL 兼容验收）
+Wave 3（P0 门禁）: 11.301–11.303 — NuGet + LIMITATIONS + 2.1.0 版本
+Wave 4（P1）    : 11.208 + 11.304 + 11.305 — 校验器 + 集成样本 + 用户文档
+Wave 5（P2）    : 11.401–11.403 — 测试深化（可与 W4 并行，不阻塞 2.1.0）
+Wave 6（可选轨）: 11.105 / 11.205 / 11.207 / 11.107 / 11.202–11.204 — 驱动解锁后独立 minor/patch
+```
+
+| Wave | 任务 ID | 范围 | 进入条件 | 退出条件 | 状态 |
+|------|---------|------|----------|----------|------|
+| **W1** | **11.001–11.003** | 发布范围文档、方言契约审计、`XUGU-VS-MYSQL` 定位修正 | Phase 10 closure | `RELEASE-SCOPE.md` + contract 草案 merged | **done** |
+| **W2** | **11.109**（a→d） | `XuguJsonTypeMapping`、JSON 路径/函数 LINQ、Fluent API、实库测试子集 | W1 done ✅ | JSON 实库 PASS；`verify-module.ps1` Storage/Query PASS | **todo** |
+| **W3** | **11.301–11.303** | NuGet 打包门禁、LIMITATIONS 冻结、版本与 CHANGELOG | W2 done | `test-nuget-pack.ps1` PASS；全量 `dotnet test` 0 FAIL | **todo** |
+| **W4** | **11.208, 11.304, 11.305** | 连接串校验器、集成样本骨架、GETTING-STARTED 2.1.0 | W3 done | 集成样本 README 可跑通（有实库时） | **todo** |
+| **W5** | **11.401–11.403** | FunctionalTests 余量、Specification Phase 2、Monster Fixup 扩展 | W3 done | 列测回归 0 FAIL（增量可选 +20~40） | **todo** |
+| **W6** | **11.105, 11.205, 11.207, 11.107, 11.202–11.204** | ROW_COUNT、Linux RID、DateOnly SC、net8.0 TFM、FOR UPDATE 等 | 驱动/ROI 解锁 | 独立 minor/patch；**不合并进 2.1.0 门禁** | **optional** |
+
+#### 11.109 JSON Provider 子任务（W2 关键路径）
+
+| 子 ID | 内容 | Pomelo 参考（仅架构） | Xugu 文档权威 |
+|-------|------|----------------------|---------------|
+| 11.109a | `XuguJsonTypeMapping` + DDL `JSON` | `MySqlJsonTypeMapping` | `reference/sql/datatype/json.md` |
+| 11.109b | JSON 路径 / 函数 LINQ 翻译 | `MySqlJson*` translators | `reference/sql/operators/json-operators/`、`reference/function/json-functions/` |
+| 11.109c | Fluent API（若需要） | `MySqlEntityTypeBuilderExtensions` | 以 Xugu 文档为准，**非**照搬 Pomelo |
+| 11.109d | 实库测试子集 | `JsonQueryMySqlTest` 可跑子集 | 手写 Xugu 兼容断言；**不**追求 Pomelo 全矩阵 |
+
+### 优先级与任务 ID 总览
+
+| 优先级 | 范围 | 任务 ID |
+|--------|------|---------|
+| **P0** | 发布范围、JSON Provider、NuGet 门禁 | 11.001–11.003、11.109、11.301–11.303 |
+| **P1** | 连接串校验、集成样本、GETTING-STARTED | 11.208、11.304、11.305 |
+| **P2** | FunctionalTests/Specification 扩展 | 11.401–11.403 |
+| **可选轨** | ROW_COUNT、Linux RID、DateOnly SC、net8.0、FOR UPDATE 等 | 11.105、11.205、11.207、11.107、11.202–11.204 |
+
+### 2.1.0 发布门禁（Release Gate）
+
+Phase 11 **done** 当且仅当以下全部满足：
+
+**构建与测试**
+
+- [ ] `dotnet build Xugu.EFCore.Xugu.sln -c Release` — PASS
+- [ ] `harness/scripts/verify.ps1` — PASS
+- [ ] `dotnet test Xugu.EFCore.Xugu.sln -c Release` — **0 FAIL**
+- [ ] 列测基线 ≥ **861**（W5 完成时目标 ≥ **880**）
+
+**功能**
+
+- [ ] JSON 列：迁移 DDL + 基础 LINQ/查询 — 实库验证（Xugu 原生语法，非 MySQL 兼容验收）
+- [ ] 连接串校验器 — 单元测试覆盖非法/合法键值对
+- [ ] 永久 OUT OF SCOPE 项在 `LIMITATIONS.md` 中明确列出且未静默回退
+
+**打包与文档**
+
+- [ ] `harness/scripts/test-nuget-pack.ps1` — 干净项目安装 + 编译 PASS（见 `PACKAGING-AND-INTEGRATION.md`）
+- [ ] `harness/scripts/publish-nuget.ps1 -Pack` — 产出 `Microsoft.EntityFrameworkCore.Xugu.2.1.0.nupkg`
+- [ ] `docs/RELEASE-SCOPE.md`、`docs/GETTING-STARTED.md`、`CHANGELOG.md` — 2.1.0 同步
+- [ ] `docs/XUGU-VS-MYSQL.md` — 已标注「对照参考，非迁移目标」
+- [ ] `LIMITATIONS.md` — **frozen** for 2.1.0
+
+**明确不纳入 2.1.0 门禁**
+
+- ROW_COUNT / Linux RID / DateOnly SaveChanges / net8.0 TFM
+- 全量 `EFCore.Specification.Tests` / Pomelo FunctionalTests 100%
+- NTS / FULLTEXT / Scaffolding Baselines
+- MySQL 即插即用 / Pomelo 迁移承诺
+
+**门禁命令**
+
+```powershell
+dotnet build Xugu.EFCore.Xugu.sln -c Release
+harness/scripts/verify.ps1
+harness/scripts/test-nuget-pack.ps1
+dotnet test Xugu.EFCore.Xugu.sln -c Release
+harness/scripts/publish-nuget.ps1 -Pack
+```
+
+### 永久 OUT OF SCOPE（不进入 Phase 11 实现，亦不作为发布阻塞）
+
+| 类别 | 任务 ID | 原因 | 处置 |
+|------|---------|------|------|
+| `ROW_COUNT()` / 乐观并发自动检测 | 10.105 / 11.105 | 实库 **E10049** | **永久 blocked** 直至 XuguDB/驱动提供等价 API |
+| Linux x64 原生 RID | 10.205 / 11.205 | 驱动无 `libxugusql.so` | **永久 blocked** 直至驱动发布 Linux native |
+| NetTopologySuite / Spatial | 8.* / 9.T | XuguDB 无 NTS 生态 | **永久 skip** |
+| FULLTEXT / `MATCH … AGAINST` | 8.* / 10.210 | 文档无对外 FULLTEXT | **永久 skip**；用 `REGEXP_LIKE` |
+| `CONVERT_TZ` / `ConvertTimeZone` | 8.Q15 | XuguDB 无等价函数 | **永久 skip** |
+| 列/表级 Collation / `HasCharSet` | 8.E4 / 8.DA | 连接级 `CHAR_SET` | **永久 skip** |
+| Scaffolding Baselines 全量快照 | 10.209 | 维护成本过高 | **永久 skip** |
+| Lazy loading proxies 测试宿主 | — | 无测试宿主 | **永久 skip** |
+| `CREATE DATABASE` / `DROP DATABASE`（EF API） | P3-2 | 运维边界 | **永久 defer** |
+| **MySQL 即插即用 / Pomelo 迁移承诺** | — | **非产品目标** | 文档明确排除 |
+| Pomelo IntegrationTests（Vegeta/ASP.NET 性能） | 10.206 | 低 ROI | **永久 defer**（可选样本见 PACKAGING-AND-INTEGRATION） |
+
+### 可选驱动轨道（W6 — 不阻塞 2.1.0）
+
+| ID | 任务 | 依赖 | 说明 |
+|----|------|------|------|
+| 11.105 | ROW_COUNT 乐观并发 | XuguDB 修复 E10049 或驱动 `RecordsAffected` | 驱动解锁后并入 2.1.x / 2.2 |
+| 11.205 | Linux x64 RID 打包 | 驱动发布 `libxugusql.so` | 驱动解锁后并入 2.1.x / 2.2 |
+| 11.207 | DateOnly/TimeOnly SaveChanges | csharp-driver 原生参数 | 驱动解锁后并入 2.1.x / 2.2 |
+| 11.107 | net8.0 多 TFM | EF 双包版本策略 | 2.1.0 可仅 net9.0 |
+| 11.202 | FOR UPDATE / 窗口函数 Tag | EF 无标准 API | 调研后定 |
+| 11.203 | 位运算返回类型修正 | 8.Q11 | 无用户报告可 defer |
+| 11.204 | RelationalCommand/Database 表面 | 8.S8–S10 | P2 API 补齐 |
+
+### 2.0.1 补丁线
+
+仅用于 **2.0.0 严重缺陷**（安全、数据损坏、构建破坏），**不**承载 Phase 11 功能。功能发布统一走 **2.1.0**。
+
+**Handoff 入口**：`harness/handoffs/phase10-closure-2026-07-08.done.md`
 
 ---
 
@@ -164,6 +305,9 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 
 | 日期 | 事件 |
 |------|------|
+| 2026-07-08 | **Phase 11 ROADMAP 完整规划**：W1–W6、11.M1–M4、2.1.0 发布门禁、永久 OUT OF SCOPE、可选驱动轨；BACKLOG/README/AGENTS/ORCHESTRATION 同步；强调 Pomelo=架构参考 only |
+| 2026-07-08 | **Phase 11 Wave 1 done**：11.001–11.003 发布范围/方言契约/XUGU-VS-MYSQL 定位冻结；11.109 JSON 调研脚手架；W2 待开工 |
+| 2026-07-08 | **Phase 11 规划**：TASKS.md + RELEASE-SCOPE + PACKAGING-AND-INTEGRATION；`test-nuget-pack.ps1`；integration-sample 骨架；当前 Phase → 11 |
 | 2026-07-08 | **Phase 10 Wave 6 / closure**：10.108 JSON 调研 done（XuguDB 原生 JSON + 28 函数；Provider defer 10.109）；10.M3 NuGet pack + 文档同步；Phase 10 → **done** |
 | 2026-07-08 | **Phase 10 Wave 5**：10.201 `XuguInlinedParameterExpression` + OFFSET 参数内联 done；10.205 Linux RID **blocked**（驱动仓库无 `libxugusql.so`）；10.107 net8.0 assessed defer；**861** 列测 |
 | 2026-07-08 | **Phase 10 Wave 4**：10.106 `XuguRetryingExecutionStrategy` done；10.105 ROW_COUNT **blocked**（E10049）；**860** 列测 |
@@ -194,7 +338,13 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 ## 关键路径
 
 ```
-docs (XuguDB 方言) → Phase 7 生产级 ✓ → Phase 8 功能对等 → Phase 9 测试对等
+XuguDB 官方文档（SQL 方言唯一权威）
+         ↓
+Phase 7 生产级 ✓ → Phase 8 功能对等 ✓ → Phase 9 测试对等 ✓ → Phase 10 维护 ✓
+         ↓
+Phase 11: Xugu 原生方言 + JSON Provider + 2.1.0 发布门禁
          ↑
-    所有 Agent 必须引用 E:\BaiduSyncdisk\docs\content\
+Pomelo = C# 架构参考 only（非 SQL 方言、非迁移目标）
 ```
+
+所有 Agent 必须引用 `E:\BaiduSyncdisk\docs\content\`；打包门禁见 `harness/tasks/phase-11-xugu-native-release/PACKAGING-AND-INTEGRATION.md`。
