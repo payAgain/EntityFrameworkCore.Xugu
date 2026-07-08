@@ -57,17 +57,39 @@ Phase 10 **维护与剩余对等**前三个 Wave 落地，稳固 2.0.0 维护线
 - **测试套件** — 850 → **860**（+10 Retry 单测）。
 - **Pomelo 可比覆盖率** — ~81% → **~82%**（860 ÷ 1050）。
 
-#### Blocked / Deferred
-
-- **10.105 ROW_COUNT 乐观并发** — 实库验证 XuguDB 返回 **E10049**（`ROW_COUNT()` 函数不存在，MYSQL 兼容模式亦不可用）；维持 `SELECT 1` rows-affected 占位。
-- **10.107 EF 版本矩阵**、**10.108 JSON 列调研**、**10.205 Linux RID** 等待 Wave 5–6。
-
 ### Deferred (documented, Phase 10 Wave 5–6)
 
 - **10.105 ROW_COUNT 乐观并发** — **blocked**（E10049）；需驱动 `RecordsAffected` 或 XuguDB 等价 API。
-- **10.107 EF 版本矩阵** — 评估 net8.0 目标；与 EF Core 9 对齐策略。
-- **10.108 JSON 列调研** — 可选；若 XuguDB 官方支持 JSON 类型再开 10.109 实现。
-- **10.205 Linux x64 RID 打包**、**10.201 参数内联**、**10.202 FOR UPDATE / 窗口函数**、**10.203 位运算返回类型**、**10.204 RelationalCommand 表面** — 见 [LIMITATIONS.md](LIMITATIONS.md)。
+- **10.107 EF 版本矩阵** — **assessed**；2.0.x 维持 net9.0 only。
+- **10.205 Linux x64 RID 打包** — **blocked**（无 `libxugusql.so`）。
+- **10.202 FOR UPDATE / 窗口函数**、**10.203 位运算返回类型**、**10.204 RelationalCommand 表面** — defer Phase 11。
+
+### Wave 5 — 2026-07-08（10.201 done / 10.205 blocked）
+
+#### Added
+
+- **OFFSET 参数内联** — `XuguInlinedParameterExpression` + `XuguParameterInliningExpressionVisitor`；`TranslatorSqlTests.Skip_with_closure_parameter_inlines_offset_literal`。
+
+#### Changed
+
+- **测试套件** — 860 → **861**（+1 参数内联单测）。
+
+#### Blocked
+
+- **10.205 Linux x64 RID** — 驱动仓库无预编译 `libxugusql.so`。
+
+### Wave 6 — 2026-07-08（10.108 JSON 调研 / Phase 10 closure）
+
+#### Research（10.108）
+
+- **XuguDB 原生 JSON** — `reference/sql/datatype/json.md`：LOB 类型、JSONPath、`->`/`->>` 运算符、28+ JSON 函数。
+- **Provider 结论** — EF JSON 列映射 **未实现**；**10.109 defer Phase 11**（对标 Pomelo `EFCore.MySql.Json.*`）。
+- **Pomelo `Json*MySqlTest`** — 永久 skip（2.0.x）。
+
+#### Closure（10.M3）
+
+- **NuGet pack** — `publish-nuget.ps1 -Pack` 验证 **2.0.0**。
+- **文档同步** — `LIMITATIONS.md`、`XUGU-VS-MYSQL.md`、`sql-dialect.contract.md`、ROADMAP/TASKS closure。
 
 ---
 

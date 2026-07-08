@@ -136,7 +136,28 @@ SELECT TOP {n} * FROM t ORDER BY ...;
 | `.Skip(o).Take(n)` | `LIMIT o, n` 或 `LIMIT n OFFSET o` | resultset-restricted.md |
 | `.Take(n)` + OrderBy (SQL Server 模式) | 可选 `TOP n` | resultset-restricted.md §TOP |
 
-**参数内联（10.201）**：`Skip` 生成的 `OFFSET` 子句在参数值已知时内联为字面量（`XuguParameterInliningExpressionVisitor`），对齐 Pomelo `MySqlInlinedParameterExpression` 模式；当前范围限于 `OFFSET`，JSON 路径 defer（无 JSON 支持）。
+**参数内联（10.201）**：`Skip` 生成的 `OFFSET` 子句在参数值已知时内联为字面量（`XuguParameterInliningExpressionVisitor`），对齐 Pomelo `MySqlInlinedParameterExpression` 模式；当前范围限于 `OFFSET`；JSON 路径内联 defer（10.109 Provider 未实现）。
+
+## JSON 列（10.108 调研 — DB 支持 / Provider defer）
+
+> 文档：`reference/sql/datatype/json.md`；运算符 `reference/sql/operators/json-operators/`；函数 `reference/function/json-functions/`
+
+| 项 | XuguDB | Provider（2.0.x） |
+|----|--------|-------------------|
+| 原生 `JSON` 列类型 | **支持**（LOB，最大 2GB） | **未映射** — defer 10.109 |
+| `->` / `->>` 路径运算符 | **支持**（MySQL 风格 JSONPath，`$` 前缀） | 未翻译 `JsonScalarExpression` |
+| `JSON_EXTRACT` / `JSON_VALUE` 等 | **28+ 函数**（见 `json.md` §预览表） | 未实现 Translator |
+| `JSON_ARRAYAGG` / `JSON_OBJECTAGG` | 支持 | 未实现 |
+| EF `ToJson()` / owned JSON 列 | — | **不实现**（2.0.x）；需 TypeMapping + SqlGenerator + 可选 Microsoft/Newtonsoft 分包 |
+| Pomelo `Json*MySqlTest` | — | **永久 skip**（2.0.x）；解锁需 10.109 + Phase 11 |
+
+**与 MySQL/Pomelo 差异**：
+
+- XuguDB JSON 比较/排序有独立类型优先级规则（`json.md` §JSON比较与排序），非 MySQL 完全一致。
+- 路径语法支持 `last`、`**` 深度查找、`[M to N]` 切片等扩展（见 `json.md` §JSONPath）。
+- ADO.NET 驱动映射为 `java.sql.String`（文档 §特性表）；EF Provider 需确认 `XuguClient` 参数绑定与反序列化策略。
+
+**10.109 可行性（Phase 11 候选）**：方言层已具备 JSON 类型与 MySQL 兼容函数；实现成本对标 Pomelo `EFCore.MySql.Json.*`（TypeMapping、Traversal、Poco/DOM Translators、Migrations `JSON` DDL、Scaffolding）。**不在 Phase 10 范围实现**。
 
 ## 自增主键（IDENTITY）
 
@@ -375,3 +396,4 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | 2026-07-08 | Phase 10 Wave 5：OFFSET 参数内联（`XuguInlinedParameterExpression`）；Linux RID blocked 登记 | QueryCore |
 | 2026-07-08 | Phase 10 Wave 4：`XuguRetryingExecutionStrategy` + `XuguTransientExceptionDetector`（10.106 ✅）；10.105 ROW_COUNT **blocked**（实库 E10049：`ROW_COUNT()` 不存在）；860 列测 | Storage / Testing |
 | 2026-07-08 | defer 登记：10.105 ROW_COUNT 乐观并发（E10049 blocked）、10.107 EF 版本矩阵、10.108 JSON 列调研 | Orchestrator |
+| 2026-07-08 | Phase 10 Wave 6（10.108）：JSON 原生类型 + 函数已确认；Provider defer 10.109 → Phase 11 | Orchestrator |

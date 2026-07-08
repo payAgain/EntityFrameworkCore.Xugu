@@ -51,12 +51,12 @@ dotnet build Xugu.EFCore.Xugu.sln
 | 项 | 值 |
 |----|-----|
 | **当前版本** | **`2.0.0`**（`Version.props`） |
-| **当前 Phase** | **10 in_progress** — 维护与剩余对等（`harness/tasks/phase-10-maintenance-and-parity/TASKS.md`） |
-| **测试** | **850/850** PASS（Wave 3 done；Monster + Specification 子集） |
-| **Provider 规模** | **120** .cs（Pomelo 9.0.0：**194** .cs，~62%） |
-| **已完成** | Phase 0–9 done（生产级 1.0.0 → Pomelo 功能对等 1.1.0-preview → 测试对等 2.0.0）；Phase 10 Wave 1/2/3 done |
+| **当前 Phase** | **10 done** — 维护与剩余对等已关闭（`harness/tasks/phase-10-maintenance-and-parity/TASKS.md`） |
+| **测试** | **861** 列测（~82% Pomelo；Wave 5 +1 参数内联） |
+| **Provider 规模** | **133** .cs（Pomelo 9.0.0：**194** .cs，~69%） |
+| **已完成** | Phase 0–10 done；Wave 6 JSON 调研 ✅；blocked：10.105 ROW_COUNT、10.205 Linux RID |
 
-**四级里程碑**：`0.1.0-preview` → **`1.0.0`** ✓ → `1.1.0-preview`（Phase 8 Pomelo 功能对等）✓ → **`2.0.0`** ✓（Phase 9 测试对等）→ Phase 10 维护与剩余对等（in_progress）
+**四级里程碑**：`0.1.0-preview` → **`1.0.0`** ✓ → `1.1.0-preview`（Phase 8 Pomelo 功能对等）✓ → **`2.0.0`** ✓（Phase 9 测试对等）→ **Phase 10 维护线** ✓
 
 Pomelo 参考：**tag 9.0.0**（`harness/references/pomelo-version.md`）。
 

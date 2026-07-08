@@ -111,6 +111,22 @@ CLR `Guid` 默认映射 XuguDB 原生 `GUID`（16 字节），非 MySQL 风格 `
 
 **后续**：驱动 `RecordsAffected` 可靠返回，或 XuguDB 文档确认 MySQL 兼容函数后再解锁 `Stale_concurrency_token_throws_DbUpdateConcurrencyException`。
 
+## JSON 列（EF Core 映射）
+
+**状态：defer — Provider 未实现（10.108 调研完成；10.109 → Phase 11）**
+
+XuguDB **服务端**支持原生 `JSON` 列类型（LOB，最大 2GB）、MySQL 风格 `->` / `->>` 路径运算符及 28+ JSON 函数（`reference/sql/datatype/json.md`、`reference/function/json-functions/`）。
+
+| 能力 | XuguDB | Provider 2.0.x |
+|------|--------|----------------|
+| `CREATE TABLE … col JSON` | **支持** | 未生成 JSON DDL 映射 |
+| LINQ JSON 列查询（`EF.Property` / owned JSON） | SQL 层支持 | **未实现** |
+| Pomelo `MySqlJson*` / `Json*MySqlTest` | — | **skip**（无 Fluent / TypeMapping） |
+
+**变通**：应用层 `VARCHAR`/`CLOB` + 序列化；或 raw SQL 使用 `JSON_EXTRACT` / `->` 运算符。
+
+**解锁 10.109 前置**：`XuguJsonTypeMapping`、`JsonScalarExpression` 翻译、`XuguQuerySqlGenerator` 路径遍历；可选 Microsoft/Newtonsoft 扩展包（对标 Pomelo `EFCore.MySql.Json.*`）。
+
 ## 其他 defer / skip（摘要）
 
 | 能力 | 处置 |
@@ -118,7 +134,8 @@ CLR `Guid` 默认映射 XuguDB 原生 `GUID`（16 字节），非 MySQL 风格 `
 | `CREATE DATABASE` / `DROP DATABASE` | defer — 运维手工建库 |
 | `CONVERT_TZ` / `ConvertTimeZone` DbFunction | skip — 无等价函数 |
 | `FULLTEXT` 索引 / `Match` 查询 | skip |
-| JSON 列 / NetTopologySuite | skip |
-| Native Linux RID 打包 | defer — `8.N1–N3` |
+| NetTopologySuite / Spatial | skip |
+| Native Linux RID 打包 | **blocked** — `10.205`（无 `libxugusql.so`） |
+| 参数内联（OFFSET） | **done** — `10.201` |
 
 详见 `harness/tasks/BACKLOG.md`。

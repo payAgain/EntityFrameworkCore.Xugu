@@ -1,6 +1,6 @@
 # XuguDB EF Core Provider — 快速开始
 
-> 当前版本：**`2.0.0`**（Phase 9 测试对等稳定版）  
+> 当前版本：**`2.0.0`**（Phase 10 维护线已关闭）  
 > 包名：`Microsoft.EntityFrameworkCore.Xugu`  
 > 目标框架：.NET 9.0
 

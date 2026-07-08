@@ -1,7 +1,7 @@
 # Phase 9 测试对等矩阵（9.O1）
 
 > **状态**：`done`（M3 达标）  
-> **更新**：2026-07-08（Wave 5 done）
+> **更新**：2026-07-08（Wave 6 closure）
 > **分母**：Pomelo `EFCore.MySql.FunctionalTests` ~**1050** 测试方法（估算）
 
 ## 里程碑进度
@@ -13,6 +13,16 @@
 | M3（90%） | ≥600 | **861** | **~82%** | **done**（Wave 3–5） |
 
 > **门禁（2026-07-08 Wave 5）**：全量 **861** 列测（Wave 5 +1 参数内联单测）。`verify.ps1` build PASS。
+
+## Wave 6（10.108 JSON 调研）— 无列测增量
+
+| 项 | 结果 |
+|----|------|
+| 10.108 JSON 调研 | **done** — XuguDB 原生 JSON + 28 函数；Provider defer 10.109 |
+| 列测 | **861**（不变） |
+| Phase 10 closure | 10.M3 NuGet pack + 文档同步 |
+
+---
 
 ## Wave 5 增量（10.201 参数内联）— 10.205 blocked
 

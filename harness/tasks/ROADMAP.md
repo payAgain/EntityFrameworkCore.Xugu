@@ -2,12 +2,12 @@
 
 > Orchestrator 维护。仓库：`E:\Work\xuguefcore`
 
-## 当前 Phase: **10**（`in_progress` — Wave 5 done）
+## 当前 Phase: **10**（`done` — Wave 6 / closure）
 
-**版本**：**`2.0.0`**（Phase 9 测试对等稳定版；Phase 10 维护线）  
-**测试**：**861** 列测（Wave 5 +1 参数内联；~82% Pomelo 覆盖）；剩余 ~190 → Phase 10 Wave 6  
+**版本**：**`2.0.0`**（Phase 9 测试对等稳定版；Phase 10 维护线已关闭）  
+**测试**：**861** 列测（~82% Pomelo 覆盖）  
 **源码**：Xugu **133** .cs vs Pomelo **194** .cs（~69%）  
-**Wave 指针**：**Wave 5 done** — 10.201 参数内联 ✅ / 10.205 Linux RID **blocked** → **Wave 6**
+**Wave 指针**：**Wave 6 done** — 10.108 JSON 调研 ✅ / Phase 10 closure → **Phase 11 规划**
 
 ---
 
@@ -39,7 +39,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 | **7** | **1.0.0 生产级发版** | **`done`** | **`1.0.0`** | ExecuteDelete/Update、编译管道、LIMITATIONS、pack |
 | **8** | **Pomelo 功能对等** | **`done`** | **`1.1.0-preview`** | P1 项完成；120 .cs；defer 见 BACKLOG |
 | **9** | **Pomelo 测试对等** | **`done`** | **`2.0.0`** | FunctionalTests M1–M3 达标；676 列测 |
-| **10** | **维护 / 剩余对等** | `in_progress` | 2.0.x | Wave 1–5 done；861 列测；10.201 参数内联 done |
+| **10** | **维护 / 剩余对等** | **`done`** | 2.0.x | Wave 1–6 done；861 列测；10.M3 发布就绪 |
 
 ### Phase 任务文档
 
@@ -94,9 +94,9 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 
 **Handoff**：`harness/handoffs/phase9-m3-test-parity-2026-07-07.md`
 
-## Phase 10 摘要（in_progress — Wave 1/2/3 done）
+## Phase 10 摘要（done — Wave 6 closure）
 
-**目标**：2.0.x 维护线 + 剩余 ~200 Pomelo 测试 + defer 项与发布
+**目标**：2.0.x 维护线 + 剩余 Pomelo 测试 + defer 项与发布 — **已关闭**
 
 | Wave | 范围 | 状态 |
 |------|------|------|
@@ -105,14 +105,16 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 | **Wave 3** | 10.101 Monster + 10.102 Specification | **done**（850 列测） |
 | Wave 4 | 10.105 ROW_COUNT + 10.106 Retry | **partial**（10.106 done；10.105 E10049 blocked） |
 | **Wave 5** | 10.205 Linux RID + 10.201 参数内联 | **done**（10.201 ✅；10.205 blocked；10.107 assessed） |
-| Wave 6 | 10.108 JSON 调研（可选） | todo |
+| **Wave 6** | 10.108 JSON 调研 + 10.M3 发布就绪 | **done**（10.109 defer Phase 11） |
 
 | 优先级 | 范围 | 任务 ID |
 |--------|------|---------|
 | **P0** | CI 实库矩阵、NuGet 发布、用户文档、测试 triage | 10.001–10.005 ✅ |
 | **P1** | Monster/Specification 子集、Query +119、9.T defer | 10.101–10.104 ✅ |
-| **P1 todo** | ROW_COUNT（blocked）、EF 版本矩阵、JSON 调研 | 10.105–10.108 |
-| **P2** | 8.Q11/Q12/Q14、Linux RID、9.IT2、DateOnly SaveChanges | 10.201–10.208 |
+| **P1** | ROW_COUNT（blocked）、JSON 调研 | 10.105 blocked / 10.108 ✅ |
+| **P2** | 参数内联、Linux RID（blocked）、EF 版本矩阵（assessed） | 10.201 ✅ / 10.205 blocked / 10.107 assessed |
+| **P2 todo** | FOR UPDATE、位运算、RelationalCommand、IntegrationTests | 10.202–10.204 / 10.206 → Phase 11 |
+| **Phase 11 候选** | JSON Provider 实现（10.109） | defer — 方言已确认 |
 
 **用户对比文档**：`docs/XUGU-VS-MYSQL.md`  
 **Triage**：`harness/references/phase-10-test-triage.md`  
@@ -151,7 +153,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 | `XuguRetryingExecutionStrategy` | 7 defer | **done**（10.106）；Message 解析 XGCI 码 |
 | CREATE/DROP DATABASE | — | defer，运维手工建库 |
 | Collation / FULLTEXT / CONVERT_TZ | — | skip |
-| JSON / NTS 扩展 | 8 | skip |
+| JSON / NTS 扩展 | 8 | skip（DB 有 JSON；Provider defer 10.109） |
 | Pomelo Scaffolding Baselines | 9 | skip |
 
 详见 `harness/tasks/BACKLOG.md`
@@ -162,6 +164,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 
 | 日期 | 事件 |
 |------|------|
+| 2026-07-08 | **Phase 10 Wave 6 / closure**：10.108 JSON 调研 done（XuguDB 原生 JSON + 28 函数；Provider defer 10.109）；10.M3 NuGet pack + 文档同步；Phase 10 → **done** |
 | 2026-07-08 | **Phase 10 Wave 5**：10.201 `XuguInlinedParameterExpression` + OFFSET 参数内联 done；10.205 Linux RID **blocked**（驱动仓库无 `libxugusql.so`）；10.107 net8.0 assessed defer；**861** 列测 |
 | 2026-07-08 | **Phase 10 Wave 4**：10.106 `XuguRetryingExecutionStrategy` done；10.105 ROW_COUNT **blocked**（E10049）；**860** 列测 |
 | 2026-07-08 | **Phase 10 Wave 3**：10.101 Monster Fixup 子集 + 10.102 Specification Tests 子集；**850** 列测；10.M4 ✅ |

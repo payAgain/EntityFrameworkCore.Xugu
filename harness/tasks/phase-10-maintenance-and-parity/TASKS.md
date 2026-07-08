@@ -1,6 +1,6 @@
 # Phase 10 — 维护与剩余对等
 
-> **状态**：`in_progress`（Wave 5 done — 10.201 ✅ / 10.205 blocked / 10.107 assessed）  
+> **状态**：`done`（Wave 6 done — 10.108 ✅ / 10.M3 ✅）  
 > **前置**：Phase 9 `done`（676 列测，~64% Pomelo，**2.0.0**）  
 > **目标**：巩固 2.0.0 维护线、补齐高价值剩余测试、落地 defer 项与发布/CI
 
@@ -10,7 +10,7 @@
 |----|------|------|
 | 10.M1 | 维护基线稳定 | 676 列测实库 **0 FAIL**；CI build 绿 |
 | 10.M2 | 测试 +80~120 | 列测 ≥ **750**（~71% Pomelo）— **795 done** |
-| 10.M3 | 发布就绪 | NuGet 可发布；用户文档与 XUGU-VS-MYSQL 同步 |
+| 10.M3 | 发布就绪 | NuGet 可发布；用户文档与 XUGU-VS-MYSQL 同步 | **done** |
 | 10.M4 | 可选深度对等 | 列测 ≥ **850** 或 Monster/Spec 子集 done — **850 done（Wave 3）** |
 
 ---
@@ -38,7 +38,7 @@
 | 10.105 | **ROW_COUNT 乐观并发** | `OptimisticConcurrencyMySqlTest` | 驱动/方言 | **blocked** | XuguDB E10049：`ROW_COUNT()` 不可用；维持 `SELECT 1` |
 | 10.106 | **Retry Strategy 实装** | `MySqlRetryingExecutionStrategy` | 驱动 XGCI | **done** | `XuguRetryingExecutionStrategy` + Message 解析瞬态码 |
 | 10.107 | **EF 版本矩阵** | Pomelo 多 TFM | — | **assessed** | net8.0 多目标需双 EF 包版本；2.0.x 维持 net9.0 only，defer 至 2.1+ |
-| 10.108 | **JSON 列调研** | `Json*MySqlTest` | XuguDB 文档 | todo | **可选** — 若官方支持 JSON 类型再开 10.109 实现 |
+| 10.108 | **JSON 列调研** | `Json*MySqlTest` | XuguDB 文档 | **done** | XuguDB **支持**原生 JSON；Provider **defer** 10.109 → Phase 11 |
 
 ### 10.104 defer 子项
 
@@ -90,8 +90,18 @@ Wave 2（P1）: 10.103 + 10.104 — Query defer 补全  ✅ done（795 列测）
 Wave 3（P1）: 10.101 + 10.102 — Monster/Specification  ✅ done（850 列测）
 Wave 4（P1）: 10.105 + 10.106 — 驱动依赖项  ⚠️ 10.106 done / 10.105 blocked（E10049）
 Wave 5（P2）: 10.205 + 10.201 — 平台/性能  ✅ 10.201 done / 10.205 blocked / 10.107 assessed
-Wave 6（可选）: 10.108 JSON — 文档确认后
+Wave 6（可选）: 10.108 JSON — 文档确认后  ✅ done（10.109 defer Phase 11）
 ```
+
+### 10.108 调研结论（Wave 6）
+
+| 项 | 结论 |
+|----|------|
+| XuguDB `JSON` 列类型 | **支持** — `reference/sql/datatype/json.md` |
+| `->` / `->>` 运算符 | **支持** — `reference/sql/operators/json-operators/` |
+| JSON 函数 | **28+** — `reference/function/json-functions/` |
+| EF Provider 映射 | **未实现** — 对标 Pomelo `EFCore.MySql.Json.*`；**10.109 defer Phase 11** |
+| Pomelo `Json*MySqlTest` | **永久 skip**（2.0.x） |
 
 ---
 

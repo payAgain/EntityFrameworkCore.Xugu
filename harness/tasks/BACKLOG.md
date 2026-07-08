@@ -1,7 +1,7 @@
 # XuguDB EF Core Provider — Backlog
 
 > Orchestrator 维护。已映射至 Phase 7/8/9/10。详见 `harness/tasks/ROADMAP.md`。  
-> **最后同步**：2026-07-08（Phase 10 Wave 4 部分 — 860 列测；10.106 done）
+> **最后同步**：2026-07-08（Phase 10 closure — 861 列测；Wave 6 done）
 
 ## Phase 映射总览
 
@@ -38,7 +38,8 @@
 | ROW_COUNT 乐观并发 | Phase 10 | 10.105 | **blocked**（E10049） |
 | Retry Strategy 实装 | Phase 10 | 10.106 | **done** |
 | EF 版本矩阵 | Phase 10 | 10.107 | todo |
-| JSON 列调研 | Phase 10 | 10.108 | todo（可选） |
+| JSON 列调研 | Phase 10 | 10.108 | **done**（DB 支持；Provider defer 10.109） |
+| JSON Provider 实现 | Phase 11 | 10.109 | **defer** |
 
 ---
 
