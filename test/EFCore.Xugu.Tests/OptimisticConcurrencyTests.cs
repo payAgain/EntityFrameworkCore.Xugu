@@ -9,8 +9,8 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
 /// Phase 9.T11 — OptimisticConcurrencyMySqlTest subset.
-/// DbUpdateConcurrencyException integration tests deferred: Xugu driver batch uses SELECT 1 for rows-affected
-/// (see XuguUpdateSqlGenerator) — ROW_COUNT() breaks existing CRUD tests.
+/// DbUpdateConcurrencyException integration test deferred: XuguDB returns E10049 for ROW_COUNT()
+/// even in MYSQL compatible_mode (verified Phase 10 Wave 4).
 /// </summary>
 [Collection("XuguOptimisticConcurrency")]
 public class OptimisticConcurrencyTests(OptimisticConcurrencyFixture fixture)
@@ -23,7 +23,7 @@ public class OptimisticConcurrencyTests(OptimisticConcurrencyFixture fixture)
         Assert.True(property.IsConcurrencyToken);
     }
 
-    [SkippableFact(Skip = "Defer: rows-affected batch uses SELECT 1; concurrency detection needs ROW_COUNT() support in Xugu driver")]
+    [SkippableFact(Skip = "Defer: XuguDB E10049 — ROW_COUNT() not available in MYSQL compatible_mode")]
     public async Task Stale_concurrency_token_throws_DbUpdateConcurrencyException()
     {
         XuguTestConnection.SkipIfUnavailable();

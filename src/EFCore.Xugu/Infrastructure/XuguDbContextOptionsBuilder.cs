@@ -1,9 +1,7 @@
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
-using Microsoft.EntityFrameworkCore.Xugu.Properties;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
-
 public class XuguDbContextOptionsBuilder
     : RelationalDbContextOptionsBuilder<XuguDbContextOptionsBuilder, XuguOptionsExtension>
 {
@@ -29,26 +27,31 @@ public class XuguDbContextOptionsBuilder
         => ExecutionStrategy(c => new Storage.Internal.XuguExecutionStrategy(c));
 
     /// <summary>
-    ///     Entry point aligned with Pomelo <c>EnableRetryOnFailure</c>.
-    ///     Automatic retry is not yet implemented for XuguDB; see <c>docs/LIMITATIONS.md</c>.
+    ///     Configures the context to retry failed database operations using
+    ///     <see cref="Storage.Internal.XuguRetryingExecutionStrategy" />.
+    ///     Transient XGCI codes are detected from exception messages; see <c>docs/LIMITATIONS.md</c>.
     /// </summary>
     public virtual XuguDbContextOptionsBuilder EnableRetryOnFailure()
-        => throw new NotSupportedException(XuguStrings.RetryingExecutionStrategyNotSupported);
+        => ExecutionStrategy(c => new Storage.Internal.XuguRetryingExecutionStrategy(c));
 
     /// <summary>
-    ///     Entry point aligned with Pomelo <c>EnableRetryOnFailure</c>.
-    ///     Automatic retry is not yet implemented for XuguDB; see <c>docs/LIMITATIONS.md</c>.
+    ///     Configures the context to retry failed database operations using
+    ///     <see cref="Storage.Internal.XuguRetryingExecutionStrategy" />.
     /// </summary>
     public virtual XuguDbContextOptionsBuilder EnableRetryOnFailure(int maxRetryCount)
-        => throw new NotSupportedException(XuguStrings.RetryingExecutionStrategyNotSupported);
+        => ExecutionStrategy(c => new Storage.Internal.XuguRetryingExecutionStrategy(c, maxRetryCount));
 
     /// <summary>
-    ///     Entry point aligned with Pomelo <c>EnableRetryOnFailure</c>.
-    ///     Automatic retry is not yet implemented for XuguDB; see <c>docs/LIMITATIONS.md</c>.
+    ///     Configures the context to retry failed database operations using
+    ///     <see cref="Storage.Internal.XuguRetryingExecutionStrategy" />.
     /// </summary>
+    /// <param name="errorCodesToAdd">
+    ///     Ignored for XuguDB — transient detection uses XGCI message codes.
+    /// </param>
     public virtual XuguDbContextOptionsBuilder EnableRetryOnFailure(
         int maxRetryCount,
         TimeSpan maxRetryDelay,
         ICollection<int>? errorCodesToAdd = null)
-        => throw new NotSupportedException(XuguStrings.RetryingExecutionStrategyNotSupported);
+        => ExecutionStrategy(c => new Storage.Internal.XuguRetryingExecutionStrategy(
+            c, maxRetryCount, maxRetryDelay, errorCodesToAdd));
 }

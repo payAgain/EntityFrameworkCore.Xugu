@@ -38,5 +38,22 @@ public class ExecutionStrategyTests
         Assert.IsType<XuguExecutionStrategy>(strategy);
     }
 
+    [Fact]
+    public void EnableRetryOnFailure_configures_retrying_strategy()
+    {
+        var options = new DbContextOptionsBuilder<StrategyContext>()
+            .UseXugu(
+                "IP=127.0.0.1;DB=SYSTEM;USER=SYSDBA;PWD=SYSDBA;PORT=5138",
+                XuguServerVersion.Default,
+                xugu => xugu.EnableRetryOnFailure())
+            .Options;
+
+        using var context = new StrategyContext(options);
+        var strategy = context.Database.CreateExecutionStrategy();
+
+        Assert.IsType<XuguRetryingExecutionStrategy>(strategy);
+        Assert.True(strategy.RetriesOnFailure);
+    }
+
     private sealed class StrategyContext(DbContextOptions<StrategyContext> options) : DbContext(options);
 }

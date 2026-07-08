@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Metadata.Internal;
 using Xunit;
-
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 public class FluentApiExtensionTests
@@ -80,16 +79,6 @@ public class FluentApiExtensionTests
             .Metadata;
 
         Assert.Equal("Blog table", entityType.GetComment());
-    }
-
-    [Fact]
-    public void EnableRetryOnFailure_throws_not_supported()
-    {
-        var optionsBuilder = new DbContextOptionsBuilder();
-        var xuguBuilder = new XuguDbContextOptionsBuilder(optionsBuilder);
-
-        var exception = Assert.Throws<NotSupportedException>(() => xuguBuilder.EnableRetryOnFailure());
-        Assert.Contains("LIMITATIONS", exception.Message);
     }
 
     private sealed class Blog
