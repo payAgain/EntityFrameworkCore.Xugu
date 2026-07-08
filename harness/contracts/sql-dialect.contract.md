@@ -152,23 +152,24 @@ SELECT TOP {n} * FROM t ORDER BY ...;
 | `.Skip(o).Take(n)` | `LIMIT o, n` 或 `LIMIT n OFFSET o` | resultset-restricted.md |
 | `.Take(n)` + OrderBy (SQL Server 模式) | 可选 `TOP n` | resultset-restricted.md §TOP |
 
-**参数内联（10.201）**：`Skip` 生成的 `OFFSET` 子句在参数值已知时内联为字面量（`XuguParameterInliningExpressionVisitor`），对齐 Pomelo `MySqlInlinedParameterExpression` 模式；当前范围限于 `OFFSET`；JSON 路径内联 defer（10.109 Provider 未实现）。
+**参数内联（10.201）**：`Skip` 生成的 `OFFSET` 子句在参数值已知时内联为字面量（`XuguParameterInliningExpressionVisitor`）；JSON 动态路径使用 `CONCAT`/`JSON_EXTRACT`（11.109b）。
 
-## JSON 列（Phase 11 — 11.109 实现中）
+## JSON 列（Phase 11 — 11.109 done）
 
-> **权威文档**（Wave 2 实现前必读）：  
+> **权威文档**：  
 > - 类型：`reference/sql/datatype/json.md`  
 > - 运算符：`reference/sql/operators/json-operators/column_path.md`（`->`）、`inline_path.md`（`->>`）  
-> - 函数：`reference/function/json-functions/`（28+ 函数）、`reference/function/aggregate-functions/json_*agg.md`
+> - 函数：`reference/function/json-functions/`（28+ 函数）
 
 | 项 | XuguDB（官方文档） | Provider 2.0.x | Provider 2.1.0 目标（11.109） |
 |----|-------------------|----------------|------------------------------|
 | 原生 `JSON` 列类型 | **支持**（LOB，最大 2GB；Java `String` 绑定） | **未映射** | **`XuguJsonTypeMapping` + DDL `JSON`（11.109a done）** |
-| `->` / `->>` 路径运算符 | **支持**（JSONPath，`$` 前缀；含 `last`、`**`、`[M to N]` 扩展） | 未翻译 | `JsonScalarExpression` + 路径遍历 |
-| `JSON_EXTRACT` / `JSON_VALUE` 等 | **28+ 函数**（见 `json.md` §预览表） | 未实现 | 按需 Translator（以文档为准） |
+| `->` / `->>` 路径运算符 | **支持**（JSONPath，`$` 前缀；含 `last`、`**`、`[M to N]` 扩展） | 未翻译 | **`XuguJsonTraversalExpression` + `VisitJsonScalar`（11.109b done）** |
+| `JSON_EXTRACT` / `JSON_VALUE` 等 | **28+ 函数**（见 `json.md` §预览表） | 未实现 | **`XuguJsonDbFunctionsExtensions` + Translator（11.109b done）** |
 | `JSON_ARRAYAGG` / `JSON_OBJECTAGG` | 支持 | 未实现 | P2 / 按需 |
 | EF `ToJson()` / owned JSON 列 | — | **不实现** | **不承诺** Pomelo 全矩阵；基础 JSON 列映射优先 |
-| Pomelo `Json*MySqlTest` | — | **skip**（2.0.x） | 手写 Xugu 兼容断言子集（11.109d） |
+| Pomelo `Json*MySqlTest` | — | **skip**（2.0.x） | 手写 Xugu 子集（11.109d done） |
+| Fluent `HasXuguJsonColumn()` | — | — | **done**（11.109c） |
 
 **与 MySQL/Pomelo 差异（实现时以 Xugu 文档为准，非 MySQL 字节级兼容）**：
 
@@ -182,13 +183,11 @@ SELECT TOP {n} * FROM t ORDER BY ...;
 | 子任务 | Provider 模块 | Pomelo 架构参考（仅 C#） | Xugu 文档锚点 |
 |--------|--------------|-------------------------|--------------|
 | 11.109a | `Storage/Internal/XuguJsonTypeMapping.cs` | `MySqlJsonTypeMapping` | `json.md` §JSON存储类型、DDL 示例 | **done** |
-| 11.109b | Query Translators（`JsonScalarExpression` 遍历） | `MySqlJson*` translators | `json-operators/`、`json-functions/json_extract.md` |
-| 11.109c | Fluent API（若需要） | `MySqlEntityTypeBuilderExtensions` | 以 Xugu 文档为准，非照搬 Pomelo |
-| 11.109d | 实库测试 | `JsonQueryMySqlTest` 可跑子集 | 手写断言；验收 **不** 追求 MySQL JSON 字节级一致 |
+| 11.109b | Query Translators（`JsonScalarExpression` 遍历） | `MySqlJson*` translators | `json-operators/`、`json-functions/json_extract.md` | **done** |
+| 11.109c | Fluent API（`HasXuguJsonColumn`） | `MySqlEntityTypeBuilderExtensions` | 以 Xugu 文档为准 | **done** |
+| 11.109d | 实库测试 | `JsonQueryMySqlTest` 可跑子集 | 手写断言 | **done** |
 
-**验收原则**：实库 PASS + `verify-module.ps1` Storage/Query PASS；**不以**「与 MySQL JSON 行为完全一致」为门禁。
-
-**2.0.x 状态**：10.108 调研确认 DB 层支持；Provider defer → Phase 11 Wave 2。
+**2.1.0 状态**：Wave 2 done（875 列测；`JsonIntegrationTests` SkippableFact）。
 
 ## 自增主键（IDENTITY）
 

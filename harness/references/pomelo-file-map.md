@@ -150,7 +150,7 @@
 
 | Pomelo 文件/功能 | 处理 | 来源 |
 |-----------------|------|------|
-| `MySqlJson*` 全套 | **skip** | skip |
+| `MySqlJson*` 全套（Pomelo 扩展包） | **skip** — 已实现 Xugu 原生子集见 `XuguJson*` | 11.109 done |
 | `MySqlQueryStringFactory` | EF Core 默认 `IRelationalQueryStringFactory` 足够 | EF-base-only |
 | `MySqlConnectionStringOptionsValidator` | **defer**（连接串格式不同） | defer |
 | `BitwiseOperationReturnTypeCorrectingExpressionVisitor` | **defer** 8.Q11 | defer |

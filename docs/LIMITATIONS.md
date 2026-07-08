@@ -113,19 +113,22 @@ CLR `Guid` 默认映射 XuguDB 原生 `GUID`（16 字节），非 MySQL 风格 `
 
 ## JSON 列（EF Core 映射）
 
-**状态：部分实现 — 11.109a TypeMapping + DDL done；LINQ/路径翻译待 11.109b**
+**状态：done（11.109 Wave 2）— TypeMapping + DDL + LINQ/函数翻译 + 实库冒烟**
 
-XuguDB **服务端**支持原生 `JSON` 列类型（LOB，最大 2GB）、MySQL 风格 `->` / `->>` 路径运算符及 28+ JSON 函数（`reference/sql/datatype/json.md`、`reference/function/json-functions/`）。
+XuguDB **服务端**支持原生 `JSON` 列类型（LOB，最大 2GB）、`->` / `->>` 路径运算符及 28+ JSON 函数（`reference/sql/datatype/json.md`、`reference/function/json-functions/`）。
 
-| 能力 | XuguDB | Provider 2.0.x |
-|------|--------|----------------|
-| `CREATE TABLE … col JSON` | **支持** | **`XuguJsonTypeMapping` + DDL `JSON`（11.109a done）** |
-| LINQ JSON 列查询（`EF.Property` / owned JSON） | SQL 层支持 | **未实现**（11.109b 待办） |
-| Pomelo `MySqlJson*` / `Json*MySqlTest` | — | **skip**（无 Fluent / TypeMapping） |
+| 能力 | XuguDB | Provider 2.1.0 |
+|------|--------|------------------|
+| `CREATE TABLE … col JSON` | **支持** | **`XuguJsonTypeMapping` + DDL `JSON`（11.109a）** |
+| `EF.Functions.JsonValue/JsonExtract/JsonContains*` | SQL 层支持 | **`XuguJsonDbFunctionsExtensions` + Translator（11.109b）** |
+| `JsonScalarExpression` / `->` / `->>` | SQL 层支持 | **`XuguQuerySqlGenerator`（11.109b）** |
+| Fluent `HasXuguJsonColumn()` | — | **done**（11.109c） |
+| 实库 INSERT + JSON 函数查询 | — | **`JsonIntegrationTests`（11.109d；SkippableFact）** |
+| 整列 JSON LOB 实体物化（`SELECT payload`） | 驱动 `String` 绑定 | **未验证** — 实库 `GetString` 可能超界；优先 JSON 函数投影 |
+| Pomelo `MySqlJson*` / `Json*MySqlTest` 全矩阵 | — | **skip** |
+| EF `ToJson()` owned JSON 列 | — | **不承诺** |
 
-**变通**：应用层 `VARCHAR`/`CLOB` + 序列化；或 raw SQL 使用 `JSON_EXTRACT` / `->` 运算符。
-
-**解锁 10.109 前置**：`XuguJsonTypeMapping`、`JsonScalarExpression` 翻译、`XuguQuerySqlGenerator` 路径遍历；可选 Microsoft/Newtonsoft 扩展包（对标 Pomelo `EFCore.MySql.Json.*`）。
+**变通**：查询优先 `EF.Functions.JsonValue` / `JsonExtract`；整列读取待驱动 LOB 绑定完善。
 
 ## 其他 defer / skip（摘要）
 

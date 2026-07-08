@@ -1,6 +1,6 @@
 # Phase 11 — Xugu 原生方言与可发布 2.1.0
 
-> **状态**：`in_progress`（Wave 1 done；Wave 2 进行中 — 11.109a done；Wave 3–5 偏差修复轨已规划）  
+> **状态**：`in_progress`（Wave 1 done；**Wave 2 done**；Wave 3–5 偏差修复轨 todo）  
 > **偏差修复轨**：`NATIVE-DIALECT-ROADMAP.md`（W3–5：RETURNING / compat flip / 双矩阵）  
 > **前置**：Phase 10 `done`（**2.0.0**；861 列测；~82% Pomelo 测试覆盖）  
 > **版本目标**：**`2.1.0`**（功能发布；非 MySQL 替代定位）  
@@ -81,7 +81,7 @@
 | 11.001 | **发布范围文档** | Docs | Phase 10 closure | **done** | `docs/RELEASE-SCOPE.md`：2.1.0 含/不含、永久 OUT OF SCOPE、Release Gate、方言权威声明 |
 | 11.002 | **方言契约审计** | Contract | 11.001 | **done** | `sql-dialect.contract.md`：权威优先级、JSON §11.109 脚手架、COMPATIBLE_MODE 标注 |
 | 11.003 | **XUGU-VS-MYSQL 定位修正** | Docs | 11.001 | **done** | 文首「对照参考·非迁移目标·非虚谷方言定义」；禁止 MySQL 语法首要依据 |
-| 11.109 | **JSON Provider 实现** | Storage + Query | 10.108 | **in_progress**（11.109a done） | 见下表「11.109 子任务」 |
+| 11.109 | **JSON Provider 实现** | Storage + Query | 10.108 | **done** | 见下表「11.109 子任务」 |
 | 11.301 | **NuGet 打包门禁** | Release | W5 done（建议） | todo | `test-nuget-pack.ps1` 全流程 |
 | 11.302 | **LIMITATIONS 冻结** | Docs | 11.109, 11.301, W5 | todo | 2.1.0 已知限制终稿 |
 | 11.303 | **版本与 CHANGELOG** | Release | 11.301–11.302 | todo | `Version.props` → 2.1.0 |
@@ -91,9 +91,9 @@
 | 子 ID | 内容 | Pomelo 参考 | Xugu 文档 |
 |-------|------|-------------|-----------|
 | 11.109a | `XuguJsonTypeMapping` + DDL `JSON` | `MySqlJsonTypeMapping` | `reference/sql/datatype/json.md` | **done** |
-| 11.109b | JSON 路径 / 函数 LINQ 翻译 | `MySqlJson*` translators | `reference/sql/operators/json-operators/`、`reference/function/json-functions/` |
-| 11.109c | Fluent API（若需要） | `MySqlEntityTypeBuilderExtensions` | 以 Xugu 文档为准，非照搬 Pomelo |
-| 11.109d | 实库测试子集 | `JsonQueryMySqlTest` 可跑子集 | 手写 Xugu 兼容断言；**不**追求 Pomelo 全矩阵 |
+| 11.109b | JSON 路径 / 函数 LINQ 翻译 | `MySqlJson*` translators | `reference/sql/operators/json-operators/`、`reference/function/json-functions/` | **done** |
+| 11.109c | Fluent API（若需要） | `MySqlEntityTypeBuilderExtensions` | 以 Xugu 文档为准，非照搬 Pomelo | **done**（`HasXuguJsonColumn`） |
+| 11.109d | 实库测试子集 | `JsonQueryMySqlTest` 可跑子集 | 手写 Xugu 兼容断言；**不**追求 Pomelo 全矩阵 | **done** |
 
 **注意**：实现使用 Xugu 原生 `JSON` 类型与运算符；**不**以「与 MySQL JSON 字节级兼容」为验收标准。
 
