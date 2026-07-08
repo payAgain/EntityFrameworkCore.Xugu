@@ -19,6 +19,7 @@ public class TypeMappingSourceTests
     [InlineData("DATE", typeof(DateOnly))]
     [InlineData("TIME", typeof(TimeOnly))]
     [InlineData("GUID", typeof(Guid))]
+    [InlineData("JSON", typeof(string))]
     [InlineData("BIGINT", typeof(long))]
     [InlineData("BIGINT", typeof(uint))]
     [InlineData("NUMERIC(20,0)", typeof(ulong))]
@@ -132,6 +133,26 @@ public class TypeMappingSourceTests
 
         Assert.NotNull(mapping);
         Assert.Equal(typeof(int), mapping!.ClrType);
+    }
+
+    [Fact]
+    public void FindMapping_json_store_type_uses_xugu_json_mapping()
+    {
+        using var context = CreateContext();
+        var source = context.GetInfrastructure().GetRequiredService<IRelationalTypeMappingSource>();
+        var mapping = source.FindMapping(typeof(string), "JSON");
+
+        Assert.NotNull(mapping);
+        Assert.IsType<XuguJsonTypeMapping>(mapping);
+        Assert.Equal("JSON", mapping!.StoreType);
+    }
+
+    [Fact]
+    public void XuguJsonTypeMapping_generates_quoted_literal()
+    {
+        var mapping = XuguJsonTypeMapping.Default;
+
+        Assert.Equal("'{\"a\":1}'", mapping.GenerateSqlLiteral("{\"a\":1}"));
     }
 
     [Fact]

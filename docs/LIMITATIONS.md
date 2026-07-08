@@ -113,14 +113,14 @@ CLR `Guid` 默认映射 XuguDB 原生 `GUID`（16 字节），非 MySQL 风格 `
 
 ## JSON 列（EF Core 映射）
 
-**状态：defer — Provider 未实现（10.108 调研完成；10.109 → Phase 11）**
+**状态：部分实现 — 11.109a TypeMapping + DDL done；LINQ/路径翻译待 11.109b**
 
 XuguDB **服务端**支持原生 `JSON` 列类型（LOB，最大 2GB）、MySQL 风格 `->` / `->>` 路径运算符及 28+ JSON 函数（`reference/sql/datatype/json.md`、`reference/function/json-functions/`）。
 
 | 能力 | XuguDB | Provider 2.0.x |
 |------|--------|----------------|
-| `CREATE TABLE … col JSON` | **支持** | 未生成 JSON DDL 映射 |
-| LINQ JSON 列查询（`EF.Property` / owned JSON） | SQL 层支持 | **未实现** |
+| `CREATE TABLE … col JSON` | **支持** | **`XuguJsonTypeMapping` + DDL `JSON`（11.109a done）** |
+| LINQ JSON 列查询（`EF.Property` / owned JSON） | SQL 层支持 | **未实现**（11.109b 待办） |
 | Pomelo `MySqlJson*` / `Json*MySqlTest` | — | **skip**（无 Fluent / TypeMapping） |
 
 **变通**：应用层 `VARCHAR`/`CLOB` + 序列化；或 raw SQL 使用 `JSON_EXTRACT` / `->` 运算符。

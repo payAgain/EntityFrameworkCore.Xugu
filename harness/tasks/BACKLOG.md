@@ -9,7 +9,7 @@
 | 原 ID / 主题 | Wave | 新任务 ID | 状态 |
 |-------------|------|-----------|------|
 | 发布范围 / 方言立场 | W1 | **11.001–11.003** | **done**（P0） |
-| JSON Provider 实现（Xugu 原生） | W2 | **11.109**（a→d） | **todo**（P0） |
+| JSON Provider 实现（Xugu 原生） | W2 | **11.109**（a→d） | **in_progress**（11.109a done） |
 | NuGet 打包门禁 + 2.1.0 版本 | W3 | **11.301–11.303** | **todo**（P0） |
 | ConnectionString 校验器 | W4 | **11.208** | **todo**（P1） |
 | 集成样本 | W4 | **11.304** | **todo**（骨架已建） |
@@ -69,7 +69,7 @@
 | ID | 任务 | Wave | 任务 ID | 状态 | 负责 |
 |----|------|------|---------|------|------|
 | P0-11.1 | 发布范围 + RELEASE-SCOPE + 方言契约 | W1 | 11.001–11.003 | **done** | Orchestrator / Docs |
-| P0-11.2 | JSON Provider（Xugu 原生 JSON，非 MySQL 验收） | W2 | 11.109 | **todo** | Storage + Query |
+| P0-11.2 | JSON Provider（Xugu 原生 JSON，非 MySQL 验收） | W2 | 11.109 | **in_progress**（11.109a done） | Storage + Query |
 | P0-11.3 | NuGet pack/install 门禁 + 2.1.0 版本 | W3 | 11.301–11.303 | **todo** | Release / Infra |
 | P0-11.4 | LIMITATIONS frozen for 2.1.0 | W3 | 11.302 | **todo** | Orchestrator |
 

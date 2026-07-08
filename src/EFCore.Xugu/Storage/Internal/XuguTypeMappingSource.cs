@@ -15,6 +15,7 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
     private const string FloatTypeName = "FLOAT";
     private const string DecimalTypeName = "NUMERIC";
     private const string BlobTypeName = "BLOB";
+    private const string JsonTypeName = "JSON";
     private const string GuidTypeName = "GUID";
     private const string ULongTypeName = "NUMERIC(20,0)";
 
@@ -24,6 +25,7 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
     private static readonly XuguDecimalTypeMapping Decimal = XuguDecimalTypeMapping.Default;
     private static readonly XuguStringTypeMapping VarChar = XuguStringTypeMapping.Default;
     private static readonly XuguDateTimeTypeMapping DateTime = XuguDateTimeTypeMapping.Default;
+    private static readonly XuguJsonTypeMapping Json = XuguJsonTypeMapping.Default;
 
     private static readonly XuguCodeGenerationServerVersionCreationTypeMapping CodeGenerationServerVersionCreation =
         XuguCodeGenerationServerVersionCreationTypeMapping.Default;
@@ -77,6 +79,7 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
             { "DECIMAL", Decimal },
             { "NUMBER", Decimal },
             { BlobTypeName, XuguByteArrayTypeMapping.Default },
+            { JsonTypeName, Json },
             { "BINARY", new XuguByteArrayTypeMapping("BINARY", fixedLength: true) },
             { "DATE", XuguDateOnlyTypeMapping.Default },
             { "TIME", XuguTimeOnlyTypeMapping.Default },
@@ -98,6 +101,14 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
     protected override RelationalTypeMapping? FindMapping(in RelationalTypeMappingInfo mappingInfo)
     {
         var clrType = mappingInfo.ClrType is null ? null : Nullable.GetUnderlyingType(mappingInfo.ClrType) ?? mappingInfo.ClrType;
+
+        if (clrType == typeof(string)
+            && mappingInfo.StoreTypeName is not null
+            && mappingInfo.StoreTypeName.Equals(JsonTypeName, StringComparison.OrdinalIgnoreCase))
+        {
+            return Json;
+        }
+
         if (clrType == typeof(decimal)
             && mappingInfo.StoreTypeName is not null
             && TryParseDecimalStoreType(mappingInfo.StoreTypeName, out var precision, out var scale))
@@ -191,6 +202,11 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
             if (Contains(storeTypeName, "INT"))
             {
                 return XuguIntTypeMapping.Default;
+            }
+
+            if (Contains(storeTypeName, "JSON"))
+            {
+                return Json;
             }
 
             if (Contains(storeTypeName, "CHAR")

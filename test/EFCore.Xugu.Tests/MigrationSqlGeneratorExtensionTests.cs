@@ -15,6 +15,23 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 public class MigrationSqlGeneratorExtensionTests
 {
     [Fact]
+    public void AddColumn_with_json_store_type_generates_json()
+    {
+        var sql = GenerateSql(new AddColumnOperation
+        {
+            Table = "T_JSON",
+            Name = "C_JSON",
+            ClrType = typeof(string),
+            ColumnType = "JSON",
+            IsNullable = true
+        });
+
+        Assert.Contains("JSON", sql, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("VARCHAR", sql, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("ADD COLUMN", sql, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void AddColumn_with_max_length_generates_varchar()
     {
         var sql = GenerateSql(new AddColumnOperation

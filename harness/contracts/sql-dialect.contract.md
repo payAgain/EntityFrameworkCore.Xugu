@@ -163,7 +163,7 @@ SELECT TOP {n} * FROM t ORDER BY ...;
 
 | 项 | XuguDB（官方文档） | Provider 2.0.x | Provider 2.1.0 目标（11.109） |
 |----|-------------------|----------------|------------------------------|
-| 原生 `JSON` 列类型 | **支持**（LOB，最大 2GB；Java `String` 绑定） | **未映射** | `XuguJsonTypeMapping` + DDL `JSON` |
+| 原生 `JSON` 列类型 | **支持**（LOB，最大 2GB；Java `String` 绑定） | **未映射** | **`XuguJsonTypeMapping` + DDL `JSON`（11.109a done）** |
 | `->` / `->>` 路径运算符 | **支持**（JSONPath，`$` 前缀；含 `last`、`**`、`[M to N]` 扩展） | 未翻译 | `JsonScalarExpression` + 路径遍历 |
 | `JSON_EXTRACT` / `JSON_VALUE` 等 | **28+ 函数**（见 `json.md` §预览表） | 未实现 | 按需 Translator（以文档为准） |
 | `JSON_ARRAYAGG` / `JSON_OBJECTAGG` | 支持 | 未实现 | P2 / 按需 |
@@ -181,7 +181,7 @@ SELECT TOP {n} * FROM t ORDER BY ...;
 
 | 子任务 | Provider 模块 | Pomelo 架构参考（仅 C#） | Xugu 文档锚点 |
 |--------|--------------|-------------------------|--------------|
-| 11.109a | `Storage/Internal/XuguJsonTypeMapping.cs` | `MySqlJsonTypeMapping` | `json.md` §JSON存储类型、DDL 示例 |
+| 11.109a | `Storage/Internal/XuguJsonTypeMapping.cs` | `MySqlJsonTypeMapping` | `json.md` §JSON存储类型、DDL 示例 | **done** |
 | 11.109b | Query Translators（`JsonScalarExpression` 遍历） | `MySqlJson*` translators | `json-operators/`、`json-functions/json_extract.md` |
 | 11.109c | Fluent API（若需要） | `MySqlEntityTypeBuilderExtensions` | 以 Xugu 文档为准，非照搬 Pomelo |
 | 11.109d | 实库测试 | `JsonQueryMySqlTest` 可跑子集 | 手写断言；验收 **不** 追求 MySQL JSON 字节级一致 |
