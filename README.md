@@ -1,6 +1,8 @@
 # XuguDB EF Core Provider
 
-EF Core Provider for XuguDB（虚谷数据库），架构对齐 [Pomelo.EntityFrameworkCore.MySql](https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql)。
+**Xugu 原生方言**的 EF Core Provider for XuguDB（虚谷数据库）。**C# 架构**对齐 [Pomelo.EntityFrameworkCore.MySql](https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql) 9.0.0；**SQL 方言**以 XuguDB 官方文档为唯一权威。
+
+> **定位说明**：Pomelo/MySQL 是**架构参考 only**——用于模块划分与 C# 实现模式，**不是** Xugu 原生方言、**不是** MySQL 迁移目标、**与虚谷原生能力无关**。`COMPATIBLE_MODE=MYSQL` 仅作开发对照便利。
 
 ## 仓库结构
 
@@ -20,7 +22,7 @@ xuguefcore/
 |------|------|------|
 | **XuguDB 官方文档** | `E:\BaiduSyncdisk\docs\content\` | **SQL 方言唯一权威** |
 | **XuguDB C# 驱动** | `external/csharp-driver/` | ADO.NET 连接层（XuguClient） |
-| Pomelo MySQL Provider | `external/Pomelo.EntityFrameworkCore.MySql/` @ **tag 9.0.0** | 架构与 C# 模式（见 `harness/references/pomelo-version.md`） |
+| Pomelo MySQL Provider | `external/Pomelo.EntityFrameworkCore.MySql/` @ **tag 9.0.0** | **仅** C# 架构与模块模式（见 `harness/references/pomelo-file-map.md`）；**非** SQL 方言依据 |
 | EF Core 源码 | `E:\Work\efcore\` | 基类参考 |
 | 架构设计文档 | `E:\Work\docs\efcore\` | 设计与协作规划 |
 
@@ -50,17 +52,17 @@ dotnet build Xugu.EFCore.Xugu.sln
 
 | 项 | 值 |
 |----|-----|
-| **当前版本** | **`2.0.0`**（`Version.props`） |
-| **当前 Phase** | **10 done** — 维护与剩余对等已关闭（`harness/tasks/phase-10-maintenance-and-parity/TASKS.md`） |
-| **测试** | **861** 列测（~82% Pomelo；Wave 5 +1 参数内联） |
+| **当前版本** | **`2.0.0`**（`Version.props`）→ Phase 11 目标 **`2.1.0`** |
+| **当前 Phase** | **11 planned** — Xugu 原生方言与可发布 2.1.0（`harness/tasks/phase-11-xugu-native-release/TASKS.md`） |
+| **测试** | **861** 列测（~82% Pomelo 覆盖；**非** 2.1.0 发布条件） |
 | **Provider 规模** | **133** .cs（Pomelo 9.0.0：**194** .cs，~69%） |
-| **已完成** | Phase 0–10 done；Wave 6 JSON 调研 ✅；blocked：10.105 ROW_COUNT、10.205 Linux RID |
+| **Phase 10** | **done** — Wave 1–6 关闭；blocked：ROW_COUNT、Linux RID |
 
-**四级里程碑**：`0.1.0-preview` → **`1.0.0`** ✓ → `1.1.0-preview`（Phase 8 Pomelo 功能对等）✓ → **`2.0.0`** ✓（Phase 9 测试对等）→ **Phase 10 维护线** ✓
+**里程碑**：`0.1.0-preview` → **`1.0.0`** ✓ → `1.1.0-preview` ✓ → **`2.0.0`** ✓ → **Phase 11 → `2.1.0`**（进行中）
 
-Pomelo 参考：**tag 9.0.0**（`harness/references/pomelo-version.md`）。
+Pomelo 参考：**tag 9.0.0**（架构 only；`harness/references/pomelo-version.md`）。
 
-路线图与并行调度见 `harness/tasks/ROADMAP.md`、`harness/tasks/PARALLEL-EXECUTION-PLAN.md`、`harness/tasks/BACKLOG.md`。
+路线图与并行调度见 `harness/tasks/ROADMAP.md`、`harness/tasks/PARALLEL-EXECUTION-PLAN.md`、`harness/tasks/BACKLOG.md`。打包门禁见 `harness/tasks/phase-11-xugu-native-release/PACKAGING-AND-INTEGRATION.md`。
 
 ## 用户文档
 

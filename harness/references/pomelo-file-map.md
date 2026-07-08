@@ -125,7 +125,7 @@
 
 | 模块 | Pomelo | Xugu | 状态 | 来源 |
 |------|--------|------|------|------|
-| Query Core | 65 | ~35 | **done** 核心路径；defer Q11/Q12/Q14 | Pomelo-port |
+| Query Core | 65 | ~37 | **done** 核心路径 + Q14 内联（10.201）；defer Q11/Q12 | Pomelo-port |
 | Query Translators | — | 14 文件 | **done**（无 JSON） | Pomelo-port |
 | Storage TypeMapping | 43 | 22 | **done** 核心 CLR 映射；defer S8–S10 | Pomelo-port |
 | Extensions | 23 | ~13 | **done** E1–E8（charset skip）；Wave 5 E6–E8 | Pomelo-port |

@@ -4,7 +4,7 @@
 
 ## 项目目标
 
-从 0 开发 **XuguDB** 的 EF Core Provider（`Microsoft.EntityFrameworkCore.Xugu`），架构对齐 Pomelo MySQL Provider，SQL 方言以 **XuguDB 官方文档** 为唯一权威来源。
+从 0 开发 **XuguDB** 的 EF Core Provider（`Microsoft.EntityFrameworkCore.Xugu`）：**SQL 方言以 XuguDB 官方文档为唯一权威**；**Pomelo/MySQL 仅作 C# 架构参考**（目录结构、服务注册、命名规范），**不是** Xugu 原生方言、**不是**迁移目标、**与虚谷原生能力无关**。
 
 ## 仓库布局
 
@@ -47,9 +47,9 @@ MySQL 兼容模式相关：
 
 `external/Pomelo.EntityFrameworkCore.MySql/` 只读参考。
 
-### 4. 架构对齐 Pomelo
+### 4. 架构对齐 Pomelo（仅 C# 结构）
 
-目录结构、服务注册、命名规范与 Pomelo 一致。映射见 `harness/references/pomelo-file-map.md`。
+目录结构、服务注册、命名规范与 Pomelo 一致。映射见 `harness/references/pomelo-file-map.md`。**Pomelo 不提供 SQL 方言依据**——所有 SQL 字符串必须来自 XuguDB 官方文档。
 
 ### 5. 契约优先
 

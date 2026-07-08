@@ -53,7 +53,7 @@
 | 8.Q11 | `BitwiseOperationReturnTypeCorrectingExpressionVisitor`（若 Xugu 位运算返回类型与 CLR 不一致） | QueryCore | 8.Q6 | ❌ | P2 | defer |
 | 8.Q12 | `XuguQuerySqlGenerator` 增量：`FOR UPDATE`、窗口函数子集（若文档支持）— **查** `reference/sql/dml/select.md` | QueryCore | — | ✅ | P2 | defer |
 | 8.Q13 | ExecuteUpdate/Delete 边缘：关联子查询、多表、Owned 类型 — **查** DML 文档 | QueryCore | Phase 7.Q1 | ❌ | P0 | done |
-| 8.Q14 | `XuguInlinedParameterExpression` + 参数内联优化（对齐 Pomelo 性能路径） | QueryCore | 8.Q6 | ❌ | P2 | todo |
+| 8.Q14 | `XuguInlinedParameterExpression` + 参数内联优化（对齐 Pomelo 性能路径） | QueryCore | 8.Q6 | ❌ | P2 | **done**（10.201） |
 | 8.Q15 | DbFunctions：`IsMatch` → `XuguRegexIsMatchTranslator`（REGEXP_LIKE）**done**；`ConvertTimeZone` — **skip**（无 CONVERT_TZ） | QueryTranslators | — | ✅ | P2 | done |
 | 8.Q16 | JSON 相关 Translators / Visitors | — | — | — | **skip** | skip |
 | 8.Q17 | Pomelo `MySqlJson*` 全套 | — | — | — | **skip** | skip |

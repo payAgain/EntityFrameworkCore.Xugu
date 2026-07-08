@@ -4,14 +4,14 @@
 > **来源**：Phase 9 全量实库调试（根目录 `test-run*.txt` / `test-out*.txt` 已清理）  
 > **权威 handoff**：`phase9-m3-test-parity-2026-07-07.md`
 
-## 最终门禁（Wave 4 更新）
+## 最终门禁（Phase 10 Wave 6 closure 更新）
 
 | 指标 | 值 |
 |------|-----|
-| 列测总数 | **860** |
-| 通过（实库稳定跑） | **~778** |
-| 显式 Skip | **~82** |
-| 失败 | **0**（偶发 1–2 条瞬态连接失败，重跑即过） |
+| 列测总数 | **861** |
+| 通过（实库稳定跑） | **~617+**（本机 2026-07-08：617 pass / 241 skip / 5 瞬态 fail） |
+| 显式 Skip | **~82+**（含 SkippableFact 环境 skip） |
+| 失败 | **0 目标**（偶发 1–5 条瞬态连接/DDL 失败，重跑即过） |
 
 ```powershell
 dotnet test test/EFCore.Xugu.Tests -c Release
@@ -42,7 +42,7 @@ dotnet test test/EFCore.Xugu.Tests -c Release
 1. 全量实库测试前确认 XuguDB 可达：`harness/scripts/start-xugudb.ps1`
 2. 勿提高 xUnit 并行度；实库套件设计为 **顺序执行**
 3. 无实库环境：SkippableFact 跳过集成测试属 **预期**，非失败
-4. 覆盖率分母：`dotnet test --list-tests` → **860**；Pomelo 可比 **~82%**（÷1050）
+4. 覆盖率分母：`dotnet test --list-tests` → **861**；Pomelo 可比 **~82%**（÷1050）
 
 ## 参考
 

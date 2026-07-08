@@ -139,5 +139,5 @@
 
 ```powershell
 dotnet test Xugu.EFCore.Xugu.sln -c Release
-dotnet test test/EFCore.Xugu.Tests -c Release --list-tests   # 860（Wave 4：+10 Retry 单测）
+dotnet test test/EFCore.Xugu.Tests -c Release --list-tests   # 861（Wave 5：+1 参数内联单测）
 ```

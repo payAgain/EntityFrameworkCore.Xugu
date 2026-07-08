@@ -1,7 +1,28 @@
 # XuguDB EF Core Provider — Backlog
 
-> Orchestrator 维护。已映射至 Phase 7/8/9/10。详见 `harness/tasks/ROADMAP.md`。  
-> **最后同步**：2026-07-08（Phase 10 closure — 861 列测；Wave 6 done）
+> Orchestrator 维护。已映射至 Phase 7–11。详见 `harness/tasks/ROADMAP.md`。  
+> **最后同步**：2026-07-08（Phase 11 ROADMAP 完整规划 — 2.1.0 目标）  
+> **方言立场**：Pomelo/MySQL = **架构参考 only**；XuguDB 官方文档 = **SQL 权威**；非 MySQL 迁移目标。
+
+## Phase 11 映射（当前活跃）
+
+| 原 ID / 主题 | Wave | 新任务 ID | 状态 |
+|-------------|------|-----------|------|
+| 发布范围 / 方言立场 | W1 | **11.001–11.003** | **done**（P0） |
+| JSON Provider 实现（Xugu 原生） | W2 | **11.109**（a→d） | **todo**（P0） |
+| NuGet 打包门禁 + 2.1.0 版本 | W3 | **11.301–11.303** | **todo**（P0） |
+| ConnectionString 校验器 | W4 | **11.208** | **todo**（P1） |
+| 集成样本 | W4 | **11.304** | **todo**（骨架已建） |
+| GETTING-STARTED 2.1.0 | W4 | **11.305** | **todo**（P1） |
+| FunctionalTests 余量 | W5 | **11.401** | **todo**（P2，不阻塞 2.1.0） |
+| Specification Tests Phase 2 | W5 | **11.402** | **todo**（P2） |
+| Monster Fixup 扩展 | W5 | **11.403** | **todo**（P2，可选） |
+| ROW_COUNT 乐观并发 | W6 可选轨 | **11.105** | **blocked**（不挡 2.1.0） |
+| Linux x64 RID | W6 可选轨 | **11.205** | **blocked**（不挡 2.1.0） |
+| DateOnly/TimeOnly SaveChanges | W6 可选轨 | **11.207** | **defer**（不挡 2.1.0） |
+| net8.0 多 TFM | W6 可选轨 | **11.107** | **assessed**（不挡 2.1.0） |
+| FOR UPDATE / 位运算 / RelationalCommand | W6 可选轨 | **11.202–11.204** | **todo**（P2，不挡 2.1.0） |
+| MySQL 迁移 / Pomelo 即插即用 | — | — | **永久排除**（非产品目标） |
 
 ## Phase 映射总览
 
@@ -22,7 +43,7 @@
 | Migrations 高级 | Phase 8 | 8.M1–M5 | **done** |
 | Scaffolding 完善 | Phase 8 | 8.SC1–SC4 | **done** |
 | SequentialGuid | Phase 8 | 8.VG1–VG2 | **done** |
-| 跨平台 native | Phase 8 | 8.N1–N3 | **defer**（10.205 todo） |
+| 跨平台 native | Phase 8 | 8.N1–N3 | **blocked**（10.205 — 驱动无 `libxugusql.so`） |
 | TestStore/Fixture | Phase 9 | 9.I1–I6 | **done** |
 | Pomelo FunctionalTests | Phase 9 | 9.T1–T30 | **done** |
 | IntegrationTests 子集 | Phase 9 | 9.IT1–IT2 | **IT1 done / IT2 defer**（10.206 todo） |
@@ -37,13 +58,22 @@
 | 9.T defer 补全 | Phase 10 | 10.104 | **done**（SaveChangesInterception +6 / ConvertToProvider +10 / Seeding +3） |
 | ROW_COUNT 乐观并发 | Phase 10 | 10.105 | **blocked**（E10049） |
 | Retry Strategy 实装 | Phase 10 | 10.106 | **done** |
-| EF 版本矩阵 | Phase 10 | 10.107 | todo |
+| EF 版本矩阵 | Phase 10 | 10.107 | **assessed**（2.0.x net9.0 only；defer 2.1+） |
 | JSON 列调研 | Phase 10 | 10.108 | **done**（DB 支持；Provider defer 10.109） |
-| JSON Provider 实现 | Phase 11 | 10.109 | **defer** |
+| JSON Provider 实现 | Phase 11 | 10.109 → **11.109** | **todo** |
 
 ---
 
-## P0 — Phase 10（当前波次，Wave 1/2/3 done）
+## P0 — Phase 11（当前波次 — W1 done；W2 待开工）
+
+| ID | 任务 | Wave | 任务 ID | 状态 | 负责 |
+|----|------|------|---------|------|------|
+| P0-11.1 | 发布范围 + RELEASE-SCOPE + 方言契约 | W1 | 11.001–11.003 | **done** | Orchestrator / Docs |
+| P0-11.2 | JSON Provider（Xugu 原生 JSON，非 MySQL 验收） | W2 | 11.109 | **todo** | Storage + Query |
+| P0-11.3 | NuGet pack/install 门禁 + 2.1.0 版本 | W3 | 11.301–11.303 | **todo** | Release / Infra |
+| P0-11.4 | LIMITATIONS frozen for 2.1.0 | W3 | 11.302 | **todo** | Orchestrator |
+
+## P0 — Phase 10（已完成）
 
 | ID | 任务 | Phase | 状态 | 负责 |
 |----|------|-------|------|------|
@@ -74,6 +104,14 @@
 | P0-7.5 | LIMITATIONS + 发版文档 | 7.T2, 7.R1 | **done** | Orchestrator / Infra |
 | P0-8.1 | Pomelo 功能对等 P0/P1 | 8.* | **done** | 各模块 Agent |
 
+## P1 — Phase 11（W4）
+
+| ID | 任务 | Wave | 任务 ID | 状态 | 说明 |
+|----|------|------|---------|------|------|
+| P1-11.1 | ConnectionString 校验器 | W4 | 11.208 | **todo** | Xugu 键值对 |
+| P1-11.2 | 集成样本 `test/integration-sample/` | W4 | 11.304 | **todo** | 见 PACKAGING-AND-INTEGRATION.md |
+| P1-11.3 | GETTING-STARTED 2.1.0 | W4 | 11.305 | **todo** | JSON 示例、方言权威链接 |
+
 ## P1 — Phase 10 剩余 / Phase 9 测试移植（历史）
 
 | ID | 任务 | Phase | 状态 | 说明 |
@@ -96,15 +134,30 @@
 
 ---
 
+## P2 — Phase 11（W5 / W6 可选轨）
+
+| ID | 任务 | Wave | 任务 ID | 状态 | 说明 |
+|----|------|------|---------|------|------|
+| P2-11.1 | FunctionalTests 余量 | W5 | 11.401 | **todo** | +20~40 列测，不阻塞 2.1.0 |
+| P2-11.2 | Specification Tests Phase 2 | W5 | 11.402 | **todo** | 分阶段，非全量 |
+| P2-11.3 | Monster Fixup 扩展 | W5 | 11.403 | **todo** | 可选 |
+| P2-11.4 | FOR UPDATE / 窗口函数 | W6 | 11.202 | **todo** | EF 无标准 Tag |
+| P2-11.5 | 位运算返回类型 | W6 | 11.203 | **todo** | 8.Q11 |
+| P2-11.6 | RelationalCommand 表面 | W6 | 11.204 | **todo** | 8.S8–S10 |
+| P2-11.7 | ROW_COUNT 乐观并发 | W6 | 11.105 | **blocked** | E10049；驱动解锁 |
+| P2-11.8 | Linux x64 RID | W6 | 11.205 | **blocked** | 驱动无 `.so` |
+| P2-11.9 | DateOnly/TimeOnly SaveChanges | W6 | 11.207 | **defer** | csharp-driver |
+| P2-11.10 | net8.0 多 TFM | W6 | 11.107 | **assessed** | 2.1.0 可仅 net9.0 |
+
 ## P2 — Phase 10 todo / Phase 8 defer（未完成）
 
 | ID | 任务 | 原 ID | 状态 | 说明 |
 |----|------|-------|------|------|
 | P2-1 | `XuguRetryingExecutionStrategy` 实装 | 7.S2 / 10.106 | **done** | Message 解析 XGCI 瞬态码 |
 | P2-2 | ROW_COUNT 乐观并发 | 10.105 | **blocked** | XuguDB E10049；`SELECT 1` 占位维持 |
-| P2-3 | EF 版本矩阵（net8.0） | 10.107 | **todo** | 评估多 TFM |
-| P2-4 | JSON 列调研 | 10.108 | **todo**（可选） | 依赖 XuguDB 文档确认 |
-| P2-5 | 参数内联 | 8.Q14 / 10.201 | **todo** | 查询性能 |
+| P2-3 | EF 版本矩阵（net8.0） | 10.107 | **assessed** | 2.0.x 维持 net9.0；defer 2.1+ |
+| P2-4 | JSON 列调研 | 10.108 | **done** | XuguDB 原生 JSON；Provider defer 10.109 |
+| P2-5 | 参数内联 | 8.Q14 / 10.201 | **done** | OFFSET 内联；`TranslatorSqlTests` |
 | P2-6 | FOR UPDATE / 窗口函数 | 8.Q12 / 10.202 | **todo** | EF 无标准 Tag 入口 |
 | P2-7 | 位运算返回类型 | 8.Q11 / 10.203 | **todo** | BitwiseOperationReturnTypeCorrecting |
 | P2-8 | RelationalCommand 表面 | 8.S8–S10 / 10.204 | **todo** | Database/Command 扩展 API |
@@ -119,7 +172,7 @@
 |----|-----|------|
 | 8.Q11 | BitwiseOperationReturnTypeCorrecting | P2 / 10.203 |
 | 8.Q12 | FOR UPDATE / 窗口函数 | P2 / 10.202 |
-| 8.Q14 | 参数内联 | P2 性能 / 10.201 |
+| 8.Q14 | 参数内联 | **done**（10.201） |
 | 8.Q15 | `ConvertTimeZone` | skip；`IsMatch` **done** |
 | 8.S8–S10 | RelationalCommand/Database 表面 | P2 / 10.204 |
 | 8.N1–N3 | Native Linux RID 打包 | 依赖驱动 / 10.205 |
@@ -149,16 +202,17 @@
 
 ---
 
-## 永久 skip（不进入 Phase 10 实现）
+## 永久 skip / 非产品目标（Phase 11 延续）
 
 | 类别 | Pomelo 源 | 处置 |
 |------|-----------|------|
 | Spatial / NTS | `SpatialMySqlTest` | skip（无 NTS 生态） |
 | FULLTEXT | `MatchQueryMySqlTest` | skip（无 MATCH AGAINST） |
-| JSON 反序列化（无扩展时） | `BadDataJsonDeserializationMySqlTest` | skip（Xugu 无 JSON 列生态） |
+| JSON 反序列化（无扩展时） | `BadDataJsonDeserializationMySqlTest` | skip（Phase 11 以 Xugu 原生 JSON 为准，非 Pomelo 矩阵） |
 | Scaffolding Baselines 全量快照 | Pomelo baseline 文件 | skip（10.209 维护成本过高） |
 | Lazy loading proxies | 无测试宿主 | skip |
 | ConvertTimeZone / Collation | — | skip（文档确认不实现，10.210） |
+| **MySQL 即插即用 / Pomelo 迁移承诺** | — | **永久排除**（非产品目标；见 RELEASE-SCOPE） |
 
 ---
 
@@ -169,18 +223,20 @@
 | 列/表级 `HasCharSet` / `HasCollation` | skip | 8.E4, 8.DA1–DA2, 10.210 |
 | MySQL `FULLTEXT` / `CONVERT_TZ` | skip | 8.Q15, 10.210 |
 | `AUTO_INCREMENT` | 使用 `IDENTITY(1,1)` | contract |
-| JSON 列 / Pomelo Json* | skip | 8.Q16–Q17 |
+| JSON 列 / Pomelo Json* | Phase 11 **11.109** 实现 | 8.Q16–Q17 defer → 11.109（Xugu 原生，非 MySQL 兼容） |
 | NetTopologySuite / Spatial | skip | 9.T skip |
 | Pomelo Scaffolding Baselines 快照 | skip | 9.T skip / 10.209 |
 
 ---
 
-## 统计（2026-07-08 Phase 10 Wave 3 基线）
+## 统计（2026-07-08 Phase 11 ROADMAP）
 
-| 指标 | 当前 | Phase 10 Wave 4 目标 | Phase 10 Wave 5 目标 | Phase 10 Wave 6 目标 |
-|------|------|---------------------|---------------------|---------------------|
-| 版本 | **2.0.0** | 2.0.x | 2.0.x | 2.0.x |
-| Provider .cs | **120** | 120+ | 120+ | 视 JSON 调研 |
-| 测试方法 | **850** | 850+（ROW_COUNT 解锁后） | 850+（性能/平台） | 视 JSON 调研 |
-| Pomelo 测试覆盖 | **~81%**（850 ÷ 1050） | ~85% | ~85% | 视调研 |
-| 当前 Wave | **Wave 4 部分** | Wave 5（10.205/10.201） | Wave 6（10.108 可选） | — |
+| 指标 | 当前 | 备注 |
+|------|------|------|
+| 版本 | **2.0.0** → 目标 **2.1.0** | Phase 11 W3 发布门禁 |
+| Provider .cs | **133** | Pomelo 194（~69%）；Pomelo = 架构参考 only |
+| 测试方法 | **861** | 2.1.0 门禁：0 FAIL；W5 目标 ≥880 可选 |
+| Pomelo 测试覆盖 | **~82%** | **非** 2.1.0 发布条件 |
+| Phase 10 | **done** | Wave 1–6 |
+| Phase 11 | **in_progress** | **W1 done**；**W2 待开工**（11.109） |
+| 打包门禁 | `PACKAGING-AND-INTEGRATION.md` | W3 起 `test-nuget-pack.ps1` |
