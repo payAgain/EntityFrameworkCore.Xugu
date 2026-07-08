@@ -136,6 +136,8 @@ SELECT TOP {n} * FROM t ORDER BY ...;
 | `.Skip(o).Take(n)` | `LIMIT o, n` 或 `LIMIT n OFFSET o` | resultset-restricted.md |
 | `.Take(n)` + OrderBy (SQL Server 模式) | 可选 `TOP n` | resultset-restricted.md §TOP |
 
+**参数内联（10.201）**：`Skip` 生成的 `OFFSET` 子句在参数值已知时内联为字面量（`XuguParameterInliningExpressionVisitor`），对齐 Pomelo `MySqlInlinedParameterExpression` 模式；当前范围限于 `OFFSET`，JSON 路径 defer（无 JSON 支持）。
+
 ## 自增主键（IDENTITY）
 
 > 文档：`reference/system-configuration-parameter/xugu.ini/compatible/def_identity_mode.md`
@@ -370,5 +372,6 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | 2026-07-07 | Phase 10 Wave 1：CI 实库矩阵（GitHub + GitLab）+ `verify.ps1 -RunTests` 全量门禁；`docs/GETTING-STARTED.md` → 2.0.0；`docs/XUGU-VS-MYSQL.md` 用户对比文档；`harness/references/phase-10-test-triage.md` 剩余 ~374 测试 triage | Infra / Docs / Testing |
 | 2026-07-07 | Phase 10 Wave 2：Query 深覆盖 +119（FromSql / TPH / Deep nested / DbFunctions / ComplexNav）对齐 Pomelo `NorthwindQueryMySqlTest` + `AdHocQueryMySqlTest` 子集；9.T defer 补全（SaveChangesInterception +6 / ConvertToProviderTypes +10 / Seeding +3 / WithConstructors insert ×2）；795 列测；10.M2 ✅ | Testing |
 | 2026-07-08 | Phase 10 Wave 3：`MonsterFixupXuguTests` + `StoreGeneratedFixupXuguTests`（手写 Xugu 兼容模型，对齐 Pomelo `MonsterFixup*MySqlTest`）；`DesignTimeXuguTest` + `KeysWithConverters` + `TransactionBasics` 子集（对齐 `EFCore.Specification.Tests` 数据库相关）；850 列测；10.M4 ✅；~81% Pomelo 覆盖 | Testing |
+| 2026-07-08 | Phase 10 Wave 5：OFFSET 参数内联（`XuguInlinedParameterExpression`）；Linux RID blocked 登记 | QueryCore |
 | 2026-07-08 | Phase 10 Wave 4：`XuguRetryingExecutionStrategy` + `XuguTransientExceptionDetector`（10.106 ✅）；10.105 ROW_COUNT **blocked**（实库 E10049：`ROW_COUNT()` 不存在）；860 列测 | Storage / Testing |
 | 2026-07-08 | defer 登记：10.105 ROW_COUNT 乐观并发（E10049 blocked）、10.107 EF 版本矩阵、10.108 JSON 列调研 | Orchestrator |

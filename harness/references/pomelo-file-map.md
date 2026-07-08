@@ -66,6 +66,8 @@
 | `Design/Internal/MySqlDesignTimeServices.cs` | `Design/Internal/XuguDesignTimeServices.cs` | Migrations | Pomelo-port |
 | `Scaffolding/Internal/MySqlDatabaseModelFactory.cs` | `Scaffolding/Internal/XuguDatabaseModelFactory.cs` | Migrations | Xugu-native |
 | `MySqlRetryingExecutionStrategy.cs` | `XuguRetryingExecutionStrategy.cs` | Storage | **done**（10.106） |
+| `MySqlInlinedParameterExpression.cs` | `XuguInlinedParameterExpression.cs` | QueryCore | **done**（10.201） |
+| `MySqlParameterInliningExpressionVisitor.cs` | `XuguParameterInliningExpressionVisitor.cs` | QueryCore | **done**（10.201） |
 
 ## Query Translators 映射（ExpressionTranslators/Internal/）
 
@@ -139,7 +141,7 @@
 |----|-----|------|------|
 | 8.Q11 | BitwiseOperationReturnTypeCorrecting | P2；Xugu 整数位运算返回 BIGINT，暂无 EF 翻译失败报告 | defer |
 | 8.Q12 | FOR UPDATE / 窗口函数 | P2；文档支持 `FOR UPDATE` 但 EF Core 无标准 API | defer |
-| 8.Q14 | 参数内联 | P2 性能优化 | defer |
+| 8.Q14 | 参数内联 | P2 性能优化 | **done**（10.201） |
 | 8.Q15 | ConvertTimeZone | 无 CONVERT_TZ | defer |
 | 8.S8–S10 | RelationalCommand/Database 表面 | P2 | defer |
 | 8.N1–N3 | Linux RID 打包 | 依赖驱动发布 | defer |

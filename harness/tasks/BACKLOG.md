@@ -107,7 +107,7 @@
 | P2-6 | FOR UPDATE / 窗口函数 | 8.Q12 / 10.202 | **todo** | EF 无标准 Tag 入口 |
 | P2-7 | 位运算返回类型 | 8.Q11 / 10.203 | **todo** | BitwiseOperationReturnTypeCorrecting |
 | P2-8 | RelationalCommand 表面 | 8.S8–S10 / 10.204 | **todo** | Database/Command 扩展 API |
-| P2-9 | Linux x64 RID 打包 | 8.N1–N3 / 10.205 | **todo** | xugusql linux 二进制 + nuspec |
+| P2-9 | Linux x64 RID 打包 | 8.N1–N3 / 10.205 | **blocked** | 驱动仓库无预编译 `libxugusql.so`；`NativeAssets.props` 已预留 |
 | P2-10 | 9.IT2 IntegrationTests | 9.IT2 / 10.206 | **todo** | ASP.NET + Vegeta 性能宿主；低价值 |
 | P2-11 | DateOnly/TimeOnly SaveChanges | P3-11 / 10.207 | **todo** | 依赖 csharp-driver 原生参数 |
 | P2-12 | ConnectionString 校验器 | 10.208 | **todo** | Xugu 键值对格式校验 |

@@ -468,6 +468,21 @@ public class TranslatorSqlTests
     }
 
     [Fact]
+    public void Skip_with_closure_parameter_inlines_offset_literal()
+    {
+        using var context = CreateContext();
+        var skip = 5;
+
+        var sql = context.Events
+            .OrderBy(e => e.Id)
+            .Skip(skip)
+            .ToQueryString();
+
+        AssertSql.Contains("OFFSET 5", sql);
+        AssertSql.DoesNotContain("@p", sql);
+    }
+
+    [Fact]
     public void Math_Ceiling_generates_CEILING()
     {
         using var context = CreateContext();
@@ -759,6 +774,16 @@ internal static class AssertSql
         Assert.True(
             normalizedSql.Contains(normalizedFragment, StringComparison.OrdinalIgnoreCase),
             $"Expected SQL to contain '{expectedFragment}'. Actual SQL:{Environment.NewLine}{sql}");
+    }
+
+    public static void DoesNotContain(string unexpectedFragment, string sql)
+    {
+        var normalizedSql = Normalize(sql);
+        var normalizedFragment = Normalize(unexpectedFragment);
+
+        Assert.False(
+            normalizedSql.Contains(normalizedFragment, StringComparison.OrdinalIgnoreCase),
+            $"Expected SQL not to contain '{unexpectedFragment}'. Actual SQL:{Environment.NewLine}{sql}");
     }
 
     private static string Normalize(string sql)

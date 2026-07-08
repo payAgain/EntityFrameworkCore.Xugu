@@ -1,6 +1,6 @@
 # Phase 10 — 维护与剩余对等
 
-> **状态**：`in_progress`（Wave 4 部分 done — 10.106 ✅ / 10.105 blocked）  
+> **状态**：`in_progress`（Wave 5 done — 10.201 ✅ / 10.205 blocked / 10.107 assessed）  
 > **前置**：Phase 9 `done`（676 列测，~64% Pomelo，**2.0.0**）  
 > **目标**：巩固 2.0.0 维护线、补齐高价值剩余测试、落地 defer 项与发布/CI
 
@@ -37,7 +37,7 @@
 | 10.104 | **9.T defer 补全** | 见下表 | 9.T* | **done** | SaveChangesInterception +6、ConvertToProvider +10、Seeding +3 |
 | 10.105 | **ROW_COUNT 乐观并发** | `OptimisticConcurrencyMySqlTest` | 驱动/方言 | **blocked** | XuguDB E10049：`ROW_COUNT()` 不可用；维持 `SELECT 1` |
 | 10.106 | **Retry Strategy 实装** | `MySqlRetryingExecutionStrategy` | 驱动 XGCI | **done** | `XuguRetryingExecutionStrategy` + Message 解析瞬态码 |
-| 10.107 | **EF 版本矩阵** | Pomelo 多 TFM | — | todo | 评估 net8.0 目标；与 EF Core 9 对齐策略 |
+| 10.107 | **EF 版本矩阵** | Pomelo 多 TFM | — | **assessed** | net8.0 多目标需双 EF 包版本；2.0.x 维持 net9.0 only，defer 至 2.1+ |
 | 10.108 | **JSON 列调研** | `Json*MySqlTest` | XuguDB 文档 | todo | **可选** — 若官方支持 JSON 类型再开 10.109 实现 |
 
 ### 10.104 defer 子项
@@ -57,11 +57,11 @@
 
 | ID | 任务 | 原 ID | 状态 | 说明 |
 |----|------|-------|------|------|
-| 10.201 | 参数内联 | 8.Q14 | todo | 查询性能优化 |
+| 10.201 | 参数内联 | 8.Q14 | **done** | `XuguInlinedParameterExpression` + OFFSET 内联；`TranslatorSqlTests` |
 | 10.202 | FOR UPDATE / 窗口函数 | 8.Q12 | todo | EF 无标准 Tag 入口；调研后定 |
 | 10.203 | 位运算返回类型 | 8.Q11 | todo | `BitwiseOperationReturnTypeCorrecting` |
 | 10.204 | RelationalCommand 表面 | 8.S8–S10 | todo | Database/Command 扩展 API |
-| 10.205 | **Linux x64 RID 打包** | 8.N1–N3 | todo | `xugusql` linux 二进制 + nuspec |
+| 10.205 | **Linux x64 RID 打包** | 8.N1–N3 | **blocked** | 驱动仓库无预编译 `libxugusql.so`；`NativeAssets.props` 已预留路径 |
 | 10.206 | **9.IT2 IntegrationTests** | 9.IT2 | todo | ASP.NET + Vegeta 性能宿主；低价值，按需 |
 | 10.207 | DateOnly/TimeOnly SaveChanges | P3-11 | todo | 依赖 csharp-driver 原生参数 |
 | 10.208 | ConnectionString 校验器 | BACKLOG | todo | Xugu 键值对格式校验 |
@@ -89,7 +89,7 @@ Wave 1（P0）: 10.001–10.005 — CI + 文档 + triage  ✅ done
 Wave 2（P1）: 10.103 + 10.104 — Query defer 补全  ✅ done（795 列测）
 Wave 3（P1）: 10.101 + 10.102 — Monster/Specification  ✅ done（850 列测）
 Wave 4（P1）: 10.105 + 10.106 — 驱动依赖项  ⚠️ 10.106 done / 10.105 blocked（E10049）
-Wave 5（P2）: 10.205 + 10.201 — 平台/性能
+Wave 5（P2）: 10.205 + 10.201 — 平台/性能  ✅ 10.201 done / 10.205 blocked / 10.107 assessed
 Wave 6（可选）: 10.108 JSON — 文档确认后
 ```
 
@@ -100,7 +100,7 @@ Wave 6（可选）: 10.108 JSON — 文档确认后
 ```powershell
 dotnet build Xugu.EFCore.Xugu.sln -c Release
 harness/scripts/verify.ps1
-dotnet test test/EFCore.Xugu.Tests -c Release --list-tests   # 基线 860（Wave 4：+10 Retry 单测）
+dotnet test test/EFCore.Xugu.Tests -c Release --list-tests   # 基线 861（Wave 5：+1 参数内联单测）
 dotnet test Xugu.EFCore.Xugu.sln -c Release                   # 0 FAIL
 ```
 

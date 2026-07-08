@@ -41,8 +41,17 @@ public class XuguQuerySqlGenerator : QuerySqlGenerator
                 => VisitXuguComplexFunctionArgumentExpression(complexFunctionArgument),
             XuguColumnAliasReferenceExpression columnAliasReferenceExpression
                 => VisitColumnAliasReference(columnAliasReferenceExpression),
+            XuguInlinedParameterExpression inlinedParameterExpression
+                => VisitInlinedParameterExpression(inlinedParameterExpression),
             _ => base.VisitExtension(extensionExpression)
         };
+
+    private Expression VisitInlinedParameterExpression(XuguInlinedParameterExpression inlinedParameterExpression)
+    {
+        Visit(inlinedParameterExpression.ValueExpression);
+
+        return inlinedParameterExpression;
+    }
 
     private Expression VisitColumnAliasReference(XuguColumnAliasReferenceExpression columnAliasReferenceExpression)
     {

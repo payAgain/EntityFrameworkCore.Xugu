@@ -39,6 +39,16 @@
     </None>
   </ItemGroup>
 
+  <!-- linux-x64 native: pack when XuguNativeSoPath exists (10.205 — blocked until driver ships .so) -->
+  <ItemGroup Condition="'$(XuguNativeSoExists)' == 'true'">
+    <None Include="$(XuguNativeSoPath)">
+      <Link>libxugusql.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>true</Pack>
+      <PackagePath>runtimes/linux-x64/native/</PackagePath>
+    </None>
+  </ItemGroup>
+
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>

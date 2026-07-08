@@ -1,7 +1,7 @@
 # Phase 9 测试对等矩阵（9.O1）
 
 > **状态**：`done`（M3 达标）  
-> **更新**：2026-07-08（Wave 3 done + Wave 4 部分）  
+> **更新**：2026-07-08（Wave 5 done）
 > **分母**：Pomelo `EFCore.MySql.FunctionalTests` ~**1050** 测试方法（估算）
 
 ## 里程碑进度
@@ -10,9 +10,26 @@
 |--------|-----------|-------------------|-------------------|------|
 | M1（30%） | ≥200 | 337 | ~32% | done |
 | M2（60%） | ≥400 | 401 | ~38% | done |
-| M3（90%） | ≥600 | **850** | **~81%** | **done**（Wave 3 扩展） |
+| M3（90%） | ≥600 | **861** | **~82%** | **done**（Wave 3–5） |
 
-> **门禁（2026-07-08 Wave 3）**：全量 **850** 列测；Wave 3 新增 **+55** 方法实库 **0 FAIL**（子集验证）。`verify.ps1` build PASS。
+> **门禁（2026-07-08 Wave 5）**：全量 **861** 列测（Wave 5 +1 参数内联单测）。`verify.ps1` build PASS。
+
+## Wave 5 增量（10.201 参数内联）— 10.205 blocked
+
+| 文件 | 新增（list-tests） | 说明 |
+|------|-------------------|------|
+| `TranslatorSqlTests.cs` | +1 | `Skip_with_closure_parameter_inlines_offset_literal` |
+| **Wave 5 小计** | **+1** | 860 → **861** |
+| Linux RID 打包 | — | 10.205 **blocked**（无 `libxugusql.so`） |
+
+## Wave 4 增量（10.106 Retry）— 10.105 blocked
+
+| 文件 | 新增（list-tests） | 说明 |
+|------|-------------------|------|
+| `XuguTransientExceptionDetectorTests.cs` | 9 | XGCI 瞬态码单元测试 |
+| `ExecutionStrategyTests.cs` | +1 | `EnableRetryOnFailure_configures_retrying_strategy` |
+| **Wave 4 小计** | **+10** | 850 → **860** |
+| `OptimisticConcurrencyTests` | 0（1 仍 Skip） | 10.105 ROW_COUNT **blocked**（E10049） |
 
 ## Wave 3 增量（10.101 + 10.102）— 10.M4 达标
 

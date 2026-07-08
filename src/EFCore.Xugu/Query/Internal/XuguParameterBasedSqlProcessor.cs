@@ -23,6 +23,12 @@ public class XuguParameterBasedSqlProcessor : RelationalParameterBasedSqlProcess
         queryExpression = new XuguBoolOptimizingExpressionVisitor(Dependencies.SqlExpressionFactory)
             .Visit(queryExpression);
 
+        queryExpression = new XuguParameterInliningExpressionVisitor(
+            Dependencies.TypeMappingSource,
+            Dependencies.SqlExpressionFactory).Process(queryExpression, parametersValues, out var canCache2);
+
+        canCache &= canCache2;
+
         return queryExpression;
     }
 

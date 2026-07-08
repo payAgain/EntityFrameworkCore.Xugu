@@ -1,12 +1,19 @@
 <Project>
   <!--
-    Native xugusql.dll path for build/test/CI packaging.
-    Override via -p:XuguNativeDllPath=... or XUGU_NATIVE_DLL_PATH env (see ci-build.ps1).
-    Document: external/csharp-driver/doc — xugusql.dll must sit beside XuguClient.dll at runtime.
+    Native xugusql runtime library paths for build/test/CI packaging.
+    Override via -p:XuguNativeDllPath=... / -p:XuguNativeSoPath=... or env vars (see ci-build.ps1).
+
+    Windows: xugusql.dll must sit beside XuguClient.dll at runtime.
+    Linux:   libxugusql.so / xugusql.so — NOT shipped in external/csharp-driver clone (10.205 blocked).
+    Document: external/csharp-driver/doc — driver README describes Linux NuGet usage but no prebuilt .so in repo.
   -->
   <PropertyGroup>
     <XuguNativeDllPath Condition="'$(XuguNativeDllPath)' == '' and '$(XUGU_NATIVE_DLL_PATH)' != ''">$(XUGU_NATIVE_DLL_PATH)</XuguNativeDllPath>
     <XuguNativeDllPath Condition="'$(XuguNativeDllPath)' == ''">$(MSBuildThisFileDirectory)external\csharp-driver\test_xugusql\64\xugusql.dll</XuguNativeDllPath>
     <XuguNativeDllExists Condition="Exists('$(XuguNativeDllPath)')">true</XuguNativeDllExists>
+
+    <XuguNativeSoPath Condition="'$(XuguNativeSoPath)' == '' and '$(XUGU_NATIVE_SO_PATH)' != ''">$(XUGU_NATIVE_SO_PATH)</XuguNativeSoPath>
+    <XuguNativeSoPath Condition="'$(XuguNativeSoPath)' == ''">$(MSBuildThisFileDirectory)external\csharp-driver\test_xugusql\linux-x64\libxugusql.so</XuguNativeSoPath>
+    <XuguNativeSoExists Condition="Exists('$(XuguNativeSoPath)')">true</XuguNativeSoExists>
   </PropertyGroup>
 </Project>

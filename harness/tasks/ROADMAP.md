@@ -2,12 +2,12 @@
 
 > Orchestrator 维护。仓库：`E:\Work\xuguefcore`
 
-## 当前 Phase: **10**（`in_progress` — Wave 4 部分 done）
+## 当前 Phase: **10**（`in_progress` — Wave 5 done）
 
 **版本**：**`2.0.0`**（Phase 9 测试对等稳定版；Phase 10 维护线）  
-**测试**：**860** 列测（Wave 4 +10 Retry 单测；~82% Pomelo 覆盖）；剩余 ~190 → Phase 10 Wave 5–6  
-**源码**：Xugu **122** .cs vs Pomelo **194** .cs（~63%）  
-**Wave 指针**：**Wave 4 部分** — 10.106 Retry ✅ / 10.105 ROW_COUNT **blocked**（E10049）→ **Wave 5**
+**测试**：**861** 列测（Wave 5 +1 参数内联；~82% Pomelo 覆盖）；剩余 ~190 → Phase 10 Wave 6  
+**源码**：Xugu **133** .cs vs Pomelo **194** .cs（~69%）  
+**Wave 指针**：**Wave 5 done** — 10.201 参数内联 ✅ / 10.205 Linux RID **blocked** → **Wave 6**
 
 ---
 
@@ -39,7 +39,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 | **7** | **1.0.0 生产级发版** | **`done`** | **`1.0.0`** | ExecuteDelete/Update、编译管道、LIMITATIONS、pack |
 | **8** | **Pomelo 功能对等** | **`done`** | **`1.1.0-preview`** | P1 项完成；120 .cs；defer 见 BACKLOG |
 | **9** | **Pomelo 测试对等** | **`done`** | **`2.0.0`** | FunctionalTests M1–M3 达标；676 列测 |
-| **10** | **维护 / 剩余对等** | `in_progress` | 2.0.x | Wave 1/2/3 done；860 列测；10.106 Retry done |
+| **10** | **维护 / 剩余对等** | `in_progress` | 2.0.x | Wave 1–5 done；861 列测；10.201 参数内联 done |
 
 ### Phase 任务文档
 
@@ -104,7 +104,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 | **Wave 2** | 10.103 Query +119 + 10.104 defer | **done**（795 列测） |
 | **Wave 3** | 10.101 Monster + 10.102 Specification | **done**（850 列测） |
 | Wave 4 | 10.105 ROW_COUNT + 10.106 Retry | **partial**（10.106 done；10.105 E10049 blocked） |
-| Wave 5 | 10.205 Linux RID + 10.201 参数内联 | todo |
+| **Wave 5** | 10.205 Linux RID + 10.201 参数内联 | **done**（10.201 ✅；10.205 blocked；10.107 assessed） |
 | Wave 6 | 10.108 JSON 调研（可选） | todo |
 
 | 优先级 | 范围 | 任务 ID |
@@ -162,6 +162,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 
 | 日期 | 事件 |
 |------|------|
+| 2026-07-08 | **Phase 10 Wave 5**：10.201 `XuguInlinedParameterExpression` + OFFSET 参数内联 done；10.205 Linux RID **blocked**（驱动仓库无 `libxugusql.so`）；10.107 net8.0 assessed defer；**861** 列测 |
 | 2026-07-08 | **Phase 10 Wave 4**：10.106 `XuguRetryingExecutionStrategy` done；10.105 ROW_COUNT **blocked**（E10049）；**860** 列测 |
 | 2026-07-08 | **Phase 10 Wave 3**：10.101 Monster Fixup 子集 + 10.102 Specification Tests 子集；**850** 列测；10.M4 ✅ |
 | 2026-07-07 | **Phase 10 Wave 2**：10.103 Query +119（FromSql/TPH/Deep/Functions/ComplexNav）+ 10.104 defer；**795** 列测；10.M2 ✅ |
