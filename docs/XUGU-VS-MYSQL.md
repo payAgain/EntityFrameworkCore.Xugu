@@ -14,11 +14,11 @@
 |------|------------|----------------|
 | 架构对齐 | 目录与服务注册对齐 Pomelo 9.0.0 | 参考实现 |
 | 源码文件 | **120** .cs（~62% Pomelo 194） | 194 .cs |
-| FunctionalTests | **676** 列测（~**64%** Pomelo ~1050） | ~1050 |
+| FunctionalTests | **860** 列测（~**82%** Pomelo ~1050） | ~1050 |
 | 核心 CRUD / LINQ / 迁移 | **支持** | 支持 |
 | ExecuteDelete / ExecuteUpdate | **核心路径支持** | 支持 |
 | JSON / Spatial / FULLTEXT | **不实现** | 支持 |
-| 自动重试（Retry） | **API 入口有，实现 defer** | `EnableRetryOnFailure` |
+| 自动重试（Retry） | **支持**（Message 解析 XGCI 码） | `EnableRetryOnFailure` |
 | 连接串 | Xugu 键值对（`IP=…; DB=…`） | MySQL 标准 URI/键值 |
 | 自增主键 DDL | `IDENTITY(1,1)` | `AUTO_INCREMENT` |
 | GUID 存储 | 原生 `GUID`（16 字节） | 常映射 `CHAR(36)` |
@@ -39,7 +39,7 @@
 | SequentialGuid | ✅ supported | 客户端 ticks+random；查询 `SYS_GUID()` |
 | 乐观并发 token 列 | ✅ supported | `DbUpdateConcurrencyException` 检测 ⚠️ defer |
 | DateOnly / TimeOnly 查询 | ✅ supported | SaveChanges 写入 ⚠️ defer（驱动） |
-| `EnableRetryOnFailure` | ❌ defer | 抛 `NotSupportedException` |
+| `EnableRetryOnFailure` | ✅ supported | `XuguRetryingExecutionStrategy`（XGCI Message 解析） |
 | Collation / `HasCharSet` Fluent | ❌ skip | 连接串 `CHAR_SET` |
 | JSON 列 / `Json*` API | ❌ skip | 无 Xugu JSON 列生态 |
 | NetTopologySuite / Spatial | ❌ skip | — |

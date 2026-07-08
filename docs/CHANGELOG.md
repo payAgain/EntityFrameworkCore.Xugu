@@ -45,10 +45,26 @@ Phase 10 **维护与剩余对等**前三个 Wave 落地，稳固 2.0.0 维护线
 - **测试套件** — 795 → **850**（Phase 10 Wave 3 达标 10.M4）。
 - **Pomelo 可比覆盖率** — ~76% → **~81%**（850 ÷ 1050 测试方法）。
 
-### Deferred (documented, Phase 10 Wave 4–6)
+### Wave 4 — 2026-07-08（10.106 done / 10.105 blocked）
 
-- **10.105 ROW_COUNT 乐观并发** — 解锁 `Stale_concurrency_token_throws_*`；需驱动 / 方言确认后回归 CRUD。
-- **10.106 `XuguRetryingExecutionStrategy`** — 前置：驱动 `IsTransient` 或 Message 码契约稳定。
+#### Added
+
+- **`XuguRetryingExecutionStrategy`** — `EnableRetryOnFailure()` 实装；`XuguTransientExceptionDetector` 解析 Message 中 XGCI 瞬态码（E19886/E32506/E34304/E34305 等）。
+- **Retry 单测 +10** — `XuguTransientExceptionDetectorTests`、`ExecutionStrategyTests.EnableRetryOnFailure_configures_retrying_strategy`。
+
+#### Changed
+
+- **测试套件** — 850 → **860**（+10 Retry 单测）。
+- **Pomelo 可比覆盖率** — ~81% → **~82%**（860 ÷ 1050）。
+
+#### Blocked / Deferred
+
+- **10.105 ROW_COUNT 乐观并发** — 实库验证 XuguDB 返回 **E10049**（`ROW_COUNT()` 函数不存在，MYSQL 兼容模式亦不可用）；维持 `SELECT 1` rows-affected 占位。
+- **10.107 EF 版本矩阵**、**10.108 JSON 列调研**、**10.205 Linux RID** 等待 Wave 5–6。
+
+### Deferred (documented, Phase 10 Wave 5–6)
+
+- **10.105 ROW_COUNT 乐观并发** — **blocked**（E10049）；需驱动 `RecordsAffected` 或 XuguDB 等价 API。
 - **10.107 EF 版本矩阵** — 评估 net8.0 目标；与 EF Core 9 对齐策略。
 - **10.108 JSON 列调研** — 可选；若 XuguDB 官方支持 JSON 类型再开 10.109 实现。
 - **10.205 Linux x64 RID 打包**、**10.201 参数内联**、**10.202 FOR UPDATE / 窗口函数**、**10.203 位运算返回类型**、**10.204 RelationalCommand 表面** — 见 [LIMITATIONS.md](LIMITATIONS.md)。

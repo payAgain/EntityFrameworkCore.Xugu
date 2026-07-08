@@ -1,7 +1,7 @@
 # Phase 9 测试对等矩阵（9.O1）
 
 > **状态**：`done`（M3 达标）  
-> **更新**：2026-07-07（W5 完成 + W6 起步）  
+> **更新**：2026-07-08（Wave 3 done + Wave 4 部分）  
 > **分母**：Pomelo `EFCore.MySql.FunctionalTests` ~**1050** 测试方法（估算）
 
 ## 里程碑进度
@@ -10,9 +10,20 @@
 |--------|-----------|-------------------|-------------------|------|
 | M1（30%） | ≥200 | 337 | ~32% | done |
 | M2（60%） | ≥400 | 401 | ~38% | done |
-| M3（90%） | ≥600 | **795** | **~76%** | **done**（Wave 2 扩展） |
+| M3（90%） | ≥600 | **850** | **~81%** | **done**（Wave 3 扩展） |
 
-> **门禁（2026-07-07 Wave 2）**：全量 **795** 列测；Wave 2 新增 **129** 方法实库 **0 FAIL**（子集验证）；全量偶发 1 条既有用例瞬态失败（连接争用）。`verify.ps1` build PASS。
+> **门禁（2026-07-08 Wave 3）**：全量 **850** 列测；Wave 3 新增 **+55** 方法实库 **0 FAIL**（子集验证）。`verify.ps1` build PASS。
+
+## Wave 3 增量（10.101 + 10.102）— 10.M4 达标
+
+| 文件 | 新增（list-tests） | 说明 |
+|------|-------------------|------|
+| `MonsterFixupXuguTests.cs` | ~22 | 复杂关系图 fixup |
+| `StoreGeneratedFixupXuguTests.cs` | ~13 | 存储生成 + fixup |
+| `DesignTimeXuguTest.cs` | ~8 | 设计时模型 / DbContext 工厂 |
+| `KeysWithConvertersXuguTests.cs` | ~7 | 键 + 值转换器 |
+| `TransactionBasicsXuguTests.cs` | ~5 | 事务基础 |
+| **Wave 3 小计** | **+55** | 795 → **850** |
 
 ## Wave 2 增量（10.103 + 10.104）— 10.M2 达标
 
@@ -82,7 +93,8 @@
 | `TimeOnlyQueryTests` 与 `DateOnly`/`Extension` 共享 `EF_TEST_SCHEDULE` | 专用表 `EF_TEST_TIMEONLY_SCHEDULE` + fixture 方法 | **done** |
 | 全量套件实库连接争用 | `xunit.runner.json` `maxParallelThreads: 1` + `DisableTestParallelization` + `XuguRelationalConnection`/`XuguTestConnection` 瞬态 open 重试 | **done** |
 | `NorthwindContext` 多 TestStore 前缀模型缓存 | `IXuguStoreBoundContext` + `XuguTestStoreModelCacheKeyFactory` | **done** |
-| `ROW_COUNT()` / 乐观并发异常 | 文档化 defer（`LIMITATIONS.md`） | **done** |
+| `ROW_COUNT()` / 乐观并发异常 | XuguDB **E10049**（函数不存在，MYSQL 兼容模式亦不可用）；`SELECT 1` 占位维持 | **blocked**（10.105） |
+| `XuguRetryingExecutionStrategy` | Message 解析 XGCI 瞬态码（E19886/E32506 等） | **done**（10.106） |
 
 ## 9.IT — IntegrationTests 调研（9.IT1）
 
@@ -100,5 +112,5 @@
 
 ```powershell
 dotnet test Xugu.EFCore.Xugu.sln -c Release
-dotnet test test/EFCore.Xugu.Tests -c Release --list-tests   # 795
+dotnet test test/EFCore.Xugu.Tests -c Release --list-tests   # 860（Wave 4：+10 Retry 单测）
 ```

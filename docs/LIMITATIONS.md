@@ -4,29 +4,22 @@
 
 ## 自动重试（Execution Strategy）
 
-**状态：defer（Phase 7 Wave 1 确认）**
+**状态：done（Phase 10 Wave 4 — 10.106）**
 
-Provider 默认注册 `XuguExecutionStrategy`（`RetriesOnFailure => false`），**未**提供 `XuguRetryingExecutionStrategy`。
+Provider 默认注册 `XuguExecutionStrategy`（`RetriesOnFailure => false`）。调用 `EnableRetryOnFailure()` 时注册 `XuguRetryingExecutionStrategy`，通过解析 `Exception.Message` 中的 XGCI 码判定瞬态错误。
 
-`EnableRetryOnFailure()` Fluent API 已对齐 Pomelo 入口，但调用时抛出 `NotSupportedException`（`XuguStrings.RetryingExecutionStrategyNotSupported`）。
-
-### 阻塞原因
+### 实现说明
 
 | 项 | 说明 |
 |----|------|
-| 驱动异常类型 | `external/csharp-driver` 抛出 `System.Exception`，非 `DbException` 子类 |
-| 错误码 | XGCI 码嵌入 `Exception.Message`（如 `[E34501]:System.CommandExecuteException:sqlexecute err: …`），无 `ErrorCode` / `IsTransient` API |
-| 瞬态码未映射 | 驱动源码中无 `E19886`（空闲断开）、`E32506`（连接超时断开）等常量 |
-| 与 Pomelo 对比 | MySqlConnector 提供 `MySqlException.IsTransient`；Xugu 无等价能力 |
+| 瞬态检测 | `XuguTransientExceptionDetector` 解析 `[E19886]`、`[E32506]`、`[E34304]`、`[E34305]` 等 |
+| 驱动限制 | 驱动仍抛出 `System.Exception`，无 `DbException.ErrorCode` / `IsTransient` |
+| `errorNumbersToAdd` | Pomelo 兼容参数 **忽略**（Xugu 使用字符串 XGCI 码，非数字 error number） |
+| 故障注入 | 尚无集成测试模拟 idle disconnect；依赖单元测试 + 实库偶发瞬态 |
 
-### 用户替代方案
+### 残余风险
 
-在 `UseXugu(..., o => o.UseXuguExecutionStrategy(...))` 基础上，可注册自定义 `IExecutionStrategyFactory`，自行解析 `Exception.Message` 中的 XGCI 码决定是否重试。
-
-### 后续前置条件
-
-1. 驱动提供 `XuguException` + 结构化 `ErrorCode` / `IsTransient`；或
-2. 与驱动团队确认 Message 中 XGCI 码格式长期稳定，并补充故障注入集成测试。
+若驱动团队变更 Message 中 XGCI 码格式，瞬态判定可能失效。长期建议驱动提供 `XuguException` + 结构化 `IsTransient`。
 
 详见 `harness/references/retrying-execution-strategy.md`。
 
@@ -105,18 +98,18 @@ CLR `Guid` 默认映射 XuguDB 原生 `GUID`（16 字节），非 MySQL 风格 `
 
 ## 乐观并发与 ROW_COUNT()
 
-**状态：defer（驱动 / Update 批次）**
+**状态：blocked（Phase 10 Wave 4 实库验证 — 10.105）**
 
-`XuguUpdateSqlGenerator` 在 batch 完成时使用 `SELECT 1` 作为 rows-affected 占位，而非 MySQL 风格 `ROW_COUNT()`。因此：
+`XuguUpdateSqlGenerator` 在 batch 完成时使用 `SELECT 1` 作为 rows-affected 占位。实库启用 `ROW_COUNT()` 后 XuguDB 返回 **E10049**（函数不存在），即使在 `COMPATIBLE_MODE=MYSQL` 下亦不可用。
 
 | 能力 | 状态 |
 |------|------|
 | 并发 token 列映射 / UPDATE 含 token 列 | **支持**（见 `OptimisticConcurrencyTests`） |
-| `DbUpdateConcurrencyException` 检测 | **defer** — 需驱动返回真实 affected rows 或 Provider 切换为 `ROW_COUNT()` 且回归 CRUD 测试 |
+| `DbUpdateConcurrencyException` 检测 | **blocked** — 需 XuguDB 提供等价 affected-rows API 或驱动返回真实 `RecordsAffected` |
 
-**原因**：全量启用 `ROW_COUNT()` 曾破坏现有 CRUD/Update 测试；在驱动与方言契约确认前不默认开启。
+**实库证据（2026-07-08）**：`[E10049 L3 C9] 字段变量或函数"ROW_COUNT"()不存在`
 
-**后续**：驱动暴露稳定 affected-rows API 或 XuguDB 文档确认 `ROW_COUNT()` 语义后，再解锁 `OptimisticConcurrencyTests.Stale_concurrency_token_throws_DbUpdateConcurrencyException`。
+**后续**：驱动 `RecordsAffected` 可靠返回，或 XuguDB 文档确认 MySQL 兼容函数后再解锁 `Stale_concurrency_token_throws_DbUpdateConcurrencyException`。
 
 ## 其他 defer / skip（摘要）
 

@@ -2,12 +2,12 @@
 
 > Orchestrator 维护。仓库：`E:\Work\xuguefcore`
 
-## 当前 Phase: **10**（`in_progress` — Wave 3 done）
+## 当前 Phase: **10**（`in_progress` — Wave 4 部分 done）
 
 **版本**：**`2.0.0`**（Phase 9 测试对等稳定版；Phase 10 维护线）  
-**测试**：**850** 列测（Wave 3 done；~81% Pomelo 覆盖）；剩余 ~200 → Phase 10 Wave 4–6  
-**源码**：Xugu **120** .cs vs Pomelo **194** .cs（~62%）  
-**Wave 指针**：**Wave 3 done** → **Wave 4**（10.105 ROW_COUNT + 10.106 Retry，依赖驱动契约）
+**测试**：**860** 列测（Wave 4 +10 Retry 单测；~82% Pomelo 覆盖）；剩余 ~190 → Phase 10 Wave 5–6  
+**源码**：Xugu **122** .cs vs Pomelo **194** .cs（~63%）  
+**Wave 指针**：**Wave 4 部分** — 10.106 Retry ✅ / 10.105 ROW_COUNT **blocked**（E10049）→ **Wave 5**
 
 ---
 
@@ -39,7 +39,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 | **7** | **1.0.0 生产级发版** | **`done`** | **`1.0.0`** | ExecuteDelete/Update、编译管道、LIMITATIONS、pack |
 | **8** | **Pomelo 功能对等** | **`done`** | **`1.1.0-preview`** | P1 项完成；120 .cs；defer 见 BACKLOG |
 | **9** | **Pomelo 测试对等** | **`done`** | **`2.0.0`** | FunctionalTests M1–M3 达标；676 列测 |
-| **10** | **维护 / 剩余对等** | `in_progress` | 2.0.x | Wave 1/2/3 done；850 列测（Monster + Specification + Query +119） |
+| **10** | **维护 / 剩余对等** | `in_progress` | 2.0.x | Wave 1/2/3 done；860 列测；10.106 Retry done |
 
 ### Phase 任务文档
 
@@ -103,7 +103,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 | **Wave 1** | 10.001–10.005 CI + verify + NuGet + 文档 + triage | **done** |
 | **Wave 2** | 10.103 Query +119 + 10.104 defer | **done**（795 列测） |
 | **Wave 3** | 10.101 Monster + 10.102 Specification | **done**（850 列测） |
-| Wave 4 | 10.105 ROW_COUNT + 10.106 Retry | todo（依赖驱动契约） |
+| Wave 4 | 10.105 ROW_COUNT + 10.106 Retry | **partial**（10.106 done；10.105 E10049 blocked） |
 | Wave 5 | 10.205 Linux RID + 10.201 参数内联 | todo |
 | Wave 6 | 10.108 JSON 调研（可选） | todo |
 
@@ -111,7 +111,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 |--------|------|---------|
 | **P0** | CI 实库矩阵、NuGet 发布、用户文档、测试 triage | 10.001–10.005 ✅ |
 | **P1** | Monster/Specification 子集、Query +119、9.T defer | 10.101–10.104 ✅ |
-| **P1 todo** | ROW_COUNT、Retry Strategy、EF 版本矩阵、JSON 调研 | 10.105–10.108 |
+| **P1 todo** | ROW_COUNT（blocked）、EF 版本矩阵、JSON 调研 | 10.105–10.108 |
 | **P2** | 8.Q11/Q12/Q14、Linux RID、9.IT2、DateOnly SaveChanges | 10.201–10.208 |
 
 **用户对比文档**：`docs/XUGU-VS-MYSQL.md`  
@@ -148,7 +148,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 
 | 项 | Phase | 说明 |
 |----|-------|------|
-| `XuguRetryingExecutionStrategy` | 7 defer | 驱动瞬态码未稳定 → LIMITATIONS 已文档化 |
+| `XuguRetryingExecutionStrategy` | 7 defer | **done**（10.106）；Message 解析 XGCI 码 |
 | CREATE/DROP DATABASE | — | defer，运维手工建库 |
 | Collation / FULLTEXT / CONVERT_TZ | — | skip |
 | JSON / NTS 扩展 | 8 | skip |
@@ -162,6 +162,7 @@ Pomelo 9.0.0 测试对等 (~2.0.0)
 
 | 日期 | 事件 |
 |------|------|
+| 2026-07-08 | **Phase 10 Wave 4**：10.106 `XuguRetryingExecutionStrategy` done；10.105 ROW_COUNT **blocked**（E10049）；**860** 列测 |
 | 2026-07-08 | **Phase 10 Wave 3**：10.101 Monster Fixup 子集 + 10.102 Specification Tests 子集；**850** 列测；10.M4 ✅ |
 | 2026-07-07 | **Phase 10 Wave 2**：10.103 Query +119（FromSql/TPH/Deep/Functions/ComplexNav）+ 10.104 defer；**795** 列测；10.M2 ✅ |
 | 2026-07-07 | **Phase 10 Wave 1**：CI（GitHub + GitLab）、`verify.ps1 -RunTests`、GETTING-STARTED 2.0.0、test triage |

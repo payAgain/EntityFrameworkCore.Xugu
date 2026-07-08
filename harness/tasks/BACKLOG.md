@@ -1,7 +1,7 @@
 # XuguDB EF Core Provider — Backlog
 
 > Orchestrator 维护。已映射至 Phase 7/8/9/10。详见 `harness/tasks/ROADMAP.md`。  
-> **最后同步**：2026-07-08（Phase 10 Wave 3 done — 850 列测）
+> **最后同步**：2026-07-08（Phase 10 Wave 4 部分 — 860 列测；10.106 done）
 
 ## Phase 映射总览
 
@@ -12,7 +12,7 @@
 | ExecuteDelete/Update | Phase 7 | 7.Q1 | **done** |
 | Query 编译管道 | Phase 7 | 7.Q2–Q4, 7.S3 | **done** |
 | TypeMapping 核心增量 | Phase 7 | 7.S1 | **done** |
-| `XuguRetryingExecutionStrategy` | Phase 7 | 7.S2 | **defer**（10.106 todo） |
+| `XuguRetryingExecutionStrategy` | Phase 7 | 7.S2 | **done**（10.106 — Message 解析 XGCI） |
 | 生产冒烟测试 | Phase 7 | 7.T1 | **done** |
 | LIMITATIONS 文档 | Phase 7 | 7.T2 | **done**（Phase 9/10 继续补全） |
 | Query Translator 全量 | Phase 8 | 8.Q1–Q5 | **done** |
@@ -35,8 +35,8 @@
 | Specification Tests 子集 | Phase 10 | 10.102 | **done** |
 | Query 深覆盖 Wave | Phase 10 | 10.103 | **done**（+119 列测） |
 | 9.T defer 补全 | Phase 10 | 10.104 | **done**（SaveChangesInterception +6 / ConvertToProvider +10 / Seeding +3） |
-| ROW_COUNT 乐观并发 | Phase 10 | 10.105 | todo |
-| Retry Strategy 实装 | Phase 10 | 10.106 | todo |
+| ROW_COUNT 乐观并发 | Phase 10 | 10.105 | **blocked**（E10049） |
+| Retry Strategy 实装 | Phase 10 | 10.106 | **done** |
 | EF 版本矩阵 | Phase 10 | 10.107 | todo |
 | JSON 列调研 | Phase 10 | 10.108 | todo（可选） |
 
@@ -99,8 +99,8 @@
 
 | ID | 任务 | 原 ID | 状态 | 说明 |
 |----|------|-------|------|------|
-| P2-1 | `XuguRetryingExecutionStrategy` 实装 | 7.S2 / 10.106 | **todo** | 驱动 IsTransient 契约稳定后 |
-| P2-2 | ROW_COUNT 乐观并发 | 10.105 | **todo** | 解锁 Stale_concurrency_token_throws_* |
+| P2-1 | `XuguRetryingExecutionStrategy` 实装 | 7.S2 / 10.106 | **done** | Message 解析 XGCI 瞬态码 |
+| P2-2 | ROW_COUNT 乐观并发 | 10.105 | **blocked** | XuguDB E10049；`SELECT 1` 占位维持 |
 | P2-3 | EF 版本矩阵（net8.0） | 10.107 | **todo** | 评估多 TFM |
 | P2-4 | JSON 列调研 | 10.108 | **todo**（可选） | 依赖 XuguDB 文档确认 |
 | P2-5 | 参数内联 | 8.Q14 / 10.201 | **todo** | 查询性能 |
@@ -122,7 +122,7 @@
 | 8.Q15 | `ConvertTimeZone` | skip；`IsMatch` **done** |
 | 8.S8–S10 | RelationalCommand/Database 表面 | P2 / 10.204 |
 | 8.N1–N3 | Native Linux RID 打包 | 依赖驱动 / 10.205 |
-| 8.E8 Retry | `EnableRetryOnFailure` | API 入口已暴露，实现 defer / 10.106 |
+| 8.E8 Retry | `EnableRetryOnFailure` | **done**（10.106） |
 | ConnectionString 校验 | Pomelo validator | defer（连接串格式不同）/ 10.208 |
 | Json 变更跟踪 | Pomelo JsonChangeTracking | skip（Xugu 无 JSON 列生态） |
 
@@ -132,7 +132,7 @@
 
 | ID | 任务 | 状态 | 依赖 | Phase 备注 |
 |----|------|------|------|-----------|
-| P3-1 | `XuguRetryingExecutionStrategy` 实装 | **defer** | 驱动异常码稳定 | 7.S2 / 10.106 |
+| P3-1 | `XuguRetryingExecutionStrategy` 实装 | **done** | Message 解析 XGCI | 7.S2 / 10.106 |
 | P3-2 | CREATE/DROP DATABASE | **defer** | 运维边界 | 不实现 DatabaseCreator |
 | P3-3 | `ConvertTimeZone` DbFunction | **skip** | 无 CONVERT_TZ | 8.Q15 skip |
 | P3-4 | Pomelo FunctionalTests 高优先级子集 | **done** | — | 批次 A–C |
@@ -182,4 +182,4 @@
 | Provider .cs | **120** | 120+ | 120+ | 视 JSON 调研 |
 | 测试方法 | **850** | 850+（ROW_COUNT 解锁后） | 850+（性能/平台） | 视 JSON 调研 |
 | Pomelo 测试覆盖 | **~81%**（850 ÷ 1050） | ~85% | ~85% | 视调研 |
-| 当前 Wave | **Wave 3 done** | Wave 4（10.105/10.106） | Wave 5（10.205/10.201） | Wave 6（10.108 可选） |
+| 当前 Wave | **Wave 4 部分** | Wave 5（10.205/10.201） | Wave 6（10.108 可选） | — |

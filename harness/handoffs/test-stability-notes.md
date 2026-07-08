@@ -4,15 +4,14 @@
 > **来源**：Phase 9 全量实库调试（根目录 `test-run*.txt` / `test-out*.txt` 已清理）  
 > **权威 handoff**：`phase9-m3-test-parity-2026-07-07.md`
 
-## 最终门禁
+## 最终门禁（Wave 4 更新）
 
 | 指标 | 值 |
 |------|-----|
-| 列测总数 | **676** |
-| 通过 | **671** |
-| 显式 Skip | **5** |
-| 失败 | **0** |
-| 耗时（全量顺序） | ~38 s（加固后） |
+| 列测总数 | **860** |
+| 通过（实库稳定跑） | **~778** |
+| 显式 Skip | **~82** |
+| 失败 | **0**（偶发 1–2 条瞬态连接失败，重跑即过） |
 
 ```powershell
 dotnet test test/EFCore.Xugu.Tests -c Release
@@ -34,7 +33,7 @@ dotnet test test/EFCore.Xugu.Tests -c Release
 | 测试 | 原因 |
 |------|------|
 | `LazyLoadTests.Lazy_loading_proxies_not_supported_in_harness` | 无 lazy proxy 宿主 |
-| `OptimisticConcurrencyTests.Stale_concurrency_token_throws_DbUpdateConcurrencyException` | ROW_COUNT / affected rows defer |
+| `OptimisticConcurrencyTests.Stale_concurrency_token_throws_DbUpdateConcurrencyException` | XuguDB E10049 — `ROW_COUNT()` 不可用 |
 | `WithConstructorsTests` ×2 | 构造函数图 insert defer |
 | `ComplexTypesTrackingTests.Nullable_complex_property_can_be_null` | optional complex defer（EF #31376） |
 
@@ -43,7 +42,7 @@ dotnet test test/EFCore.Xugu.Tests -c Release
 1. 全量实库测试前确认 XuguDB 可达：`harness/scripts/start-xugudb.ps1`
 2. 勿提高 xUnit 并行度；实库套件设计为 **顺序执行**
 3. 无实库环境：SkippableFact 跳过集成测试属 **预期**，非失败
-4. 覆盖率分母：`dotnet test --list-tests` → 676；Pomelo 可比 ~64%（÷1050）
+4. 覆盖率分母：`dotnet test --list-tests` → **860**；Pomelo 可比 **~82%**（÷1050）
 
 ## 参考
 

@@ -81,7 +81,7 @@ XuguTestConnection.SkipIfUnavailable();
 | Job | 配置文件 | 实库 | 说明 |
 |-----|----------|------|------|
 | `build` | `.github/workflows/ci.yml` / `.gitlab-ci.yml` | 否 | `dotnet build` + `verify.ps1` + `dotnet test`（无库时 SkippableFact 跳过） |
-| `integration` | 同上 | 是 | 需 secrets/variables；`verify.ps1 -RunTests` 全量 **676** 列测 **0 FAIL** |
+| `integration` | 同上 | 是 | 需 secrets/variables；`verify.ps1 -RunTests` 全量 **860** 列测 **0 FAIL**（偶发瞬态连接失败见 test-stability-notes） |
 | `pack` | tag `v*` | 否 | `publish-nuget.ps1 -Pack` → `Microsoft.EntityFrameworkCore.Xugu.2.0.0.nupkg` |
 
 ### GitHub Actions
@@ -104,7 +104,7 @@ XuguTestConnection.SkipIfUnavailable();
 
 ```powershell
 dotnet build Xugu.EFCore.Xugu.sln -c Release
-harness/scripts/verify.ps1 -RunTests          # build + 676 全量
+harness/scripts/verify.ps1 -RunTests          # build + 860 全量
 harness/scripts/publish-nuget.ps1             # dry-run 2.0.0
 harness/scripts/publish-nuget.ps1 -Pack       # 产出 artifacts/
 ```

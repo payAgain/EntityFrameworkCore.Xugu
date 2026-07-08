@@ -65,7 +65,7 @@
 | `Query/ExpressionVisitors/Internal/MySqlQueryableMethodTranslatingExpressionVisitor.cs` | `Query/ExpressionVisitors/Internal/XuguQueryableMethodTranslatingExpressionVisitor.cs` | QueryCore | Pomelo-port |
 | `Design/Internal/MySqlDesignTimeServices.cs` | `Design/Internal/XuguDesignTimeServices.cs` | Migrations | Pomelo-port |
 | `Scaffolding/Internal/MySqlDatabaseModelFactory.cs` | `Scaffolding/Internal/XuguDatabaseModelFactory.cs` | Migrations | Xugu-native |
-| `MySqlRetryingExecutionStrategy.cs` | `XuguRetryingExecutionStrategy.cs` | Storage | defer |
+| `MySqlRetryingExecutionStrategy.cs` | `XuguRetryingExecutionStrategy.cs` | Storage | **done**（10.106） |
 
 ## Query Translators 映射（ExpressionTranslators/Internal/）
 

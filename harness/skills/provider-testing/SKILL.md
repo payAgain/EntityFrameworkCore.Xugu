@@ -52,7 +52,7 @@ description: 'XuguDB EF Core test infrastructure and verification scripts. Use w
 
 ## 当前 Phase
 
-**Phase 10** — 维护与剩余对等（Wave 1/2/3 done；Monster/Specification 子集 + Query +119；850 列测）。
+**Phase 10** — 维护与剩余对等（Wave 1/2/3 done；Wave 4 部分 — 10.106 Retry done；860 列测）。
 
 ## Phase 1 测试（历史）
 

@@ -1,13 +1,13 @@
 # XuguRetryingExecutionStrategy — 调研结论
 
-> 日期：2026-07-06（P2 波次更新）  
-> 任务：P2-1 / P3-1
+> 日期：2026-07-06（P2 波次更新）；**2026-07-08 Wave 4 实装**  
+> 任务：P2-1 / P3-1 / **10.106**
 
 ## 现状
 
 - Provider 已注册 `XuguExecutionStrategy` / `XuguExecutionStrategyFactory`。
-- 默认策略 **`RetriesOnFailure => false`**，与 Pomelo `MySqlRetryingExecutionStrategy` 不同。
-- **Phase 7 Wave 1（2026-07-06）复验**：驱动层仍无结构化瞬态判定 API，维持 **defer**；已写入 `docs/LIMITATIONS.md` §自动重试。
+- 默认策略 **`RetriesOnFailure => false`**。
+- **`EnableRetryOnFailure()` 已实装**（Phase 10 Wave 4）：注册 `XuguRetryingExecutionStrategy` + `XuguTransientExceptionDetector`（Message 解析 XGCI 码）。
 
 ## XuguDB / ADO.NET 瞬态错误码调研
 
@@ -47,10 +47,9 @@
 
 | 项 | 决定 |
 |----|------|
-| `XuguRetryingExecutionStrategy` 实现 | **defer** — 驱动未暴露稳定瞬态判定 API |
-| 可行前置条件 | ① 驱动提供 `XuguException` + `ErrorCode`/`IsTransient`；或 ② 与驱动团队确认 Message 中 XGCI 码格式稳定 |
-| 短期替代 | 用户可在 `UseXuguExecutionStrategy()` 基础上自定义 `IExecutionStrategy`，自行解析 `Exception.Message` |
-| 后续工作 | 故障注入集成测试（模拟 idle disconnect）；对齐 Pomelo 重试次数/延迟配置 |
+| `XuguRetryingExecutionStrategy` 实现 | **done**（10.106）— Message 解析 XGCI 码；`errorNumbersToAdd` 忽略 |
+| 残余风险 | 驱动 Message 格式变更可能破坏判定；长期建议 `XuguException` + `IsTransient` |
+| 后续工作 | 故障注入集成测试（模拟 idle disconnect） |
 
 ## DbFunctions 相关 defer（同波次）
 
@@ -64,6 +63,6 @@
 ## 参考
 
 - Pomelo：`MySqlRetryingExecutionStrategy.cs`, `MySqlTransientExceptionDetector.cs`
-- 本项目：`src/EFCore.Xugu/Storage/Internal/XuguExecutionStrategy.cs`
+- 本项目：`src/EFCore.Xugu/Storage/Internal/XuguRetryingExecutionStrategy.cs`, `XuguTransientExceptionDetector.cs`
 - 驱动：`external/csharp-driver/XGCSClient/XGCommand.cs`, `XGConnection.cs`
 - XuguDB 文档：`development/xgci/error.md`, `reference/function/string-functions/regexp_like.md`, `reference/function/uncategorized-functions/hex.md`

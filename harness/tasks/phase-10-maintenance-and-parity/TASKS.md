@@ -1,6 +1,6 @@
 # Phase 10 — 维护与剩余对等
 
-> **状态**：`in_progress`（Wave 3 **done**）  
+> **状态**：`in_progress`（Wave 4 部分 done — 10.106 ✅ / 10.105 blocked）  
 > **前置**：Phase 9 `done`（676 列测，~64% Pomelo，**2.0.0**）  
 > **目标**：巩固 2.0.0 维护线、补齐高价值剩余测试、落地 defer 项与发布/CI
 
@@ -35,8 +35,8 @@
 | 10.102 | **Specification Tests 子集** | `EFCore.Specification.Tests` 数据库相关 | 10.005 | **done** | `DesignTimeXuguTest` + `KeysWithConverters` + `TransactionBasics` 子集 |
 | 10.103 | **Query 深覆盖 Wave** | 剩余 Northwind/AdHoc | 9.W6 | **done** | +119 列测；FromSql/TPH/Deep/Functions/ComplexNav |
 | 10.104 | **9.T defer 补全** | 见下表 | 9.T* | **done** | SaveChangesInterception +6、ConvertToProvider +10、Seeding +3 |
-| 10.105 | **ROW_COUNT 乐观并发** | `OptimisticConcurrencyMySqlTest` | 驱动/方言 | todo | 解锁 `Stale_concurrency_token_throws_*`；需回归 CRUD |
-| 10.106 | **Retry Strategy 实装** | `MySqlRetryingExecutionStrategy` | 驱动 XGCI | todo | 前置：驱动 `IsTransient` 或 Message 码契约稳定 |
+| 10.105 | **ROW_COUNT 乐观并发** | `OptimisticConcurrencyMySqlTest` | 驱动/方言 | **blocked** | XuguDB E10049：`ROW_COUNT()` 不可用；维持 `SELECT 1` |
+| 10.106 | **Retry Strategy 实装** | `MySqlRetryingExecutionStrategy` | 驱动 XGCI | **done** | `XuguRetryingExecutionStrategy` + Message 解析瞬态码 |
 | 10.107 | **EF 版本矩阵** | Pomelo 多 TFM | — | todo | 评估 net8.0 目标；与 EF Core 9 对齐策略 |
 | 10.108 | **JSON 列调研** | `Json*MySqlTest` | XuguDB 文档 | todo | **可选** — 若官方支持 JSON 类型再开 10.109 实现 |
 
@@ -87,8 +87,8 @@
 ```
 Wave 1（P0）: 10.001–10.005 — CI + 文档 + triage  ✅ done
 Wave 2（P1）: 10.103 + 10.104 — Query defer 补全  ✅ done（795 列测）
-Wave 3（P1）: 10.101 + 10.102 — Monster/Specification
-Wave 4（P1）: 10.105 + 10.106 — 驱动依赖项（并行调研）
+Wave 3（P1）: 10.101 + 10.102 — Monster/Specification  ✅ done（850 列测）
+Wave 4（P1）: 10.105 + 10.106 — 驱动依赖项  ⚠️ 10.106 done / 10.105 blocked（E10049）
 Wave 5（P2）: 10.205 + 10.201 — 平台/性能
 Wave 6（可选）: 10.108 JSON — 文档确认后
 ```
@@ -100,7 +100,7 @@ Wave 6（可选）: 10.108 JSON — 文档确认后
 ```powershell
 dotnet build Xugu.EFCore.Xugu.sln -c Release
 harness/scripts/verify.ps1
-dotnet test test/EFCore.Xugu.Tests -c Release --list-tests   # 基线 850（Wave 3 done）
+dotnet test test/EFCore.Xugu.Tests -c Release --list-tests   # 基线 860（Wave 4：+10 Retry 单测）
 dotnet test Xugu.EFCore.Xugu.sln -c Release                   # 0 FAIL
 ```
 
