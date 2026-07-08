@@ -17,4 +17,4 @@ description: 'Implement XuguDB EF Core Query core (visitors, factories). Use whe
 
 ## 状态
 
-Phase 8 **done** — Query Core（SqlExpressionFactory、Visitor 工厂、DI、Postprocessor）完整；Translators P0/P1 完成。P2 defer：Q11/Q12/Q14。当前 Phase 9 测试对等。
+Phase 8 **done** — Query Core（SqlExpressionFactory、Visitor 工厂、DI、Postprocessor）完整；Translators P0/P1 完成。P2 defer：Q11/Q12/Q14。当前 Phase 10 维护与剩余对等。

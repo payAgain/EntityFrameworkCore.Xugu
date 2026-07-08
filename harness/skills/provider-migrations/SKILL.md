@@ -25,7 +25,7 @@ description: 'Implement XuguDB EF Core Migrations and DesignTime. MUST read Xugu
 
 ## 状态
 
-Phase 8 **done** — Migrations M1–M5、Scaffolding SC1–SC4 完整。当前 Phase 9 测试移植。
+Phase 8 **done** — Migrations M1–M5、Scaffolding SC1–SC4 完整。当前 Phase 10 维护与剩余对等。
 
 ## XuguDB 关键差异
 

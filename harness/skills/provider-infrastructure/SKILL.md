@@ -26,7 +26,7 @@ description: 'Implement XuguDB EF Core Infrastructure: ServerVersion, OptionsExt
 
 ## 状态
 
-Phase 8 **done** — Infrastructure（ServerVersion、Options、UseXugu、Retry API defer）完整。当前 Phase 9。
+Phase 8 **done** — Infrastructure（ServerVersion、Options、UseXugu、Retry API defer）完整。当前 Phase 10。
 
 ## XuguDB 特有
 

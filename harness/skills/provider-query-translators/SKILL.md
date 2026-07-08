@@ -31,7 +31,7 @@ description: 'Implement XuguDB EF Core Query Translators. MUST read XuguDB docs 
 
 ## 状态
 
-Phase 8 **done** — Translators P0/P1 完整；`XuguRegexIsMatchTranslator`（IsMatch）已交付。当前 Phase 9 测试移植。
+Phase 8 **done** — Translators P0/P1 完整；`XuguRegexIsMatchTranslator`（IsMatch）已交付。当前 Phase 10 维护与剩余对等。
 
 ## XuguDB 文档
 

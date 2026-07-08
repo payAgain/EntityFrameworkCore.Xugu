@@ -27,7 +27,7 @@ description: 'Implement XuguDB EF Core Storage: Connection, TypeMapping, SqlGene
 
 ## 状态
 
-Phase 8 **done** — Storage S1–S7 + SqlGenerationHelper 完整；S8–S10 defer。当前 Phase 9。
+Phase 8 **done** — Storage S1–S7 + SqlGenerationHelper 完整；S8–S10 defer。当前 Phase 10。
 
 ## SqlGenerationHelper
 

@@ -17,4 +17,4 @@ description: 'Implement XuguDB EF Core Metadata and conventions. Use when workin
 
 ## 状态
 
-Phase 8 **done** — Metadata + DataAnnotations DA3 完整。当前 Phase 9。
+Phase 8 **done** — Metadata + DataAnnotations DA3 完整。当前 Phase 10。
