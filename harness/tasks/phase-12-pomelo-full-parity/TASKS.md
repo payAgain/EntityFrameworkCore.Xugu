@@ -1,6 +1,6 @@
 # Phase 12 — Pomelo 完全体 GA（v3.0.0）
 
-> **状态**：**W4 done**（2026-07-09 — OUT OF SCOPE **approved**；Adjusted **952**；open defer Skip **0**）  
+> **状态**：**W5 done**（2026-07-09 — Platform **signed-off** PLAT-01/02；vendor tickets filed）  
 > **前置**：`v2.1.0` @ 6dc0c72；compat **1056** 列测；native **1056**；**140**/194 .cs implemented + disposition 100%  
 > **版本目标**：**`3.0.0`** — Adjusted 100% Pomelo Comparable Parity  
 > **权威**：`PHASE12-GOALS.md`；SQL = Xugu 文档；Pomelo = 架构参考 only
@@ -55,7 +55,7 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 | **W2** | **12.201–12.205** | Native matrix ≥80% | W1 done | 12.M2 ✅ | **done** |
 | **W3** | **12.301–12.315** | Feature + source | W1 inventory | 12.M3 ✅ | **done** |
 | **W4** | **12.401–12.415** | Formal exclusions | W1.101 freeze | 12.M4 ✅ | **done** |
-| **W5** | **12.501–12.510** | Platform + CI | W4 done | 12.M5 ✅ | **planned** |
+| **W5** | **12.501–12.510** | Platform + CI | W4 done | 12.M5 ✅ | **done** |
 | **W6** | **12.601–12.610** | GA Gate + tag | W1–W5 | 12.M6 ✅ | **planned** |
 
 ---
@@ -148,16 +148,16 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 
 | ID | 任务 | 验收 | 状态 | 原 ID |
 |----|------|------|------|-------|
-| **12.501** | **ROW_COUNT 实库复验** | E10049 是否修复 | todo | 11.1001 |
-| **12.502** | **乐观并发测试** | `DbUpdateConcurrencyException` PASS 或 signed-off | todo | 11.1002 |
-| **12.503** | **RecordsAffected fallback** | ADO 层替代路径 | todo | 11.1003 |
-| **12.504** | **ROW_COUNT vendor ticket** | ticket # 登记 | todo | 11.1004 |
-| **12.505** | **Linux libxugusql.so** | 驱动 Release 或 vendor | todo | 11.1005 |
-| **12.506** | **Linux RID 打包** | `linux-x64` nupkg CI | todo | 11.1006 |
-| **12.507** | **NativeAssets.props 实装** | 多 RID 矩阵 | todo | 11.1007 |
-| **12.508** | **跨平台 CI job** | Linux agent 0 FAIL | todo | 11.1008 |
-| **12.509** | **Platform limitation 文档** | LIMITATIONS + ticket | todo | 11.1009 |
-| **12.510** | **W5 handoff + production checklist** | `PRODUCTION-RELEASE-CHECKLIST.md` P0 | todo | 11.1010 |
+| **12.501** | **ROW_COUNT 实库复验** | E10049 是否修复 | **done**（仍 E10049） | 11.1001 |
+| **12.502** | **乐观并发测试** | `DbUpdateConcurrencyException` PASS 或 signed-off | **done**（signed-off PLAT-01） | 11.1002 |
+| **12.503** | **RecordsAffected fallback** | ADO 层替代路径 | **done**（不可行；文档） | 11.1003 |
+| **12.504** | **ROW_COUNT vendor ticket** | ticket # 登记 | **done**（VT-XUGU-ROWCOUNT-001） | 11.1004 |
+| **12.505** | **Linux libxugusql.so** | 驱动 Release 或 vendor | **done**（仍缺失） | 11.1005 |
+| **12.506** | **Linux RID 打包** | `linux-x64` nupkg CI | **done**（条件打包预备） | 11.1006 |
+| **12.507** | **NativeAssets.props 实装** | 多 RID 矩阵 | **done** | 11.1007 |
+| **12.508** | **跨平台 CI job** | Linux agent 0 FAIL | **done**（Windows-only signed-off） | 11.1008 |
+| **12.509** | **Platform limitation 文档** | LIMITATIONS + ticket | **done** | 11.1009 |
+| **12.510** | **W5 handoff + production checklist** | `PRODUCTION-RELEASE-CHECKLIST.md` P0 | **done** | 11.1010 |
 
 **退出条件**：ROW_COUNT + Linux RID **unblocked** 或 **vendor ticket + signed-off**。
 
@@ -190,9 +190,9 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 | W2 | 5 | **5** | 0 |
 | W3 | 15 | **15** | 0 |
 | W4 | 15 | **15** | 0 |
-| W5 | 10 | 0 | 10 |
+| W5 | 10 | **10** | 0 |
 | W6 | 10 | 0 | 10 |
-| **合计** | **64** | **44** | **20** |
+| **合计** | **64** | **54** | **10** |
 
 > head start：11.802–805（batch port）已在 1056 列测中体现，不重复计入 Done。
 

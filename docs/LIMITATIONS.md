@@ -145,18 +145,35 @@ CLR `Guid` 默认映射 XuguDB 原生 `GUID`（16 字节），非 MySQL 风格 `
 
 ## 乐观并发与 ROW_COUNT()
 
-**状态：blocked（Phase 10 Wave 4 实库验证 — 10.105）**
+**状态：signed-off blocked（Phase 12 W5 — 12.509/PLAT-01）**
 
 `XuguUpdateSqlGenerator` 在 batch 完成时使用 `SELECT 1` 作为 rows-affected 占位。实库启用 `ROW_COUNT()` 后 XuguDB 返回 **E10049**（函数不存在），即使在 `COMPATIBLE_MODE=MYSQL` 下亦不可用。
 
 | 能力 | 状态 |
 |------|------|
 | 并发 token 列映射 / UPDATE 含 token 列 | **支持**（见 `OptimisticConcurrencyTests`） |
-| `DbUpdateConcurrencyException` 检测 | **blocked** — 需 XuguDB 提供等价 affected-rows API 或驱动返回真实 `RecordsAffected` |
+| `DbUpdateConcurrencyException` 检测 | **signed-off blocked** — VT-XUGU-ROWCOUNT-001 |
 
-**实库证据（2026-07-08）**：`[E10049 L3 C9] 字段变量或函数"ROW_COUNT"()不存在`
+**实库证据**：`[E10049 L3 C9] 字段变量或函数"ROW_COUNT"()不存在`（2026-07-08 10.105；**2026-07-09** 12.501 复验 PASS）
 
-**后续**：驱动 `RecordsAffected` 可靠返回，或 XuguDB 文档确认 MySQL 兼容函数后再解锁 `Stale_concurrency_token_throws_DbUpdateConcurrencyException`。
+**RecordsAffected fallback（12.503）**：`XGDataReader.RecordsAffected` 存在，但 EF `UpdateAndSelectSqlGenerator` 从 batch 末 `SELECT` 标量读 affected rows，ADO fallback **不可行**。
+
+**解锁**：XuguDB 提供 `ROW_COUNT()` 或等价 API，或驱动 batch affected count 可供 EF 消费 → 启用 `Stale_concurrency_token_throws_DbUpdateConcurrencyException`。
+
+## 平台支持（Windows / Linux RID）
+
+**状态：signed-off platform exclusion（Phase 12 W5 — 12.509/PLAT-02）**
+
+| 平台 | RID | 状态 |
+|------|-----|------|
+| Windows x64 | `win-x64` | **支持** — `xugusql.dll` 随 NuGet / 构建输出 |
+| Linux x64 | `linux-x64` | **signed-off blocked** — 驱动无 `libxugusql.so`；VT-XUGU-LINUXRID-001 |
+
+**预备**：`NativeAssets.props` + `EFCore.Xugu.csproj` 条件 `runtimes/linux-x64/native/` 打包（`.so` 存在时自动启用）。
+
+**CI**：GitHub Actions 实库 job 为 **Windows-only**（12.508 signed-off）；Linux agent 待驱动发布 `.so` 后添加。
+
+详见 `harness/references/platform-limitations-signed-off-12.509.md`。
 
 ## JSON 列（EF Core 映射）
 
@@ -186,7 +203,8 @@ XuguDB **服务端**支持原生 `JSON` 列类型（LOB，最大 2GB）、`->` /
 | `FULLTEXT` 索引 / `Match` 查询 | **excluded** — OOS-02 |
 | `CONVERT_TZ` / `ConvertTimeZone` | **excluded** — OOS-04 |
 | Scaffolding Baselines 全量快照 | **excluded** — OOS-05 |
-| Native Linux RID 打包 | **blocked** — W5 `12.505–12.507` |
+| Native Linux RID 打包 | **signed-off blocked** — PLAT-02 / VT-XUGU-LINUXRID-001 |
+| ROW_COUNT 乐观并发 | **signed-off blocked** — PLAT-01 / VT-XUGU-ROWCOUNT-001 |
 | 参数内联（OFFSET） | **done** — `10.201` |
 
 详见 `harness/references/out-of-scope-approved-12.409.md` 与 `harness/tasks/BACKLOG.md`。

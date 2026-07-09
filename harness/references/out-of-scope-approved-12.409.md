@@ -61,7 +61,7 @@
 | `WithConstructorsTests` ×2 | Excluded **12.312** | excluded-with-evidence | W3 |
 | `ComplexTypesTrackingTests` ×1 | Excluded **12.313** / EF #31376 | excluded-with-evidence | W3 |
 | `SeedingTests.EnsureCreated_*` | Excluded **12.410**（EnsureCreated+HasData 实库 FAIL） | excluded-with-evidence | W4 |
-| `OptimisticConcurrencyTests.Stale_*` | Blocked **12.502/W5** E10049 | blocked | W5 |
+| `OptimisticConcurrencyTests.Stale_*` | Blocked **12.502/W5** E10049 | **signed-off blocked** PLAT-01 | W5 |
 
 **开放 defer Skip**：**0**
 

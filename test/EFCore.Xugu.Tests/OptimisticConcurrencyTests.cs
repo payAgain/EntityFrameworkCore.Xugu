@@ -9,8 +9,9 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
 /// Phase 9.T11 — OptimisticConcurrencyMySqlTest subset.
-/// DbUpdateConcurrencyException integration test deferred: XuguDB returns E10049 for ROW_COUNT()
-/// even in MYSQL compatible_mode (verified Phase 10 Wave 4).
+/// DbUpdateConcurrencyException integration test signed-off blocked (12.509/PLAT-01):
+/// XuguDB returns E10049 for ROW_COUNT() even in MYSQL compatible_mode
+/// (verified Phase 10 Wave 4; re-verified 12.501 / PlatformLimitationProbeTests).
 /// </summary>
 [Collection("XuguOptimisticConcurrency")]
 [Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
@@ -24,7 +25,7 @@ public class OptimisticConcurrencyTests(OptimisticConcurrencyFixture fixture)
         Assert.True(property.IsConcurrencyToken);
     }
 
-    [SkippableFact(Skip = "Blocked 12.502/W5: XuguDB E10049 — ROW_COUNT() not available; DbUpdateConcurrencyException detection deferred")]
+    [SkippableFact(Skip = "Signed-off 12.509/PLAT-01: XuguDB E10049 — ROW_COUNT() not available; VT-XUGU-ROWCOUNT-001")]
     public async Task Stale_concurrency_token_throws_DbUpdateConcurrencyException()
     {
         XuguTestConnection.SkipIfUnavailable();

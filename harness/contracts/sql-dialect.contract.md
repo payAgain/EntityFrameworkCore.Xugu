@@ -214,7 +214,7 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
   - **差异**：compat 模式连接打开时额外 `SET compatible_mode TO 'MYSQL'`
   - **RETURNING**：数据库与 `insert.md` 支持；**XuguClient ADO 暂不可读** — Provider 不使用 `AppendInsertReturningOperation` 直至驱动修复（11.506）
 - 与 Pomelo 差异：**必须在 MigrationsSqlGenerator 和 Convention 中单独实现**
-- **ROW_COUNT**：仍 **blocked**（10.105 / E10049）；RETURNING 路径 **不** 依赖 `ROW_COUNT()`
+- **ROW_COUNT**：**signed-off blocked**（12.509/PLAT-01 / E10049）；RETURNING 路径 **不** 依赖 `ROW_COUNT()`
 
 ## 数据类型映射（CLR → XuguDB）
 
@@ -438,6 +438,6 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | 2026-07-08 | Phase 10 Wave 3：`MonsterFixupXuguTests` + `StoreGeneratedFixupXuguTests`（手写 Xugu 兼容模型，对齐 Pomelo `MonsterFixup*MySqlTest`）；`DesignTimeXuguTest` + `KeysWithConverters` + `TransactionBasics` 子集（对齐 `EFCore.Specification.Tests` 数据库相关）；850 列测；10.M4 ✅；~81% Pomelo 覆盖 | Testing |
 | 2026-07-08 | Phase 10 Wave 5：OFFSET 参数内联（`XuguInlinedParameterExpression`）；Linux RID blocked 登记 | QueryCore |
 | 2026-07-08 | Phase 10 Wave 4：`XuguRetryingExecutionStrategy` + `XuguTransientExceptionDetector`（10.106 ✅）；10.105 ROW_COUNT **blocked**（实库 E10049：`ROW_COUNT()` 不存在）；860 列测 | Storage / Testing |
-| 2026-07-08 | defer 登记：10.105 ROW_COUNT 乐观并发（E10049 blocked）、10.107 EF 版本矩阵、10.108 JSON 列调研 | Orchestrator |
+| 2026-07-09 | Phase 12 W5：ROW_COUNT **signed-off blocked**（12.509/PLAT-01；12.501 复验 E10049）；Linux RID **signed-off**（PLAT-02）；`PlatformLimitationProbeTests` | Platform / Testing |
 | 2026-07-08 | Phase 11 W1：方言权威声明强化；JSON § 扩展为 11.109 实现脚手架；COMPATIBLE_MODE 标注为可选开发便利 | Docs |
 | 2026-07-08 | Phase 10 Wave 6（10.108）：JSON 原生类型 + 函数已确认；Provider defer 10.109 → Phase 11 | Orchestrator |

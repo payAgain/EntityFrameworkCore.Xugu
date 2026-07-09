@@ -82,8 +82,8 @@
 | 能力 | 处置 | 原因 |
 |------|------|------|
 | MySQL 迁移零改动 / Pomelo 即插即用 | **非目标** | 产品定位为 Xugu 原生方言 |
-| `DbUpdateConcurrencyException`（ROW_COUNT） | **永久 blocked** | E10049；MYSQL 兼容模式亦不可用 |
-| Linux x64 原生 RID | **永久 blocked** | 驱动无 `libxugusql.so` |
+| `DbUpdateConcurrencyException`（ROW_COUNT） | **signed-off blocked** PLAT-01 | E10049；VT-XUGU-ROWCOUNT-001 |
+| Linux x64 原生 RID | **signed-off blocked** PLAT-02 | 驱动无 `libxugusql.so`；VT-XUGU-LINUXRID-001 |
 | NetTopologySuite / Spatial | **永久 skip** | 无 NTS 生态 |
 | FULLTEXT / `MATCH … AGAINST` | **永久 skip** | 文档无对外 FULLTEXT；用 `REGEXP_LIKE` |
 | `CONVERT_TZ` / `ConvertTimeZone` | **永久 skip** | XuguDB 无等价函数 |

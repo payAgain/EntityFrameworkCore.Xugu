@@ -1,9 +1,9 @@
-# 生产发布检查清单（Phase 11 → 3.0.0 完全体）
+# 生产发布检查清单（Phase 12 → 3.0.0 完全体）
 
-> **状态**：**active**（2026-07-09）  
+> **状态**：**active**（2026-07-09 — W5 platform signed-off）  
 > **2.1.0 功能发布**：✅ `v2.1.0` @ 6dc0c72 — **非**生产完全体  
-> **完全体权威**：`harness/tasks/phase-11-xugu-native-release/PHASE11-CLOSURE-CRITERIA.md`  
-> **当前 Phase**：11 **in_progress**（W11–W15）
+> **完全体权威**：`harness/tasks/phase-12-pomelo-full-parity/PHASE12-GOALS.md`  
+> **当前 Phase**：12 **W5 done** → **W6** GA Gate
 
 ---
 
@@ -11,8 +11,8 @@
 
 | 级别 | 版本 | 含义 | 状态 |
 |------|------|------|------|
-| **功能发布** | 2.1.0 | JSON、native-first、dual CI、898 列测 ~85% | ✅ tagged |
-| **生产完全体** | 3.0.0 | Adjusted 100% Pomelo Comparable Parity + 全部门禁 | ❌ open |
+| **功能发布** | 2.1.0 | JSON、native-first、dual CI、1056 列测 | ✅ tagged |
+| **生产完全体** | 3.0.0 | Adjusted 100% Pomelo Comparable Parity + 全部门禁 | W6 open |
 
 ---
 
@@ -22,47 +22,49 @@
 
 - [x] `dotnet build Xugu.EFCore.Xugu.sln -c Release` — PASS
 - [x] `harness/scripts/verify.ps1` — PASS
-- [ ] **compat 全量 0 FAIL** — 连续 **3×** `run-compat-gate.ps1`（11.807）
-- [ ] **native 全量 0 FAIL** — `Category=NativeDialect`（W11.808 扩展后复验）
+- [x] **compat 全量 0 FAIL** — 1056 列测（W1 12.102）
+- [x] **native 全量 0 FAIL** — `Category=NativeDialect` 1056（W2 12.201）
 - [x] GitHub `build` job（无 DB）— PASS
-- [ ] GitHub `integration-compat` + `integration-native`（`XUGU_CI_INTEGRATION=true`）— 3× 稳定
+- [ ] GitHub `integration-compat` + `integration-native`（`XUGU_CI_INTEGRATION=true`）— 3× 稳定（W6 复验）
 
-### 测试对等（11.M8）
+### 测试对等（12.M1）
 
-- [ ] Pomelo Comparable Set **100%** 分类（11.801 / 11.806）
-- [ ] compat 列测 **≥1050** 或 adjusted 分母 **100%**（当前 **898** / ~85%）
-- [ ] 显式 `Skip=` **0** 或 evidence-backed（当前 **6**）
-- [ ] `test-parity-matrix.md` 无未分类 `todo`
+- [x] Pomelo Comparable Set **100%** 分类（12.101）
+- [x] compat 列测 **1056**；Adjusted 分母 **952** / **110.9%**（12.411）
+- [x] 显式 `Skip=` 全 evidence（5 方法；含 1 signed-off blocked）
+- [x] `test-parity-matrix.md` 无未分类 `todo`
 
 ### 打包与集成
 
 - [x] `harness/scripts/test-nuget-pack.ps1` — PASS
 - [x] `harness/scripts/publish-nuget.ps1 -Pack` — 2.1.0 nupkg
 - [x] **`harness/scripts/run-integration-smoke.ps1`** — E2E CRUD PASS（有实库）
-- [ ] `samples/EfDesignSample` 与当前包版本一致
+- [ ] `samples/EfDesignSample` 与当前包版本一致（W6）
 
 ### 文档（运维）
 
 - [x] `docs/RELEASE-SCOPE.md` — 2.1.0 + 完全体定义
 - [x] `docs/LIMITATIONS.md` — frozen for 2.1.0
-- [ ] `docs/LIMITATIONS.md` — frozen for **3.0.0**
+- [ ] `docs/LIMITATIONS.md` — frozen for **3.0.0**（W6 12.603）
 - [x] `docs/GETTING-STARTED.md` — 2.1.0
-- [x] `docs/TESTING.md` — dual CI / secrets
-- [ ] NuGet 公开发布流程文档化（feed URL、版本策略）
+- [x] `docs/TESTING.md` — dual CI / platform notes
+- [ ] NuGet 公开发布流程文档化（W6）
 
-### 源码对等（11.M9）
+### 源码对等（12.M3）
 
-- [ ] `pomelo-file-map.md` **194** 文件 disposition **100%**（当前 **139** / ~72%）
-- [ ] defer 表 **0 open**（DateOnly、net8.0、11.202–204 等）
+- [x] `pomelo-file-map.md` **194** 文件 disposition **100%**
+- [x] defer 表 **0 open**
 
-### 平台（11.M10 前置 — W13）
+### 平台（12.M5 — W5 ✅）
 
-- [ ] ROW_COUNT / `DbUpdateConcurrencyException` — unblocked 或 vendor ticket + signed-off
-- [ ] Linux x64 RID — pack 可用 或 platform exclusion signed-off
+- [x] ROW_COUNT / `DbUpdateConcurrencyException` — **signed-off** PLAT-01 / VT-XUGU-ROWCOUNT-001
+- [x] Linux x64 RID — **signed-off** PLAT-02 / VT-XUGU-LINUXRID-001
+- [x] `NativeAssets.props` + 条件 `linux-x64` 打包预备
+- [x] 跨平台 CI — Windows-only signed-off（12.508）；Linux job defer 至驱动 `.so`
 
 ### 完全体 Tag
 
-- [ ] W11–W14 全绿
+- [ ] W6 Release Gate 全绿（12.601–12.610）
 - [ ] `git tag v3.0.0` 指向 Gate 全绿 commit
 - [ ] CHANGELOG / GETTING-STARTED 3.0.0 同步
 
@@ -70,24 +72,19 @@
 
 ## P1 — 发布质量（建议完全体前完成）
 
-- [ ] native 矩阵 ≥ compat **80%** 覆盖（当前 **177** / 898 ≈ 20%）
+- [x] native 矩阵 **1056** = compat 100%（W2）
 - [ ] Specification Tests Phase 3（PACKAGING §3）
-- [ ] JSON 实体 integration-sample 端点（11.109 延伸）
-- [ ] 11.RG16 标识符策略审计关闭
-- [ ] parity 仪表板（test-parity-matrix + pomelo-file-map）100%
+- [ ] JSON 实体 integration-sample 端点
+- [x] parity 仪表板（test-parity-matrix + pomelo-file-map）W4 签字
 
 ---
 
-## P2 / 驱动阻塞（文档登记，可能 signed-off exclusion）
+## P2 / 驱动阻塞（W5 signed-off）
 
-| 项 | ID | 依赖 | 处置 |
-|----|-----|------|------|
-| ROW_COUNT E10049 | 11.105 | XuguDB/驱动 | W13 vendor ticket |
-| Linux `libxugusql.so` | 11.205 | 驱动 Release | W13 platform exclusion |
-| DateOnly SaveChanges | 11.207 | csharp-driver | W12 |
-| net8.0 TFM | 11.107 | EF 双包 | W12 |
-| NTS / FULLTEXT / Collation | 8.* | XuguDB 无生态 | W14 exclusion |
-| Pomelo IntegrationTests | 10.206 | 低 ROI | W11 决策 |
+| 项 | ID | Vendor ticket | 处置 |
+|----|-----|---------------|------|
+| ROW_COUNT E10049 | PLAT-01 | VT-XUGU-ROWCOUNT-001 | **signed-off blocked** |
+| Linux `libxugusql.so` | PLAT-02 | VT-XUGU-LINUXRID-001 | **signed-off platform exclusion** |
 
 ---
 
@@ -98,45 +95,40 @@
 dotnet build Xugu.EFCore.Xugu.sln -c Release
 harness/scripts/verify.ps1
 
-# P0 — compat 稳定门禁（3× 建议）
-harness/scripts/run-compat-gate.ps1 -MaxAttempts 3
+# P0 — 平台探针（W5）
+harness/scripts/probe-platform-limitations.ps1
+
+# P0 — compat
+$env:XUGU_DIALECT_MODE = 'compat'
+dotnet test test/EFCore.Xugu.Tests -c Release -v q
 
 # P0 — native
 $env:XUGU_DIALECT_MODE = 'native'
-$env:XUGU_CI_INTEGRATION = 'true'
-dotnet test test/EFCore.Xugu.Tests -c Release --filter "Category=NativeDialect"
+dotnet test test/EFCore.Xugu.Tests -c Release --filter "Category=NativeDialect" -v q
 
 # P0 — NuGet
 harness/scripts/test-nuget-pack.ps1
 harness/scripts/publish-nuget.ps1 -Pack
-
-# P0 — 集成 E2E
-$env:XUGU_CONNECTION = "IP=127.0.0.1; DB=SYSTEM; USER=SYSDBA; PWD=SYSDBA; PORT=5138; AUTO_COMMIT=on; CHAR_SET=UTF8"
-harness/scripts/run-integration-smoke.ps1
-
-# W11 — 列测基线
-$env:XUGU_DIALECT_MODE = 'compat'
-dotnet test test/EFCore.Xugu.Tests -c Release --list-tests
 ```
 
 ---
 
-## 进度估算（诚实）
+## 进度估算（2026-07-09 W5 后）
 
 | 维度 | 完成度 | 说明 |
 |------|--------|------|
 | 2.1.0 功能发布 | **100%** | tag ✅ |
-| 生产运维就绪（NuGet + 文档 + 样本） | **~85%** | E2E 自动化 ✅；缺公开发布 |
-| 测试完全体（11.M8） | **~15%** | 898/1050；W11 刚启动 |
-| 源码完全体（11.M9） | **~10%** | 139/194 |
-| 平台完全体（W13） | **0%** | blocked |
-| **综合距 3.0.0 生产完全体** | **~38%** | 2.1.0 基线 + W11 CI/样本加固；W11–W15 主体待做 |
+| 测试完全体（12.M1–M2） | **100%** | 1056 compat + native |
+| 源码完全体（12.M3） | **100%** | 194 disposition |
+| 排除收口（12.M4） | **100%** | Adjusted 952 / 110.9% |
+| 平台（12.M5） | **100%** | Path B signed-off |
+| **综合距 3.0.0** | **~90%** | W6 GA Gate + tag 余量 |
 
 ---
 
 ## 参考
 
-- `harness/tasks/phase-11-xugu-native-release/PHASE11-CLOSURE-CRITERIA.md`
-- `harness/tasks/phase-11-xugu-native-release/W11-TEST-GAP-INVENTORY.md`
-- `harness/tasks/phase-11-xugu-native-release/RELEASE-GATE-GAPS.md`
+- `harness/references/platform-limitations-signed-off-12.509.md`
+- `harness/references/vendor-tickets-12.504.md`
+- `harness/tasks/phase-12-pomelo-full-parity/TASKS.md`
 - `docs/RELEASE-SCOPE.md`

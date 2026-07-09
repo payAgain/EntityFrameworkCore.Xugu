@@ -63,7 +63,7 @@
 |------|-----------|------|-------------|------|
 | GearsOfWar 复杂图 | `GearsOfWarQuery*`, `TPTGears*` | partial `ComplexQueryTests` | **defer** | W3 |
 | TPC 继承全矩阵 | `TPC*QueryMySqlTest` | TPH/TPT 子集 | **defer** | W3 |
-| ROW_COUNT 乐观并发 | `OptimisticConcurrencyMySqlTest` | 1 skip E10049 | **blocked** | W5 |
+| ROW_COUNT 乐观并发 | `OptimisticConcurrencyMySqlTest` | 1 skip E10049 | **signed-off blocked** PLAT-01 | W5 ✅ |
 | Constructor graph insert | `WithConstructorsMySqlTest` | 2 skip | **defer** | W3 **12.312** |
 | Optional complex | `ComplexTypesTrackingMySqlTest` | 1 skip EF #31376 | **defer** | W3/W4 |
 | StoredProcedure update | `StoredProcedureUpdateMySqlTest` | none | **defer** | W3 |
@@ -76,7 +76,7 @@
 | 测试 | 原因 | disposition | Wave |
 |------|------|-------------|------|
 | `LazyLoadTests.Lazy_loading_proxies_not_supported_in_harness` | 无 proxy 宿主 | **excluded** 12.410 | W4 ✅ |
-| `OptimisticConcurrencyTests.Stale_concurrency_token_*` | E10049 ROW_COUNT | **blocked** 12.502/W5 | W5 |
+| `OptimisticConcurrencyTests.Stale_concurrency_token_*` | E10049 ROW_COUNT | **signed-off blocked** PLAT-01 | W5 ✅ |
 | `WithConstructorsTests` ×2 | constructor insert | **excluded** 12.312 | W3 ✅ |
 | `ComplexTypesTrackingTests.Nullable_complex_property_*` | EF #31376 | **excluded** 12.313 | W3 ✅ |
 | `SeedingTests.EnsureCreated_applies_has_data_seed` | EnsureCreated+HasData 实库 FAIL | **excluded** 12.410 | W4 ✅ |

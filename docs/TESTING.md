@@ -118,8 +118,19 @@ XuguTestConnection.SkipIfUnavailable();
 | Job | 配置文件 | 实库 | 说明 |
 |-----|----------|------|------|
 | `build` | `.github/workflows/ci.yml` / `.gitlab-ci.yml` | 否 | `dotnet build` + `verify.ps1` + `dotnet test`（无库时 SkippableFact 跳过） |
-| `integration` | 同上 | 是 | compat **1056** + native **1056** 列测 **0 FAIL**（`Category=NativeDialect`；偶发瞬态见 test-stability-notes） |
-| `pack` | tag `v*` | 否 | `publish-nuget.ps1 -Pack` → `Microsoft.EntityFrameworkCore.Xugu.2.0.0.nupkg` |
+| `integration-compat` | `.github/workflows/ci.yml` | 是 | compat **1057** 列测 **0 FAIL**（`XUGU_CI_INTEGRATION=true`） |
+| `integration-native` | `.github/workflows/ci.yml` | 是 | native **1057** 列测 **0 FAIL**（`Category=NativeDialect`） |
+| `integration-linux` | — | — | **signed-off defer**（12.508）— 待 `libxugusql.so`（PLAT-02） |
+| `pack` | tag `v*` | 否 | `publish-nuget.ps1 -Pack` |
+
+### 平台限制（Phase 12 W5）
+
+| 项 | 状态 | 探针 |
+|----|------|------|
+| ROW_COUNT / E10049 | **signed-off blocked**（PLAT-01） | `PlatformLimitationProbeTests` / `probe-platform-limitations.ps1` |
+| Linux x64 RID | **signed-off**（PLAT-02） | `probe-platform-limitations.ps1` 检查 `.so` 路径 |
+
+CI 实库 job 运行于 **windows-latest**（驱动 `xugusql.dll`）。Linux agent 在虚谷发布 `libxugusql.so` 后启用。
 
 ### GitHub Actions
 

@@ -50,7 +50,7 @@ jobs:
 
   integration-compat:
     name: Integration compat (full suite)
-    runs-on: windows-latest
+    runs-on: windows-latest  # PLAT-02: Linux deferred until libxugusql.so (12.508 signed-off)
     needs: build
     if: vars.XUGU_CI_INTEGRATION == 'true'
     steps:
@@ -86,7 +86,7 @@ jobs:
 
   integration-native:
     name: Integration native (core subset)
-    runs-on: windows-latest
+    runs-on: windows-latest  # PLAT-02: Linux deferred until libxugusql.so (12.508 signed-off)
     needs: build
     if: vars.XUGU_CI_INTEGRATION == 'true'
     steps:
