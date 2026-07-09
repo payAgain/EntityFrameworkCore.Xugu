@@ -22,8 +22,8 @@ dotnet test test/EFCore.Xugu.Tests -c Release
 
 | 现象 | 典型错误 | 根因 | 处置 |
 |------|---------|------|------|
-| 实库长跑偶发连接失败 | `[E34305]: InValidConnectionException` | 并行 Open + 驱动瞬态 | `XuguRelationalConnection` 8 次重试 + 全局 Semaphore 串行化 Open |
-| 测试 DDL 争用 | 同上 / `Net Error recv_noQuery` | 多测试同时建表/清表 | `XuguTestConnection.OpenConnection()` 同模式；`maxParallelThreads: 1` |
+| 实库长跑偶发连接失败 | `[E34305]: InValidConnectionException` | 并行 Open + 驱动瞬态 | `XuguRelationalConnection` 12 次重退避重试 + 全局 Semaphore；**不再**因单次失败污染 availability 缓存 |
+| 测试 DDL 争用 | 同上 / `Net Error recv_noQuery` | 多测试同时建表/清表 | `XuguTestConnection.OpenConnection()` 同模式；`maxParallelThreads: 1`；`run-compat-gate.ps1` 3× CI 重试 |
 | Skip 雪崩 | 大量 SkippableFact skip（48+） | `IsAvailable()` 探测失败连锁 | 轻量 2 次探测 + 3s 缓存 |
 | `SeedingTests` 单测失败 | `read-optimized model` / `GetSeedData` | EF Core 设计时模型 API 用法 | 测试已修正或标 defer（EnsureCreated+HasData） |
 | `ManyToManyTrackingTests` 间歇失败 | `[E34501]: CommandExecuteException` | 连接/DDL 与上同 | 稳定性加固后纳入全绿 |

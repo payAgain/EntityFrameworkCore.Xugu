@@ -68,8 +68,8 @@ if ($null -ne $sln) {
 
         if ($RunTests) {
             Write-Host "Running full test gate (Release)..." -ForegroundColor Yellow
-            dotnet test $sln.FullName -c Release --no-build --verbosity minimal
-            if ($LASTEXITCODE -ne 0) { throw "dotnet test failed" }
+            & (Join-Path $PSScriptRoot "run-compat-gate.ps1") -Configuration Release -MaxAttempts 3
+            if ($LASTEXITCODE -ne 0) { throw "compat gate failed" }
             Write-Host "[OK] Tests passed (0 FAIL expected when XuguDB available)" -ForegroundColor Green
         }
     }

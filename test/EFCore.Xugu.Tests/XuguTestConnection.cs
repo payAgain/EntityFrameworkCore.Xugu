@@ -50,7 +50,7 @@ public static class XuguTestConnection
     /// Opens a driver connection with short retries for transient driver open errors (E34304/E34305).
     /// Serialized to avoid native driver races under long test runs.
     /// </summary>
-    public static XGConnection OpenConnection(int maxAttempts = 8)
+    public static XGConnection OpenConnection(int maxAttempts = 12)
     {
         OpenLock.Wait();
         try
@@ -69,11 +69,13 @@ public static class XuguTestConnection
                 catch (Exception ex) when (attempt < maxAttempts && IsTransientConnectionError(ex))
                 {
                     last = ex;
-                    Thread.Sleep(TimeSpan.FromMilliseconds(150 * attempt));
+                    var delayMs = 200 * attempt + Random.Shared.Next(0, 100);
+                    Thread.Sleep(TimeSpan.FromMilliseconds(delayMs));
                 }
             }
 
-            MarkAvailable(false);
+            // Do not poison availability cache on transient open exhaustion — long suites
+            // may recover; only ProbeAvailability() should mark the DB unavailable.
             throw last ?? new InvalidOperationException("Failed to open XuguDB connection.");
         }
         finally

@@ -1,9 +1,7 @@
 # Phase 11 Wave 3–5 — 原生方言偏差修复轨
 
-> **状态**：**partial done**（W3–W5 代码 merged；**11.M5–M7 未关闭** — 见 `RELEASE-GATE-GAPS.md`）  
-> **前置**：Wave 2（**11.109** JSON Provider）done  
-> **定位**：基于 Wave 1 方言审计与实库/代码 walkthrough，消除 Provider 与「纯 Xugu 原生方言」目标之间的 **中等偏差**  
-> **与发布轨关系**：本轨 **插入于 Wave 2 与 Release Wave 6 之间**；**W10 Release Gate 收口**须在 tag 前补完 11.M5–M7 缺口
+> **状态**：**done**（W3–W5 + W10 收口 — 11.M5–M7 ✅ @ 6dc0c72）  
+> **后继**：W11 native 矩阵扩展至 compat 对等 — 见 `PHASE11-CLOSURE-CRITERIA.md` §W11.808
 
 ---
 
@@ -33,9 +31,12 @@
 
 | ID | 名称 | 验收标准 | 关联 Wave |
 |----|------|----------|-----------|
-| **11.M5** | **Native Identity** | 原生模式 INSERT identity SaveChanges **实库 0 FAIL**；SQL `RETURNING`；`LAST_INSERT_ID()` 仅 compat | W3 | **partial** — **11.RG1** |
-| **11.M6** | **Compat Optional** | 默认 compat off ✅；dual CI ✅；compat 898 0 FAIL + native ≥80 0 FAIL | W4 | **partial** — native FAIL/过小 — **11.RG5/11.RG6** |
-| **11.M7** | **方言契约闭环** | contract / XUGU-VS-MYSQL / LIMITATIONS native-first；Release Gate synced | W5 | **partial** — 漂移 — **11.RG7/11.RG14–17** |
+| **11.M5** | **Native Identity** | 原生模式 INSERT identity SaveChanges **实库 0 FAIL** | W3 | **done**（W10 RG1） |
+| **11.M6** | **Compat Optional** | 默认 compat off；dual CI green；native 177 0 FAIL | W4 | **done**（W10 RG5/6） |
+| **11.M7** | **方言契约闭环** | contract / XUGU-VS-MYSQL / LIMITATIONS native-first | W5 | **done**（W10 RG7） |
+| **11.M8** | **Test 100%** | Comparable Set 100%；compat + native 0 FAIL | W11 | **todo** |
+| **11.M9** | **Feature 100%** | defer 清零；Comparable Files 100% | W12 | **todo** |
+| **11.M10** | **完全体 Release** | W13–W15；`v3.0.0` tag | W15 | **todo** |
 
 > 既有 **11.M1–11.M4**（发布范围、JSON、打包、2.1.0）不变；**11.M5–11.M7** 为偏差修复轨新增，**11.M3/M4 发布门禁在 W5 后须含 native 矩阵 PASS**。
 
@@ -183,17 +184,17 @@ Wave 10（Release Gate）: 11.RG1–11.RG17 — 见 RELEASE-GATE-GAPS.md
 
 ---
 
-## 成功指标（偏差修复轨 Done — **当前未达标**）
+## 成功指标（偏差修复轨 Done — **W10 已达标**）
 
 | 指标 | 目标 | 当前 |
 |------|------|------|
-| Native mode identity SaveChanges | **0 FAIL**（实库） | **FAIL** — 11.RG1 |
-| `LAST_INSERT_ID()` 调用 | **仅** compat 回退路径 | 待验证 — 11.RG15 |
+| Native mode identity SaveChanges | **0 FAIL**（实库） | **✅** — W10 RG1 |
+| `LAST_INSERT_ID()` 调用 | **仅** compat 回退路径 | **✅** — RG15 |
 | Compat 默认 | **off**（opt-in enable） | **✅** |
-| CI `compat` job | ≥ **861** 列测 0 FAIL | **898；1 FAIL** — 11.RG2 |
-| CI `native` job | 核心子集 0 FAIL（≥80 方法） | **~5 测 FAIL** — 11.RG6 |
+| CI `compat` job | ≥ **861** 列测 0 FAIL | **896；0 FAIL** — RG2 |
+| CI `native` job | 核心子集 0 FAIL（≥80 方法） | **177；0 FAIL** — RG6 |
 | DDL/Migrations | 保持 `IDENTITY` / `DBA_*` native | **✅** |
-| ROW_COUNT | 仍 **blocked**（10.105） | **blocked** ✅ |
+| ROW_COUNT | 仍 **blocked**（10.105） | **blocked** → W13 |
 
 ---
 

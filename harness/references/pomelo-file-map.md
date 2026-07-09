@@ -109,17 +109,18 @@
 | 兼容模式 | 不需要 | SET compatible_mode TO 'MYSQL' |
 | INSERT 回读 | LAST_INSERT_ID() | 查 insert.md RETURNING 或等效函数 |
 
-## Phase 8 差距审计（2026-07-06 Wave 4）
+## Phase 8 差距审计（2026-07-09 Phase 11 完全体重规划）
 
-> Xugu **117** .cs vs Pomelo **194** .cs（~60%）；测试 **194/194** PASS
+> Xugu **139** .cs vs Pomelo **194** .cs（**~72%**）；compat 列测 **896** / ~1050（**~85%**）；native **177**
 
 ### 状态汇总
 
 | 状态 | 数量 | 说明 | 来源 |
 |------|------|------|------|
-| **done** | ~45 任务 ID | W1–W4 核心 Query/Storage/Migrations/Scaffolding/Extensions | Pomelo-port |
-| **skip** | 6 | JSON/NTS、Collation/Charset DataAnnotations、FULLTEXT | skip |
-| **defer** | 11 | 见下表 | defer |
+| **done** | ~123 文件 | W1–W10 + 11.109 JSON | Pomelo-port / Xugu-native |
+| **skip** | ~8 文件 | Collation/Charset、FULLTEXT、NTS 等 | W14 待 resolution |
+| **defer** | ~11 文件 | Bitwise、FOR UPDATE、RelationalCommand、RID 等 | W12/W13 |
+| **缺口** | **55** 文件 | 194 − 139 | W12 目标 100% disposition |
 
 ### 模块 done/skip/defer
 

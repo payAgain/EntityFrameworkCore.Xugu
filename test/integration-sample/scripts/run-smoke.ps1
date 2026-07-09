@@ -25,6 +25,9 @@ Invoke-RestMethod -Uri "$BaseUrl/api/items/$id" -Method Put `
     -ContentType "application/json" -Body '{"name":"smoke-updated"}' | Out-Null
 
 Write-Host "Delete item..." -ForegroundColor Cyan
-Invoke-WebRequest -Uri "$BaseUrl/api/items/$id" -Method Delete | Out-Null
+$deleteResponse = Invoke-WebRequest -Uri "$BaseUrl/api/items/$id" -Method Delete -UseBasicParsing -TimeoutSec 30
+if ($deleteResponse.StatusCode -ne 204) {
+    throw "Expected 204 No Content, got $($deleteResponse.StatusCode)"
+}
 
 Write-Host "=== Integration smoke PASSED ===" -ForegroundColor Green

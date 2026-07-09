@@ -65,5 +65,6 @@ harness/scripts/test-nuget-pack.ps1 -SmokeConnect  # 需 XUGU_CONNECTION
 ## Phase 11 待办
 
 - [ ] 11.109 后追加 JSON 实体与端点
-- [ ] `scripts/run-smoke.ps1` 自动化 curl 序列
+- [x] `scripts/run-smoke.ps1` 自动化 curl 序列
+- [x] `harness/scripts/run-integration-smoke.ps1` 端到端（build + run + CRUD）
 - [ ] CI manual job 可选挂载

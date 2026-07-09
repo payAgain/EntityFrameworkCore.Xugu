@@ -69,7 +69,7 @@ public class XuguRelationalConnection : RelationalConnection, IXuguRelationalCon
 
     private static bool OpenWithRetry(Func<bool> open)
     {
-        const int maxAttempts = 8;
+        const int maxAttempts = 12;
         Exception? last = null;
 
         for (var attempt = 1; attempt <= maxAttempts; attempt++)
@@ -81,7 +81,8 @@ public class XuguRelationalConnection : RelationalConnection, IXuguRelationalCon
             catch (Exception ex) when (attempt < maxAttempts && IsTransientOpenError(ex))
             {
                 last = ex;
-                Thread.Sleep(TimeSpan.FromMilliseconds(150 * attempt));
+                var delayMs = 200 * attempt + Random.Shared.Next(0, 100);
+                Thread.Sleep(TimeSpan.FromMilliseconds(delayMs));
             }
         }
 
@@ -92,7 +93,7 @@ public class XuguRelationalConnection : RelationalConnection, IXuguRelationalCon
         Func<Task<bool>> open,
         CancellationToken cancellationToken)
     {
-        const int maxAttempts = 8;
+        const int maxAttempts = 12;
         Exception? last = null;
 
         for (var attempt = 1; attempt <= maxAttempts; attempt++)
@@ -106,7 +107,8 @@ public class XuguRelationalConnection : RelationalConnection, IXuguRelationalCon
             catch (Exception ex) when (attempt < maxAttempts && IsTransientOpenError(ex))
             {
                 last = ex;
-                await Task.Delay(TimeSpan.FromMilliseconds(150 * attempt), cancellationToken).ConfigureAwait(false);
+                var delayMs = 200 * attempt + Random.Shared.Next(0, 100);
+                await Task.Delay(TimeSpan.FromMilliseconds(delayMs), cancellationToken).ConfigureAwait(false);
             }
         }
 

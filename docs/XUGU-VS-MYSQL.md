@@ -26,7 +26,7 @@
 |------|------------|----------------|
 | 架构对齐 | 目录与服务注册对齐 Pomelo 9.0.0 | 参考实现 |
 | 源码文件 | **139** .cs（~72% Pomelo 194） | 194 .cs |
-| FunctionalTests | **898** 列测（~**85%** Pomelo ~1050） | ~1050 |
+| FunctionalTests | **896** 列测（~**85%** Pomelo ~1050） | ~1050 |
 | 核心 CRUD / LINQ / 迁移 | **支持** | 支持 |
 | ExecuteDelete / ExecuteUpdate | **核心路径支持** | 支持 |
 | JSON / Spatial / FULLTEXT | JSON **✅ 2.1.0**（11.109）；Spatial/FULLTEXT **不实现** | 支持 |
@@ -36,7 +36,7 @@
 | 自增主键 DDL | `IDENTITY(1,1)` | `AUTO_INCREMENT` |
 | GUID 存储 | 原生 `GUID`（16 字节） | 常映射 `CHAR(36)` |
 
-**结论**：Xugu Provider 已具备生产级 CRUD、查询翻译、迁移与 Scaffolding **主路径**；与 Pomelo 差距主要在 **扩展生态**（JSON/NTS/FULLTEXT）、**驱动级能力缺口**（ROW_COUNT 乐观并发、DateOnly SaveChanges）及 **部分高级 Query/测试矩阵**。适合 **以 XuguDB 为目标库** 的新项目或可控迁移；若强依赖 MySQL 专有扩展，需逐项核对下文限制。
+**结论**：Xugu Provider 2.1.0 已具备生产级 CRUD、查询翻译、迁移与 Scaffolding **主路径**；与 Pomelo 差距主要在 **测试/源码对等**（~85%/~72%）、**扩展生态**（NTS/FULLTEXT）、**驱动级能力缺口**（ROW_COUNT、DateOnly SaveChanges）及 **平台**（Linux RID）。**完全体 3.0.0** 目标 100% Comparable Parity — 见 `PHASE11-CLOSURE-CRITERIA.md`。
 
 ---
 

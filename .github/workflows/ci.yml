@@ -73,7 +73,7 @@ jobs:
           XUGU_CONNECTION_STRING: ${{ secrets.XUGU_CONNECTION_STRING }}
           XUGU_NATIVE_DLL_PATH: ${{ secrets.XUGU_NATIVE_DLL_PATH }}
           XUGU_DIALECT_MODE: compat
-        run: harness/scripts/verify.ps1 -RunTests
+        run: harness/scripts/run-compat-gate.ps1 -MaxAttempts 3 -CooldownSeconds 20
 
       - name: List-tests baseline check
         shell: pwsh

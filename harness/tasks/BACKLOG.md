@@ -1,32 +1,28 @@
 # XuguDB EF Core Provider — Backlog
 
 > Orchestrator 维护。已映射至 Phase 7–11。详见 `harness/tasks/ROADMAP.md`。  
-> **最后同步**：2026-07-09（Phase 11 验收审计 — W10 Release Gate 缺口；W1–W9 实现轨条件 done）  
+> **最后同步**：2026-07-09（Phase 11 完全体重规划 — 2.1.0 tag ✅；W11–W15 open；目标 v3.0.0 完全体）  
 > **方言立场**：Pomelo/MySQL = **架构参考 only**；XuguDB 官方文档 = **SQL 权威**；非 MySQL 迁移目标。
 
-## Phase 11 映射（W1–W9 条件 done；**W10 Release Gate open**）
+## Phase 11 映射（W1–W10 done；**W11–W15 完全体 open**）
 
 | 原 ID / 主题 | Wave | 新任务 ID | 状态 |
 |-------------|------|-----------|------|
-| 发布范围 / 方言立场 | W1 | **11.001–11.003** | **done**（P0） |
-| JSON Provider 实现（Xugu 原生） | W2 | **11.109**（a→d） | **done**（P0） |
-| RETURNING + identity 回读 | **W3 偏差修复** | **11.501–11.506** | **partial**（→ 11.M5 **未关闭**；**11.RG1**） |
-| 默认 compat off + 双 CI 矩阵 | **W4 偏差修复** | **11.601–11.604** | **partial**（→ 11.M6；**11.RG5/11.RG6**） |
-| 文档/契约/Release Gate 闭环 | **W5 偏差修复** | **11.701–11.705** | **partial**（→ 11.M7；**11.RG7**） |
-| NuGet 打包门禁 + 2.1.0 版本 | W6 | **11.301–11.303** | **partial**（pack 脚本 FAIL — **11.RG3**；无 tag — **11.RG4**） |
-| ConnectionString 校验器 | W7 | **11.208** | **done**（P1） |
-| 集成样本 | W7 | **11.304** | **done** |
-| GETTING-STARTED 2.1.0 | W7 | **11.305** | **partial**（**11.RG14**） |
-| FunctionalTests 余量 | W8 | **11.401** | **done**（898 列测 ~85% Pomelo） |
-| Specification Tests Phase 2 | W8 | **11.402** | **done**（P2） |
-| Monster Fixup 扩展 | W8 | **11.403** | **done**（P2） |
-| **Release Gate 收口** | **W10** | **11.RG1–11.RG17** | **open**（见 `RELEASE-GATE-GAPS.md`） |
-| ROW_COUNT 乐观并发 | W9 可选轨 | **11.105** | **blocked**（不挡 2.1.0） |
-| Linux x64 RID | W9 可选轨 | **11.205** | **blocked**（不挡 2.1.0） |
-| DateOnly/TimeOnly SaveChanges | W9 可选轨 | **11.207** | **defer**（不挡 2.1.0） |
-| net8.0 多 TFM | W9 可选轨 | **11.107** | **assessed**（不挡 2.1.0） |
-| FOR UPDATE / 位运算 / RelationalCommand | W9 可选轨 | **11.202–11.204** | **defer**（不挡 2.1.0） |
-| MySQL 迁移 / Pomelo 即插即用 | — | — | **永久排除**（非产品目标） |
+| 发布范围 / 方言立场 | W1 | **11.001–11.003** | **done** |
+| JSON Provider | W2 | **11.109** | **done** |
+| RETURNING + identity | W3 | **11.501–11.506** | **done**（W10 RG1） |
+| compat off + 双 CI | W4 | **11.601–11.604** | **done**（W10 RG5/6） |
+| 文档/契约 | W5 | **11.701–11.705** | **done**（W10 RG7） |
+| NuGet + 2.1.0 | W6 | **11.301–11.303** | **done**（W10 RG3/4） |
+| 校验器 + 集成样本 | W7 | **11.208, 11.304, 11.305** | **done** |
+| FunctionalTests 余量 | W8 | **11.401–11.403** | **done**（898 列测） |
+| 驱动 defer 项 | W9 | **11.105, 11.205, 11.207, 11.107, 11.202–204** | **→ W12/W13** |
+| **2.1.0 Release Gate** | **W10** | **11.RG1–11.RG17** | **done**（v2.1.0 @ 6dc0c72） |
+| **Test parity ~152 缺口** | **W11** | **11.801–11.815** | **todo** → 11.M8 |
+| **Feature defer 清零** | **W12** | **11.901–11.915** | **todo** → 11.M9 |
+| **ROW_COUNT + Linux RID** | **W13** | **11.1001–11.1010** | **todo**（blocked） |
+| **Skip 模块 resolution** | **W14** | **11.1101–11.1115** | **todo** |
+| **完全体 Gate + v3.0.0** | **W15** | **11.1201–11.1210** | **todo** → 11.M10 |
 
 ## Phase 映射总览
 
@@ -68,16 +64,53 @@
 
 ---
 
-## P0 — Phase 11 W10 Release Gate（**当前活跃 — 阻塞 v2.1.0 tag**）
+## P0 — Phase 11 完全体 W11–W15（**当前活跃 — 阻塞 v3.0.0 tag**）
 
-| ID | 任务 | Wave | 任务 ID | 状态 | 负责 |
+| ID | 任务 | Wave | 任务 ID | 缺口 | 状态 |
 |----|------|------|---------|------|------|
-| P0-RG.1 | RETURNING 运行时 / 默认 native identity | W10 | **11.RG1, 11.RG5, 11.506** | **todo** | Update + ADO |
-| P0-RG.2 | Compat 全量 0 FAIL | W10 | **11.RG2** | **todo** | Testing |
-| P0-RG.3 | NuGet pack 脚本 | W10 | **11.RG3, 11.301** | **todo** | Release / Infra |
-| P0-RG.4 | `v2.1.0` git tag | W10 | **11.RG4** | **todo** | Release（依赖 RG1–3） |
+| P0-11.W11 | Test parity closure | W11 | **11.801–11.815** | ~154 测试 | **todo** |
+| P0-11.W12 | Feature parity closure | W12 | **11.901–11.915** | 55 .cs + defer | **todo** |
+| P0-11.W13 | Platform parity | W13 | **11.1001–11.1010** | ROW_COUNT + Linux RID | **blocked/todo** |
+| P0-11.W14 | Skip module resolution | W14 | **11.1101–11.1115** | NTS/FULLTEXT/Collation | **todo** |
+| P0-11.W15 | 完全体 Release Gate | W15 | **11.1201–11.1210** | Gate 100% | **todo** |
 
-## P0 — Phase 11（W1–W9 — **条件 done**）
+## P0 — Phase 11 W10（**done** — v2.1.0 @ 6dc0c72）
+
+| ID | 任务 | Wave | 任务 ID | 状态 |
+|----|------|------|---------|------|
+| P0-RG.1 | RETURNING 运行时 / native identity | W10 | **11.RG1, 11.RG5** | **done** |
+| P0-RG.2 | Compat 全量 0 FAIL | W10 | **11.RG2** | **done** |
+| P0-RG.3 | NuGet pack 脚本 | W10 | **11.RG3** | **done** |
+| P0-RG.4 | `v2.1.0` git tag | W10 | **11.RG4** | **done** |
+
+## 完全体缺口全表（2026-07-09）
+
+| 类别 | 项 | 数量/状态 | Wave | Path A | Path B |
+|------|-----|----------|------|--------|--------|
+| **测试** | compat 列测 vs Pomelo | **896 / ~1050**（~85%） | W11 | port ~154 | adjusted denominator |
+| **测试** | 显式 Skip= | **6** 方法 | W11/W12 | implement | evidence exclusion |
+| **源码** | Provider .cs vs Pomelo | **139 / 194**（~72%） | W12 | port 55 | per-file exclusion |
+| **blocked** | ROW_COUNT E10049 | 1 测试 skip | W13 | DB/driver fix | vendor ticket |
+| **blocked** | Linux libxugusql.so | no RID | W13 | driver release | platform exclusion |
+| **skip** | NTS / Spatial | 模块 + 测试 | W14 | NTS 集成 | doc exclusion |
+| **skip** | FULLTEXT / Match | 模块 + 测试 | W14 | REGEXP 适配 | doc exclusion |
+| **skip** | Collation / HasCharSet | ~8 文件 | W14 | 列级 API | doc exclusion |
+| **skip** | Scaffolding baselines | 维护成本 | W14 | 最小 snapshot | exclusion |
+| **skip** | CONVERT_TZ | 8.Q15 | W14 | — | doc exclusion |
+| **defer** | DateOnly/TimeOnly SC | 11.207 | W12 | 驱动绑定 | — |
+| **defer** | net8.0 TFM | 11.107 | W12 | 双包 CI | — |
+| **defer** | FOR UPDATE / 窗口 Tag | 11.202 | W12 | Tag API | EF limitation exclusion |
+| **defer** | 位运算返回类型 | 11.203 | W12 | visitor | — |
+| **defer** | RelationalCommand surface | 11.204 | W12 | 8.S8–S10 | — |
+| **defer** | CREATE/DROP DATABASE | P3-2 | W12 | — | ops exclusion |
+| **defer** | IntegrationTests Vegeta | 10.206 | W11 | Web 宿主 | low ROI exclusion |
+| **defer** | Constructor graph insert | 2 skip | W12 | provider binding | — |
+| **defer** | Complex types optional | 1 skip | W12 | EF #31376 | exclusion |
+| **defer** | Lazy load proxy | 1 skip | W11 | proxy host | exclusion |
+| **CI** | compat 瞬态 E34305 | partial | W11 | quarantine/fix | — |
+| **CI** | native vs compat 覆盖差 | 177 vs 896 | W11 | native 扩展 | — |
+
+---
 
 | ID | 任务 | Wave | 任务 ID | 状态 | 负责 |
 |----|------|------|---------|------|------|
@@ -120,17 +153,17 @@
 | P0-7.5 | LIMITATIONS + 发版文档 | 7.T2, 7.R1 | **done** | Orchestrator / Infra |
 | P0-8.1 | Pomelo 功能对等 P0/P1 | 8.* | **done** | 各模块 Agent |
 
-## P1 — Phase 11（W10 + W7 遗留）
+## P1 — Phase 11 W10（**done** — v2.1.0 @ 6dc0c72）
 
-| ID | 任务 | Wave | 任务 ID | 状态 | 说明 |
-|----|------|------|---------|------|------|
-| P1-RG.1 | Native 矩阵扩展 ≥80 | W10 | **11.RG6** | **todo** | 含 JsonIntegrationTests |
-| P1-RG.2 | 文档漂移对账 | W10 | **11.RG7** | **todo** | RELEASE-SCOPE 2.1.0 等 |
-| P1-RG.3 | Handoff 与测试结果对账 | W10 | **11.RG8** | **todo** | phase11-closure 修订 |
-| P1-RG.4 | GETTING-STARTED compat 说明 | W10 | **11.RG14** | **todo** | 默认 native 表述 |
-| P1-RG.5 | LAST_INSERT_ID 契约验证 | W10 | **11.RG15** | **todo** | 仅 compat 回退 |
-| P1-RG.6 | 标识符策略审计 | W10 | **11.RG16, 11.602** | **todo** | native 模式 |
-| P1-RG.7 | 双 CI 环境变量文档 | W10 | **11.RG17** | **todo** | `XUGU_CI_INTEGRATION=true` |
+| ID | 任务 | Wave | 任务 ID | 状态 |
+|----|------|------|---------|------|
+| P1-RG.1 | Native 矩阵扩展 ≥80 | W10 | **11.RG6** | **done**（177 列测） |
+| P1-RG.2 | 文档漂移对账 | W10 | **11.RG7** | **done** |
+| P1-RG.3 | Handoff 与测试结果对账 | W10 | **11.RG8** | **done** |
+| P1-RG.4 | GETTING-STARTED compat 说明 | W10 | **11.RG14** | **done** |
+| P1-RG.5 | LAST_INSERT_ID 契约验证 | W10 | **11.RG15** | **done** |
+| P1-RG.6 | 标识符策略审计 | W10 | **11.RG16, 11.602** | **partial** → W12 |
+| P1-RG.7 | 双 CI 环境变量文档 | W10 | **11.RG17** | **done** |
 | P1-11.1 | ConnectionString 校验器 | W7 | 11.208 | **done** | Xugu 键值对 |
 | P1-11.2 | 集成样本 | W7 | 11.304 | **done** | PACKAGING-AND-INTEGRATION |
 | P1-11.3 | GETTING-STARTED 2.1.0 | W7 | 11.305 | **partial** | 见 11.RG14 |
@@ -255,15 +288,14 @@
 
 ---
 
-## 统计（2026-07-09 Phase 11 验收审计后）
+## 统计（2026-07-09 完全体重规划后）
 
-| 指标 | 当前 | 备注 |
-|------|------|------|
-| 版本 | **2.1.0**（props）/ **无 tag** | W10 **11.RG4** |
-| Provider .cs | **139** | Pomelo 194（~72%）；**非完全体 — 11.RG9** |
-| 测试方法 | **898**（compat） | compat **1 FAIL**；native ~5 **FAIL** |
-| Pomelo 测试覆盖 | **~85%** | **非** 2.1.0 发布条件 |
-| Phase 10 | **done** | Wave 1–6 |
-| Phase 11 | **条件 done** | W1–W9 实现轨；**W10 Release Gate open** |
-| 打包门禁 | `PACKAGING-AND-INTEGRATION.md` | **partial** — test-nuget-pack **FAIL** |
-| Release Gate 缺口 | `RELEASE-GATE-GAPS.md` | P0×5 / P1×7 / P2×5 |
+| 指标 | 当前 | 完全体目标 | 备注 |
+|------|------|-----------|------|
+| 版本 | **2.1.0** tag ✅ | **3.0.0** | W15 |
+| Provider .cs | **139** | **194**（或 adjusted 100%） | 缺口 **55** |
+| 测试方法 | **896** | **1050**（或 adjusted 100%） | 缺口 **~154** |
+| Pomelo 测试覆盖 | **~85%** | **100%** | 11.M8 |
+| Phase 11 | **in_progress** | done @ 11.M10 | W11–W15 |
+| 2.1.0 Gate | **closed** | — | W10 @ 6dc0c72 |
+| 完全体 Gate | **open** | `PHASE11-CLOSURE-CRITERIA.md` | W15 |

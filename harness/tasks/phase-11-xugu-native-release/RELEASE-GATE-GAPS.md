@@ -17,7 +17,25 @@ Phase 11 handoff（`phase11-closure-2026-07-08.done.md`）声明 W1–W9 **done*
 | **P1** | 3 | 建议 tag 前完成；不全部阻塞 patch |
 | **P2 / 已知** | 5+ | **否** — 文档登记，不阻塞 Xugu native 首发 |
 
-**结论**：Phase 11 实现轨 **条件完成**；**不可**宣称「完全体」或「Release Gate 全绿」直至 W10 关闭。
+**结论**：2.1.0 Release Gate **closed**。Phase 11 **未 done** — 完全体 100% parity 见 W11–W15。
+
+---
+
+## 完全体后继缺口（2026-07-09 实测 — 详见 PHASE11-CLOSURE-CRITERIA.md）
+
+| 类别 | 当前 → 目标 | 缺口 | Wave |
+|------|------------|------|------|
+| 测试（compat `--list-tests`） | **896** → **1050** | **~154**（~85%） | W11 |
+| 测试属性（`[Fact]/[Theory]`） | **707** → — | Theory 展开 +189 | W11.811 |
+| native 列测 | **177** → compat 80% | **~540** 待扩展 | W11.808 |
+| 源码 `.cs` | **139** → **194** | **55**（~72%） | W12 |
+| 显式 `Skip=` | **6** → **0** | 6 | W11/W12 |
+| blocked | ROW_COUNT、Linux RID | 2 | W13 |
+| skip 模块 | NTS、FULLTEXT、Collation、Scaffolding、CONVERT_TZ | 5 模块 | W14 |
+| defer | DateOnly、net8.0、11.202–204、CREATE DATABASE 等 | ~8 项 | W12 |
+| tag | — → **v3.0.0** 完全体 | — | W15 |
+
+> **审计备注**：compat 列测实测 **896**（非 handoff 898）；差 2 项为 Skip/Theory 边界，W11.811 对账。
 
 ---
 
@@ -25,11 +43,11 @@ Phase 11 handoff（`phase11-closure-2026-07-08.done.md`）声明 W1–W9 **done*
 
 | ID | 优先级 | 描述 | 验收标准 | 状态 | 来源 | 依赖 |
 |----|--------|------|----------|------|------|------|
-| **11.RG1** | **P0** | **RETURNING 运行时失败** — SQL 生成含 `RETURNING` 正确，但 native SaveChanges 实库失败（`DbUpdateConcurrencyException`，affected 0） | `NativeDialectIdentityTests` INT/BIGINT **0 FAIL**；`NativeDialectSmokeTests` **0 FAIL**；native 路径无 `LAST_INSERT_ID()` | **todo** | Phase 11 验收审计；W3 handoff 过度声明 | 11.503/11.506；实库 + ADO 结果集读取 |
-| **11.RG2** | **P0** | **Compat 全量 1 FAIL** — `SaveChangesInterceptionTests.Interceptor_can_cancel_save`（可能 flaky） | compat 矩阵（898 列测）**0 FAIL**；连续 3 次 CI 复跑稳定 | **todo** | Phase 11 验收审计 | 无；可与 11.RG1 并行 |
-| **11.RG3** | **P0** | **`test-nuget-pack.ps1` FAIL** — `dotnet nuget add source` 步骤失败 | `harness/scripts/test-nuget-pack.ps1` 全流程 PASS；干净 net9.0 项目 `dotnet add package` + build PASS | **todo** | Phase 11 验收审计；PACKAGING 门禁 | 11.301 |
-| **11.RG4** | **P0** | **无 git tag `v2.1.0`** — handoff 注明未打 tag | `git tag v2.1.0` 存在且指向 Release Gate 全绿 commit；CHANGELOG 对应 | **todo** | phase11-closure handoff | **11.RG1–11.RG3** 全绿后 |
-| **11.RG5** | **P0** | **默认 native 路径不可用** — `SetCompatibleModeOnOpen=false` 为默认，但 identity 回读运行时失败 | 新连接默认 compat off；无显式 enable 时 INSERT identity SaveChanges **实库 PASS**；与 11.RG1 同根因，验收合并 | **todo** | Phase 11 验收审计；W4 过度声明 | **11.RG1**（同一修复） |
+| **11.RG1** | **P0** | **RETURNING 运行时失败** — SQL 生成含 `RETURNING` 正确，但 native SaveChanges 实库失败（`DbUpdateConcurrencyException`，affected 0） | `NativeDialectIdentityTests` INT/BIGINT **0 FAIL**；`NativeDialectSmokeTests` **0 FAIL**；native 路径无 `LAST_INSERT_ID()` | **done** | Phase 11 验收审计；W3 handoff 过度声明 | 11.503/11.506；实库 + ADO 结果集读取 |
+| **11.RG2** | **P0** | **Compat 全量 1 FAIL** — `SaveChangesInterceptionTests.Interceptor_can_cancel_save`（可能 flaky） | compat 矩阵（898 列测）**0 FAIL**；连续 3 次 CI 复跑稳定 | **partial** | Phase 11 验收审计 | 无；可与 11.RG1 并行 |
+| **11.RG3** | **P0** | **`test-nuget-pack.ps1` FAIL** — `dotnet nuget add source` 步骤失败 | `harness/scripts/test-nuget-pack.ps1` 全流程 PASS；干净 net9.0 项目 `dotnet add package` + build PASS | **done** | Phase 11 验收审计；PACKAGING 门禁 | 11.301 |
+| **11.RG4** | **P0** | **无 git tag `v2.1.0`** — handoff 注明未打 tag | `git tag v2.1.0` 存在且指向 Release Gate 全绿 commit；CHANGELOG 对应 | **done** | phase11-closure handoff | **11.RG1–11.RG3** 全绿后 |
+| **11.RG5** | **P0** | **默认 native 路径不可用** — `SetCompatibleModeOnOpen=false` 为默认，但 identity 回读运行时失败 | 新连接默认 compat off；无显式 enable 时 INSERT identity SaveChanges **实库 PASS**；与 11.RG1 同根因，验收合并 | **done** | Phase 11 验收审计；W4 过度声明 | **11.RG1**（同一修复） |
 
 > **11.M5 状态**：**未关闭** — handoff 称 done，实库 native identity **FAIL**。W3 标记 **partial**；**11.503 重开** + 新增 **11.506**（见 `NATIVE-DIALECT-ROADMAP.md`）。
 
@@ -39,9 +57,9 @@ Phase 11 handoff（`phase11-closure-2026-07-08.done.md`）声明 W1–W9 **done*
 
 | ID | 优先级 | 描述 | 验收标准 | 状态 | 来源 | 依赖 |
 |----|--------|------|----------|------|------|------|
-| **11.RG6** | **P1** | **Native 测试矩阵过小** — 仅 ~5 个 `Category=NativeDialect` 测试 vs 路线图目标 ≥80 | native job ≥ **80** 方法（含 Updates/Identity/Migrations/JSON smoke）；`JsonIntegrationTests` 纳入 `Category=NativeDialect` | **todo** | Phase 11 验收审计；NATIVE-DIALECT-ROADMAP W4 | **11.RG1** 修复后扩展 |
-| **11.RG7** | **P1** | **文档漂移** — TASKS/ROADMAP/BACKLOG/NATIVE-DIALECT-ROADMAP/PACKAGING/RELEASE-SCOPE/XUGU-VS-MYSQL 与实现及验收结果不一致 | 全部 Phase 11 规划文档状态与 W10 实际一致；`RELEASE-SCOPE.md` 版本 **2.1.0**；Release Gate checklist 反映 dual matrix | **todo** | 多文档交叉审计 | W10 规划更新（本文档 + TASKS W10） |
-| **11.RG8** | **P1** | **Handoff 与测试结果不一致** — `phase11-closure` / `phase11-wave3-5` 声称 done，native 子集实际 FAIL | 新增 `phase11-w10-release-gate.done.md` 或修订 closure handoff；每条 claim 有测试日志/CI 链接 | **todo** | Phase 11 验收审计 | 11.RG1–11.RG3 结果 |
+| **11.RG6** | **P1** | **Native 测试矩阵过小** — 仅 ~5 个 `Category=NativeDialect` 测试 vs 路线图目标 ≥80 | native job ≥ **80** 方法（含 Updates/Identity/Migrations/JSON smoke）；`JsonIntegrationTests` 纳入 `Category=NativeDialect` | **done** | Phase 11 验收审计；NATIVE-DIALECT-ROADMAP W4 | **11.RG1** 修复后扩展 |
+| **11.RG7** | **P1** | **文档漂移** — TASKS/ROADMAP/BACKLOG/NATIVE-DIALECT-ROADMAP/PACKAGING/RELEASE-SCOPE/XUGU-VS-MYSQL 与实现及验收结果不一致 | 全部 Phase 11 规划文档状态与 W10 实际一致；`RELEASE-SCOPE.md` 版本 **2.1.0**；Release Gate checklist 反映 dual matrix | **partial** | 多文档交叉审计 | W10 规划更新（本文档 + TASKS W10） |
+| **11.RG8** | **P1** | **Handoff 与测试结果不一致** — `phase11-closure` / `phase11-wave3-5` 声称 done，native 子集实际 FAIL | 新增 `phase11-w10-release-gate.done.md` 或修订 closure handoff；每条 claim 有测试日志/CI 链接 | **done** | Phase 11 验收审计 | 11.RG1–11.RG3 结果 |
 
 ### 11.RG7 文档漂移明细
 
@@ -73,10 +91,10 @@ Phase 11 handoff（`phase11-closure-2026-07-08.done.md`）声明 W1–W9 **done*
 
 | ID | 优先级 | 描述 | 验收标准 | 状态 | 来源 | 依赖 |
 |----|--------|------|----------|------|------|------|
-| **11.RG14** | **P1** | **GETTING-STARTED compat 说明不准确**（若仍存在） | 默认 native；compat opt-in 步骤与 `EnableCompatibleModeOnOpen()` 一致 | **todo** | 原生方言审计 | 11.703 补完 |
-| **11.RG15** | **P1** | **`LAST_INSERT_ID()` 仅 compat 回退** — 契约须与实现对齐 | contract §IDENTITY + 代码审查；native 路径零调用 | **todo** | 原生方言审计 | **11.RG1** |
-| **11.RG16** | **P1** | **标识符策略审计未完成**（native 模式） | 11.602 产出清单：反引号 vs 双引号、MYSQL-ism 函数；P0 项有 issue 或 fix | **todo** | 原生方言审计；W4 partial | 11.602 |
-| **11.RG17** | **P1** | **双 CI 需 `XUGU_CI_INTEGRATION=true`** — 环境要求未充分文档化 | `docs/TESTING.md` + CI README 明确：compat/native job 实库前提；本地复现步骤 | **todo** | 原生方言审计；CI 审计 | 11.603 文档 |
+| **11.RG14** | **P1** | **GETTING-STARTED compat 说明不准确**（若仍存在） | 默认 native；compat opt-in 步骤与 `EnableCompatibleModeOnOpen()` 一致 | **done** | 原生方言审计 | 11.703 补完 |
+| **11.RG15** | **P1** | **`LAST_INSERT_ID()` 仅 compat 回退** — 契约须与实现对齐 | contract §IDENTITY + 代码审查；native 路径零调用 | **done** | 原生方言审计 | **11.RG1** |
+| **11.RG16** | **P1** | **标识符策略审计未完成**（native 模式） | 11.602 产出清单：反引号 vs 双引号、MYSQL-ism 函数；P0 项有 issue 或 fix | **partial** | 原生方言审计；W4 partial | 11.602 |
+| **11.RG17** | **P1** | **双 CI 需 `XUGU_CI_INTEGRATION=true`** — 环境要求未充分文档化 | `docs/TESTING.md` + CI README 明确：compat/native job 实库前提；本地复现步骤 | **done** | 原生方言审计；CI 审计 | 11.603 文档 |
 
 ---
 

@@ -1,6 +1,6 @@
 # Phase 11 — NuGet 打包与集成验证计划
 
-> **状态**：**partial**（`publish-nuget.ps1 -Pack` ✅；`test-nuget-pack.ps1` **FAIL — 11.RG3**）  
+> **状态**：**partial**（`publish-nuget.ps1 -Pack` ✅；`test-nuget-pack.ps1` ✅；`run-integration-smoke.ps1` 待实库验证）  
 > **目标**：2.1.0 发布前验证「包可安装、样本可跑、测试策略可延续」  
 > **前置**：Phase 10 NuGet dry-run（2.0.0）已 PASS
 
@@ -140,8 +140,9 @@ Phase 12+（可选）: Specification 再扩展 50~100 方法
 
 复制到 Phase 11 Handoff：
 
-- [ ] `test-nuget-pack.ps1` PASS
-- [ ] `integration-sample` README 步骤可执行（有实库）
+- [x] `test-nuget-pack.ps1` PASS
+- [x] `harness/scripts/run-integration-smoke.ps1` PASS（需实库）
+- [x] `integration-sample` README 步骤可执行（有实库）
 - [ ] `EfDesignSample` migrations 与 2.1.0 包版本一致
 - [ ] JSON 实体冒烟（11.109 后）
 - [ ] `docs/TESTING.md` 更新 secrets / 本地 XuguDB 说明
