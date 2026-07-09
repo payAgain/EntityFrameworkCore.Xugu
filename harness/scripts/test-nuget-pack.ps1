@@ -29,6 +29,14 @@ param(
 
 $ErrorActionPreference = "Stop"
 $Root = Resolve-Path (Join-Path $PSScriptRoot "..\..")
+
+if ($null -eq (Get-Command dotnet -ErrorAction SilentlyContinue)) {
+    $dotnetFallback = "C:\Program Files\dotnet\dotnet.exe"
+    if (Test-Path $dotnetFallback) {
+        $env:PATH = "C:\Program Files\dotnet;$env:PATH"
+    }
+}
+
 $PublishScript = Join-Path $PSScriptRoot "publish-nuget.ps1"
 $Artifacts = Join-Path $Root "artifacts"
 
@@ -65,18 +73,32 @@ $feedName = "xugu-local-smoke"
 
 try {
     Write-Host "Step 2: Create clean consumer at $tempProj..." -ForegroundColor Yellow
-    New-Item -ItemType Directory -Path $tempProj -Force | Out-Null
-    Push-Location $tempProj
+    New-Item -ItemType Directory -Path $tempRoot -Force | Out-Null
+    Push-Location $tempRoot
 
     dotnet new console -n SmokeConsumer -f net9.0 --force | Out-Null
     if ($LASTEXITCODE -ne 0) { throw "dotnet new failed" }
 
+    $tempProj = Join-Path $tempRoot "SmokeConsumer"
+    Push-Location $tempProj
+
     Write-Host "Step 3: Add local NuGet feed..." -ForegroundColor Yellow
-    dotnet nuget add source $Artifacts --name $feedName --configfile "$tempRoot\NuGet.Config" | Out-Null
+    $configFile = Join-Path $tempRoot "NuGet.Config"
+    @"
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <packageSources>
+    <clear />
+  </packageSources>
+</configuration>
+"@ | Set-Content -Path $configFile -Encoding UTF8
+
+    & dotnet nuget add source $Artifacts --name $feedName --configfile $configFile
     if ($LASTEXITCODE -ne 0) { throw "dotnet nuget add source failed" }
 
     Write-Host "Step 4: Install package $packageId..." -ForegroundColor Yellow
-    dotnet add package $packageId --version $version --source $feedName | Out-Null
+    Copy-Item -Path $configFile -Destination (Join-Path $tempProj "NuGet.Config") -Force
+    dotnet add package $packageId --version $version --source $Artifacts | Out-Null
     if ($LASTEXITCODE -ne 0) { throw "dotnet add package failed" }
 
   # Minimal UseXugu smoke code
