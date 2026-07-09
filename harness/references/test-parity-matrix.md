@@ -4,19 +4,39 @@
 > **更新**：2026-07-09（Phase 11 完全体重规划 + 实测审计）  
 > **分母**：Pomelo `EFCore.MySql.FunctionalTests` ~**1050** 测试方法（估算）
 
-## Phase 11 W11 基线（2026-07-09 实测）
+## Phase 11 W11 基线（2026-07-09 W11.802–805 后实测）
 
 | 指标 | 当前 | 完全体目标 | 缺口 | Wave |
 |------|------|-----------|------|------|
-| compat `--list-tests` | **896** | **1050** 或 adjusted 100% | **~154** | W11 |
-| `[Fact]/[Theory]` 属性 | **707** | — | Theory 展开 +189 | W11.811 |
-| 测试 `.cs` 文件 | **157** | — | — | W11 |
+| compat `--list-tests` | **1056** | **1050** 或 adjusted 100% | **0 literal** | W11 ✅ |
+| `[Fact]/[Theory]` 属性 | **~780+** | — | W11.811 对账 | W11 |
+| 测试 `.cs` 文件 | **~175** | — | — | W11 |
 | 显式 `Skip=` | **6** | **0** | 6 | W11/W12 |
-| native `--list-tests` | **177** | ≥ compat 80% | ~540 | W11.808 |
-| Pomelo 可比覆盖率 | **~85.3%** | **100%** | ~14.7% | W11–W14 |
+| native `--list-tests` | **263** | ≥ compat 80% (~845) | ~582 | W11.808 partial |
+| Pomelo 可比覆盖率 | **~100.6%** literal | **100%** adjusted | W14 triage | W11–W14 |
 
 > **审计命令**：`dotnet test test/EFCore.Xugu.Tests -c Release --list-tests`  
-> 规划 handoff 记 **898**；实测 **896**（±2 Skip/Theory 边界，W11.811 对账）。
+> W11.802–805 增量 **+158**（898→1056）；native +86（177→263）。
+
+## W11 批次增量（11.802–805）
+
+| 文件 | 新增（list-tests 约） | Pomelo 源 | Wave |
+|------|---------------------|-----------|------|
+| `QueryNorthwindAggregateOperatorsTests.cs` | ~18 | NorthwindAggregateOperators | 11.802 |
+| `QueryNorthwindMiscellaneousTests.cs` | ~20 | NorthwindMiscellaneous | 11.802 |
+| `QueryNorthwindAsTrackingTests.cs` | ~8 | NorthwindAsTracking | 11.802 |
+| `NorthwindSqlRawExtendedTests.cs` | ~10 | SqlExecutor/FromSql | 11.802 |
+| `TPTInheritanceQueryTests.cs` | ~12 | TPTInheritanceQuery | 11.802 |
+| `NonSharedModelUpdatesTests.cs` | ~11 | NonSharedModelUpdates | 11.803 |
+| `TransactionInterceptionTests.cs` | ~8 | Transaction（语义子集） | 11.803 |
+| `GraphUpdatesExtendedTests.cs` | ~10 | GraphUpdates | 11.803 |
+| `MigrationExtendedTests.cs` | ~10 | MigrationMySql | 11.804 |
+| `ScaffoldingExtendedTests.cs` | ~8 | ScaffoldingMySql | 11.804 |
+| `DesignTimeExtendedTests.cs` | ~8 | DesignTimeMySql | 11.804 |
+| `DbFunctionsExtendedQueryTests.cs` | ~11 | MySqlDbFunctions | 11.805 |
+| `ValueGenerationExtendedTests.cs` | ~8 | ValueGeneration | 11.805 |
+| `ConnectionSettingsExtendedTests.cs` | ~9 | ConnectionSettings | 11.805 |
+| **W11.802–805 小计** | **~158** | — | 898→**1056** |
 
 ---
 

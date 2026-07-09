@@ -1,7 +1,7 @@
 # Phase 11 W11 — Pomelo 测试缺口清单（11.801）
 
-> **状态**：**in_progress**（2026-07-09 初稿）  
-> **基线**：compat **898** 列测（`--list-tests`）vs Pomelo **~1050** → **~152** literal 缺口  
+> **状态**：**partial**（2026-07-09 — W11.802–805 批次完成）  
+> **基线**：compat **898** → **1056** 列测（`--list-tests`）vs Pomelo **~1050** → **literal 达标**  
 > **目标**：Comparable Set 100% 分类 → W11.806 冻结 → 11.M8
 
 ---
@@ -10,10 +10,10 @@
 
 | 桶 | 估算缺口 | Wave | 优先级 | disposition 目标 |
 |----|---------|------|--------|-----------------|
-| A. Query 深覆盖余量 | ~40–50 | 11.802 | P0 | port / Xugu-adapt |
-| B. Update / Graph / Concurrency | ~35–40 | 11.803 | P0 | port（ROW_COUNT 除外） |
-| C. Design / Migration / Scaffolding | ~30–35 | 11.804 | P1 | port / exclusion |
-| D. Extensions / DI / Edge | ~25–30 | 11.805 | P1 | port |
+| A. Query 深覆盖余量 | ~40–50 | 11.802 | P0 | port / Xugu-adapt | **done** (+~58) |
+| B. Update / Graph / Concurrency | ~35–40 | 11.803 | P0 | port（ROW_COUNT 除外） | **done** (+~27) |
+| C. Design / Migration / Scaffolding | ~30–35 | 11.804 | P1 | port / exclusion | **done** (+~26) |
+| D. Extensions / DI / Edge | ~25–30 | 11.805 | P1 | port | **done** (+~28) |
 | E. 永久 skip 模块测试 | ~80–100 | W14 | P2 | exclusion-with-evidence |
 | F. IntegrationTests / 低 ROI | ~15–20 | 11.812 | P2 | exclusion |
 | G. 显式 Skip（6 方法） | 6 | 11.810 | P1 | fix / exclusion |
@@ -27,12 +27,13 @@
 
 | Pomelo 源类（示例） | 主题 | 估算 | Xugu disposition | 状态 |
 |--------------------|------|------|----------------|------|
-| `GearsOfWarQueryMySqlTest` | 复杂 Include/过滤 | ~20 | port 子集 | todo |
-| `SqlExecutorMySqlTest` | Raw SQL 执行 | ~15 | port 子集 | todo |
-| `ToSqlQueryMySqlTest` | ToSqlQuery | ~10 | port 子集 | todo |
-| `QueryNorthwind*` 余量 | Where/Join 扩展 | ~15 | extend 现有 Northwind | partial |
-| `AdHoc*MySqlTest` 余量 | 复杂 LINQ | ~10 | port | partial |
+| `GearsOfWarQueryMySqlTest` | 复杂 Include/过滤 | ~20 | defer（需 Gears 模型） | defer |
+| `SqlExecutorMySqlTest` | Raw SQL 执行 | ~15 | `NorthwindSqlRawExtendedTests` | **done** |
+| `ToSqlQueryMySqlTest` | ToSqlQuery | ~10 | `NorthwindSqlRawExtendedTests` | **done** |
+| `QueryNorthwind*` 余量 | Where/Join 扩展 | ~15 | Aggregate/Misc/AsTracking | **done** |
+| `AdHoc*MySqlTest` 余量 | 复杂 LINQ | ~10 | 既有 + Misc | partial |
 | `ComplexQueryMySqlTest` 全量 | 复杂图 | ~10 | extend `ComplexQueryTests` | partial |
+| `TPTInheritanceQueryMySqlTest` | TPT 继承 | ~10 | `TPTInheritanceQueryTests` | **done** |
 
 ---
 
@@ -40,10 +41,10 @@
 
 | Pomelo 源 | 估算 | Xugu 覆盖 | disposition | 状态 |
 |-----------|------|-----------|-------------|------|
-| `UpdatesMySqlTest` 余量 | ~10 | partial | port | todo |
-| `NonSharedModelUpdatesMySqlTest` | ~8 | none | port | todo |
-| `GraphUpdates*` 余量 | ~15 | partial `GraphUpdatesTests` | port | partial |
-| `TransactionInterceptionMySqlTest` | ~8 | none | port | todo |
+| `UpdatesMySqlTest` 余量 | ~10 | `NonSharedModelUpdatesTests` | **done** |
+| `NonSharedModelUpdatesMySqlTest` | ~8 | `NonSharedModelUpdatesTests` | **done** |
+| `GraphUpdates*` 余量 | ~15 | `GraphUpdatesExtendedTests` | **done** |
+| `TransactionInterceptionMySqlTest` | ~8 | `TransactionInterceptionTests`（语义子集） | **done** |
 | `TwoDatabasesMySqlTest` | ~6 | none | exclusion（单库 harness） | todo |
 | `OptimisticConcurrencyMySqlTest` | ~5 | 1 skip ROW_COUNT | W13 blocked | blocked |
 
@@ -53,9 +54,9 @@
 
 | Pomelo 源 | 估算 | Xugu | disposition | 状态 |
 |-----------|------|------|-------------|------|
-| `MigrationMySqlTest` 余量 | ~15 | partial | port | partial |
-| `ScaffoldingMySqlTest` 余量 | ~10 | partial | port | partial |
-| `DesignTimeMySqlTest` 余量 | ~5 | partial Spec | port | partial |
+| `MigrationMySqlTest` 余量 | ~15 | `MigrationExtendedTests` | **done** |
+| `ScaffoldingMySqlTest` 余量 | ~10 | `ScaffoldingExtendedTests` | **done** |
+| `DesignTimeMySqlTest` 余量 | ~5 | `DesignTimeExtendedTests` | **done** |
 | Scaffolding Baselines 全量 | ~20 | skip | W14 exclusion | skip |
 
 ---
@@ -64,10 +65,10 @@
 
 | Pomelo 源 | 估算 | disposition | 状态 |
 |-----------|------|-------------|------|
-| `MySqlDbFunctionsMySqlTest` 余量 | ~10 | port / Xugu 函数 | todo |
-| `EntityTypeBuilderExtensions` 测试 | ~8 | port JSON/charset skip | partial |
-| `Connection/MySqlConnectionTests` 余量 | ~6 | port | partial |
-| `ValueGenerationMySqlTest` 余量 | ~10 | port | partial |
+| `MySqlDbFunctionsMySqlTest` 余量 | ~10 | `DbFunctionsExtendedQueryTests` | **done** |
+| `EntityTypeBuilderExtensions` 测试 | ~8 | 既有 FluentApi | partial |
+| `Connection/MySqlConnectionTests` 余量 | ~6 | `ConnectionSettingsExtendedTests` | **done** |
+| `ValueGenerationMySqlTest` 余量 | ~10 | `ValueGenerationExtendedTests` | **done** |
 
 ---
 

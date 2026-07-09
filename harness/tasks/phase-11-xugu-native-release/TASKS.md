@@ -255,13 +255,13 @@ Wave 15（完全体 Gate）      : 11.1201–11.1210 — v3.0.0 tag；11.M10
 | ID | 任务 | 目标数 | 验收 | 依赖 | 风险 | 状态 |
 |----|------|--------|------|------|------|------|
 | 11.801 | Pomelo 测试缺口清单 | ~154 项 | 映射表 100% 分类 | — | triage 工作量 | **partial** |
-| 11.802 | Batch port Wave A（Query） | +40 列测 | 0 FAIL | 11.801 | — | todo |
-| 11.803 | Batch port Wave B（Update/Graph） | +40 列测 | 0 FAIL | 11.801 | ROW_COUNT 除外 | todo |
-| 11.804 | Batch port Wave C（Design/Migration） | +35 列测 | 0 FAIL | 11.801 | — | todo |
-| 11.805 | Batch port Wave D（Extensions/Edge） | +34 → **≥1050** | 0 FAIL | 11.802–804 | — | todo |
-| 11.806 | Comparable Set 冻结 | 100% | test-parity-matrix | 11.801 | — | todo |
+| 11.802 | Batch port Wave A（Query） | +40 列测 | 0 FAIL | 11.801 | — | **done** |
+| 11.803 | Batch port Wave B（Update/Graph） | +40 列测 | 0 FAIL | 11.801 | ROW_COUNT 除外 | **done** |
+| 11.804 | Batch port Wave C（Design/Migration） | +35 列测 | 0 FAIL | 11.801 | — | **done** |
+| 11.805 | Batch port Wave D（Extensions/Edge） | +34 → **≥1050** | 0 FAIL | 11.802–804 | — | **done** |
+| 11.806 | Comparable Set 冻结 | 100% | test-parity-matrix | 11.801 | — | partial |
 | 11.807 | Compat CI 稳定 0 FAIL | 898→1050 | 3× 复跑 | 11.RG2 经验 | E34305 flaky | **partial** |
-| 11.808 | Native 矩阵对齐 | ≥ compat 80% | 0 FAIL | 11.805 | — | todo |
+| 11.808 | Native 矩阵对齐 | ≥ compat 80% | 0 FAIL | 11.805 | — | partial（263） |
 | 11.809 | Specification Tests Phase 3 | — | PACKAGING §P3 | 11.402 | — | todo |
 | 11.810 | 显式 Skip 清零 | 6→0 | 或 evidence | W14 | — | todo |
 | 11.811–11.815 | 审计/handoff | — | 见 CLOSURE-CRITERIA | 11.805 | — | todo |

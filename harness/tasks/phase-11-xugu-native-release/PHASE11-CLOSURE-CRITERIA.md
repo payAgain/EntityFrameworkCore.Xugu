@@ -118,14 +118,14 @@ Phase 11 **done** 当且仅当 **全部** 满足：
 
 | 项 | 数量 | 说明 |
 |----|------|------|
-| compat 列测（`--list-tests`） | **896** | 2026-07-09 实测；规划基线 898（±2 Theory/Skip 漂移） |
+| compat 列测（`--list-tests`） | **1056** | 2026-07-09 W11.802–805；规划基线 898 |
 | Pomelo 分母 | **~1050** | `EFCore.MySql.FunctionalTests` 估算（Phase 9/10 沿用） |
-| **Literal 缺口** | **~154** | 896 → 1050（~85.3%） |
+| **Literal 缺口** | **0** | 1056 ≥ 1050 ✅ |
 | 测试 `.cs` 文件 | **157** | `test/EFCore.Xugu.Tests/` |
 | 代码中 `[Fact]/[Theory]` 属性 | **707** | Theory 展开后 list-tests **896**（+189 展开） |
 | 显式 `Skip=` | **6** | ROW_COUNT×1、constructors×2、complex×1、lazy×1 |
-| native 列测 | **177** | `Category=NativeDialect`；RG6 ✅ |
-| native vs compat 覆盖差 | **719** | W11.808 目标：native ≥ compat 80% |
+| native 列测 | **263** | `Category=NativeDialect`；W11.808 partial |
+| native vs compat 覆盖差 | **793** | W11.808 目标：native ≥ compat 80% |
 
 ### 源码
 
@@ -194,10 +194,10 @@ Phase 11 **done** 当且仅当 **全部** 满足：
 | ID | 任务 | 验收 | 状态 |
 |----|------|------|------|
 | 11.801 | **Pomelo 测试缺口清单** | ~154 项映射表：源类→ disposition | **partial** |
-| 11.802 | **Batch port Wave A**（Query 余量） | +40 列测；0 FAIL | todo |
-| 11.803 | **Batch port Wave B**（Update/Concurrency/Graph） | +40 列测；ROW_COUNT 除外 | todo |
-| 11.804 | **Batch port Wave C**（Design/Scaffolding/Migration） | +35 列测 | todo |
-| 11.805 | **Batch port Wave D**（Extensions/DI/Edge） | +37 列测 → **≥1050** | todo |
+| 11.802 | **Batch port Wave A**（Query 余量） | +40 列测；0 FAIL | **done** |
+| 11.803 | **Batch port Wave B**（Update/Concurrency/Graph） | +40 列测；ROW_COUNT 除外 | **done** |
+| 11.804 | **Batch port Wave C**（Design/Scaffolding/Migration） | +35 列测 | **done** |
+| 11.805 | **Batch port Wave D**（Extensions/DI/Edge） | +37 列测 → **≥1050** | **done** |
 | 11.806 | **Comparable Set 冻结** | `test-parity-matrix.md` 100% 分类 | todo |
 | 11.807 | **Compat CI 稳定 0 FAIL** | 3× 复跑；E34305 quarantine/fix | **partial** |
 | 11.808 | **Native 矩阵 = compat 核心** | native ≥ compat 80% 覆盖；0 FAIL | todo |
