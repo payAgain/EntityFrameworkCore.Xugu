@@ -7,7 +7,8 @@
 **版本**：**`2.1.0`**（`v2.1.0` tag @ 6dc0c72）→ 目标 **`3.0.0`** 完全体  
 **测试**：compat **1056** / ~1050（**literal 达标**）；native **263**  
 **源码**：**139** / 194 .cs（~72%）  
-**Wave 指针**：W1–W10 **done**；**W11–W15 open**
+**Wave 指针**：W1–W10 **done**；**W11 partial**（802–805）；**W11.806–W15 open**  
+**GA 差距**：`harness/tasks/phase-11-xugu-native-release/GA-GAP.md`（距 v3.0.0 ~52% adjusted）
 
 ---
 

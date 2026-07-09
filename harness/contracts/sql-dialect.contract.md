@@ -14,8 +14,9 @@
 ```
 1. E:\BaiduSyncdisk\docs\content\              ← SQL 方言、类型、函数（唯一权威）
 2. harness/contracts/sql-dialect.contract.md   ← 项目内已登记规则
-3. docs/LIMITATIONS.md / RELEASE-SCOPE.md      ← 产品范围
-4. external/Pomelo.EntityFrameworkCore.MySql     ← C# 架构参考（MySqlJson* 等命名可借鉴，SQL 不可照搬）
+3. harness/contracts/stub-and-exclusion.contract.md ← 无文档能力时的 stub/skip 策略
+4. docs/LIMITATIONS.md / RELEASE-SCOPE.md      ← 产品范围
+5. external/Pomelo.EntityFrameworkCore.MySql     ← C# 架构参考（MySqlJson* 等命名可借鉴，SQL 不可照搬）
 ```
 
 ## 数据库信息

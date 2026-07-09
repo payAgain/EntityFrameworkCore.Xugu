@@ -30,6 +30,7 @@ E:\BaiduSyncdisk\docs\content\
 
 - 开工前读 `harness/references/xugudb-docs-map.md` 定位相关文档
 - 开工前读 `harness/contracts/sql-dialect.contract.md` 确认已登记方言规则
+- 文档无对应能力时读 `harness/contracts/stub-and-exclusion.contract.md` 再决定 stub/skip
 - **禁止**凭记忆、猜测或仅参考 Pomelo/MySQL 语法直接编写
 - **禁止**假设 XuguDB 与 MySQL 100% 兼容；以文档为准，差异写入 `sql-dialect.contract.md`
 - 发现文档与实现不一致时，以文档为准，并在 contract 中标注
@@ -90,6 +91,7 @@ MySQL 兼容模式相关：
 - [ ] 读 `harness/skills/provider-{module}/SKILL.md`
 - [ ] 读 `harness/tasks/` 中领取的任务
 - [ ] 读 `harness/contracts/sql-dialect.contract.md`
+- [ ] 若涉及 Pomelo 有而 Xugu 文档未载明的功能，读 `harness/contracts/stub-and-exclusion.contract.md`
 - [ ] 读 `harness/references/xugudb-docs-map.md` 找到本任务相关文档并**实际打开阅读**
 - [ ] 读 `harness/references/pomelo-file-map.md` 找到 Pomelo 参考文件
 
