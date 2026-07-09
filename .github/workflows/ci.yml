@@ -126,7 +126,7 @@ jobs:
         with:
           global-json-file: global.json
 
-      - name: Pack 2.1.x
+      - name: Pack release
         shell: pwsh
         env:
           XUGU_NATIVE_DLL_PATH: ${{ secrets.XUGU_NATIVE_DLL_PATH }}
