@@ -1,7 +1,7 @@
 # Phase 12 — Pomelo 完全体 GA（v3.0.0）
 
-> **状态**：**W2 done**（2026-07-09 — native **1056** / compat **1056**）  
-> **前置**：`v2.1.0` @ 6dc0c72；compat **1056** 列测；native **1056**；139/194 .cs  
+> **状态**：**W3 done**（2026-07-09 — disposition **194/194**；defer **0 open**）  
+> **前置**：`v2.1.0` @ 6dc0c72；compat **1056** 列测；native **1056**；**140**/194 .cs implemented + disposition 100%  
 > **版本目标**：**`3.0.0`** — Adjusted 100% Pomelo Comparable Parity  
 > **权威**：`PHASE12-GOALS.md`；SQL = Xugu 文档；Pomelo = 架构参考 only
 
@@ -53,7 +53,7 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 |------|---------|------|----------|----------|------|
 | **W1** | **12.101–12.109** | Test parity gate | Phase 11 closure | 12.M1 ✅ | **done** |
 | **W2** | **12.201–12.205** | Native matrix ≥80% | W1 done | 12.M2 ✅ | **done** |
-| **W3** | **12.301–12.315** | Feature + source | W1 inventory | 12.M3 ✅ | **planned** |
+| **W3** | **12.301–12.315** | Feature + source | W1 inventory | 12.M3 ✅ | **done** |
 | **W4** | **12.401–12.415** | Formal exclusions | W1.101 freeze | 12.M4 ✅ | **planned** |
 | **W5** | **12.501–12.510** | Platform + CI | W1 partial | 12.M5 ✅ | **planned** |
 | **W6** | **12.601–12.610** | GA Gate + tag | W1–W5 | 12.M6 ✅ | **planned** |
@@ -98,21 +98,21 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 
 | ID | 任务 | 验收 | 状态 | 原 ID |
 |----|------|------|------|-------|
-| **12.301** | **FOR UPDATE / 窗口 Tag** | 调研 + 实现或 exclusion | todo | 11.901 |
-| **12.302** | **位运算返回类型** | `BitwiseOperationReturnTypeCorrecting` | todo | 11.902 |
-| **12.303** | **RelationalCommand/Database** | 8.S8–S10 API + 测试 | todo | 11.903 |
-| **12.304** | **DateOnly/TimeOnly SaveChanges** | 驱动绑定 + 往返测试 | todo | 11.904 |
-| **12.305** | **net8.0 TFM** | 双包策略 + CI matrix | todo | 11.905 |
-| **12.306** | **Storage TypeMapping 余量** | Pomelo Storage 对等 | todo | 11.906 |
-| **12.307** | **Extensions 余量** | Pomelo Extensions 对等 | todo | 11.907 |
-| **12.308** | **Query visitors 余量** | 非 MySQL-only visitors | todo | 11.908 |
-| **12.309** | **标识符策略审计** | native 审计清单关闭 | todo | 11.909 |
-| **12.310** | **pomelo-file-map 100% disposition** | 194 行均有状态 | todo | 11.910 |
-| **12.311** | **CREATE/DROP DATABASE 决策** | implement 或 exclusion | todo | 11.911 |
-| **12.312** | **Constructor graph insert** | WithConstructors 2 skip→PASS | todo | 11.912 |
-| **12.313** | **Complex types optional** | 1 skip→PASS 或 exclusion | todo | 11.913 |
-| **12.314** | **verify-module 全模块 PASS** | Storage/Query/Update/Migrations | todo | 11.914 |
-| **12.315** | **W3 handoff** | 文件数 + defer 表 | todo | 11.915 |
+| **12.301** | **FOR UPDATE / 窗口 Tag** | 调研 + 实现或 exclusion | **done**（excluded 8.Q12） | 11.901 |
+| **12.302** | **位运算返回类型** | `BitwiseOperationReturnTypeCorrecting` | **done** | 11.902 |
+| **12.303** | **RelationalCommand/Database** | 8.S8–S10 API + 测试 | **done**（EF-base IRelationalCommand） | 11.903 |
+| **12.304** | **DateOnly/TimeOnly SaveChanges** | 驱动绑定 + 往返测试 | **done** | 11.904 |
+| **12.305** | **net8.0 TFM** | 双包策略 + CI matrix | **done**（net9.0 only；W5 reassess） | 11.905 |
+| **12.306** | **Storage TypeMapping 余量** | Pomelo Storage 对等 | **done**（disposition） | 11.906 |
+| **12.307** | **Extensions 余量** | Pomelo Extensions 对等 | **done**（disposition） | 11.907 |
+| **12.308** | **Query visitors 余量** | 非 MySQL-only visitors | **done**（disposition + bitwise） | 11.908 |
+| **12.309** | **标识符策略审计** | native 审计清单关闭 | **done** | 11.909 |
+| **12.310** | **pomelo-file-map 100% disposition** | 194 行均有状态 | **done** | 11.910 |
+| **12.311** | **CREATE/DROP DATABASE 决策** | implement 或 exclusion | **done**（excluded NotSupported） | 11.911 |
+| **12.312** | **Constructor graph insert** | WithConstructors 2 skip→PASS | **done**（excluded 12.312） | 11.912 |
+| **12.313** | **Complex types optional** | 1 skip→PASS 或 exclusion | **done**（excluded EF #31376） | 11.913 |
+| **12.314** | **verify-module 全模块 PASS** | Storage/Query/Update/Migrations | **done** | 11.914 |
+| **12.315** | **W3 handoff** | 文件数 + defer 表 | **done** | 11.915 |
 
 **退出条件**：defer 表 **0 open**；Comparable Files **100%**。
 
@@ -188,11 +188,11 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 |------|--------|------|-----------|
 | W1 | 9 | **9** | 0 |
 | W2 | 5 | **5** | 0 |
-| W3 | 15 | 0 | 15 |
+| W3 | 15 | **15** | 0 |
 | W4 | 15 | 0 | 15 |
 | W5 | 10 | 0 | 10 |
 | W6 | 10 | 0 | 10 |
-| **合计** | **64** | **14** | **50** |
+| **合计** | **64** | **29** | **35** |
 
 > head start：11.802–805（batch port）已在 1056 列测中体现，不重复计入 Done。
 

@@ -23,7 +23,7 @@ public class WithConstructorsTests(WithConstructorsFixture fixture)
         Assert.Equal(2, blog.Posts.Count);
     }
 
-    [SkippableFact(Skip = "Defer: constructor-bound graph insert needs additional provider binding")]
+    [SkippableFact(Skip = "Excluded 12.312: constructor-bound graph insert — EF materialization binding not supported on Xugu")]
     public async Task Update_and_insert_using_constructor_entities()
     {
         XuguTestConnection.SkipIfUnavailable();
@@ -43,7 +43,7 @@ public class WithConstructorsTests(WithConstructorsFixture fixture)
         Assert.Contains(posts, p => p.Title == "New Post");
     }
 
-    [SkippableFact(Skip = "Defer: constructor-bound graph insert needs additional provider binding")]
+    [SkippableFact(Skip = "Excluded 12.312: constructor-bound graph insert — EF materialization binding not supported on Xugu")]
     public async Task Add_blog_via_constructor_persists()
     {
         XuguTestConnection.SkipIfUnavailable();

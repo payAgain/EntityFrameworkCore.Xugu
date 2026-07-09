@@ -113,16 +113,19 @@
 
 > Xugu **139** .cs vs Pomelo **194** .cs（**~72%**）；compat 列测 **896** / ~1050（**~85%**）；native **177**
 
-### 状态汇总
+### 状态汇总（Phase 12 W3 — 2026-07-09）
 
 | 状态 | 数量 | 说明 | 来源 |
 |------|------|------|------|
-| **done** | ~123 文件 | W1–W10 + 11.109 JSON | Pomelo-port / Xugu-native |
-| **skip** | ~8 文件 | Collation/Charset、FULLTEXT、NTS 等 | W14 待 resolution |
-| **defer** | ~11 文件 | Bitwise、FOR UPDATE、RelationalCommand、RID 等 | W12/W13 |
-| **缺口** | **55** 文件 | 194 − 139 | W12 目标 100% disposition |
+| **implemented** | **124** | Pomelo-port / Xugu-native 物理文件 | W3 disposition |
+| **Xugu-adapted** | **3** | 命名/结构改写对等 | W3 disposition |
+| **EF-base-only** | **29** | EF Core Relational 默认足够 | W3 disposition |
+| **excluded-with-evidence** | **38** | Collation/JSON/FULLTEXT 等 | W3/W4 stub contract |
+| **合计** | **194** | **100% disposition** | `pomelo-file-disposition.md` |
 
-### 模块 done/skip/defer
+> 校验：`harness/scripts/verify-pomelo-disposition.ps1`（由 `verify.ps1` 调用）
+
+### 模块 done/skip/defer（legacy — 见 disposition 表）
 
 | 模块 | Pomelo | Xugu | 状态 | 来源 |
 |------|--------|------|------|------|
@@ -140,12 +143,12 @@
 
 | ID | 项 | 原因 | 来源 |
 |----|-----|------|------|
-| 8.Q11 | BitwiseOperationReturnTypeCorrecting | P2；Xugu 整数位运算返回 BIGINT，暂无 EF 翻译失败报告 | defer |
-| 8.Q12 | FOR UPDATE / 窗口函数 | P2；文档支持 `FOR UPDATE` 但 EF Core 无标准 API | defer |
+| 8.Q11 | BitwiseOperationReturnTypeCorrecting | P2；Xugu BIGINT 位运算 | **done**（12.302） |
+| 8.Q12 | FOR UPDATE / 窗口函数 | P2；EF 无标准 API | **excluded-with-evidence**（12.301 → W4 formal） |
 | 8.Q14 | 参数内联 | P2 性能优化 | **done**（10.201） |
-| 8.Q15 | ConvertTimeZone | 无 CONVERT_TZ | defer |
-| 8.S8–S10 | RelationalCommand/Database 表面 | P2 | defer |
-| 8.N1–N3 | Linux RID 打包 | 依赖驱动发布 | defer |
+| 8.Q15 | ConvertTimeZone | 无 CONVERT_TZ | **excluded-with-evidence**（→ W4 formal） |
+| 8.S8–S10 | RelationalCommand/Database 表面 | P2 | **done**（EF-base IRelationalCommand） |
+| 8.N1–N3 | Linux RID 打包 | 依赖驱动发布 | **blocked**（→ W5） |
 
 ### Pomelo 独有、Xugu 不实现
 

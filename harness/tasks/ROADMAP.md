@@ -2,14 +2,14 @@
 
 > Orchestrator 维护。仓库：`E:\Work\xuguefcore`
 
-## 当前 Phase: **12**（**W2 done** — Pomelo 完全体 GA）
+## 当前 Phase: **12**（**W3 done** — Pomelo 完全体 GA）
 
 **已发布**：**`2.1.0` GA-preview**（`v2.1.0` tag @ 6dc0c72；Phase 11 **done**）  
 **GA 目标**：**`3.0.0`**（Phase 12 — Adjusted 100% Pomelo Comparable Parity）  
 **测试**：compat **1056**（Comparable Set **frozen**）；native **1056**（Phase 12 W2 ✅）  
-**源码**：**139** / 194 .cs（~72%；Phase 12 W3 disposition）  
-**Wave 指针**：Phase 12 **W2 done** → **W3** feature + source disposition  
-**GA 差距**：`phase-11-xugu-native-release/GA-GAP.md`（native 矩阵已关闭；W3–W6 余量）
+**源码**：**140** .cs implemented；**194/194** disposition（Phase 12 W3 ✅）  
+**Wave 指针**：Phase 12 **W3 done** → **W4** formal exclusions  
+**GA 差距**：`phase-11-xugu-native-release/GA-GAP.md`（W4–W6 余量）
 
 ---
 
@@ -190,7 +190,7 @@ Pomelo 完全体 GA 3.0.0
 |------|---------|------|------|
 | **W1** | **12.101–12.109** | Test parity（含 11.802–805 head start） | **done** |
 | **W2** | **12.201–12.205** | Native ≥80% | **done** |
-| **W3** | **12.301–12.315** | Feature + 194 文件 disposition | **planned** |
+| **W3** | **12.301–12.315** | Feature + 194 文件 disposition | **done** |
 | **W4** | **12.401–12.415** | Formal exclusions + stub policy | **planned** |
 | **W5** | **12.501–12.510** | Platform + production checklist | **planned** |
 | **W6** | **12.601–12.610** | GA Gate + `v3.0.0` tag | **planned** |

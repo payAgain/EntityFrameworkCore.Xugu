@@ -26,6 +26,8 @@ public class XuguQueryTranslationPostprocessor : RelationalQueryTranslationPostp
 
         query = havingExpressionVisitor.Process(query, usePrePostprocessorMode: false);
 
+        query = new BitwiseOperationReturnTypeCorrectingExpressionVisitor(_sqlExpressionFactory).Visit(query);
+
         return query;
     }
 }

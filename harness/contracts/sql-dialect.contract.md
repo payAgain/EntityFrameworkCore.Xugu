@@ -366,16 +366,16 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | FULLTEXT IsMatch | **无 MATCH AGAINST** | `MATCH … AGAINST` | **不实现** |
 | HasTables | `DBA_TABLES`（`VALID='T'`, `IS_SYS='F'`） | `information_schema.tables` | XuguDatabaseCreator |
 
-## FOR UPDATE / 位运算（Phase 8 调研）
+## FOR UPDATE / 位运算（Phase 12 W3 收口）
 
 > 文档：`reference/sql/select/select.md` §FOR UPDATE；`reference/sql/datatype/bit.md`；`reference/sql/operators/bit-operators/`
 
 | 场景 | XuguDB | Provider | 状态 |
 |------|--------|----------|------|
-| `SELECT … FOR UPDATE` | 支持行排他锁 | — | **defer**（8.Q12；EF Core 无标准 Tag 翻译入口） |
-| 窗口函数 | 文档子集支持 | — | **defer**（8.Q12） |
-| 整数位运算 `& \| ^ << >>` | BIGINT 返回；BIT 类型独立 | — | **defer**（8.Q11；暂无翻译类型不匹配报告） |
-| `BitwiseOperationReturnTypeCorrecting` | Pomelo 用于 MySQL 返回类型修正 | — | **defer** |
+| `SELECT … FOR UPDATE` | 支持行排他锁 | — | **excluded-with-evidence**（8.Q12；EF Core 无标准 Tag 翻译入口 → W4 formal） |
+| 窗口函数 | 文档子集支持 | — | **excluded-with-evidence**（8.Q12；无 EF 标准 API → W4 formal） |
+| 整数位运算 `& \| ^ << >>` | BIGINT 返回；BIT 类型独立 | `BitwiseOperationReturnTypeCorrectingExpressionVisitor` | **done**（12.302） |
+| `BitwiseOperationReturnTypeCorrecting` | Pomelo 用于 MySQL 返回类型修正 | 同上 | **done**（12.302） |
 
 ## DDL 差异
 

@@ -109,7 +109,7 @@ public class ComplexTypesTrackingTests(ComplexTypesFixture fixture)
         await context.SaveChangesAsync();
     }
 
-    [SkippableFact(Skip = "Defer: optional complex properties require EF #31376 support")]
+    [SkippableFact(Skip = "Excluded 12.313: optional complex properties require EF #31376")]
     public async Task Nullable_complex_property_can_be_null()
     {
         XuguTestConnection.SkipIfUnavailable();
