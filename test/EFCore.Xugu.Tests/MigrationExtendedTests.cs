@@ -359,7 +359,42 @@ public class MigrationExtendedTests(XuguDatabaseFixture fixture)
         var executor = context.GetInfrastructure().GetRequiredService<IMigrationCommandExecutor>();
         var connection = context.GetInfrastructure().GetRequiredService<IRelationalConnection>();
         var commands = generator.Generate(operations);
-        executor.ExecuteNonQuery(commands, connection, new MigrationExecutionState(), commitTransaction: true);
+
+        Exception? last = null;
+        for (var attempt = 1; attempt <= 3; attempt++)
+        {
+            try
+            {
+                executor.ExecuteNonQuery(commands, connection, new MigrationExecutionState(), commitTransaction: true);
+                return;
+            }
+            catch (Exception ex) when (attempt < 3 && IsTransientMigrationError(ex))
+            {
+                last = ex;
+                Thread.Sleep(300 * attempt);
+            }
+        }
+
+        if (last != null)
+        {
+            throw last;
+        }
+    }
+
+    private static bool IsTransientMigrationError(Exception exception)
+    {
+        for (var current = exception; current is not null; current = current.InnerException)
+        {
+            var message = current.Message;
+            if (message.Contains("E34501", StringComparison.Ordinal)
+                || message.Contains("E34305", StringComparison.Ordinal)
+                || message.Contains("E34304", StringComparison.Ordinal))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static MigContext CreateContext()

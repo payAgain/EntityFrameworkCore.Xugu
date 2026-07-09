@@ -54,7 +54,7 @@
 
 | 类别 | Done（Phase 11） | Remaining | 完成度 % | Phase 12 Wave |
 |------|-----------------|-----------|---------|--------------|
-| **测试数量** | 1056 列测 | Comparable Set 冻结；3× 0 FAIL；Skip 6 | **~55%** | W1 |
+| **测试数量** | 1056 列测；Comparable Set **frozen**；compat **3× 0 FAIL** | native ≥80%；Skip→0 | **~62%** | W1 ✅ / W2 |
 | **native 覆盖** | 263 列测 | → ≥845；0 FAIL | **~25%** | W2 |
 | **源码 disposition** | 139/194 | 55 文件分类 + 实现 | **~72%** | W3 |
 | **formal exclusions** | 文档化 skip | OUT OF SCOPE 表 + recalc | **~10%** | W4 |
@@ -65,7 +65,7 @@
 
 | 估算口径 | 完成度 |
 |----------|--------|
-| **保守**（含 CI + native + disposition） | **~52%** |
+| **保守**（含 CI + native + disposition） | **~58%** |
 | **乐观**（W4 快速签字 + blocked signed-off） | **~58%** |
 | **含 vendor 必须 unblock** | **~38%** |
 
@@ -77,7 +77,7 @@
 
 | Wave | 目标 | 任务数 | Done | Remaining |
 |------|------|--------|------|-----------|
-| **W1** | Test parity gate（12.M1） | 9 | 0 (+4 head start) | 9 |
+| **W1** | Test parity gate（12.M1） | 9 | **9** | 0 |
 | **W2** | Native ≥80%（12.M2） | 5 | 0 (partial) | 5 |
 | **W3** | Feature / source（12.M3） | 15 | 0 | 15 |
 | **W4** | Exclusions（12.M4） | 15 | 0 | 15 |

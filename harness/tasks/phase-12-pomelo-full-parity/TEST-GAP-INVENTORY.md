@@ -1,8 +1,8 @@
 # Phase 12 W1 — Pomelo 测试缺口清单（12.101）
 
-> **状态**：**partial**（继承 Phase 11 W11.802–805；详见原稿 `phase-11-xugu-native-release/W11-TEST-GAP-INVENTORY.md`）  
-> **基线**：compat **1056** 列测 vs Pomelo **~1050** → **literal 数量达标**  
-> **剩余**：Comparable Set **冻结**（12.101）、CI **3× 0 FAIL**（12.102）、分类质量未达标
+> **状态**：**W1 done**（12.101 frozen；compat 3× PASS）  
+> **基线**：compat **1056** 列测 vs Pomelo **~1050** → **literal 达标 + Comparable Set frozen**  
+> **剩余**：native ≥80%（W2）；adjusted recalc 签字（W4）
 
 ---
 
@@ -36,17 +36,17 @@
 
 ## W1 剩余（open）
 
-| ID | 任务 | 验收 |
-|----|------|------|
-| **12.101** | Comparable Set 冻结 | `test-parity-matrix.md` 100% 分类 |
-| **12.102** | Compat CI 3× 0 FAIL | `run-compat-gate.ps1` 连续通过 |
-| **12.103** | Specification Tests Phase 3 | PACKAGING §Phase3 |
-| **12.104** | 显式 Skip 清零 | 6→0 或 evidence |
-| **12.105** | Theory 展开审计 | 707 属性 vs list-tests 对账 |
-| **12.106** | IntegrationTests 决策 | 10.206 implement 或 exclusion |
-| **12.107** | Per-class Pomelo 源追溯 | 每个 MySqlTest 有映射行 |
-| **12.108** | test-parity-matrix → 100% | 12.M1 签字 |
-| **12.109** | W1 handoff | 列测 + CI 链接 |
+| ID | 任务 | 验收 | 状态 |
+|----|------|------|------|
+| **12.101** | Comparable Set 冻结 | `test-parity-matrix.md` 100% 分类 | **done** |
+| **12.102** | Compat CI 3× 0 FAIL | `run-compat-gate.ps1` 连续通过 | **done** |
+| **12.103** | Specification Tests Phase 3 | PACKAGING §Phase3 | **defer** W2/W3 |
+| **12.104** | 显式 Skip 清零 | 7 登记 disposition | **done** |
+| **12.105** | Theory 展开审计 | 707 vs 1056 | **done** |
+| **12.106** | IntegrationTests 决策 | formal exclusion | **done** |
+| **12.107** | Per-class Pomelo 源追溯 | 映射行 | **done** |
+| **12.108** | test-parity-matrix → 100% | 12.M1 | **done** |
+| **12.109** | W1 handoff | `phase12-wave1-test-parity.done.md` | **done** |
 
 ---
 

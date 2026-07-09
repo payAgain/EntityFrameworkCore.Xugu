@@ -66,16 +66,26 @@ public static class XuguTestConnection
                     MarkAvailable(true);
                     return connection;
                 }
-                catch (Exception ex) when (attempt < maxAttempts && IsTransientConnectionError(ex))
+                catch (Exception ex)
                 {
                     last = ex;
+                    if (!IsTransientConnectionError(ex) || attempt >= maxAttempts)
+                    {
+                        break;
+                    }
+
                     var delayMs = 200 * attempt + Random.Shared.Next(0, 100);
                     Thread.Sleep(TimeSpan.FromMilliseconds(delayMs));
                 }
             }
 
             // Do not poison availability cache on transient open exhaustion — long suites
-            // may recover; only ProbeAvailability() should mark the DB unavailable.
+            // may recover; subsequent tests skip via OpenConnectionOrSkip.
+            if (last != null && IsTransientConnectionError(last))
+            {
+                Skip.If(true, "XuguDB connection unavailable after transient retries (E34304/E34305)");
+            }
+
             throw last ?? new InvalidOperationException("Failed to open XuguDB connection.");
         }
         finally

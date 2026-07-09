@@ -14,9 +14,16 @@ public sealed class XuguDatabaseFixture : IDisposable
     public const string CustomerTableName = "EF_TEST_CUSTOMERS";
     public const string OrderTableName = "EF_TEST_ORDERS";
 
+    private bool _schemaReady;
+
     public XuguDatabaseFixture()
     {
-        if (!XuguTestConnection.IsAvailable())
+        EnsureSchemaReady();
+    }
+
+    private void EnsureSchemaReady()
+    {
+        if (_schemaReady || !XuguTestConnection.IsAvailable())
         {
             return;
         }
@@ -29,6 +36,7 @@ public sealed class XuguDatabaseFixture : IDisposable
         EnsureAppointmentTable();
         EnsureBuiltinTypesTable();
         EnsureCustomerOrderTables();
+        _schemaReady = true;
     }
 
     public void EnsureBlogTable()
@@ -52,6 +60,7 @@ public sealed class XuguDatabaseFixture : IDisposable
 
     public void ClearBlogs()
     {
+        EnsureSchemaReady();
         using var connection = OpenConnection();
         ExecuteNonQuery(connection, $"DELETE FROM {BlogTableName}");
     }
@@ -77,6 +86,7 @@ public sealed class XuguDatabaseFixture : IDisposable
 
     public void ClearEvents()
     {
+        EnsureSchemaReady();
         using var connection = OpenConnection();
         ExecuteNonQuery(connection, $"DELETE FROM {EventTableName}");
     }
@@ -112,6 +122,7 @@ public sealed class XuguDatabaseFixture : IDisposable
 
     public void ClearNumericItems()
     {
+        EnsureSchemaReady();
         using var connection = OpenConnection();
         ExecuteNonQuery(connection, $"DELETE FROM {NumericTableName}");
     }
@@ -138,6 +149,7 @@ public sealed class XuguDatabaseFixture : IDisposable
 
     public void ClearScheduleItems()
     {
+        EnsureSchemaReady();
         using var connection = OpenConnection();
         ExecuteNonQuery(connection, $"DELETE FROM {ScheduleTableName}");
     }
@@ -162,6 +174,7 @@ public sealed class XuguDatabaseFixture : IDisposable
 
     public void ClearAppointments()
     {
+        EnsureSchemaReady();
         using var connection = OpenConnection();
         ExecuteNonQuery(connection, $"DELETE FROM {AppointmentTableName}");
     }
@@ -194,6 +207,7 @@ public sealed class XuguDatabaseFixture : IDisposable
 
     public void ClearBuiltinTypes()
     {
+        EnsureSchemaReady();
         using var connection = OpenConnection();
         ExecuteNonQuery(connection, $"DELETE FROM {BuiltinTypesTableName}");
     }
@@ -258,6 +272,7 @@ public sealed class XuguDatabaseFixture : IDisposable
 
     public void ClearCustomersAndOrders()
     {
+        EnsureSchemaReady();
         using var connection = OpenConnection();
         ExecuteNonQuery(connection, $"DELETE FROM {OrderTableName}");
         ExecuteNonQuery(connection, $"DELETE FROM {CustomerTableName}");
@@ -323,6 +338,7 @@ public sealed class XuguDatabaseFixture : IDisposable
 
     public void ClearTimeOnlyScheduleItems()
     {
+        EnsureSchemaReady();
         using var connection = OpenConnection();
         ExecuteNonQuery(connection, $"DELETE FROM {TimeOnlyScheduleTableName}");
     }

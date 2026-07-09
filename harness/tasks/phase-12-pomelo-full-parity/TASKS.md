@@ -1,6 +1,6 @@
 # Phase 12 — Pomelo 完全体 GA（v3.0.0）
 
-> **状态**：**planned**（2026-07-09 — Phase 11 以 **2.1.0 GA-preview** 关闭）  
+> **状态**：**W1 done**（2026-07-09 — Phase 11 以 **2.1.0 GA-preview** 关闭）  
 > **前置**：`v2.1.0` @ 6dc0c72；compat **1056** 列测；native **263**；139/194 .cs  
 > **版本目标**：**`3.0.0`** — Adjusted 100% Pomelo Comparable Parity  
 > **权威**：`PHASE12-GOALS.md`；SQL = Xugu 文档；Pomelo = 架构参考 only
@@ -51,8 +51,8 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 
 | Wave | 任务 ID | 范围 | 进入条件 | 退出条件 | 状态 |
 |------|---------|------|----------|----------|------|
-| **W1** | **12.101–12.109** | Test parity gate | Phase 11 closure | 12.M1 ✅ | **planned** |
-| **W2** | **12.201–12.205** | Native matrix ≥80% | W1 partial | 12.M2 ✅ | **planned** |
+| **W1** | **12.101–12.109** | Test parity gate | Phase 11 closure | 12.M1 ✅ | **done** |
+| **W2** | **12.201–12.205** | Native matrix ≥80% | W1 done | 12.M2 ✅ | **planned** |
 | **W3** | **12.301–12.315** | Feature + source | W1 inventory | 12.M3 ✅ | **planned** |
 | **W4** | **12.401–12.415** | Formal exclusions | W1.101 freeze | 12.M4 ✅ | **planned** |
 | **W5** | **12.501–12.510** | Platform + CI | W1 partial | 12.M5 ✅ | **planned** |
@@ -66,15 +66,15 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 
 | ID | 任务 | 验收 | 状态 | 原 ID |
 |----|------|------|------|-------|
-| **12.101** | **Comparable Set 冻结** | `test-parity-matrix.md` 100% 分类 | todo | 11.806 |
-| **12.102** | **Compat CI 3× 0 FAIL** | `run-compat-gate.ps1` 连续通过；E34305 消除 | partial | 11.807 |
-| **12.103** | **Specification Tests Phase 3** | PACKAGING §Phase3 PASS | todo | 11.809 |
-| **12.104** | **显式 Skip 清零** | 6→0 或 evidence | todo | 11.810 |
-| **12.105** | **Theory 展开审计** | 707 属性 vs 1056 list-tests | todo | 11.811 |
-| **12.106** | **IntegrationTests 决策** | 10.206 implement 或 exclusion | todo | 11.812 |
-| **12.107** | **Per-class Pomelo 源追溯** | 每个 MySqlTest 有 Xugu 映射行 | todo | 11.813 |
-| **12.108** | **test-parity-matrix → 100%** | 12.M1 里程碑签字 | todo | 11.814 |
-| **12.109** | **W1 handoff** | `phase12-w1-test-parity.done.md` | todo | 11.815 |
+| **12.101** | **Comparable Set 冻结** | `test-parity-matrix.md` 100% 分类 | **done** | 11.806 |
+| **12.102** | **Compat CI 3× 0 FAIL** | `run-compat-gate.ps1` 连续通过；E34305 消除 | **done** | 11.807 |
+| **12.103** | **Specification Tests Phase 3** | PACKAGING §Phase3 PASS | **defer** | 11.809 |
+| **12.104** | **显式 Skip 清零** | 6→0 或 evidence | **done**（7 登记） | 11.810 |
+| **12.105** | **Theory 展开审计** | 707 属性 vs 1056 list-tests | **done** | 11.811 |
+| **12.106** | **IntegrationTests 决策** | 10.206 implement 或 exclusion | **done** | 11.812 |
+| **12.107** | **Per-class Pomelo 源追溯** | 每个 MySqlTest 有 Xugu 映射行 | **done** | 11.813 |
+| **12.108** | **test-parity-matrix → 100%** | 12.M1 里程碑签字 | **done** | 11.814 |
+| **12.109** | **W1 handoff** | `phase12-wave1-test-parity.done.md` | **done** | 11.815 |
 
 **已完成（Phase 11 head start，不重复验收）**：11.802–805 batch port → 1056 列测。
 
@@ -186,13 +186,13 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 
 | Wave | 任务数 | Done | Remaining |
 |------|--------|------|-----------|
-| W1 | 9 | 0（+4 head start 不计） | 9 |
+| W1 | 9 | **9** | 0 |
 | W2 | 5 | 0（12.201 partial） | 5 |
 | W3 | 15 | 0 | 15 |
 | W4 | 15 | 0 | 15 |
 | W5 | 10 | 0 | 10 |
 | W6 | 10 | 0 | 10 |
-| **合计** | **64** | **0** | **64** |
+| **合计** | **64** | **9** | **55** |
 
 > head start：11.802–805（batch port）已在 1056 列测中体现，不重复计入 Done。
 

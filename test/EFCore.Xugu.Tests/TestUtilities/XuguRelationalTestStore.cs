@@ -1,3 +1,4 @@
+using System.Data;
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -24,10 +25,71 @@ public sealed class XuguRelationalTestStore : RelationalTestStore
     }
 
     private static DbConnection CreateConnection()
-        => XuguTestConnection.OpenConnection();
+        => new XGConnection(XuguTestConnection.ConnectionString);
 
     public override DbContextOptionsBuilder AddProviderOptions(DbContextOptionsBuilder builder)
         => builder.UseXugu(ConnectionString, XuguServerVersion.Default);
+
+    public override async Task<TestStore> InitializeAsync(
+        IServiceProvider? serviceProvider,
+        Func<DbContext>? createContext,
+        Func<DbContext, Task>? seed = null,
+        Func<DbContext, Task>? clean = null)
+    {
+        ServiceProvider = serviceProvider;
+
+        if (!XuguTestConnection.IsAvailable())
+        {
+            return this;
+        }
+
+        if (ConnectionState != ConnectionState.Open)
+        {
+            await OpenConnectionWithRetryAsync().ConfigureAwait(false);
+        }
+
+        return await base.InitializeAsync(serviceProvider, createContext, seed, clean).ConfigureAwait(false);
+    }
+
+    public override void OpenConnection()
+        => OpenConnectionWithRetry();
+
+    public override Task OpenConnectionAsync()
+        => OpenConnectionWithRetryAsync();
+
+    private void OpenConnectionWithRetry()
+        => OpenConnectionWithRetryAsync().GetAwaiter().GetResult();
+
+    private async Task OpenConnectionWithRetryAsync()
+    {
+        if (Connection.State == ConnectionState.Open)
+        {
+            return;
+        }
+
+        Exception? last = null;
+
+        for (var attempt = 1; attempt <= 12; attempt++)
+        {
+            try
+            {
+                await Connection.OpenAsync().ConfigureAwait(false);
+                return;
+            }
+            catch (Exception ex) when (attempt < 12 && XuguTestConnection.IsTransientConnectionError(ex))
+            {
+                last = ex;
+                if (Connection.State != ConnectionState.Closed)
+                {
+                    Connection.Close();
+                }
+
+                await Task.Delay(200 * attempt + Random.Shared.Next(0, 100)).ConfigureAwait(false);
+            }
+        }
+
+        throw last ?? new InvalidOperationException("Failed to open XuguDB connection for relational test store.");
+    }
 
     protected override async Task InitializeAsync(
         Func<DbContext> createContext,
