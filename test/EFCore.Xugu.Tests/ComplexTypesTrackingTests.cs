@@ -8,6 +8,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 9.T23 — ComplexTypesTrackingMySqlTest subset.
 /// </summary>
 [Collection("XuguComplexTypes")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class ComplexTypesTrackingTests(ComplexTypesFixture fixture)
 {
     [SkippableFact]

@@ -11,6 +11,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Computed column tests deferred — Xugu generated column support varies.
 /// </summary>
 [Collection("XuguTableSplitting")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class TableSplittingTests(TableSplittingFixture fixture)
 {
     [SkippableFact]

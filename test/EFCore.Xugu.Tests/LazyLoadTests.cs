@@ -8,6 +8,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 9.T26 — LazyLoadProxyMySqlTest subset (explicit loading; lazy proxies defer).
 /// </summary>
 [Collection("XuguLoad")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class LazyLoadTests(LoadFixture fixture)
 {
     [SkippableFact(Skip = "Defer: lazy-loading proxies not enabled for Xugu test harness")]

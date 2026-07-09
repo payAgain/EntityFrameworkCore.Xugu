@@ -10,6 +10,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 10.103 — Pomelo TPHInheritanceQueryMySqlTest 最小子集：单表继承查询。
 /// </summary>
 [Collection("XuguTPHInheritance")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class TPHInheritanceQueryTests(TPHInheritanceQueryFixture fixture)
 {
     private TPHInheritanceQueryTests.TPHContext CreateContext() => fixture.CreateContext();

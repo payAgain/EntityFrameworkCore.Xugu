@@ -12,6 +12,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Computed column matrix deferred per LIMITATIONS.
 /// </summary>
 [Collection("XuguStoreGenerated")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class StoreGeneratedTests(StoreGeneratedFixture fixture)
 {
     [SkippableFact]

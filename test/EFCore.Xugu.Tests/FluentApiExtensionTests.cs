@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
+
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
@@ -5,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Xugu.Metadata.Internal;
 using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class FluentApiExtensionTests
 {
     [Fact]

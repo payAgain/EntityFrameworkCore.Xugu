@@ -10,6 +10,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 9.T13 — LoadMySqlTest subset (Load / Include / explicit loading).
 /// </summary>
 [Collection("XuguLoad")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class LoadTests(LoadFixture fixture)
 {
     [SkippableFact]

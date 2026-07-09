@@ -10,6 +10,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 9.T16 — EntitySplittingMySqlTest subset (one entity type, multiple tables).
 /// </summary>
 [Collection("XuguEntitySplitting")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class EntitySplittingTests(EntitySplittingFixture fixture)
 {
     [SkippableFact]

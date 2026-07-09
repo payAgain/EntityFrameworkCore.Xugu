@@ -11,6 +11,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 10.103 — Pomelo FromSqlQueryMySqlTest 子集：FromSqlRaw / 参数 / 组合 LINQ。
 /// </summary>
 [Collection("XuguNorthwind")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class FromSqlQueryTests(XuguNorthwindQueryFixture fixture)
     : XuguQueryTestBase<XuguNorthwindQueryFixture>(fixture)
 {

@@ -9,10 +9,12 @@ using Microsoft.EntityFrameworkCore.Xugu.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class MigrationTests(XuguDatabaseFixture fixture)
 {
     public const string ItemsTableName = "EF_MIG_TEST_ITEMS";

@@ -13,6 +13,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// even in MYSQL compatible_mode (verified Phase 10 Wave 4).
 /// </summary>
 [Collection("XuguOptimisticConcurrency")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class OptimisticConcurrencyTests(OptimisticConcurrencyFixture fixture)
 {
     [Fact]

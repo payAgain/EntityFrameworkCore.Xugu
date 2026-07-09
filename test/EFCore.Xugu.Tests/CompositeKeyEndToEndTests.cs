@@ -11,6 +11,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 9.T4 — CompositeKeyEndToEndMySqlTest subset.
 /// </summary>
 [Collection("XuguCompositeKey")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class CompositeKeyEndToEndTests(CompositeKeyFixture fixture)
 {
     [SkippableFact]

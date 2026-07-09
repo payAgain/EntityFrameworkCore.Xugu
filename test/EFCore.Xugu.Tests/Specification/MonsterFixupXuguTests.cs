@@ -8,6 +8,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests.Specification;
 /// Phase 10.101 — MonsterFixup subset (change-tracking fixup on Xugu-compatible models).
 /// </summary>
 [Collection("XuguMonsterFixup")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class MonsterFixupXuguTests(MonsterFixupFixture fixture)
 {
     [SkippableFact]

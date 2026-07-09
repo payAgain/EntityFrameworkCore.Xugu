@@ -10,6 +10,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 9.T21 — PropertyValuesMySqlTest subset (CurrentValues / OriginalValues / store values).
 /// </summary>
 [Collection("XuguPropertyValues")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class PropertyValuesTests(PropertyValuesFixture fixture)
 {
     [SkippableFact]

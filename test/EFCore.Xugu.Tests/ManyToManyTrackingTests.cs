@@ -10,6 +10,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 9.T14 — ManyToManyTrackingMySqlTest subset (skip entity with join table).
 /// </summary>
 [Collection("XuguManyToMany")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class ManyToManyTrackingTests(ManyToManyFixture fixture)
 {
     [SkippableFact]

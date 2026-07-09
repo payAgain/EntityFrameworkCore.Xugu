@@ -11,6 +11,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 9.T5 — FindMySqlTest subset (Set.Find / DbContext.Find patterns).
 /// </summary>
 [Collection("XuguFind")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class FindTests(FindFixture fixture)
 {
     [SkippableFact]

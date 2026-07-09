@@ -8,6 +8,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 9.T27 — MusicStoreMySqlTest subset (store browse scenario).
 /// </summary>
 [Collection("XuguMusicStore")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class MusicStoreTests(MusicStoreFixture fixture)
 {
     [SkippableFact]

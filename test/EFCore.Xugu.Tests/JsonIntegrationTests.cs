@@ -2,13 +2,15 @@ using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 11.109d â€?JSON column CRUD and query against a live XuguDB instance.
+/// Phase 11.109d ï¿½?JSON column CRUD and query against a live XuguDB instance.
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class JsonIntegrationTests(XuguDatabaseFixture _)
 {
     private const string JsonTableName = "EF_TEST_JSON_PAYLOADS";

@@ -8,6 +8,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests.Specification;
 /// Phase 10.101 — store-generated value fixup subset.
 /// </summary>
 [Collection("XuguStoreGeneratedFixup")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class StoreGeneratedFixupXuguTests(StoreGeneratedFixupFixture fixture)
 {
     [SkippableFact]

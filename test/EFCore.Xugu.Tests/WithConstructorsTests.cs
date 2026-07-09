@@ -8,6 +8,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 9.T25 — WithConstructorsMySqlTest subset.
 /// </summary>
 [Collection("XuguWithConstructors")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class WithConstructorsTests(WithConstructorsFixture fixture)
 {
     [SkippableFact]
