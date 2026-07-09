@@ -153,6 +153,7 @@ To publish from CI, add feed secrets and extend workflow (not enabled by default
 | Document | Purpose |
 |----------|---------|
 | [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md) | Connection string, `UseXugu`, migrations |
+| [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | End-user guide (models, LINQ, FAQ) |
 | [docs/LIMITATIONS.md](docs/LIMITATIONS.md) | Known limits, platform exclusions |
 | [docs/CHANGELOG.md](docs/CHANGELOG.md) | Version history |
 | [docs/RELEASE-SCOPE.md](docs/RELEASE-SCOPE.md) | Product positioning |

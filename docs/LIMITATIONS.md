@@ -1,6 +1,9 @@
 # Microsoft.EntityFrameworkCore.Xugu — 已知限制
 
-> Phase 7 Wave 1 初稿；Phase 8 / gap analysis 补全；**3.0.0 frozen（Phase 12 GA）**。完整路线图见 `harness/tasks/ROADMAP.md`。
+> **面向用户**：本文列出 3.0.0 GA 的功能边界与平台范围。使用前请先阅读 [GETTING-STARTED.md](GETTING-STARTED.md) 与 [USER-GUIDE.md](USER-GUIDE.md)。  
+> **版本**：3.0.0 frozen（Phase 12 GA，2026-07-09）
+
+若你遇到文档未列出的行为，请在 GitHub 仓库提交 Issue，并附上 XGCI 错误码与复现步骤。
 
 ## 方言模式（3.0.0 frozen）
 

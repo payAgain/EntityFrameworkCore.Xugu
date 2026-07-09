@@ -28,7 +28,8 @@ services.AddDbContext<AppDbContext>(options =>
     options.UseXugu("IP=127.0.0.1; DB=SYSTEM; USER=SYSDBA; PWD=***; PORT=5138; CHARSET=UTF8;"));
 ```
 
-详细说明见 [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md)。
+**5 分钟上手** → [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md)  
+**完整用户指南** → [docs/USER-GUIDE.md](docs/USER-GUIDE.md)（连接、模型、LINQ、迁移、FAQ）
 
 ---
 
@@ -67,12 +68,13 @@ dotnet pack src/EFCore.Xugu/EFCore.Xugu.csproj -c Release -o artifacts/ -p:UseLo
 
 | 文档 | 说明 |
 |------|------|
-| [GETTING-STARTED.md](docs/GETTING-STARTED.md) | 连接串、`UseXugu`、迁移 |
+| [GETTING-STARTED.md](docs/GETTING-STARTED.md) | 快速开始：安装、连接串、`UseXugu`、迁移 |
+| [USER-GUIDE.md](docs/USER-GUIDE.md) | **用户指南**：模型约定、LINQ/JSON、批量 DML、重试、FAQ |
 | [LIMITATIONS.md](docs/LIMITATIONS.md) | 已知限制与平台范围 |
+| [XUGU-VS-MYSQL.md](docs/XUGU-VS-MYSQL.md) | 与 Pomelo/MySQL 对照参考（非迁移指南） |
 | [CHANGELOG.md](docs/CHANGELOG.md) | 版本变更 |
 | [RELEASE-SCOPE.md](docs/RELEASE-SCOPE.md) | 产品范围声明 |
 | [xuguclient-dependency-strategy.md](docs/xuguclient-dependency-strategy.md) | 驱动依赖策略 |
-| [RELEASE-BRANCH-STRATEGY.md](docs/RELEASE-BRANCH-STRATEGY.md) | 发布分支与公开镜像策略 |
 
 ---
 
@@ -89,4 +91,4 @@ MIT — see [LICENSE](LICENSE).
 
 ## Contributing
 
-内部开发使用完整单体仓库（含 harness 与参考子模块）。公开贡献请基于 **公开镜像** 仓库的 `main` 分支；详见 [RELEASE-BRANCH-STRATEGY.md](docs/RELEASE-BRANCH-STRATEGY.md)。
+欢迎通过 GitHub Issue / Pull Request 参与。开发环境需 .NET 9 SDK、Windows x64 与可访问的 XuguDB 实例。

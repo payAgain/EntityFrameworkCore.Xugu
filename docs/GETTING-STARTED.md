@@ -4,7 +4,12 @@
 > 包名：`Microsoft.EntityFrameworkCore.Xugu`  
 > 目标框架：.NET 9.0
 
-本文介绍如何在应用中使用 XuguDB EF Core Provider：连接串、`UseXugu`、迁移与常见排错。已知限制见 [LIMITATIONS.md](LIMITATIONS.md)；版本历史见 [CHANGELOG.md](CHANGELOG.md)。从 MySQL/Pomelo 迁移请阅读 [XUGU-VS-MYSQL.md](XUGU-VS-MYSQL.md)。
+本文介绍如何在应用中使用 XuguDB EF Core Provider：连接串、`UseXugu`、迁移与常见排错。
+
+- **完整用户指南**（模型约定、JSON/LINQ、批量 DML、重试、FAQ）→ [USER-GUIDE.md](USER-GUIDE.md)
+- 已知限制 → [LIMITATIONS.md](LIMITATIONS.md)
+- 版本历史 → [CHANGELOG.md](CHANGELOG.md)
+- 与 MySQL/Pomelo 对照（**非迁移指南**）→ [XUGU-VS-MYSQL.md](XUGU-VS-MYSQL.md)
 
 ---
 
@@ -14,7 +19,7 @@
 |----|------|
 | .NET SDK | 9.0+（见仓库根目录 `global.json`） |
 | XuguDB 服务端 | 可网络访问的实例（默认端口 `5138`） |
-| ADO.NET 驱动 | `Xuguclient`（NuGet）或开发时本地 `external/csharp-driver` |
+| ADO.NET 驱动 | `Xuguclient`（NuGet） |
 | 原生库 | `xugusql.dll`（Windows x64；须与应用程序同目录或在 PATH 中） |
 
 驱动与依赖策略详见 [xuguclient-dependency-strategy.md](xuguclient-dependency-strategy.md)。
@@ -165,14 +170,26 @@ dotnet ef dbcontext scaffold $env:XUGU_CONNECTION Microsoft.EntityFrameworkCore.
 
 ---
 
+## 进阶主题
+
+以下主题在 [USER-GUIDE.md](USER-GUIDE.md) 中有完整说明与代码示例：
+
+| 主题 | 章节 |
+|------|------|
+| IDENTITY / GUID / JSON 列映射 | §3 模型与约定 |
+| `EF.Functions.JsonValue` 等 JSON 查询 | §4 查询与 LINQ |
+| `ExecuteUpdate` / `ExecuteDelete` 批量 DML | §7 |
+| `EnableRetryOnFailure` 瞬态重试 | §8 |
+| PLAT-01 并发、Windows-only 等 FAQ | §9–§10 |
+
+---
+
 ## 相关文档
 
 | 文档 | 说明 |
 |------|------|
+| [USER-GUIDE.md](USER-GUIDE.md) | 完整用户指南（推荐下一步阅读） |
 | [XUGU-VS-MYSQL.md](XUGU-VS-MYSQL.md) | 与 Pomelo/MySQL 功能对等、方言差异、选型建议 |
-| [LIMITATIONS.md](LIMITATIONS.md) | 已知限制、skip/defer 清单 |
+| [LIMITATIONS.md](LIMITATIONS.md) | 已知限制 |
 | [CHANGELOG.md](CHANGELOG.md) | 版本变更摘要 |
-| [TESTING.md](TESTING.md) | 实库测试、CI 矩阵、SkippableFact |
-| [xuguclient-dependency-strategy.md](xuguclient-dependency-strategy.md) | 驱动依赖、CI 与 NuGet 发布 |
-| `harness/references/csharp-driver-analysis.md` | ADO.NET 驱动分析 |
-| `E:\BaiduSyncdisk\docs\content\ecosystem\orm\dotnet\efcore.md` | XuguDB 官方 EF Core 生态文档 |
+| [xuguclient-dependency-strategy.md](xuguclient-dependency-strategy.md) | 驱动依赖与原生库部署 |
