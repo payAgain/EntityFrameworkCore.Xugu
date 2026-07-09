@@ -7,12 +7,14 @@ using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Scaffolding.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 9.T19 â€?DesignTimeMySqlTest subset (design-time service registration).
+/// Phase 9.T19 ï¿½?DesignTimeMySqlTest subset (design-time service registration).
 /// </summary>
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class DesignTimeExtensionTests
 {
     [Fact]

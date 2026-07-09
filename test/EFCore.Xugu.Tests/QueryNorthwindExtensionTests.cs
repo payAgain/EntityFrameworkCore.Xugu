@@ -9,6 +9,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 9.T1 — query extension tests using Northwind seed + AssertSql (Pomelo QueryMySqlTest 子集等价).
 /// </summary>
 [Collection("XuguNorthwind")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class QueryNorthwindExtensionTests(XuguNorthwindQueryFixture fixture)
     : XuguQueryTestBase<XuguNorthwindQueryFixture>(fixture)
 {

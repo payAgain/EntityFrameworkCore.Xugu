@@ -10,10 +10,12 @@ using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 using XuguClient;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class MigrationIntegrationEdgeTests(XuguDatabaseFixture fixture)
 {
     public const string TableName = "EF_MIG_IDX_EDGE";

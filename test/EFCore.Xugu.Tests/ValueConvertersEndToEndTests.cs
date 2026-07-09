@@ -3,13 +3,15 @@ using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 9.T3 â€?ValueConvertersEndToEndMySqlTest subset (column mapping + roundtrip).
+/// Phase 9.T3 ï¿½?ValueConvertersEndToEndMySqlTest subset (column mapping + roundtrip).
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class ValueConvertersEndToEndTests(XuguDatabaseFixture fixture)
 {
     public const string TableName = "EF_TEST_CONVERTERS";

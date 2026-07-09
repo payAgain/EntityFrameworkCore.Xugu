@@ -2,13 +2,15 @@ using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 9.T9 â€?CustomConvertersMySqlTest subset (enum / custom value converters).
+/// Phase 9.T9 ï¿½?CustomConvertersMySqlTest subset (enum / custom value converters).
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class CustomConvertersTests(XuguDatabaseFixture fixture)
 {
     public const string TableName = "EF_TEST_CUSTOM_CONV";

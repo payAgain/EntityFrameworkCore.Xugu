@@ -6,12 +6,14 @@ using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Storage.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
 /// Phase 9.T28 — MySqlApiConsistencyTest subset for public Xugu API surface.
 /// </summary>
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class XuguApiConsistencyTests
 {
     public static IEnumerable<object[]> FluentApiTypes =>

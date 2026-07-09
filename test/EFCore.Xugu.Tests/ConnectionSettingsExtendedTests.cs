@@ -14,6 +14,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 11 W11.805 — Pomelo ConnectionSettingsMySqlTest 扩展子集。
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class ConnectionSettingsExtendedTests(XuguDatabaseFixture fixture)
 {
     [SkippableFact]

@@ -2,13 +2,15 @@ using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 10.103 �?AdHoc 复杂导航：多�?Include、ThenInclude、过滤组合�?
+/// Phase 10.103 �?AdHoc 复杂导航：多�?Include、ThenInclude、过滤组合�?
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class AdHocComplexNavigationQueryTests(XuguDatabaseFixture fixture)
 {
     [SkippableFact]

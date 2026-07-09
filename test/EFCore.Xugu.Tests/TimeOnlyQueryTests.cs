@@ -2,13 +2,15 @@ using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Pomelo TimeOnly 查询子集：算术、比较�?
+/// Pomelo TimeOnly 查询子集：算术、比较�?
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class TimeOnlyQueryTests(XuguDatabaseFixture fixture)
 {
     [SkippableFact]

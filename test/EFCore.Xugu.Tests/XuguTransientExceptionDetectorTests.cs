@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore.Xugu.Storage.Internal;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class XuguTransientExceptionDetectorTests
 {
     [Theory]

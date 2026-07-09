@@ -2,9 +2,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Xugu.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Scaffolding.Internal;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class ScaffoldingMetadataTests
 {
     [Theory]

@@ -11,6 +11,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 9.T20 — SaveChangesInterceptionMySqlTest subset.
 /// </summary>
 [Collection("XuguSaveChangesInterception")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class SaveChangesInterceptionTests(SaveChangesInterceptionFixture fixture)
 {
     private InterceptionContext CreateContextWith(params IInterceptor[] interceptors)

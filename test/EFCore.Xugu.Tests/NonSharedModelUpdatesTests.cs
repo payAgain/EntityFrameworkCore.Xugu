@@ -10,6 +10,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 11 W11.803 — Pomelo NonSharedModelUpdatesMySqlTest 子集：非共享模型更新。
 /// </summary>
 [Collection("XuguNonSharedUpdates")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class NonSharedModelUpdatesTests(NonSharedModelUpdatesFixture fixture)
 {
     [SkippableFact]

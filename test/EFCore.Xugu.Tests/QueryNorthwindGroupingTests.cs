@@ -8,6 +8,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 9 W6 — Northwind GroupBy 子集（Pomelo QueryMySqlTest 等价）。
 /// </summary>
 [Collection("XuguNorthwind")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class QueryNorthwindGroupingTests(XuguNorthwindQueryFixture fixture)
     : XuguQueryTestBase<XuguNorthwindQueryFixture>(fixture)
 {

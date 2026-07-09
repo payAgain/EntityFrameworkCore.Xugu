@@ -2,13 +2,15 @@ using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 9.T2 â€?remaining BuiltInDataTypesMySqlTest scenarios (date/time/binary/null filtering).
+/// Phase 9.T2 ï¿½?remaining BuiltInDataTypesMySqlTest scenarios (date/time/binary/null filtering).
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class BuiltInDataTypesExtensionTests(XuguDatabaseFixture fixture)
 {
     [SkippableFact]

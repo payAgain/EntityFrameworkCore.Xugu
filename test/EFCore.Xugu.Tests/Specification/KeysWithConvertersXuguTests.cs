@@ -10,6 +10,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests.Specification;
 /// Phase 10.102 — KeysWithConverters subset (provider key converters on XuguDB).
 /// </summary>
 [Collection("XuguKeysWithConverters")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class KeysWithConvertersXuguTests(KeysWithConvertersFixture fixture)
 {
     [SkippableTheory]

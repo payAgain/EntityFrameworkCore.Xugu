@@ -9,8 +9,9 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 9.T22 / 10.104 â€?SeedingMySqlTest subset (HasData model + manual seed roundtrip).
+/// Phase 9.T22 / 10.104 ï¿½?SeedingMySqlTest subset (HasData model + manual seed roundtrip).
 /// </summary>
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class SeedingTests
 {
     [Fact]

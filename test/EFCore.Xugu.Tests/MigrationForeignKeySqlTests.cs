@@ -4,9 +4,11 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class MigrationForeignKeySqlTests
 {
     [Theory]

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Xugu.Scaffolding.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
@@ -15,6 +16,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 11 W11.804 — Pomelo ScaffoldingMySqlTest 扩展子集。
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class ScaffoldingExtendedTests(XuguDatabaseFixture fixture)
 {
     public const string ExtParent = "EF_SCAFF_EXT_PARENT";

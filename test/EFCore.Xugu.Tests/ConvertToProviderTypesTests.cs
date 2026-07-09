@@ -2,13 +2,15 @@ using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 9.T10 / 10.104 â€?ConvertToProviderTypesMySqlTest partial (HasConversion to provider types).
+/// Phase 9.T10 / 10.104 ï¿½?ConvertToProviderTypesMySqlTest partial (HasConversion to provider types).
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class ConvertToProviderTypesTests(XuguDatabaseFixture fixture)
 {
     public const string TableName = "EF_TEST_PROVIDER_TYPES";

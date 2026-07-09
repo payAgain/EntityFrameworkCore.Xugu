@@ -21,20 +21,40 @@
 
 未设置时测试使用 `XuguTestConnection.DefaultConnectionString`。
 
-## Phase 11 双矩阵（compat + native）
+## Phase 12 双矩阵（compat + native）
 
-| Job | 环境 | 命令 |
-|-----|------|------|
-| **compat** | `XUGU_DIALECT_MODE=compat` | `dotnet test Xugu.EFCore.Xugu.sln -c Release`（全量 ~898） |
-| **native** | `XUGU_DIALECT_MODE=native` | `dotnet test test/EFCore.Xugu.Tests -c Release --filter "Category=NativeDialect"`（≥80 核心子集） |
+| Job | 环境 | 列测 | 命令 |
+|-----|------|------|------|
+| **compat** | `XUGU_DIALECT_MODE=compat`（默认） | **1056** | `dotnet test Xugu.EFCore.Xugu.sln -c Release` |
+| **native** | `XUGU_DIALECT_MODE=native` | **1056**（`Category=NativeDialect`） | `dotnet test test/EFCore.Xugu.Tests -c Release --filter "Category=NativeDialect"` |
 
-CI 实库 job 须设置 `XUGU_CI_INTEGRATION=true` 且 XuguDB 可达。本地复现 native 子集：
+> Phase 12 W2（12.M2）：native 矩阵从 **263** 扩展至 **1056**（compat 100%）；OUT OF SCOPE 模块（NTS/FULLTEXT 等）在 W1 已 exclusion，无对应测试文件。映射见 `harness/references/native-coverage-mapping-12.202.md`。
+
+CI 实库 job 须设置 `XUGU_CI_INTEGRATION=true` 且 XuguDB 可达。本地复现：
 
 ```powershell
+# compat 全量（默认）
+$env:XUGU_DIALECT_MODE = 'compat'
+dotnet test Xugu.EFCore.Xugu.sln -c Release
+
+# native 矩阵
 $env:XUGU_DIALECT_MODE = 'native'
 $env:XUGU_CI_INTEGRATION = 'true'
 dotnet test test/EFCore.Xugu.Tests -c Release --filter "Category=NativeDialect"
 ```
+
+### NativeDialect 标签约定
+
+集成测试类使用类级 trait：
+
+```csharp
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
+public class MyFeatureTests { ... }
+```
+
+- **compat job**：跑全量 1056（含 native 标签类；`XUGU_DIALECT_MODE=compat` 启用 MySQL 兼容模式）
+- **native job**：仅跑带 `NativeDialect` 标签的 1056 列测（`XUGU_DIALECT_MODE=native` 禁用兼容模式）
+- 批量打标脚本：`harness/scripts/tag-native-tests.py`
 
 ## 运行测试
 
@@ -98,7 +118,7 @@ XuguTestConnection.SkipIfUnavailable();
 | Job | 配置文件 | 实库 | 说明 |
 |-----|----------|------|------|
 | `build` | `.github/workflows/ci.yml` / `.gitlab-ci.yml` | 否 | `dotnet build` + `verify.ps1` + `dotnet test`（无库时 SkippableFact 跳过） |
-| `integration` | 同上 | 是 | 需 secrets/variables；`verify.ps1 -RunTests` 全量 **861** 列测 **0 FAIL**（偶发瞬态连接失败见 test-stability-notes） |
+| `integration` | 同上 | 是 | compat **1056** + native **1056** 列测 **0 FAIL**（`Category=NativeDialect`；偶发瞬态见 test-stability-notes） |
 | `pack` | tag `v*` | 否 | `publish-nuget.ps1 -Pack` → `Microsoft.EntityFrameworkCore.Xugu.2.0.0.nupkg` |
 
 ### GitHub Actions
@@ -121,7 +141,8 @@ XuguTestConnection.SkipIfUnavailable();
 
 ```powershell
 dotnet build Xugu.EFCore.Xugu.sln -c Release
-harness/scripts/verify.ps1 -RunTests          # build + 861 全量
+harness/scripts/verify.ps1 -RunTests          # build + compat 1056 全量
+harness/scripts/run-compat-gate.ps1 -MaxAttempts 3  # compat 3× 0 FAIL
 harness/scripts/publish-nuget.ps1             # dry-run 2.0.0
 harness/scripts/publish-nuget.ps1 -Pack       # 产出 artifacts/
 ```

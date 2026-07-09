@@ -2,13 +2,15 @@ using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Pomelo BuiltInDataTypesMySqlTest 高优先级子集：核�?CLR 类型往返�?
+/// Pomelo BuiltInDataTypesMySqlTest 高优先级子集：核�?CLR 类型往返�?
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class BuiltInDataTypesTests(XuguDatabaseFixture fixture)
 {
     [SkippableFact]

@@ -2,13 +2,15 @@ using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Pomelo DateOnlyQueryMySqlTest 子集：DayNumber、比较、排序�?
+/// Pomelo DateOnlyQueryMySqlTest 子集：DayNumber、比较、排序�?
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class DateOnlyQueryTests(XuguDatabaseFixture fixture)
 {
     [SkippableFact]

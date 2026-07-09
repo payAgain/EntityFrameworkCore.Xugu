@@ -2,13 +2,15 @@ using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Pomelo NorthwindDbFunctionsQueryMySqlTest 子集：DateDiff、Like、Hex/Unhex 组合查询�?
+/// Pomelo NorthwindDbFunctionsQueryMySqlTest 子集：DateDiff、Like、Hex/Unhex 组合查询�?
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class NorthwindDbFunctionsQueryTests(XuguDatabaseFixture fixture)
 {
     [SkippableFact]

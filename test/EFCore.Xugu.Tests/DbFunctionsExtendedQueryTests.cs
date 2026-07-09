@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
@@ -9,6 +10,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 11 W11.805 — Pomelo MySqlDbFunctionsMySqlTest / 函数扩展子集。
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class DbFunctionsExtendedQueryTests(XuguDatabaseFixture fixture)
 {
     [SkippableFact]

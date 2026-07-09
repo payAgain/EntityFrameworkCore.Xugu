@@ -2,13 +2,15 @@ using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Pomelo NorthwindFunctionsQueryMySqlTest 子集：string/math/date 函数组合（仅 Xugu 文档支持的函数）�?
+/// Pomelo NorthwindFunctionsQueryMySqlTest 子集：string/math/date 函数组合（仅 Xugu 文档支持的函数）�?
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class NorthwindFunctionsQueryTests(XuguDatabaseFixture fixture)
 {
     [SkippableFact]

@@ -9,7 +9,7 @@
 | 指标 | 当前 | Adjusted 目标 | 状态 |
 |------|------|--------------|------|
 | compat `--list-tests` | **1056** | frozen | **done** |
-| native `Category=NativeDialect` | **263** | ≥845（80%） | W2 |
+| native `Category=NativeDialect` | **1056** | ≥845（80%） | **done** |
 | Pomelo 可比类 disposition | **~155** | 100% 分类 | **done** |
 | Excluded（OUT OF SCOPE） | **~98** | formal evidence | W4 recalc |
 | Adjusted 分母（估算） | **~952** | 12.411 recalc | W4 |

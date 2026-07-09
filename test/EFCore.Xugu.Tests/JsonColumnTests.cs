@@ -7,12 +7,14 @@ using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Storage.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 11.109 â€?Xugu native JSON column type mapping, DDL, and LINQ SQL translation.
+/// Phase 11.109 ï¿½?Xugu native JSON column type mapping, DDL, and LINQ SQL translation.
 /// </summary>
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class JsonColumnTests
 {
     [Fact]

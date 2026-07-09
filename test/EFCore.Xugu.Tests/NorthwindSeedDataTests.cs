@@ -7,6 +7,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// <summary>
 /// Smoke tests for 9.I2 Northwind seed + 9.I3 factory.
 /// </summary>
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class NorthwindSeedDataTests
 {
     [SkippableFact]

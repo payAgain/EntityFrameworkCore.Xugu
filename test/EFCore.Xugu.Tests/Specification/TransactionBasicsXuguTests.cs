@@ -11,6 +11,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests.Specification;
 /// Phase 10.102 — transaction subset (explicit transactions on XuguDB).
 /// </summary>
 [Collection("XuguTransactionBasics")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class TransactionBasicsXuguTests(TransactionBasicsFixture fixture)
 {
     [SkippableFact]

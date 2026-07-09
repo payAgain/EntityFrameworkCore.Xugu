@@ -2,14 +2,14 @@
 
 > Orchestrator 维护。仓库：`E:\Work\xuguefcore`
 
-## 当前 Phase: **12**（**W1 done** — Pomelo 完全体 GA）
+## 当前 Phase: **12**（**W2 done** — Pomelo 完全体 GA）
 
 **已发布**：**`2.1.0` GA-preview**（`v2.1.0` tag @ 6dc0c72；Phase 11 **done**）  
 **GA 目标**：**`3.0.0`**（Phase 12 — Adjusted 100% Pomelo Comparable Parity）  
-**测试**：compat **1056**（Comparable Set **frozen**）；native **263**（Phase 12 W2 → ≥80%）  
+**测试**：compat **1056**（Comparable Set **frozen**）；native **1056**（Phase 12 W2 ✅）  
 **源码**：**139** / 194 .cs（~72%；Phase 12 W3 disposition）  
-**Wave 指针**：Phase 12 **W1 done** → **W2** native ≥80%  
-**GA 差距**：`phase-11-xugu-native-release/GA-GAP.md`（~58% adjusted → W2–W6）
+**Wave 指针**：Phase 12 **W2 done** → **W3** feature + source disposition  
+**GA 差距**：`phase-11-xugu-native-release/GA-GAP.md`（native 矩阵已关闭；W3–W6 余量）
 
 ---
 
@@ -189,7 +189,7 @@ Pomelo 完全体 GA 3.0.0
 | Wave | 任务 ID | 范围 | 状态 |
 |------|---------|------|------|
 | **W1** | **12.101–12.109** | Test parity（含 11.802–805 head start） | **done** |
-| **W2** | **12.201–12.205** | Native ≥80% | **planned** |
+| **W2** | **12.201–12.205** | Native ≥80% | **done** |
 | **W3** | **12.301–12.315** | Feature + 194 文件 disposition | **planned** |
 | **W4** | **12.401–12.415** | Formal exclusions + stub policy | **planned** |
 | **W5** | **12.501–12.510** | Platform + production checklist | **planned** |
@@ -385,6 +385,7 @@ harness/scripts/publish-nuget.ps1 -Pack
 
 | 日期 | 事件 |
 |------|------|
+| 2026-07-09 | **Phase 12 W2 done**：native **263→1056**（100% compat）；`Category=NativeDialect` **0 FAIL**；handoff `phase12-wave2-native-matrix.done.md` |
 | 2026-07-09 | **Phase 12 W1 done**：Comparable Set 冻结（12.101）；compat **3× 0 FAIL**；handoff `phase12-wave1-test-parity.done.md` |
 | 2026-07-09 | **Phase 11 关闭 / Phase 12 规划**：2.1.0 = GA-preview done；W11–W15 → Phase 12（64 任务；v3.0.0 GA） |
 | 2026-07-09 | **Phase 11 完全体重规划（实测审计）**：compat **1056**、native **263**；PHASE11-CLOSURE-CRITERIA + W11–W15 初稿 |

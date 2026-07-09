@@ -10,6 +10,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 9.T12 — GraphUpdatesMySqlTestBase subset (relationship graph mutations).
 /// </summary>
 [Collection("XuguGraphUpdates")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class GraphUpdatesTests(GraphUpdatesFixture fixture)
 {
     [SkippableFact]

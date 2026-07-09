@@ -8,12 +8,14 @@ using Microsoft.EntityFrameworkCore.Xugu.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Update.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
 /// Phase 11.503 / 11.506 — INSERT SQL: INSERT + SELECT + LAST_INSERT_ID (XuguClient ADO cannot read RETURNING rows).
 /// </summary>
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class XuguUpdateSqlGeneratorTests
 {
     [Fact]

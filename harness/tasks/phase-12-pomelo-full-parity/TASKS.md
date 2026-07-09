@@ -1,7 +1,7 @@
 # Phase 12 — Pomelo 完全体 GA（v3.0.0）
 
-> **状态**：**W1 done**（2026-07-09 — Phase 11 以 **2.1.0 GA-preview** 关闭）  
-> **前置**：`v2.1.0` @ 6dc0c72；compat **1056** 列测；native **263**；139/194 .cs  
+> **状态**：**W2 done**（2026-07-09 — native **1056** / compat **1056**）  
+> **前置**：`v2.1.0` @ 6dc0c72；compat **1056** 列测；native **1056**；139/194 .cs  
 > **版本目标**：**`3.0.0`** — Adjusted 100% Pomelo Comparable Parity  
 > **权威**：`PHASE12-GOALS.md`；SQL = Xugu 文档；Pomelo = 架构参考 only
 
@@ -52,7 +52,7 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 | Wave | 任务 ID | 范围 | 进入条件 | 退出条件 | 状态 |
 |------|---------|------|----------|----------|------|
 | **W1** | **12.101–12.109** | Test parity gate | Phase 11 closure | 12.M1 ✅ | **done** |
-| **W2** | **12.201–12.205** | Native matrix ≥80% | W1 done | 12.M2 ✅ | **planned** |
+| **W2** | **12.201–12.205** | Native matrix ≥80% | W1 done | 12.M2 ✅ | **done** |
 | **W3** | **12.301–12.315** | Feature + source | W1 inventory | 12.M3 ✅ | **planned** |
 | **W4** | **12.401–12.415** | Formal exclusions | W1.101 freeze | 12.M4 ✅ | **planned** |
 | **W5** | **12.501–12.510** | Platform + CI | W1 partial | 12.M5 ✅ | **planned** |
@@ -84,11 +84,11 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 
 | ID | 任务 | 验收 | 状态 | 原 ID |
 |----|------|------|------|-------|
-| **12.201** | **Native 矩阵 ≥ compat 80%** | 263→≥845 列测；0 FAIL | partial | 11.808 |
-| **12.202** | **Native 测试分类审计** | compat 核心用例 native 覆盖映射 | todo | — |
-| **12.203** | **NativeDialect 标签补全** | 缺口测试打标 + 实库验证 | todo | — |
-| **12.204** | **Dual matrix CI 文档** | TESTING.md native 扩展说明 | todo | 11.RG17 延伸 |
-| **12.205** | **W2 handoff** | native 列测数 + CI 链接 | todo | — |
+| **12.201** | **Native 矩阵 ≥ compat 80%** | 263→≥845 列测；0 FAIL | **done**（**1056**） | 11.808 |
+| **12.202** | **Native 测试分类审计** | compat 核心用例 native 覆盖映射 | **done** | — |
+| **12.203** | **NativeDialect 标签补全** | 缺口测试打标 + 实库验证 | **done** | — |
+| **12.204** | **Dual matrix CI 文档** | TESTING.md native 扩展说明 | **done** | 11.RG17 延伸 |
+| **12.205** | **W2 handoff** | native 列测数 + CI 链接 | **done** | — |
 
 **退出条件**：native **≥ compat 80%**；`Category=NativeDialect` **0 FAIL**。
 
@@ -187,12 +187,12 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 | Wave | 任务数 | Done | Remaining |
 |------|--------|------|-----------|
 | W1 | 9 | **9** | 0 |
-| W2 | 5 | 0（12.201 partial） | 5 |
+| W2 | 5 | **5** | 0 |
 | W3 | 15 | 0 | 15 |
 | W4 | 15 | 0 | 15 |
 | W5 | 10 | 0 | 10 |
 | W6 | 10 | 0 | 10 |
-| **合计** | **64** | **9** | **55** |
+| **合计** | **64** | **14** | **50** |
 
 > head start：11.802–805（batch port）已在 1056 列测中体现，不重复计入 Done。
 

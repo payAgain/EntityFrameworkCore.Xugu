@@ -8,6 +8,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 9 W6 — Northwind Where 子集（Pomelo QueryMySqlTest / AdHoc 等价）。
 /// </summary>
 [Collection("XuguNorthwind")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class QueryNorthwindWhereTests(XuguNorthwindQueryFixture fixture)
     : XuguQueryTestBase<XuguNorthwindQueryFixture>(fixture)
 {

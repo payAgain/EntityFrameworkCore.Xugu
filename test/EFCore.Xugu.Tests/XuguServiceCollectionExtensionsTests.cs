@@ -25,12 +25,14 @@ using Microsoft.EntityFrameworkCore.Xugu.ValueGeneration.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
 /// Phase 9.T29 — MySqlServiceCollectionExtensionsTest subset.
 /// </summary>
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class XuguServiceCollectionExtensionsTests
 {
     [Fact]

@@ -10,6 +10,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 10.103 — Northwind 深覆盖：子查询、EXISTS、相关查询、导航组合。
 /// </summary>
 [Collection("XuguNorthwind")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class QueryNorthwindDeepCoverageTests(XuguNorthwindQueryFixture fixture)
     : XuguQueryTestBase<XuguNorthwindQueryFixture>(fixture)
 {

@@ -10,6 +10,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 11 W11.803 — Pomelo TransactionInterceptionMySqlTest 等价行为子集（事务语义；拦截器矩阵 defer）。
 /// </summary>
 [Collection("XuguTransactionInterception")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class TransactionInterceptionTests(TransactionInterceptionFixture fixture)
 {
     [SkippableFact]

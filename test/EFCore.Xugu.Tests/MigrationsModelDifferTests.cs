@@ -10,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Xugu.Migrations.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class MigrationsModelDifferTests
 {
     [Fact]

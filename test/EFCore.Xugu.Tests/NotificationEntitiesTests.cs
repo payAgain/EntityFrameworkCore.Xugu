@@ -11,6 +11,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 9.T24 — NotificationEntitiesMySqlTest subset (Issue #4020).
 /// </summary>
 [Collection("XuguNotificationEntities")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class NotificationEntitiesTests(NotificationEntitiesFixture fixture)
 {
     [SkippableFact]

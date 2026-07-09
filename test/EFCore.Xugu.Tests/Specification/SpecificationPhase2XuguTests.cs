@@ -8,6 +8,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests.Specification;
 /// Phase 11.402 — Specification Tests Phase 2 subset.
 /// </summary>
 [Collection("XuguMonsterFixup")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class SpecificationPhase2XuguTests(MonsterFixupFixture fixture)
 {
     [SkippableFact]

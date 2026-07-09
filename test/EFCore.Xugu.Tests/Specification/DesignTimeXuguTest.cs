@@ -15,6 +15,7 @@ namespace Microsoft.EntityFrameworkCore;
 /// <summary>
 /// Phase 10.102 — DesignTimeTestBase subset (SkippableFact for compat gate stability).
 /// </summary>
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class DesignTimeXuguTest : IClassFixture<DesignTimeXuguTest.DesignTimeXuguFixture>
 {
     private readonly DesignTimeXuguFixture _fixture;

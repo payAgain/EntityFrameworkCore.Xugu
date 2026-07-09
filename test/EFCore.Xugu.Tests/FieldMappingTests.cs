@@ -7,9 +7,10 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 9.T17 â€?FieldMappingMySqlTest subset (backing fields / PropertyAccessMode.Field).
+/// Phase 9.T17 ï¿½?FieldMappingMySqlTest subset (backing fields / PropertyAccessMode.Field).
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class FieldMappingTests(XuguDatabaseFixture fixture)
 {
     public const string TableName = "EF_TEST_FIELD_MAP";

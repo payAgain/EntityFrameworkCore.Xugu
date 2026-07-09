@@ -14,6 +14,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 11 W11.804 — Pomelo DesignTimeMySqlTest 扩展子集。
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class DesignTimeExtendedTests(XuguDatabaseFixture fixture)
 {
     [SkippableFact]

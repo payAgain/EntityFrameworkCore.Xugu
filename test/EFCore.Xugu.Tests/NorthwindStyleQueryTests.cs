@@ -2,13 +2,15 @@ using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Pomelo NorthwindQueryMySqlTest 高优先级子集：Join / GroupBy / 聚合�?
+/// Pomelo NorthwindQueryMySqlTest 高优先级子集：Join / GroupBy / 聚合�?
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class NorthwindStyleQueryTests(XuguDatabaseFixture fixture)
 {
     [SkippableFact]

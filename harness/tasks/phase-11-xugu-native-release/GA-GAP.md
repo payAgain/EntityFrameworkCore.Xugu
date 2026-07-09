@@ -22,7 +22,7 @@
 | 指标 | 数值 | Phase 12 目标 |
 |------|------|--------------|
 | compat `--list-tests` | **1056** | Comparable Set **100%** + 0 FAIL |
-| native `Category=NativeDialect` | **263** | **≥845**（compat 80%） |
+| native `Category=NativeDialect` | **1056** | **≥845**（compat 80%） | **done**（W2） |
 | Pomelo 分母（literal） | **~1050** | Adjusted recalc 后 100% |
 | Provider `.cs` | **139** / 194 | disposition **100%** |
 | 显式 `Skip=` | **6** | **0** 或 evidence |

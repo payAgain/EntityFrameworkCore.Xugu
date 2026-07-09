@@ -13,6 +13,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// <summary>
 /// Phase 9.T30 — ExistingConnectionMySqlTest subset.
 /// </summary>
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class ExistingConnectionTests
 {
     private static XuguTestStore GetNorthwindStoreOrSkip(string name)

@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore.Xugu.Storage.Internal;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
 /// Phase 11.208 — connection string key validation.
 /// </summary>
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class XuguConnectionStringOptionsValidatorTests
 {
     private readonly XuguConnectionStringOptionsValidator _validator = new();

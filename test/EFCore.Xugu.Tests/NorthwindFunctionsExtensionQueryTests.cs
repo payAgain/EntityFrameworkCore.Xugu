@@ -2,13 +2,15 @@ using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.Fixtures;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 10.103 �?NorthwindFunctionsQuery 扩展：字符串/数学/日期函数余量�?
+/// Phase 10.103 �?NorthwindFunctionsQuery 扩展：字符串/数学/日期函数余量�?
 /// </summary>
 [Collection("XuguDatabase")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class NorthwindFunctionsExtensionQueryTests(XuguDatabaseFixture fixture)
 {
     [SkippableFact]

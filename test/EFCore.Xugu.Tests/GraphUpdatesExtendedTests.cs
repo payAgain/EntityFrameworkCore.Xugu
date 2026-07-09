@@ -10,6 +10,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 /// Phase 11 W11.803 — GraphUpdatesMySqlTest 扩展子集。
 /// </summary>
 [Collection("XuguGraphUpdates")]
+[Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class GraphUpdatesExtendedTests(GraphUpdatesFixture fixture)
 {
     [SkippableFact]
