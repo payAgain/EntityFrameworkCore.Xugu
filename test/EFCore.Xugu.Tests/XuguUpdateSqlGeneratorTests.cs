@@ -12,18 +12,18 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 /// <summary>
-/// Phase 11.503 — INSERT SQL generation: native RETURNING vs compat LAST_INSERT_ID.
+/// Phase 11.503 / 11.506 — INSERT SQL: INSERT + SELECT + LAST_INSERT_ID (XuguClient ADO cannot read RETURNING rows).
 /// </summary>
 public class XuguUpdateSqlGeneratorTests
 {
     [Fact]
-    public void Native_mode_generates_RETURNING_not_LAST_INSERT_ID()
+    public void Native_mode_generates_LAST_INSERT_ID_not_RETURNING()
     {
         var (generator, typeMappingSource) = CreateGenerator(setCompatibleModeOnOpen: false);
         var sql = GenerateIdentityInsertSql(generator, typeMappingSource);
 
-        AssertSql.Contains("RETURNING", sql);
-        AssertSql.DoesNotContain("LAST_INSERT_ID", sql);
+        AssertSql.Contains("LAST_INSERT_ID", sql);
+        AssertSql.DoesNotContain("RETURNING", sql);
     }
 
     [Fact]

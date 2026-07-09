@@ -9,22 +9,25 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Update.Internal;
 
 public class XuguUpdateSqlGenerator : UpdateAndSelectSqlGenerator, IXuguUpdateSqlGenerator
 {
-    private readonly IXuguOptions _options;
-
     public XuguUpdateSqlGenerator(
         UpdateSqlGeneratorDependencies dependencies,
         IXuguOptions options)
         : base(dependencies)
-        => _options = options;
+    {
+        _ = options;
+    }
 
     public override ResultSetMapping AppendInsertOperation(
         StringBuilder commandStringBuilder,
         IReadOnlyModificationCommand command,
         int commandPosition,
         out bool requiresTransaction)
-        => UsesReturningClause()
-            ? AppendInsertReturningOperation(commandStringBuilder, command, commandPosition, out requiresTransaction)
-            : base.AppendInsertOperation(commandStringBuilder, command, commandPosition, out requiresTransaction);
+    {
+        // XuguClient ADO does not surface INSERT … RETURNING rows via DbDataReader (empty FieldCount=0
+        // result set, no NextResult). Use INSERT + SELECT with native LAST_INSERT_ID() instead.
+        // See docs/reference/function/system-infos-functions/last_insert_id.md (Xugu native, not MySQL-only).
+        return base.AppendInsertOperation(commandStringBuilder, command, commandPosition, out requiresTransaction);
+    }
 
     public virtual ResultSetMapping AppendBulkInsertOperation(
         StringBuilder commandStringBuilder,
@@ -131,8 +134,6 @@ public class XuguUpdateSqlGenerator : UpdateAndSelectSqlGenerator, IXuguUpdateSq
 
         return isIdentityOperation;
     }
-
-    private bool UsesReturningClause() => !_options.SetCompatibleModeOnOpen;
 
     private static (string? tableName, string? schema) GetTableNameAndSchema(
         IColumnModification modification,
