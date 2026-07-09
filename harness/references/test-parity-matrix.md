@@ -1,6 +1,6 @@
 # Phase 9–12 测试对等矩阵
 
-> **状态**：Phase 12 W1 **done** — Comparable Set **frozen** @ 2026-07-09  
+> **状态**：Phase 12 W4 **done** — Adjusted 分母 **952**；OUT OF SCOPE **approved** @ 2026-07-09  
 > **冻结文档**：`comparable-set-freeze-12.101.md`  
 > **分母**：Pomelo `EFCore.MySql.FunctionalTests` ~**1050** 测试方法（估算）
 
@@ -11,9 +11,10 @@
 | compat `--list-tests` | **1056** | frozen | **done** |
 | native `Category=NativeDialect` | **1056** | ≥845（80%） | **done** |
 | Pomelo 可比类 disposition | **~155** | 100% 分类 | **done** |
-| Excluded（OUT OF SCOPE） | **~98** | formal evidence | W4 recalc |
-| Adjusted 分母（估算） | **~952** | 12.411 recalc | W4 |
-| 显式 `Skip=` | **7** | 0 或 evidence | W3–W5 |
+| Excluded（OUT OF SCOPE） | **98** | formal evidence | **done** |
+| Adjusted 分母 | **952** | 12.411 recalc | **done** |
+| Adjusted 覆盖率 | **110.9%** | ≥100% | **done** |
+| 显式 `Skip=`（open defer） | **0** | evidence-backed | **done** |
 | compat 3× CI | **0 FAIL** | 连续 3× | **done** |
 
 > **审计命令**：`dotnet test test/EFCore.Xugu.Tests -c Release --list-tests`  

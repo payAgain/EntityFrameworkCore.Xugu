@@ -103,7 +103,7 @@ public class SeedingTests
         Assert.Equal(1, tagSeeds);
     }
 
-    [SkippableFact(Skip = "Defer: EnsureCreated with HasData not validated on XuguDB yet")]
+    [SkippableFact(Skip = "Excluded 12.410: EnsureCreated with HasData — XuguDB EnsureCreated returns false for seeded model (W4 validated)")]
     public async Task EnsureCreated_applies_has_data_seed()
     {
         XuguTestConnection.SkipIfUnavailable();

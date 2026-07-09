@@ -416,6 +416,7 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-09 | Phase 12 W4：NTS/FULLTEXT/Collation/CONVERT_TZ/Scaffolding Baselines formal exclusion（`out-of-scope-approved-12.409.md`） | W4 |
 | 2026-07-06 | Phase 8 W4：FOR UPDATE/位运算 defer 登记；Translator/TypeMapping/Migration/Scaffolding 测试扩展 | Orchestrator |
 | 2026-07-06 | Phase 8 W3：Having/BoolOptimizing/Postprocessor visitors；ExecuteUpdate 多表 LIMIT 守卫；SequentialGuid；MigrationsModelDiffer 索引/Collation 过滤 | Orchestrator |
 | 2026-07-06 | Phase 8 W2：SqlTranslating/Convert 扩展；Migration 列重命名/备注；视图 Scaffolding；Extensions E1–E3 | Orchestrator |

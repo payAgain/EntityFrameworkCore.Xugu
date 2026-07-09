@@ -11,7 +11,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 [Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class LazyLoadTests(LoadFixture fixture)
 {
-    [SkippableFact(Skip = "Defer: lazy-loading proxies not enabled for Xugu test harness")]
+    [SkippableFact(Skip = "Excluded 12.410: lazy-loading proxies require Castle.DynamicProxy host — not in Xugu test harness")]
     public void Lazy_loading_proxies_not_supported_in_harness()
     {
     }

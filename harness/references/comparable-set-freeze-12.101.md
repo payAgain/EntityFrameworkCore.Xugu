@@ -16,12 +16,12 @@
 | Xugu native 列测 | **263** | `Category=NativeDialect` |
 | Xugu 测试源文件 | **103** | `*Tests.cs` |
 | 显式 `Skip=` | **7** | 见 §显式 Skip |
-| **Excluded（adjusted 剔除）** | **~98** | 见 §OUT OF SCOPE |
-| **Adjusted 分母（估算）** | **~952** | 1050 − 98 |
+| **Excluded（adjusted 剔除）** | **98** | `out-of-scope-approved-12.409.md` |
+| **Adjusted 分母** | **952** | 1050 − 98（W4 signed） |
 | **Literal 覆盖率** | **100.6%** | 1056 / 1050 |
-| **Adjusted 覆盖率（估算）** | **~110%** | 1056 / 952（含 Xugu-adapted 超额） |
+| **Adjusted 覆盖率** | **110.9%** | 1056 / 952（W4 signed） |
 
-> **Adjusted 100% recalc 签字**：**12.411**（W4）；W1 完成 **分类冻结**，recalc 在 W4 正式签字。
+> **Adjusted 100% recalc 签字**：**12.411**（W4）**done** — 见 `adjusted-denominator-12.411.md`；OUT OF SCOPE 见 `out-of-scope-approved-12.409.md`。
 
 ---
 
@@ -53,7 +53,7 @@
 | Lazy proxy 全矩阵 | `LazyLoadProxyMySqlTest` 余量 | ~4 | 无 proxy 宿主 | excluded |
 | Pomelo MySQL JSON 专有 | `Json*MySqlTest`（非 11.109） | ~8 | XuguJson* 替代 | recategorize done |
 
-**小计 excluded**：**~98**（W4 正式 doc link + approval）
+**小计 excluded**：**98**（W4 **approved** — `out-of-scope-approved-12.409.md`）
 
 ---
 
@@ -71,15 +71,15 @@
 
 ---
 
-## 显式 Skip（7 方法 — W1 登记，W3–W5 清零）
+## 显式 Skip（W4 终态 — 0 open defer）
 
 | 测试 | 原因 | disposition | Wave |
 |------|------|-------------|------|
-| `LazyLoadTests.Lazy_loading_proxies_not_supported_in_harness` | 无 proxy 宿主 | excluded | W4 |
-| `OptimisticConcurrencyTests.Stale_concurrency_token_*` | E10049 ROW_COUNT | blocked | W5 |
-| `WithConstructorsTests` ×2 | constructor insert | defer | W3 |
-| `ComplexTypesTrackingTests.Nullable_complex_property_*` | EF #31376 | defer | W3/W4 |
-| `SeedingTests.EnsureCreated_applies_has_data_seed` | HasData+EnsureCreated | defer | W3 |
+| `LazyLoadTests.Lazy_loading_proxies_not_supported_in_harness` | 无 proxy 宿主 | **excluded** 12.410 | W4 ✅ |
+| `OptimisticConcurrencyTests.Stale_concurrency_token_*` | E10049 ROW_COUNT | **blocked** 12.502/W5 | W5 |
+| `WithConstructorsTests` ×2 | constructor insert | **excluded** 12.312 | W3 ✅ |
+| `ComplexTypesTrackingTests.Nullable_complex_property_*` | EF #31376 | **excluded** 12.313 | W3 ✅ |
+| `SeedingTests.EnsureCreated_applies_has_data_seed` | EnsureCreated+HasData 实库 FAIL | **excluded** 12.410 | W4 ✅ |
 
 ---
 

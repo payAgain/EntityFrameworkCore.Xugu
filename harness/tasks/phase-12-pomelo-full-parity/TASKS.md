@@ -1,6 +1,6 @@
 # Phase 12 — Pomelo 完全体 GA（v3.0.0）
 
-> **状态**：**W3 done**（2026-07-09 — disposition **194/194**；defer **0 open**）  
+> **状态**：**W4 done**（2026-07-09 — OUT OF SCOPE **approved**；Adjusted **952**；open defer Skip **0**）  
 > **前置**：`v2.1.0` @ 6dc0c72；compat **1056** 列测；native **1056**；**140**/194 .cs implemented + disposition 100%  
 > **版本目标**：**`3.0.0`** — Adjusted 100% Pomelo Comparable Parity  
 > **权威**：`PHASE12-GOALS.md`；SQL = Xugu 文档；Pomelo = 架构参考 only
@@ -32,7 +32,7 @@
 | **12.M1** | Test parity gate | Comparable Set 冻结；compat 3× 0 FAIL | W1 |
 | **12.M2** | Native matrix | native ≥ compat 80%；0 FAIL | W2 |
 | **12.M3** | Feature / source 100% | pomelo-file-map 100%；defer 清零 | W3 |
-| **12.M4** | Exclusion closure | OUT OF SCOPE 全 evidence；Skip 6→0 | W4 |
+| **12.M4** | Exclusion closure | OUT OF SCOPE 全 evidence；Skip 6→0 defer | W4 |
 | **12.M5** | Platform parity | ROW_COUNT/RID + production checklist | W5 |
 | **12.M6** | **GA Release** | Gate 全绿；`v3.0.0` tag | W6 |
 
@@ -54,8 +54,8 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 | **W1** | **12.101–12.109** | Test parity gate | Phase 11 closure | 12.M1 ✅ | **done** |
 | **W2** | **12.201–12.205** | Native matrix ≥80% | W1 done | 12.M2 ✅ | **done** |
 | **W3** | **12.301–12.315** | Feature + source | W1 inventory | 12.M3 ✅ | **done** |
-| **W4** | **12.401–12.415** | Formal exclusions | W1.101 freeze | 12.M4 ✅ | **planned** |
-| **W5** | **12.501–12.510** | Platform + CI | W1 partial | 12.M5 ✅ | **planned** |
+| **W4** | **12.401–12.415** | Formal exclusions | W1.101 freeze | 12.M4 ✅ | **done** |
+| **W5** | **12.501–12.510** | Platform + CI | W4 done | 12.M5 ✅ | **planned** |
 | **W6** | **12.601–12.610** | GA Gate + tag | W1–W5 | 12.M6 ✅ | **planned** |
 
 ---
@@ -124,21 +124,21 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 
 | ID | 任务 | 验收 | 状态 | 原 ID |
 |----|------|------|------|-------|
-| **12.401** | **NTS 文档调研** | XuguDB spatial 扩展证据 | todo | 11.1101 |
-| **12.402** | **NTS 路径决策** | implement 或 formal exclusion | todo | 11.1102 |
-| **12.403** | **FULLTEXT 文档调研** | 全文索引官方说明 | todo | 11.1103 |
-| **12.404** | **FULLTEXT 路径决策** | REGEXP 或 exclusion | todo | 11.1104 |
-| **12.405** | **Collation 文档调研** | 列级 collation 证据 | todo | 11.1105 |
-| **12.406** | **Collation 路径决策** | HasCollation 或 exclusion | todo | 11.1106 |
-| **12.407** | **Scaffolding baseline 最小集** | 1 表 snapshot 或 exclusion | todo | 11.1107 |
-| **12.408** | **CONVERT_TZ 确认** | 8.Q15 exclusion 归档 | todo | 11.1108 |
-| **12.409** | **用户 approved OUT OF SCOPE 表** | 每项 doc link | todo | 11.1109 |
-| **12.410** | **Skip 模块测试 disposition** | NTS/FULLTEXT 测试分类 | todo | 11.1110 |
-| **12.411** | **Adjusted 分母 recalc** | 新 Comparable Set 数字 | todo | 11.1111 |
-| **12.412** | **LIMITATIONS 同步** | skip→done 或 exclusion | todo | 11.1112 |
-| **12.413** | **pomelo-file-map skip 行更新** | skip→done/excluded | todo | 11.1113 |
-| **12.414** | **W4 门禁测试** | 模块相关 0 FAIL | todo | 11.1114 |
-| **12.415** | **W4 handoff** | OUT OF SCOPE 表终稿 | todo | 11.1115 |
+| **12.401** | **NTS 文档调研** | XuguDB spatial 扩展证据 | **done** | 11.1101 |
+| **12.402** | **NTS 路径决策** | implement 或 formal exclusion | **done**（excluded OOS-01） | 11.1102 |
+| **12.403** | **FULLTEXT 文档调研** | 全文索引官方说明 | **done** | 11.1103 |
+| **12.404** | **FULLTEXT 路径决策** | REGEXP 或 exclusion | **done**（excluded OOS-02；REGEXP_LIKE done） | 11.1104 |
+| **12.405** | **Collation 文档调研** | 列级 collation 证据 | **done** | 11.1105 |
+| **12.406** | **Collation 路径决策** | HasCollation 或 exclusion | **done**（excluded OOS-03） | 11.1106 |
+| **12.407** | **Scaffolding baseline 最小集** | 1 表 snapshot 或 exclusion | **done**（excluded OOS-05；集成测试覆盖） | 11.1107 |
+| **12.408** | **CONVERT_TZ 确认** | 8.Q15 exclusion 归档 | **done**（excluded OOS-04） | 11.1108 |
+| **12.409** | **用户 approved OUT OF SCOPE 表** | 每项 doc link | **done** | 11.1109 |
+| **12.410** | **Skip 模块测试 disposition** | NTS/FULLTEXT 测试分类 | **done** | 11.1110 |
+| **12.411** | **Adjusted 分母 recalc** | 新 Comparable Set 数字 | **done** | 11.1111 |
+| **12.412** | **LIMITATIONS 同步** | skip→done 或 exclusion | **done** | 11.1112 |
+| **12.413** | **pomelo-file-map skip 行更新** | skip→done/excluded | **done** | 11.1113 |
+| **12.414** | **W4 门禁测试** | 模块相关 0 FAIL | **done** | 11.1114 |
+| **12.415** | **W4 handoff** | OUT OF SCOPE 表终稿 | **done** | 11.1115 |
 
 **退出条件**：永久 skip 表 **空** 或 **全部 evidence + approved**；adjusted 分母 **recalc 100%**。
 
@@ -189,10 +189,10 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 | W1 | 9 | **9** | 0 |
 | W2 | 5 | **5** | 0 |
 | W3 | 15 | **15** | 0 |
-| W4 | 15 | 0 | 15 |
+| W4 | 15 | **15** | 0 |
 | W5 | 10 | 0 | 10 |
 | W6 | 10 | 0 | 10 |
-| **合计** | **64** | **29** | **35** |
+| **合计** | **64** | **44** | **20** |
 
 > head start：11.802–805（batch port）已在 1056 列测中体现，不重复计入 Done。
 

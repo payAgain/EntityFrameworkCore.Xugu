@@ -11,7 +11,7 @@
 | Test parity（原 W11） | W1–W2 | **12.101–12.109**, **12.201–205** | **planned**（802–805 head start ✅） |
 | Feature defer 清零（原 W12） | W3 | **12.301–12.315** | **planned** |
 | ROW_COUNT + Linux RID（原 W13） | W5 | **12.501–12.510** | **planned**（blocked） |
-| Skip 模块 resolution（原 W14） | W4 | **12.401–12.415** | **planned** |
+| Skip 模块 resolution（原 W14） | W4 | **12.401–12.415** | **done** |
 | GA Gate + v3.0.0（原 W15） | W6 | **12.601–12.610** | **planned** |
 
 ## Phase 11 映射（**done** — W1–W10；2.1.0 GA-preview）
@@ -81,7 +81,7 @@
 | P0-12.W1 | Test parity gate | W1 | **12.101–12.109** | Comparable Set + 3× CI | **planned** |
 | P0-12.W2 | Native matrix ≥80% | W2 | **12.201–12.205** | 263→845 | **planned** |
 | P0-12.W3 | Feature / source 100% | W3 | **12.301–12.315** | 55 .cs + defer | **planned** |
-| P0-12.W4 | Formal exclusions | W4 | **12.401–12.415** | NTS/FULLTEXT/Collation | **planned** |
+| P0-12.W4 | Formal exclusions | W4 | **12.401–12.415** | NTS/FULLTEXT/Collation | **done** |
 | P0-12.W5 | Platform parity | W5 | **12.501–12.510** | ROW_COUNT + Linux RID | **planned** |
 | P0-12.W6 | GA Release Gate | W6 | **12.601–12.610** | v3.0.0 tag | **planned** |
 

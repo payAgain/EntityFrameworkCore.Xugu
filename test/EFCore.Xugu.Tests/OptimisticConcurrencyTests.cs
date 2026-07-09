@@ -24,7 +24,7 @@ public class OptimisticConcurrencyTests(OptimisticConcurrencyFixture fixture)
         Assert.True(property.IsConcurrencyToken);
     }
 
-    [SkippableFact(Skip = "Defer: XuguDB E10049 — ROW_COUNT() not available in MYSQL compatible_mode")]
+    [SkippableFact(Skip = "Blocked 12.502/W5: XuguDB E10049 — ROW_COUNT() not available; DbUpdateConcurrencyException detection deferred")]
     public async Task Stale_concurrency_token_throws_DbUpdateConcurrencyException()
     {
         XuguTestConnection.SkipIfUnavailable();

@@ -11,7 +11,7 @@
 | **Pomelo-port** | 结构镜像 Pomelo，方言已适配 XuguDB |
 | **Xugu-native** | 无 Pomelo 对等实现；XuguDB 特有（Scaffolding 目录视图、连接层、DBA_* 等） |
 | **EF-base-only** | 仅继承 EF Core 基类，几乎无 Pomelo 模式（如 `XuguMigrator`） |
-| **skip** | Pomelo 模块有意不移植（JSON、NTS、Collation/Charset 等） |
+| **skip** | Pomelo 模块有意不移植 — **W4 全部升级为 `excluded-with-evidence`**（见 `out-of-scope-approved-12.409.md`） |
 | **defer** | 计划后续阶段实现 |
 
 > 自动化校验：`harness/scripts/verify-source-lineage.ps1`（由 `verify.ps1` 调用）
@@ -120,7 +120,7 @@
 | **implemented** | **124** | Pomelo-port / Xugu-native 物理文件 | W3 disposition |
 | **Xugu-adapted** | **3** | 命名/结构改写对等 | W3 disposition |
 | **EF-base-only** | **29** | EF Core Relational 默认足够 | W3 disposition |
-| **excluded-with-evidence** | **38** | Collation/JSON/FULLTEXT 等 | W3/W4 stub contract |
+| **excluded-with-evidence** | **38** | Collation/JSON/FULLTEXT/NTS 等 | W3/W4 stub contract ✅ |
 | **合计** | **194** | **100% disposition** | `pomelo-file-disposition.md` |
 
 > 校验：`harness/scripts/verify-pomelo-disposition.ps1`（由 `verify.ps1` 调用）
@@ -136,7 +136,7 @@
 | Migrations | 8 | 5 | **done** 核心 + M3 FK 全动作 | Pomelo-port |
 | Scaffolding | 6 | 5 | **done** SC1–SC4 + SC3 CodeGenerator | Xugu-native |
 | ValueGeneration | 2 | 2 | **done** | Pomelo-port |
-| DataAnnotations | 2 | 0 | **skip** DA1–DA2 | skip |
+| DataAnnotations | 2 | 0 | **excluded** DA1–DA2（OOS-03） | excluded-with-evidence |
 | Native RID | — | — | **defer** N1–N3 | defer |
 
 ### defer 清单（Phase 8 剩余）
@@ -144,9 +144,9 @@
 | ID | 项 | 原因 | 来源 |
 |----|-----|------|------|
 | 8.Q11 | BitwiseOperationReturnTypeCorrecting | P2；Xugu BIGINT 位运算 | **done**（12.302） |
-| 8.Q12 | FOR UPDATE / 窗口函数 | P2；EF 无标准 API | **excluded-with-evidence**（12.301 → W4 formal） |
+| 8.Q12 | FOR UPDATE / 窗口函数 | P2；EF 无标准 API | **excluded-with-evidence**（12.301；W4 formal OOS） |
 | 8.Q14 | 参数内联 | P2 性能优化 | **done**（10.201） |
-| 8.Q15 | ConvertTimeZone | 无 CONVERT_TZ | **excluded-with-evidence**（→ W4 formal） |
+| 8.Q15 | ConvertTimeZone | 无 CONVERT_TZ | **excluded-with-evidence**（OOS-04；W4 formal） |
 | 8.S8–S10 | RelationalCommand/Database 表面 | P2 | **done**（EF-base IRelationalCommand） |
 | 8.N1–N3 | Linux RID 打包 | 依赖驱动发布 | **blocked**（→ W5） |
 
@@ -158,5 +158,7 @@
 | `MySqlQueryStringFactory` | EF Core 默认 `IRelationalQueryStringFactory` 足够 | EF-base-only |
 | `MySqlConnectionStringOptionsValidator` | **defer**（连接串格式不同） | defer |
 | `BitwiseOperationReturnTypeCorrectingExpressionVisitor` | **defer** 8.Q11 | defer |
-| Collation/Charset Fluent + DataAnnotations | **skip** | skip |
-| FULLTEXT/SPATIAL 索引 | **skip** | skip |
+| Collation/Charset Fluent + DataAnnotations | **excluded-with-evidence**（OOS-03） | W4 |
+| FULLTEXT/SPATIAL 索引 | **excluded-with-evidence**（OOS-01/02） | W4 |
+| NTS / NetTopologySuite | **excluded-with-evidence**（OOS-01） | W4 |
+| Scaffolding Baselines 全量快照 | **excluded-with-evidence**（OOS-05） | W4 |

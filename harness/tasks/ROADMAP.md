@@ -155,7 +155,7 @@ Pomelo 完全体 GA 3.0.0
 
 ---
 
-## Phase 12 — Pomelo 完全体 GA（**planned**）
+## Phase 12 — Pomelo 完全体 GA（**W4 done → W5**）
 
 > **任务详情**：`harness/tasks/phase-12-pomelo-full-parity/TASKS.md`  
 > **GA 定义**：`PHASE12-GOALS.md`  
@@ -191,7 +191,7 @@ Pomelo 完全体 GA 3.0.0
 | **W1** | **12.101–12.109** | Test parity（含 11.802–805 head start） | **done** |
 | **W2** | **12.201–12.205** | Native ≥80% | **done** |
 | **W3** | **12.301–12.315** | Feature + 194 文件 disposition | **done** |
-| **W4** | **12.401–12.415** | Formal exclusions + stub policy | **planned** |
+| **W4** | **12.401–12.415** | Formal exclusions + stub policy | **done** |
 | **W5** | **12.501–12.510** | Platform + production checklist | **planned** |
 | **W6** | **12.601–12.610** | GA Gate + `v3.0.0` tag | **planned** |
 
