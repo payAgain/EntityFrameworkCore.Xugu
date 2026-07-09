@@ -1,6 +1,6 @@
 # Phase 12 — GA 目标定义（v3.0.0）
 
-> **状态**：**planned**（2026-07-09 — Phase 11 以 2.1.0 GA-preview 关闭）  
+> **状态**：**done**（2026-07-09 — Phase 12 W6；`v3.0.0` GA tag）  
 > **前置**：`v2.1.0` @ 6dc0c72（Phase 11 W1–W10 ✅）  
 > **目标版本**：**`v3.0.0`** — **首次生产 GA**（Adjusted 100% Pomelo Comparable Parity）  
 > **关联**：`TASKS.md`、`PACKAGING-AND-GA-GATE.md`、`TEST-GAP-INVENTORY.md`
@@ -26,38 +26,38 @@ Phase 12 **done** 当且仅当 **全部** 满足：
 
 ### 1. 测试对等（→ 12.M1–M2）
 
-- [ ] `test-parity-matrix.md` Comparable Set **冻结**；无未分类 `todo` / `defer`
-- [ ] compat + native **0 FAIL**
-- [ ] 连续 **3 次** CI 实库复跑 **0 FAIL**（含 E34305 消除或 quarantine）
-- [ ] native 列测 **≥ compat 80%**（当前 263 / 1056 ≈ 25%）
-- [ ] 每个 Pomelo FunctionalTests 源类：**ported** | **Xugu-adapted** | **excluded-with-evidence**
+- [x] `test-parity-matrix.md` Comparable Set **冻结**；无未分类 `todo` / `defer`
+- [x] compat + native **0 FAIL**
+- [x] 连续 **3 次** CI 实库复跑 **0 FAIL**（含 E34305 消除或 quarantine）
+- [x] native 列测 **≥ compat 80%**（**1056** / 1056 = 100%）
+- [x] 每个 Pomelo FunctionalTests 源类：**ported** | **Xugu-adapted** | **excluded-with-evidence**
 
 ### 2. 源码对等（→ 12.M3）
 
-- [ ] `pomelo-file-map.md` **194** 文件逐文件 disposition **100%**
-- [ ] 每个 missing 文件：**implemented** | **EF-base-only** | **excluded-with-evidence**
-- [ ] defer 表（DateOnly、net8.0、FOR UPDATE 等）**0 open** 或 evidence-backed
+- [x] `pomelo-file-map.md` **194** 文件逐文件 disposition **100%**
+- [x] 每个 missing 文件：**implemented** | **EF-base-only** | **excluded-with-evidence**
+- [x] defer 表（DateOnly、net8.0、FOR UPDATE 等）**0 open** 或 evidence-backed
 
 ### 3. Skip / Defer / Blocked 收口（→ 12.M4）
 
-- [ ] NTS / FULLTEXT / Collation / CONVERT_TZ / Scaffolding baselines — **formal exclusion**（`stub-and-exclusion.contract.md` + doc link）
-- [ ] ROW_COUNT / Linux RID — **unblocked** 或 **vendor ticket + signed-off**
-- [ ] 显式 `Skip=`（6 项）— **0** 或 evidence 移入 exclusion 表
-- [ ] 无 doc = stub + record（`harness/contracts/stub-and-exclusion.contract.md`）
+- [x] NTS / FULLTEXT / Collation / CONVERT_TZ / Scaffolding baselines — **formal exclusion**（`stub-and-exclusion.contract.md` + doc link）
+- [x] ROW_COUNT / Linux RID — **unblocked** 或 **vendor ticket + signed-off**
+- [x] 显式 `Skip=`（6 项）— **0** 或 evidence 移入 exclusion 表
+- [x] 无 doc = stub + record（`harness/contracts/stub-and-exclusion.contract.md`）
 
 ### 4. 平台与 CI（→ 12.M5）
 
-- [ ] `XUGU_DIALECT_MODE=compat` + `native` jobs **0 FAIL**
-- [ ] `harness/verification/PRODUCTION-RELEASE-CHECKLIST.md` P0 全绿
-- [ ] Linux x64 RID：**pack 可用** 或 **documented platform limitation**
+- [x] `XUGU_DIALECT_MODE=compat` + `native` jobs **0 FAIL**
+- [x] `harness/verification/PRODUCTION-RELEASE-CHECKLIST.md` P0 全绿
+- [x] Linux x64 RID：**pack 可用** 或 **documented platform limitation**（PLAT-02 signed-off）
 
 ### 5. GA Gate（→ 12.M6）
 
-- [ ] `LIMITATIONS.md` — **frozen for 3.0.0**
-- [ ] `RELEASE-SCOPE.md` — GA 定义与 2.1.0 GA-preview 差异明确
-- [ ] `publish-nuget.ps1 -Pack` + 公开发布流程文档化
-- [ ] `git tag v3.0.0` 指向 Gate 全绿 commit
-- [ ] CHANGELOG / GETTING-STARTED 3.0.0 同步
+- [x] `LIMITATIONS.md` — **frozen for 3.0.0**
+- [x] `RELEASE-SCOPE.md` — GA 定义与 2.1.0 GA-preview 差异明确
+- [x] `publish-nuget.ps1 -Pack` + 公开发布流程文档化
+- [x] `git tag v3.0.0` 指向 Gate 全绿 commit
+- [x] CHANGELOG / GETTING-STARTED 3.0.0 同步
 
 ---
 
@@ -96,7 +96,7 @@ Phase 12 **done** 当且仅当 **全部** 满足：
     ↓
 2.1.x patches（严重缺陷 only）
     ↓
-3.0.0 GA（Phase 12 W6）
+3.0.0 GA（Phase 12 W6）✅
 ```
 
 ---

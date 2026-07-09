@@ -7,13 +7,44 @@ Known limitations and deferred features: [LIMITATIONS.md](LIMITATIONS.md).
 
 ---
 
-## [Unreleased] — Phase 12 planning
+## [Unreleased]
+
+（无）
+
+---
+
+## [3.0.0] — 2026-07-09 (Phase 12 — Pomelo 完全体 GA)
+
+Phase 12 完成：**首次生产 GA**。Adjusted **110.9%** Pomelo Comparable Parity（分母 **952** / 列测 **1057**）；compat + native 双矩阵 **0 FAIL**；`pomelo-file-map` **194/194** disposition **100%**。
+
+### Added
+
+- **Platform limitation 探针** — `PlatformLimitationProbeTests` + `probe-platform-limitations.ps1`（ROW_COUNT E10049 / Linux `.so` 自动化复验）。
+- **Vendor ticket 登记** — VT-XUGU-ROWCOUNT-001、VT-XUGU-LINUXRID-001（Path B signed-off）。
+- **DateOnly/TimeOnly SaveChanges** — `XuguDateOnlyTypeMapping` / `XuguTimeOnlyTypeMapping`（12.304）。
+- **位运算返回类型修正** — `BitwiseOperationReturnTypeCorrectingExpressionVisitor`（12.302）。
+- **OUT OF SCOPE 正式排除表** — NTS / FULLTEXT / Collation / CONVERT_TZ / Scaffolding baselines（`out-of-scope-approved-12.409.md`）。
+- **Native 矩阵 100%** — `Category=NativeDialect` 扩展至 **1056** 列测（W2）。
 
 ### Changed
 
-- **Phase 11 关闭** — `v2.1.0` 定位为 **GA-preview**（Xugu 原生方言首发）；W1–W10 + Release Gate 验收完成。
-- **Phase 12 规划** — 目标 **`v3.0.0` GA**；Adjusted 100% Pomelo Comparable Parity；64 任务（W1–W6）。
-- **测试基线** — compat **1056** 列测（W11.802–805 head start 记入 Phase 12 W1）。
+- **版本** — `2.1.0` GA-preview → **`3.0.0` GA**。
+- **测试基线** — compat **1057**（+1 platform probe）；native **1056** = compat 100%。
+- **Adjusted 分母** — Pomelo literal 1050 → 剔除 98 OUT OF SCOPE → **952**；覆盖率 **110.9%**。
+- **显式 Skip** — 5 方法全 evidence（1 signed-off blocked PLAT-01）。
+- **LIMITATIONS** — **frozen for 3.0.0**；DateOnly SC done；平台限制 PLAT-01/02 签收。
+- **平台 GA 范围** — **Windows-only GA**（Linux RID signed-off PLAT-02）。
+
+### Signed-off blocked（非 GA 阻塞）
+
+- **PLAT-01** — `ROW_COUNT()` / `DbUpdateConcurrencyException`（E10049）。
+- **PLAT-02** — Linux x64 `libxugusql.so` / RID 打包。
+
+### Deferred（documented，非 3.0.0 阻塞）
+
+- Specification Tests Phase 3（12.103 defer）。
+- net8.0 多 TFM（net9.0 only）。
+- NuGet 公开发布 push（pack 验证 PASS；push 待 feed 配置）。
 
 ---
 

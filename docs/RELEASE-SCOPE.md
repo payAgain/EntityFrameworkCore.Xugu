@@ -1,8 +1,8 @@
 # Microsoft.EntityFrameworkCore.Xugu — 发布范围声明
 
-> **当前稳定版**：**2.1.0 GA-preview**（Phase 11 **done** — `v2.1.0` @ 6dc0c72）  
-> **GA 目标**：**3.0.0**（Phase 12 — Pomelo **Adjusted 100% Comparable Parity**）  
-> **更新**：2026-07-09（Phase 11 关闭；Phase 12 规划）
+> **当前稳定版**：**3.0.0 GA**（Phase 12 **done** — `v3.0.0`）  
+> **上一 GA-preview**：**2.1.0**（Phase 11 — `v2.1.0` @ 6dc0c72）  
+> **更新**：2026-07-09（Phase 12 W6 关闭；**首次生产 GA**）
 
 > **⚠️ 产品立场（必读）**  
 > 本 Provider 是 **Xugu 原生方言** 产品：SQL 语法、函数、DDL/DML 以 **XuguDB 官方文档** 为唯一权威。  
@@ -18,8 +18,8 @@
 - **以 XuguDB 官方文档为 SQL 方言唯一权威**（`E:\BaiduSyncdisk\docs\content\`）
 - **架构对齐** Pomelo.EntityFrameworkCore.MySql 9.0.0（目录、DI、扩展模式 — **仅 C# 实现模式**）
 - **不是** MySQL 或 Pomelo 的即插即用替代品
-- **2.1.0 GA-preview** ✅ — 不要求 Pomelo 100%（**已发布** @ 6dc0c72）
-- **GA（3.0.0）** — Phase 12：**Adjusted 100%** Pomelo Comparable Parity
+- **2.1.0 GA-preview** ✅ — Phase 11 Xugu 原生方言首发（`v2.1.0` @ 6dc0c72）
+- **GA（3.0.0）** ✅ — Phase 12：**Adjusted 110.9%** Pomelo Comparable Parity（`v3.0.0`）
 
 `COMPATIBLE_MODE=MYSQL` 可在连接会话中启用，便于与 MySQL 语法对照或遗留脚本调试；**这不构成**「迁移到 Xugu 无需改 SQL」的产品承诺。新应用应编写 **Xugu 原生 SQL** 与 EF 映射；对照文档见 [XUGU-VS-MYSQL.md](XUGU-VS-MYSQL.md)（**对照参考，非迁移目标，非虚谷方言定义**）。
 
@@ -33,7 +33,7 @@
 | **2.0.1** | 补丁（按需） | 仅严重缺陷修复；**不**承载新功能 |
 | **2.1.0** | **GA-preview** ✅ | Phase 11 W1–W10：JSON、native-first、dual CI、**1056** 列测 |
 | **2.1.x** | 补丁（按需） | 仅严重缺陷；**不**承载 Phase 12 功能 |
-| **3.0.0** | **GA** | Phase 12 W6：Adjusted 100% parity；skip/defer/blocked 收口 |
+| **3.0.0** | **GA** ✅ | Phase 12 W1–W6：Adjusted 110.9%；1057 列测；194 disposition 100%；`v3.0.0` tag |
 
 ---
 
@@ -147,9 +147,9 @@
 
 在 2.1.0 OUT OF SCOPE 前提下：实库 CI 0 FAIL、verify + test-nuget-pack PASS、集成样本冒烟、LIMITATIONS 2.1.0 frozen、`v2.1.0` tag。
 
-### GA 3.0.0（Phase 12 目标）
+### GA 3.0.0（Phase 12 — **done**）
 
-在 **Comparable Parity Adjusted 100%** 前提下：Phase 12 W1–W6 全绿 + `PHASE12-GOALS.md` 全部门禁 + `v3.0.0` tag。
+在 **Comparable Parity Adjusted 110.9%** 前提下：Phase 12 W1–W6 全绿 + `PHASE12-GOALS.md` 全部门禁 + `v3.0.0` tag。平台限制 PLAT-01/02 **signed-off blocked**（vendor tickets filed）；**Windows-only GA**。
 
 ---
 

@@ -2,14 +2,14 @@
 
 > Orchestrator 维护。仓库：`E:\Work\xuguefcore`
 
-## 当前 Phase: **12**（**W5 done** — Platform signed-off → W6 GA Gate）
+## 当前 Phase: **12 done**（**v3.0.0 GA** — Phase 12 关闭）
 
-**已发布**：**`2.1.0` GA-preview**（`v2.1.0` tag @ 6dc0c72；Phase 11 **done**）  
-**GA 目标**：**`3.0.0`**（Phase 12 — Adjusted 100% Pomelo Comparable Parity）  
-**测试**：compat **1057**（+1 platform probe）；native **1057**（Phase 12 W2 ✅）  
-**源码**：**140** .cs implemented；**194/194** disposition（Phase 12 W3 ✅）  
-**Wave 指针**：Phase 12 **W5 done** → **W6** GA Gate + `v3.0.0` tag  
-**GA 差距**：W6 Release Gate 余量（`PACKAGING-AND-GA-GATE.md`）
+**已发布**：**`3.0.0` GA**（`v3.0.0` tag；Phase 12 **done**）  
+**上一版本**：**`2.1.0` GA-preview**（`v2.1.0` @ 6dc0c72）  
+**测试**：compat **1057**；native **1056**（100% compat）；Adjusted **110.9%**  
+**源码**：**140** .cs implemented；**194/194** disposition ✅  
+**Wave 指针**：Phase 12 **W6 done** — GA Gate + `v3.0.0` tag ✅  
+**Post-GA**：vendor tickets only（PLAT-01 ROW_COUNT / PLAT-02 Linux RID）
 
 ---
 
@@ -27,7 +27,7 @@ Pomelo 9.0.0 测试对等 (2.0.0)
 维护 / 剩余对等 (2.0.x)
         ↓ Phase 11 ✓
 Xugu 原生方言 2.1.0 GA-preview
-        ↓ Phase 12 (current — planned)
+        ↓ Phase 12 ✓
 Pomelo 完全体 GA 3.0.0
 ```
 
@@ -49,7 +49,7 @@ Pomelo 完全体 GA 3.0.0
 | **9** | **Pomelo 测试对等** | **`done`** | **`2.0.0`** | FunctionalTests M1–M3 达标；676 列测 |
 | **10** | **维护 / 剩余对等** | **`done`** | 2.0.x | Wave 1–6 done；861 列测；10.M3 发布就绪 |
 | **11** | **Xugu 原生方言 GA-preview** | **`done`** | **2.1.0** | W1–W10 ✅；`v2.1.0` tag；GA-preview |
-| **12** | **Pomelo 完全体 GA** | **`W5 done`** | **3.0.0** | W6 GA Gate |
+| **12** | **Pomelo 完全体 GA** | **`done`** | **3.0.0** | W6 GA Gate ✅ |
 
 ### Phase 任务文档
 
@@ -155,7 +155,7 @@ Pomelo 完全体 GA 3.0.0
 
 ---
 
-## Phase 12 — Pomelo 完全体 GA（**W4 done → W5**）
+## Phase 12 — Pomelo 完全体 GA（**done** — `v3.0.0`）
 
 > **任务详情**：`harness/tasks/phase-12-pomelo-full-parity/TASKS.md`  
 > **GA 定义**：`PHASE12-GOALS.md`  
@@ -193,7 +193,7 @@ Pomelo 完全体 GA 3.0.0
 | **W3** | **12.301–12.315** | Feature + 194 文件 disposition | **done** |
 | **W4** | **12.401–12.415** | Formal exclusions + stub policy | **done** |
 | **W5** | **12.501–12.510** | Platform + production checklist | **done** |
-| **W6** | **12.601–12.610** | GA Gate + `v3.0.0` tag | **planned** |
+| **W6** | **12.601–12.610** | GA Gate + `v3.0.0` tag | **done** |
 
 **任务计数**：**64** 项（W11.802–805 已完成，不计入 Remaining）。
 
@@ -385,7 +385,7 @@ harness/scripts/publish-nuget.ps1 -Pack
 
 | 日期 | 事件 |
 |------|------|
-| 2026-07-09 | **Phase 12 W2 done**：native **263→1056**（100% compat）；`Category=NativeDialect` **0 FAIL**；handoff `phase12-wave2-native-matrix.done.md` |
+| 2026-07-09 | **Phase 12 W6 / 3.0.0 tag**：GA Gate 全绿；compat + native 3× 0 FAIL；`v3.0.0` GA；handoff `phase12-wave6-ga-release.done.md` |
 | 2026-07-09 | **Phase 12 W1 done**：Comparable Set 冻结（12.101）；compat **3× 0 FAIL**；handoff `phase12-wave1-test-parity.done.md` |
 | 2026-07-09 | **Phase 11 关闭 / Phase 12 规划**：2.1.0 = GA-preview done；W11–W15 → Phase 12（64 任务；v3.0.0 GA） |
 | 2026-07-09 | **Phase 11 完全体重规划（实测审计）**：compat **1056**、native **263**；PHASE11-CLOSURE-CRITERIA + W11–W15 初稿 |
@@ -432,7 +432,7 @@ Phase 7 生产级 ✓ → Phase 8 功能对等 ✓ → Phase 9 测试对等 ✓ 
          ↓
 Phase 11: Xugu 原生方言 2.1.0 GA-preview ✓
          ↓
-Phase 12: Pomelo 完全体 GA 3.0.0
+Phase 12: Pomelo 完全体 GA 3.0.0 ✓
 
 ```
 

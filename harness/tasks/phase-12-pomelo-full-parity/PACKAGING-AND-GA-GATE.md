@@ -1,6 +1,6 @@
 # Phase 12 — 打包与 GA Gate（v3.0.0）
 
-> **状态**：**planned**（自 Phase 11 `PACKAGING-AND-INTEGRATION.md` 延伸）  
+> **状态**：**done**（Phase 12 W6 — `v3.0.0` GA tag）  
 > **2.1.0 基线**：pack + install + integration smoke ✅  
 > **GA 目标**：3.0.0 公开发布 + LIMITATIONS frozen + 全 RID（若 W5 unblocked）
 

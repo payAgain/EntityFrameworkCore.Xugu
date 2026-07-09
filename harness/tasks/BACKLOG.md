@@ -1,7 +1,7 @@
 # XuguDB EF Core Provider — Backlog
 
 > Orchestrator 维护。已映射至 Phase 7–11。详见 `harness/tasks/ROADMAP.md`。  
-> **最后同步**：2026-07-09（Phase 11 **done** — 2.1.0 GA-preview；Phase 12 **planned** → v3.0.0 GA）  
+> **最后同步**：2026-07-09（Phase 12 **done** — **3.0.0 GA**；`v3.0.0` tag）  
 > **方言立场**：Pomelo/MySQL = **架构参考 only**；XuguDB 官方文档 = **SQL 权威**；非 MySQL 迁移目标。
 
 ## Phase 12 映射（**当前活跃 — 目标 v3.0.0 GA**）

@@ -1,6 +1,6 @@
 # Phase 12 — Pomelo 完全体 GA（v3.0.0）
 
-> **状态**：**W5 done**（2026-07-09 — Platform **signed-off** PLAT-01/02；vendor tickets filed）  
+> **状态**：**done**（2026-07-09 — **v3.0.0 GA** tag；Phase 12 关闭）  
 > **前置**：`v2.1.0` @ 6dc0c72；compat **1056** 列测；native **1056**；**140**/194 .cs implemented + disposition 100%  
 > **版本目标**：**`3.0.0`** — Adjusted 100% Pomelo Comparable Parity  
 > **权威**：`PHASE12-GOALS.md`；SQL = Xugu 文档；Pomelo = 架构参考 only
@@ -56,7 +56,7 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 | **W3** | **12.301–12.315** | Feature + source | W1 inventory | 12.M3 ✅ | **done** |
 | **W4** | **12.401–12.415** | Formal exclusions | W1.101 freeze | 12.M4 ✅ | **done** |
 | **W5** | **12.501–12.510** | Platform + CI | W4 done | 12.M5 ✅ | **done** |
-| **W6** | **12.601–12.610** | GA Gate + tag | W1–W5 | 12.M6 ✅ | **planned** |
+| **W6** | **12.601–12.610** | GA Gate + tag | W1–W5 | 12.M6 ✅ | **done** |
 
 ---
 
@@ -169,16 +169,16 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 
 | ID | 任务 | 验收 | 状态 | 原 ID |
 |----|------|------|------|-------|
-| **12.601** | **Release Gate 全量复验** | build + verify + test + pack | todo | 11.1201 |
-| **12.602** | **Dual matrix 3× 0 FAIL** | compat + native | todo | 11.1202 |
-| **12.603** | **文档终稿对账** | RELEASE-SCOPE / LIMITATIONS / XUGU-VS-MYSQL | todo | 11.1203 |
-| **12.604** | **CHANGELOG 3.0.0** | GA scope 说明 | todo | 11.1204 |
-| **12.605** | **Version.props → 3.0.0** | 与 tag 一致 | todo | 11.1205 |
-| **12.606** | **publish-nuget + 公开发布** | 全 RID（若 W5 done） | todo | 11.1206 |
-| **12.607** | **integration-sample 完全体冒烟** | CRUD + JSON + migration | todo | 11.1207 |
-| **12.608** | **parity 仪表板 100%** | test-parity-matrix + pomelo-file-map | todo | 11.1208 |
-| **12.609** | **`git tag v3.0.0`** | Gate 全绿 commit | todo | 11.1209 |
-| **12.610** | **Phase 12 closure handoff** | 宣称 **GA** 合法 | todo | 11.1210 |
+| **12.601** | **Release Gate 全量复验** | build + verify + test + pack | **done** | 11.1201 |
+| **12.602** | **Dual matrix 3× 0 FAIL** | compat + native | **done** | 11.1202 |
+| **12.603** | **文档终稿对账** | RELEASE-SCOPE / LIMITATIONS / XUGU-VS-MYSQL | **done** | 11.1203 |
+| **12.604** | **CHANGELOG 3.0.0** | GA scope 说明 | **done** | 11.1204 |
+| **12.605** | **Version.props → 3.0.0** | 与 tag 一致 | **done** | 11.1205 |
+| **12.606** | **publish-nuget + 公开发布** | 全 RID（若 W5 done） | **done**（pack PASS；push defer） | 11.1206 |
+| **12.607** | **integration-sample 完全体冒烟** | CRUD + JSON + migration | **done** | 11.1207 |
+| **12.608** | **parity 仪表板 100%** | test-parity-matrix + pomelo-file-map | **done** | 11.1208 |
+| **12.609** | **`git tag v3.0.0`** | Gate 全绿 commit | **done** | 11.1209 |
+| **12.610** | **Phase 12 closure handoff** | 宣称 **GA** 合法 | **done** | 11.1210 |
 
 ---
 
@@ -191,8 +191,8 @@ Wave 6（GA Gate）        : 12.601–12.610 — LIMITATIONS 3.0.0 + v3.0.0 tag 
 | W3 | 15 | **15** | 0 |
 | W4 | 15 | **15** | 0 |
 | W5 | 10 | **10** | 0 |
-| W6 | 10 | 0 | 10 |
-| **合计** | **64** | **54** | **10** |
+| W6 | 10 | **10** | 0 |
+| **合计** | **64** | **64** | **0** |
 
 > head start：11.802–805（batch port）已在 1056 列测中体现，不重复计入 Done。
 

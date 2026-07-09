@@ -1,8 +1,8 @@
 # Microsoft.EntityFrameworkCore.Xugu — 已知限制
 
-> Phase 7 Wave 1 初稿；Phase 8 / gap analysis 补全；**2.1.0 frozen（Phase 11）**。完整路线图见 `harness/tasks/ROADMAP.md`。
+> Phase 7 Wave 1 初稿；Phase 8 / gap analysis 补全；**3.0.0 frozen（Phase 12 GA）**。完整路线图见 `harness/tasks/ROADMAP.md`。
 
-## 方言模式（2.1.0 frozen）
+## 方言模式（3.0.0 frozen）
 
 | 模式 | 默认 | Identity 回读 | 说明 |
 |------|------|---------------|------|

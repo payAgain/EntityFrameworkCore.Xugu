@@ -52,13 +52,13 @@ dotnet build Xugu.EFCore.Xugu.sln
 
 | 项 | 值 |
 |----|-----|
-| **当前版本** | **`2.1.0` GA-preview**（`v2.1.0` @ 6dc0c72） |
-| **当前 Phase** | **12 planned** — Pomelo 完全体 GA `v3.0.0`（`harness/tasks/phase-12-pomelo-full-parity/TASKS.md`） |
-| **Phase 11** | **done** — Xugu 原生方言 GA-preview |
-| **测试** | **1056** 列测（compat）；native **263** |
-| **Provider 规模** | **139** .cs（Pomelo 9.0.0：**194** .cs，~72%） |
+| **当前版本** | **`3.0.0` GA**（`v3.0.0` — Phase 12 done） |
+| **当前 Phase** | **12 done** — Pomelo 完全体 GA（`harness/tasks/phase-12-pomelo-full-parity/TASKS.md`） |
+| **Phase 11** | **done** — Xugu 原生方言 GA-preview（`v2.1.0` @ 6dc0c72） |
+| **测试** | **1057** 列测（compat + native 双矩阵）；Adjusted **110.9%** |
+| **Provider 规模** | **140** .cs；Pomelo 9.0.0 **194** 文件 disposition **100%** |
 
-**里程碑**：`0.1.0-preview` → **`1.0.0`** ✓ → `1.1.0-preview` ✓ → **`2.0.0`** ✓ → **`2.1.0` GA-preview** ✓（Phase 11）→ **`3.0.0` GA**（Phase 12）
+**里程碑**：`0.1.0-preview` → **`1.0.0`** ✓ → `1.1.0-preview` ✓ → **`2.0.0`** ✓ → **`2.1.0` GA-preview** ✓ → **`3.0.0` GA** ✓（Phase 12）
 
 Pomelo 参考：**tag 9.0.0**（架构 only；`harness/references/pomelo-version.md`）。
 
