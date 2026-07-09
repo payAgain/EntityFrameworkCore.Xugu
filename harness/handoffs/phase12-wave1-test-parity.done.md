@@ -41,15 +41,17 @@
 ## Compat Gate 结果（12.102）
 
 ```powershell
-# 3× 连续全绿（2026-07-09）
+# 3× 连续全绿（2026-07-09 复验 — coordinator agent）
 for ($i=1; $i -le 3; $i++) {
   harness/scripts/run-compat-gate.ps1 -MaxAttempts 3 -CooldownSeconds 25
 }
-# Run 1: PASSED attempt 2
-# Run 2: PASSED attempt 1
-# Run 3: PASSED attempt 3
+# Run 1: 0 FAIL, 566 pass, 490 skip (attempt 1)
+# Run 2: 0 FAIL, 568 pass, 488 skip (attempt 1)
+# Run 3: 0 FAIL, 565 pass, 491 skip (attempt 1)
 # Final: 0, 0, 0
 ```
+
+**初验修复**（compat 复验前）：`DesignTimeXuguFixture` 不可用早退导致 cleanup FAIL；`MusicStoreTests` E34305 瞬态连接 → Skip。
 
 `harness/scripts/verify.ps1` — **PASS**
 
@@ -64,6 +66,9 @@ for ($i=1; $i -le 3; $i++) {
 | `DesignTimeXuguTest.cs` | SkippableFact + IClassFixture；fixture 早退 |
 | `XuguDatabaseFixture.cs` | `EnsureSchemaReady()` 懒初始化 |
 | `MigrationExtendedTests.cs` | DDL 瞬态重试（E34501/E34305） |
+| `DesignTimeXuguTest.cs` | `_initialized` 标志 + 安全 `DisposeAsync` |
+| `MusicStoreTests.cs` | SaveChanges 瞬态 E34305 → Skip |
+| `XuguTestConnection.cs` | `MarkUnavailable` + `SkipIfTransientConnectionFailure` |
 
 ---
 

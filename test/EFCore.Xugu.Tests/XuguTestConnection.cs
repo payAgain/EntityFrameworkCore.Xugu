@@ -141,4 +141,25 @@ public static class XuguTestConnection
             _availabilityCheckedAt = DateTime.UtcNow;
         }
     }
+
+    internal static void MarkUnavailable()
+    {
+        lock (AvailabilityLock)
+        {
+            _cachedAvailability = false;
+            _availabilityCheckedAt = DateTime.UtcNow;
+        }
+    }
+
+    /// <summary>
+    /// Skips the test when a database operation fails with a transient connection error (E34304/E34305).
+    /// </summary>
+    internal static void SkipIfTransientConnectionFailure(Exception exception)
+    {
+        if (IsTransientConnectionError(exception))
+        {
+            MarkUnavailable();
+            Skip.If(true, "XuguDB connection unavailable (E34304/E34305)");
+        }
+    }
 }

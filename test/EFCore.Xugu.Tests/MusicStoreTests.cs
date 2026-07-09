@@ -78,7 +78,15 @@ public class MusicStoreTests(MusicStoreFixture fixture)
             var artist = new Artist { Name = "New Artist" };
             var genre = new Genre { Name = "Jazz", Albums = [new Album { Title = "Blue", Artist = artist }] };
             context.Add(genre);
-            await context.SaveChangesAsync();
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                XuguTestConnection.SkipIfTransientConnectionFailure(ex);
+                throw;
+            }
         }
 
         await using var read = fixture.CreateContext();
@@ -105,7 +113,16 @@ public class MusicStoreTests(MusicStoreFixture fixture)
         }).ToList();
 
         context.AddRange(genres);
-        context.SaveChanges();
+        try
+        {
+            context.SaveChanges();
+        }
+        catch (Exception ex)
+        {
+            XuguTestConnection.SkipIfTransientConnectionFailure(ex);
+            throw;
+        }
+
         return genres;
     }
 

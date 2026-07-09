@@ -66,6 +66,8 @@ public class DesignTimeXuguTest : IClassFixture<DesignTimeXuguTest.DesignTimeXug
 
     public class DesignTimeXuguFixture : SharedStoreFixtureBase<PoolableDbContext>
     {
+        private bool _initialized;
+
         protected override string StoreName => "DesignTimeTest";
 
         public override async Task InitializeAsync()
@@ -76,6 +78,15 @@ public class DesignTimeXuguTest : IClassFixture<DesignTimeXuguTest.DesignTimeXug
             }
 
             await base.InitializeAsync();
+            _initialized = true;
+        }
+
+        public override async Task DisposeAsync()
+        {
+            if (_initialized)
+            {
+                await base.DisposeAsync();
+            }
         }
 
         protected override ITestStoreFactory TestStoreFactory
