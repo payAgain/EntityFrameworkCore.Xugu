@@ -52,17 +52,17 @@ dotnet build Xugu.EFCore.Xugu.sln
 
 | 项 | 值 |
 |----|-----|
-| **当前版本** | **`2.1.0`**（`Version.props`；Phase 11） |
-| **当前 Phase** | **11 done** — Xugu 原生方言与可发布 2.1.0（`harness/tasks/phase-11-xugu-native-release/TASKS.md`） |
-| **测试** | **898** 列测（compat 矩阵；~**85%** Pomelo ~1050 覆盖） |
+| **当前版本** | **`2.1.0` GA-preview**（`v2.1.0` @ 6dc0c72） |
+| **当前 Phase** | **12 planned** — Pomelo 完全体 GA `v3.0.0`（`harness/tasks/phase-12-pomelo-full-parity/TASKS.md`） |
+| **Phase 11** | **done** — Xugu 原生方言 GA-preview |
+| **测试** | **1056** 列测（compat）；native **263** |
 | **Provider 规模** | **139** .cs（Pomelo 9.0.0：**194** .cs，~72%） |
-| **Phase 10** | **done** — Wave 1–6 关闭；blocked：ROW_COUNT、Linux RID |
 
-**里程碑**：`0.1.0-preview` → **`1.0.0`** ✓ → `1.1.0-preview` ✓ → **`2.0.0`** ✓ → **`2.1.0`** ✓（Phase 11）
+**里程碑**：`0.1.0-preview` → **`1.0.0`** ✓ → `1.1.0-preview` ✓ → **`2.0.0`** ✓ → **`2.1.0` GA-preview** ✓（Phase 11）→ **`3.0.0` GA**（Phase 12）
 
 Pomelo 参考：**tag 9.0.0**（架构 only；`harness/references/pomelo-version.md`）。
 
-路线图与并行调度见 `harness/tasks/ROADMAP.md`、`harness/tasks/PARALLEL-EXECUTION-PLAN.md`、`harness/tasks/BACKLOG.md`。打包门禁见 `harness/tasks/phase-11-xugu-native-release/PACKAGING-AND-INTEGRATION.md`。
+路线图与并行调度见 `harness/tasks/ROADMAP.md`、`harness/tasks/PARALLEL-EXECUTION-PLAN.md`、`harness/tasks/BACKLOG.md`。Phase 12 打包门禁见 `harness/tasks/phase-12-pomelo-full-parity/PACKAGING-AND-GA-GATE.md`。
 
 ## 用户文档
 

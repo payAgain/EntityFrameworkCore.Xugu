@@ -1,10 +1,20 @@
 # XuguDB EF Core Provider — Backlog
 
 > Orchestrator 维护。已映射至 Phase 7–11。详见 `harness/tasks/ROADMAP.md`。  
-> **最后同步**：2026-07-09（Phase 11 完全体重规划 — 2.1.0 tag ✅；W11–W15 open；目标 v3.0.0 完全体）  
+> **最后同步**：2026-07-09（Phase 11 **done** — 2.1.0 GA-preview；Phase 12 **planned** → v3.0.0 GA）  
 > **方言立场**：Pomelo/MySQL = **架构参考 only**；XuguDB 官方文档 = **SQL 权威**；非 MySQL 迁移目标。
 
-## Phase 11 映射（W1–W10 done；**W11–W15 完全体 open**）
+## Phase 12 映射（**当前活跃 — 目标 v3.0.0 GA**）
+
+| 原 ID / 主题 | Phase 12 Wave | 新任务 ID | 状态 |
+|-------------|--------------|-----------|------|
+| Test parity（原 W11） | W1–W2 | **12.101–12.109**, **12.201–205** | **planned**（802–805 head start ✅） |
+| Feature defer 清零（原 W12） | W3 | **12.301–12.315** | **planned** |
+| ROW_COUNT + Linux RID（原 W13） | W5 | **12.501–12.510** | **planned**（blocked） |
+| Skip 模块 resolution（原 W14） | W4 | **12.401–12.415** | **planned** |
+| GA Gate + v3.0.0（原 W15） | W6 | **12.601–12.610** | **planned** |
+
+## Phase 11 映射（**done** — W1–W10；2.1.0 GA-preview）
 
 | 原 ID / 主题 | Wave | 新任务 ID | 状态 |
 |-------------|------|-----------|------|
@@ -18,11 +28,11 @@
 | FunctionalTests 余量 | W8 | **11.401–11.403** | **done**（898 列测） |
 | 驱动 defer 项 | W9 | **11.105, 11.205, 11.207, 11.107, 11.202–204** | **→ W12/W13** |
 | **2.1.0 Release Gate** | **W10** | **11.RG1–11.RG17** | **done**（v2.1.0 @ 6dc0c72） |
-| **Test parity ~152 缺口** | **W11** | **11.801–11.815** | **todo** → 11.M8 |
-| **Feature defer 清零** | **W12** | **11.901–11.915** | **todo** → 11.M9 |
-| **ROW_COUNT + Linux RID** | **W13** | **11.1001–11.1010** | **todo**（blocked） |
-| **Skip 模块 resolution** | **W14** | **11.1101–11.1115** | **todo** |
-| **完全体 Gate + v3.0.0** | **W15** | **11.1201–11.1210** | **todo** → 11.M10 |
+| ~~Test parity~~ | ~~W11~~ | ~~11.801–815~~ | **→ Phase 12 W1** |
+| ~~Feature parity~~ | ~~W12~~ | ~~11.901–915~~ | **→ Phase 12 W3** |
+| ~~Platform~~ | ~~W13~~ | ~~11.1001–1010~~ | **→ Phase 12 W5** |
+| ~~Skip modules~~ | ~~W14~~ | ~~11.1101–1115~~ | **→ Phase 12 W4** |
+| ~~GA Gate~~ | ~~W15~~ | ~~11.1201–1210~~ | **→ Phase 12 W6** |
 
 ## Phase 映射总览
 
@@ -64,17 +74,18 @@
 
 ---
 
-## P0 — Phase 11 完全体 W11–W15（**当前活跃 — 阻塞 v3.0.0 tag**）
+## P0 — Phase 12（**当前活跃 — 阻塞 v3.0.0 GA**）
 
 | ID | 任务 | Wave | 任务 ID | 缺口 | 状态 |
 |----|------|------|---------|------|------|
-| P0-11.W11 | Test parity closure | W11 | **11.801–11.815** | ~154 测试 | **todo** |
-| P0-11.W12 | Feature parity closure | W12 | **11.901–11.915** | 55 .cs + defer | **todo** |
-| P0-11.W13 | Platform parity | W13 | **11.1001–11.1010** | ROW_COUNT + Linux RID | **blocked/todo** |
-| P0-11.W14 | Skip module resolution | W14 | **11.1101–11.1115** | NTS/FULLTEXT/Collation | **todo** |
-| P0-11.W15 | 完全体 Release Gate | W15 | **11.1201–11.1210** | Gate 100% | **todo** |
+| P0-12.W1 | Test parity gate | W1 | **12.101–12.109** | Comparable Set + 3× CI | **planned** |
+| P0-12.W2 | Native matrix ≥80% | W2 | **12.201–12.205** | 263→845 | **planned** |
+| P0-12.W3 | Feature / source 100% | W3 | **12.301–12.315** | 55 .cs + defer | **planned** |
+| P0-12.W4 | Formal exclusions | W4 | **12.401–12.415** | NTS/FULLTEXT/Collation | **planned** |
+| P0-12.W5 | Platform parity | W5 | **12.501–12.510** | ROW_COUNT + Linux RID | **planned** |
+| P0-12.W6 | GA Release Gate | W6 | **12.601–12.610** | v3.0.0 tag | **planned** |
 
-## P0 — Phase 11 W10（**done** — v2.1.0 @ 6dc0c72）
+## P0 — Phase 11（**done** — v2.1.0 GA-preview @ 6dc0c72）
 
 | ID | 任务 | Wave | 任务 ID | 状态 |
 |----|------|------|---------|------|
@@ -83,11 +94,11 @@
 | P0-RG.3 | NuGet pack 脚本 | W10 | **11.RG3** | **done** |
 | P0-RG.4 | `v2.1.0` git tag | W10 | **11.RG4** | **done** |
 
-## 完全体缺口全表（2026-07-09）
+## 完全体缺口全表（→ Phase 12 工作项）
 
 | 类别 | 项 | 数量/状态 | Wave | Path A | Path B |
 |------|-----|----------|------|--------|--------|
-| **测试** | compat 列测 vs Pomelo | **896 / ~1050**（~85%） | W11 | port ~154 | adjusted denominator |
+| **测试** | compat 列测 vs Pomelo | **1056 / ~1050**（literal ✅） | W1 | adjusted 100% + 0 FAIL |
 | **测试** | 显式 Skip= | **6** 方法 | W11/W12 | implement | evidence exclusion |
 | **源码** | Provider .cs vs Pomelo | **139 / 194**（~72%） | W12 | port 55 | per-file exclusion |
 | **blocked** | ROW_COUNT E10049 | 1 测试 skip | W13 | DB/driver fix | vendor ticket |
@@ -292,10 +303,11 @@
 
 | 指标 | 当前 | 完全体目标 | 备注 |
 |------|------|-----------|------|
-| 版本 | **2.1.0** tag ✅ | **3.0.0** | W15 |
+| 版本 | **2.1.0** GA-preview ✅ | **3.0.0** GA | W6 |
 | Provider .cs | **139** | **194**（或 adjusted 100%） | 缺口 **55** |
-| 测试方法 | **896** | **1050**（或 adjusted 100%） | 缺口 **~154** |
-| Pomelo 测试覆盖 | **~85%** | **100%** | 11.M8 |
-| Phase 11 | **in_progress** | done @ 11.M10 | W11–W15 |
+| 测试方法 | **1056** | adjusted **100%** | literal ✅ |
+| Pomelo 测试覆盖 | **literal ✅** | **Adjusted 100%** | 12.M1 |
+| Phase 11 | **done** | GA-preview @ 6dc0c72 | W1–W10 |
+| Phase 12 | **planned** | done @ 12.M6 | W1–W6 |
 | 2.1.0 Gate | **closed** | — | W10 @ 6dc0c72 |
-| 完全体 Gate | **open** | `PHASE11-CLOSURE-CRITERIA.md` | W15 |
+| GA Gate | **open** | `PHASE12-GOALS.md` | W6 |

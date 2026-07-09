@@ -1,8 +1,8 @@
 # Microsoft.EntityFrameworkCore.Xugu — 发布范围声明
 
-> **当前稳定版**：**2.1.0**（Phase 11 功能发布 — `v2.1.0` @ 6dc0c72）  
-> **完全体目标**：**3.0.0**（Phase 11 W11–W15 — Pomelo **100% Comparable Parity**）  
-> **更新**：2026-07-09（完全体重规划；见 `PHASE11-CLOSURE-CRITERIA.md`）
+> **当前稳定版**：**2.1.0 GA-preview**（Phase 11 **done** — `v2.1.0` @ 6dc0c72）  
+> **GA 目标**：**3.0.0**（Phase 12 — Pomelo **Adjusted 100% Comparable Parity**）  
+> **更新**：2026-07-09（Phase 11 关闭；Phase 12 规划）
 
 > **⚠️ 产品立场（必读）**  
 > 本 Provider 是 **Xugu 原生方言** 产品：SQL 语法、函数、DDL/DML 以 **XuguDB 官方文档** 为唯一权威。  
@@ -18,8 +18,8 @@
 - **以 XuguDB 官方文档为 SQL 方言唯一权威**（`E:\BaiduSyncdisk\docs\content\`）
 - **架构对齐** Pomelo.EntityFrameworkCore.MySql 9.0.0（目录、DI、扩展模式 — **仅 C# 实现模式**）
 - **不是** MySQL 或 Pomelo 的即插即用替代品
-- **2.1.0** 不要求 Pomelo 100% 作为发布条件（**已发布**）
-- **完全体（3.0.0）** 要求 **100% Pomelo Comparable Parity**（Literal 或 Adjusted — 见下文）
+- **2.1.0 GA-preview** ✅ — 不要求 Pomelo 100%（**已发布** @ 6dc0c72）
+- **GA（3.0.0）** — Phase 12：**Adjusted 100%** Pomelo Comparable Parity
 
 `COMPATIBLE_MODE=MYSQL` 可在连接会话中启用，便于与 MySQL 语法对照或遗留脚本调试；**这不构成**「迁移到 Xugu 无需改 SQL」的产品承诺。新应用应编写 **Xugu 原生 SQL** 与 EF 映射；对照文档见 [XUGU-VS-MYSQL.md](XUGU-VS-MYSQL.md)（**对照参考，非迁移目标，非虚谷方言定义**）。
 
@@ -31,9 +31,9 @@
 |------|------|------|
 | **2.0.0** | 稳定维护基线 | Phase 9–10：~861 列测、CRUD/LINQ/迁移/Scaffolding 主路径、Retry、参数内联 |
 | **2.0.1** | 补丁（按需） | 仅严重缺陷修复；**不**承载新功能 |
-| **2.1.0** | 功能发布 ✅ | Phase 11 W1–W10：JSON、native-first、dual CI、898 列测 |
-| **2.1.x** | 补丁/增量（可选） | W11–W14 进行中交付 |
-| **3.0.0** | **完全体** | Phase 11 W15：100% Pomelo Comparable Parity；skip/defer/blocked 清零或 evidence-backed |
+| **2.1.0** | **GA-preview** ✅ | Phase 11 W1–W10：JSON、native-first、dual CI、**1056** 列测 |
+| **2.1.x** | 补丁（按需） | 仅严重缺陷；**不**承载 Phase 12 功能 |
+| **3.0.0** | **GA** | Phase 12 W6：Adjusted 100% parity；skip/defer/blocked 收口 |
 
 ---
 
@@ -56,7 +56,7 @@
 | **Literal 100%** | 1050 测试 + 194 文件 + 全部 Pomelo 特性物理实现 | Stretch goal；可能不可达 |
 | **Adjusted 100%** | 对 proven Xugu-impossible 项 recalc 分母后 **100%**；每项须 doc link + approval | **推荐** — 满足「无 silent gap」意图 |
 
-权威门禁：`harness/tasks/phase-11-xugu-native-release/PHASE11-CLOSURE-CRITERIA.md`
+权威门禁：`harness/tasks/phase-12-pomelo-full-parity/PHASE12-GOALS.md`
 
 ---
 
@@ -75,7 +75,7 @@
 
 ---
 
-## 2.1.0 不包含（2.1.0 时期 OUT OF SCOPE — **完全体阶段重新打开 W11–W14**）
+## 2.1.0 不包含（OUT OF SCOPE — GA-preview 时期；完全体在 Phase 12 重新打开）
 
 > 下列在 2.1.0 **不阻塞发布**。完全体（3.0.0）要求每项 Path A 实现或 Path B evidence-backed exclusion。
 
@@ -93,7 +93,7 @@
 | `CREATE DATABASE` / `DROP DATABASE`（EF API） | **永久 defer** | 运维边界 |
 | DateOnly/TimeOnly **SaveChanges** | **defer** | 驱动参数绑定 |
 | net8.0 多 TFM | **可选** | 2.1.0 默认 net9.0 only |
-| Pomelo FunctionalTests 100% | **2.1.0 非目标** / **3.0.0 目标** | ~898/~1050；W11 |
+| Pomelo FunctionalTests 100% | **2.1.0 非目标** / **3.0.0 Phase 12** | 1056/~1050 literal ✅；Adjusted 100% 待 Phase 12 |
 | Pomelo IntegrationTests（Vegeta/ASP.NET 性能） | **永久 defer** | 低 ROI；见 PACKAGING-AND-INTEGRATION |
 | 全量 EF.Specification.Tests | **分阶段** | 见 `PACKAGING-AND-INTEGRATION.md` |
 | FOR UPDATE / 窗口函数 Tag / 位运算返回类型修正 | **defer** | EF 无标准 API 或低 ROI |
@@ -105,14 +105,14 @@
 
 ## 2.1.0 发布门禁（Release Gate — **closed** @ 6dc0c72）
 
-> Phase 11 **done** 见完全体门禁 `PHASE11-CLOSURE-CRITERIA.md`（W15 / 11.M10 / v3.0.0）。
+> Phase 11 **done**（GA-preview @ 6dc0c72）。GA 见 `phase-12-pomelo-full-parity/PHASE12-GOALS.md`。
 
 ### 构建与测试
 
 - [x] `dotnet build Xugu.EFCore.Xugu.sln -c Release` — PASS
 - [x] `harness/scripts/verify.ps1` — PASS
 - [x] `dotnet test Xugu.EFCore.Xugu.sln -c Release` — **0 FAIL**
-- [x] 列测基线 **896** compat（~85% Pomelo ~1050）
+- [x] 列测基线 **1056** compat（literal ≥ ~1050）
 - [x] **native** CI 子集 **177** 列测 0 FAIL
 
 ### 功能
@@ -143,13 +143,13 @@
 
 ## 生产就绪定义
 
-### 2.1.0（已达成）
+### 2.1.0 GA-preview（已达成）
 
-在 2.1.0 OUT OF SCOPE 前提下：实库 CI 0 FAIL、verify + test-nuget-pack PASS、集成样本冒烟、LIMITATIONS frozen。
+在 2.1.0 OUT OF SCOPE 前提下：实库 CI 0 FAIL、verify + test-nuget-pack PASS、集成样本冒烟、LIMITATIONS 2.1.0 frozen、`v2.1.0` tag。
 
-### 完全体 3.0.0（W15 目标）
+### GA 3.0.0（Phase 12 目标）
 
-在 **Comparable Parity 100%** 前提下：W11–W14 全绿 + `PHASE11-CLOSURE-CRITERIA.md` 全部门禁 + `v3.0.0` tag。
+在 **Comparable Parity Adjusted 100%** 前提下：Phase 12 W1–W6 全绿 + `PHASE12-GOALS.md` 全部门禁 + `v3.0.0` tag。
 
 ---
 
@@ -181,7 +181,7 @@ Agent 与贡献者：**禁止**仅凭 MySQL 或 Pomelo 行为推断 Xugu SQL；*
 
 ## 相关文档
 
-- Phase 11 任务：`harness/tasks/phase-11-xugu-native-release/TASKS.md`
-- **完全体标准**：`harness/tasks/phase-11-xugu-native-release/PHASE11-CLOSURE-CRITERIA.md`
+- Phase 11 任务：`harness/tasks/phase-11-xugu-native-release/TASKS.md`（**done**）
+- **GA 目标**：`harness/tasks/phase-12-pomelo-full-parity/PHASE12-GOALS.md`
 - 打包与集成：`harness/tasks/phase-11-xugu-native-release/PACKAGING-AND-INTEGRATION.md`
 - 路线图：`harness/tasks/ROADMAP.md`

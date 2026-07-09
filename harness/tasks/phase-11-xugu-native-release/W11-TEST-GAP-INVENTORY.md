@@ -1,8 +1,8 @@
 # Phase 11 W11 — Pomelo 测试缺口清单（11.801）
 
-> **状态**：**partial**（2026-07-09 — W11.802–805 批次完成）  
-> **基线**：compat **898** → **1056** 列测（`--list-tests`）vs Pomelo **~1050** → **literal 达标**  
-> **目标**：Comparable Set 100% 分类 → W11.806 冻结 → 11.M8
+> **状态**：**moved to Phase 12**（2026-07-09）  
+> **活跃副本**：`harness/tasks/phase-12-pomelo-full-parity/TEST-GAP-INVENTORY.md`（任务 **12.101**）  
+> **基线**：compat **1056** 列测；11.802–805 **done**（Phase 12 W1 head start）
 
 ---
 

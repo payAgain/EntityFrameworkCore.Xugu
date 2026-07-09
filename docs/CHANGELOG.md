@@ -7,9 +7,19 @@ Known limitations and deferred features: [LIMITATIONS.md](LIMITATIONS.md).
 
 ---
 
-## [2.1.0] — 2026-07-08 (Phase 11 — Xugu 原生方言)
+## [Unreleased] — Phase 12 planning
 
-Phase 11 完成：**Xugu 原生方言优先**、JSON Provider、RETURNING identity 回读、双 CI 矩阵、NuGet 2.1.0 门禁。
+### Changed
+
+- **Phase 11 关闭** — `v2.1.0` 定位为 **GA-preview**（Xugu 原生方言首发）；W1–W10 + Release Gate 验收完成。
+- **Phase 12 规划** — 目标 **`v3.0.0` GA**；Adjusted 100% Pomelo Comparable Parity；64 任务（W1–W6）。
+- **测试基线** — compat **1056** 列测（W11.802–805 head start 记入 Phase 12 W1）。
+
+---
+
+## [2.1.0] — 2026-07-09 (Phase 11 — Xugu 原生方言 GA-preview)
+
+Phase 11 完成（**GA-preview**）：**Xugu 原生方言优先**、JSON Provider、RETURNING identity 回读、双 CI 矩阵、NuGet 2.1.0 门禁。完全体 GA → Phase 12 `v3.0.0`。
 
 ### Added
 
@@ -24,7 +34,7 @@ Phase 11 完成：**Xugu 原生方言优先**、JSON Provider、RETURNING identi
 
 - **默认方言** — 连接打开时 **不再** 默认执行 `SET compatible_mode TO 'MYSQL'`；需显式 `EnableCompatibleModeOnOpen()`。
 - **版本** — `2.0.0` → **`2.1.0`**。
-- **测试套件** — **880+** 列测（compat 矩阵）；native 核心子集独立验收。
+- **测试套件** — **1056** 列测（compat 矩阵）；native **263** 列测。
 
 ### Breaking
 
