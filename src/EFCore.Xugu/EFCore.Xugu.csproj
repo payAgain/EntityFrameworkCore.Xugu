@@ -1,0 +1,68 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Entity Framework Core provider for XuguDB (虚谷数据库).</Description>
+    <TargetFramework>$(XuguTargetFramework)</TargetFramework>
+    <AssemblyName>Microsoft.EntityFrameworkCore.Xugu</AssemblyName>
+    <RootNamespace>Microsoft.EntityFrameworkCore.Xugu</RootNamespace>
+    <NoWarn>$(NoWarn);CS1591;EF9100</NoWarn>
+    <IsPackable>true</IsPackable>
+    <PackageId>Microsoft.EntityFrameworkCore.Xugu</PackageId>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- PrivateAssets="none" flows EF Core analyzers to consuming projects -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" PrivateAssets="none" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Phase 0: local driver reference; switch to PackageReference Xuguclient for release builds -->
+  <ItemGroup Condition="'$(UseLocalXuguDriver)' != 'false'">
+    <ProjectReference Include="..\..\external\csharp-driver\XGCSClient\XGCSClient.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseLocalXuguDriver)' == 'false'">
+    <!-- Public nuget.org only ships prerelease builds; override for release pack validation -->
+    <PackageReference Include="Xuguclient" VersionOverride="3.3.6-bionic" />
+  </ItemGroup>
+
+  <!-- Native xugusql.dll: copy to output + NuGet runtimes folder when present (6.S2) -->
+  <ItemGroup Condition="'$(XuguNativeDllExists)' == 'true'">
+    <None Include="$(XuguNativeDllPath)">
+      <Link>xugusql.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>true</Pack>
+      <PackagePath>runtimes/win-x64/native/</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <!-- linux-x64 native: pack when XuguNativeSoPath exists (10.205 — blocked until driver ships .so) -->
+  <ItemGroup Condition="'$(XuguNativeSoExists)' == 'true'">
+    <None Include="$(XuguNativeSoPath)">
+      <Link>libxugusql.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>true</Pack>
+      <PackagePath>runtimes/linux-x64/native/</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\XuguStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>XuguStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Compile Update="Properties\XuguStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XuguStrings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>

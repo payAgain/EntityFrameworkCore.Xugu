@@ -1,0 +1,21 @@
+<Project>
+  <Import Project="Version.props" />
+  <Import Project="NativeAssets.props" />
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <XuguTargetFramework>net9.0</XuguTargetFramework>
+    <Product>Microsoft.EntityFrameworkCore.Xugu</Product>
+    <Authors>XuguDB</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://gitlab2.xugu.com/RDB/xuguefcore</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://gitlab2.xugu.com/RDB/xuguefcore</RepositoryUrl>
+    <PackageTags>xugudb;虚谷;Entity Framework Core;entity-framework-core;ef;efcore;ef core;orm;sql</PackageTags>
+    <DebugType Condition="'$(DebugType)' == ''">portable</DebugType>
+  </PropertyGroup>
+</Project>

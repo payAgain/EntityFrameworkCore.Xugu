@@ -1,0 +1,38 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.nupkg
+*.snupkg
+artifacts/
+TestResults/
+.vs/
+
+## IDE
+.idea/
+*.DotSettings.user
+
+## OS
+Thumbs.db
+.DS_Store
+
+## Secrets & local config
+.env
+.env.*
+*.env
+credentials.json
+**/secrets.json
+**/appsettings.*.local.json
+
+## Debug / scratch
+tmp_cols.cs
+test_diag*.txt
+test_out*.txt
+test-out*.txt
+test-run*.txt
+test-results.txt
+
+## Native driver binaries (obtain from XuguDB SDK; path configured in Directory.Build.props)
+external/csharp-driver/test_xugusql/
