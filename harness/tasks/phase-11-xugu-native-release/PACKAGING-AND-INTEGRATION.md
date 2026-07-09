@@ -1,6 +1,6 @@
 # Phase 11 — NuGet 打包与集成验证计划
 
-> **状态**：`planned`  
+> **状态**：**partial**（`publish-nuget.ps1 -Pack` ✅；`test-nuget-pack.ps1` **FAIL — 11.RG3**）  
 > **目标**：2.1.0 发布前验证「包可安装、样本可跑、测试策略可延续」  
 > **前置**：Phase 10 NuGet dry-run（2.0.0）已 PASS
 

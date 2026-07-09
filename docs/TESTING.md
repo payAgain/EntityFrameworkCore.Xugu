@@ -16,8 +16,25 @@
 |------|------|------|
 | `XUGU_CONNECTION_STRING` | 集成测试连接串 | `IP=127.0.0.1; DB=SYSTEM; USER=SYSDBA; PWD=SYSDBA; PORT=5138; AUTO_COMMIT=on; CHAR_SET=UTF8` |
 | `XUGU_TEST_CONNECTION` | 别名（部分脚本/CI 矩阵预留） | 同 `XUGU_CONNECTION_STRING` |
+| `XUGU_DIALECT_MODE` | CI 双矩阵：`compat`（默认）或 `native` | `compat` |
+| `XUGU_CI_INTEGRATION` | GitHub Actions 实库 job 标记 | 本地可设 `true` |
 
 未设置时测试使用 `XuguTestConnection.DefaultConnectionString`。
+
+## Phase 11 双矩阵（compat + native）
+
+| Job | 环境 | 命令 |
+|-----|------|------|
+| **compat** | `XUGU_DIALECT_MODE=compat` | `dotnet test Xugu.EFCore.Xugu.sln -c Release`（全量 ~898） |
+| **native** | `XUGU_DIALECT_MODE=native` | `dotnet test test/EFCore.Xugu.Tests -c Release --filter "Category=NativeDialect"`（≥80 核心子集） |
+
+CI 实库 job 须设置 `XUGU_CI_INTEGRATION=true` 且 XuguDB 可达。本地复现 native 子集：
+
+```powershell
+$env:XUGU_DIALECT_MODE = 'native'
+$env:XUGU_CI_INTEGRATION = 'true'
+dotnet test test/EFCore.Xugu.Tests -c Release --filter "Category=NativeDialect"
+```
 
 ## 运行测试
 

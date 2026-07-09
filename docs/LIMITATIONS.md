@@ -6,8 +6,10 @@
 
 | 模式 | 默认 | Identity 回读 | 说明 |
 |------|------|---------------|------|
-| **Xugu 原生** | **是** | `INSERT … RETURNING` | 产品默认；见 `insert.md` |
-| **MySQL compat** | 否（opt-in） | `LAST_INSERT_ID()` + SELECT | `EnableCompatibleModeOnOpen()`；遗留对照便利 |
+| **Xugu 原生** | **是** | `INSERT` + `SELECT … WHERE id = LAST_INSERT_ID()` | 产品默认；`LAST_INSERT_ID()` 为 [Xugu 原生函数](reference/function/system-infos-functions/last_insert_id.md)，非 MySQL 专有 |
+| **MySQL compat** | 否（opt-in） | 同上 | `EnableCompatibleModeOnOpen()` 额外执行 `SET compatible_mode TO 'MYSQL'` |
+
+**ADO 说明（2.1.0）**：XuguDB 支持 `INSERT … RETURNING`，但当前 **XuguClient** 不通过 `DbDataReader` 暴露 RETURNING 行（`FieldCount=0`、无 `NextResult`）。Provider 因此统一使用 `INSERT` + `SELECT` + `LAST_INSERT_ID()` 回读；待驱动修复后可切回 RETURNING 单语句路径。
 
 `COMPATIBLE_MODE=MYSQL` **不是**产品目标或迁移承诺。Pomelo 移植测试在 CI 中通过 `XUGU_DIALECT_MODE=compat` 运行。
 

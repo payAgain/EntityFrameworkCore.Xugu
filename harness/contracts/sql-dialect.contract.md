@@ -209,8 +209,9 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 
 - 模型约定：映射为 `IDENTITY(1,1)`，不是 `AUTO_INCREMENT`
 - **SaveChanges 回读（2.1.0）**：
-  - **原生模式（默认）**：`INSERT … RETURNING {identity_col}`（`insert.md` §`returning_clause`）
-  - **Compat 模式**：`INSERT` + `SELECT … WHERE id = LAST_INSERT_ID()`（`EnableCompatibleModeOnOpen()`）
+  - **默认与 compat 运行时 SQL**：`INSERT` + `SELECT … WHERE {identity_col} = LAST_INSERT_ID()`（Xugu 原生函数，见 `last_insert_id.md`）
+  - **差异**：compat 模式连接打开时额外 `SET compatible_mode TO 'MYSQL'`
+  - **RETURNING**：数据库与 `insert.md` 支持；**XuguClient ADO 暂不可读** — Provider 不使用 `AppendInsertReturningOperation` 直至驱动修复（11.506）
 - 与 Pomelo 差异：**必须在 MigrationsSqlGenerator 和 Convention 中单独实现**
 - **ROW_COUNT**：仍 **blocked**（10.105 / E10049）；RETURNING 路径 **不** 依赖 `ROW_COUNT()`
 
@@ -252,12 +253,12 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 
 **Provider 实现（2.1.0）**：
 
-| 模式 | INSERT identity 回读 SQL |
-|------|-------------------------|
-| Native（默认） | `INSERT INTO t (…) VALUES (…) RETURNING id` |
-| Compat（opt-in） | `INSERT` + `SELECT … WHERE id = LAST_INSERT_ID()` |
+| 模式 | INSERT identity 回读 SQL（2.1.0 运行时） |
+|------|----------------------------------------|
+| Native（默认） | `INSERT …`; `SELECT id FROM t WHERE id = LAST_INSERT_ID()` |
+| Compat（opt-in） | 同上 + 连接级 `SET compatible_mode TO 'MYSQL'` |
 
-**与 Pomelo/MySQL 差异**：XuguDB 原生 `RETURNING` 为主路径；`LAST_INSERT_ID()` 仅 compat 回退。
+**理想路径（驱动修复后）**：`INSERT INTO t (…) VALUES (…) RETURNING id`（`insert.md`）。当前 XuguClient 不暴露 RETURNING 结果集。
 
 ## 函数映射表
 

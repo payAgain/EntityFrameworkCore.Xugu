@@ -2,9 +2,9 @@
 
 ## 对照参考 · 非迁移目标 · 非虚谷方言定义
 
-> **版本**：Microsoft.EntityFrameworkCore.Xugu **2.0.0**（Phase 11 目标 **2.1.0**）  
+> **版本**：Microsoft.EntityFrameworkCore.Xugu **2.1.0**（Phase 11）  
 > **对照基准**：Pomelo.EntityFrameworkCore.MySql **9.0.0**（EF Core 9）— **仅 C# 架构参考**  
-> **更新**：2026-07-08（Phase 11 Wave 1）
+> **更新**：2026-07-09（Phase 11 验收 — native-first / compat opt-in）
 
 > **⚠️ 本文档定位（必读）**
 >
@@ -22,14 +22,14 @@
 
 ## 执行摘要
 
-| 维度 | Xugu 2.0.0 | Pomelo / MySQL |
+| 维度 | Xugu 2.1.0 | Pomelo / MySQL |
 |------|------------|----------------|
 | 架构对齐 | 目录与服务注册对齐 Pomelo 9.0.0 | 参考实现 |
-| 源码文件 | **133** .cs（~69% Pomelo 194） | 194 .cs |
-| FunctionalTests | **861** 列测（~**82%** Pomelo ~1050） | ~1050 |
+| 源码文件 | **139** .cs（~72% Pomelo 194） | 194 .cs |
+| FunctionalTests | **898** 列测（~**85%** Pomelo ~1050） | ~1050 |
 | 核心 CRUD / LINQ / 迁移 | **支持** | 支持 |
 | ExecuteDelete / ExecuteUpdate | **核心路径支持** | 支持 |
-| JSON / Spatial / FULLTEXT | JSON **2.1.0 目标**（11.109）；Spatial/FULLTEXT **不实现** | 支持 |
+| JSON / Spatial / FULLTEXT | JSON **✅ 2.1.0**（11.109）；Spatial/FULLTEXT **不实现** | 支持 |
 | 自动重试（Retry） | **支持**（10.106 — Message 解析 XGCI 码） | `EnableRetryOnFailure` |
 | 乐观并发异常检测 | **blocked**（10.105 — `ROW_COUNT()` E10049） | `ROW_COUNT()` |
 | 连接串 | Xugu 键值对（`IP=…; DB=…`） | MySQL 标准 URI/键值 |
@@ -95,14 +95,14 @@
 | Scaffolding `DBA_TABLES` | `VALID='T'`, `IS_SYS='F'` | `information_schema.tables` | `dba_tables.md` |
 | XGCI Message 瞬态重试 | `XuguTransientExceptionDetector` | `MySqlException.IsTransient` | `development/xgci/error.md` |
 | 连接串格式 | `IP=…; DB=…; USER=…` | `Server=…;Database=…` | 驱动文档 |
-| 默认 `SET compatible_mode TO 'MYSQL'` | Provider 连接初始化 | 不需要 | `compatible_mode.md` |
+| 默认 `SET compatible_mode TO 'MYSQL'` | **2.1.0 起默认关闭**；`EnableCompatibleModeOnOpen()` opt-in | 不需要 | `compatible_mode.md` |
 
 ---
 
 ## 兼容模式（`compatible_mode=MYSQL`）下的行为差异
 
 > 文档：`reference/system-configuration-parameter/session-parameter/compatible_mode.md`  
-> Provider 默认在连接打开后执行 `SET compatible_mode TO 'MYSQL'`（可用 `DisableCompatibleModeOnOpen()` 关闭）。
+> **2.1.0 起默认使用 Xugu 原生方言**（连接打开时 **不** 执行 `SET compatible_mode`）。需 MySQL 对照时调用 `EnableCompatibleModeOnOpen()`。
 
 | 项 | MYSQL 模式下 XuguDB | 仍与 MySQL 不同 |
 |----|---------------------|-----------------|
@@ -200,7 +200,7 @@
 | 项 | XuguDB | MySQL/Pomelo |
 |----|--------|-------------|
 | 连接串 | `IP=…; DB=…; USER=…; PWD=…; PORT=5138` | `Server=…;Database=…;` 等 |
-| MySQL 兼容 | `SET compatible_mode TO 'MYSQL'`（Provider 默认） | 原生 MySQL |
+| MySQL 兼容 | `EnableCompatibleModeOnOpen()` opt-in | 原生 MySQL |
 | 字符集 | 连接级 `CHAR_SET=UTF8` | 表/列级 `HasCharSet` |
 
 ### 自增与 Identity

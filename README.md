@@ -52,13 +52,13 @@ dotnet build Xugu.EFCore.Xugu.sln
 
 | 项 | 值 |
 |----|-----|
-| **当前版本** | **`2.0.0`**（`Version.props`）→ Phase 11 目标 **`2.1.0`** |
-| **当前 Phase** | **11 planned** — Xugu 原生方言与可发布 2.1.0（`harness/tasks/phase-11-xugu-native-release/TASKS.md`） |
-| **测试** | **861** 列测（~82% Pomelo 覆盖；**非** 2.1.0 发布条件） |
-| **Provider 规模** | **133** .cs（Pomelo 9.0.0：**194** .cs，~69%） |
+| **当前版本** | **`2.1.0`**（`Version.props`；Phase 11） |
+| **当前 Phase** | **11 done** — Xugu 原生方言与可发布 2.1.0（`harness/tasks/phase-11-xugu-native-release/TASKS.md`） |
+| **测试** | **898** 列测（compat 矩阵；~**85%** Pomelo ~1050 覆盖） |
+| **Provider 规模** | **139** .cs（Pomelo 9.0.0：**194** .cs，~72%） |
 | **Phase 10** | **done** — Wave 1–6 关闭；blocked：ROW_COUNT、Linux RID |
 
-**里程碑**：`0.1.0-preview` → **`1.0.0`** ✓ → `1.1.0-preview` ✓ → **`2.0.0`** ✓ → **Phase 11 → `2.1.0`**（进行中）
+**里程碑**：`0.1.0-preview` → **`1.0.0`** ✓ → `1.1.0-preview` ✓ → **`2.0.0`** ✓ → **`2.1.0`** ✓（Phase 11）
 
 Pomelo 参考：**tag 9.0.0**（架构 only；`harness/references/pomelo-version.md`）。
 
