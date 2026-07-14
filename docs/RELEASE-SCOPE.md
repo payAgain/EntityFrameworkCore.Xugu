@@ -1,8 +1,8 @@
 # Microsoft.EntityFrameworkCore.Xugu — 发布范围声明
 
-> **当前稳定版**：**3.0.0 GA**（Phase 12 **done** — `v3.0.0`）  
-> **上一 GA-preview**：**2.1.0**（Phase 11 — `v2.1.0` @ 6dc0c72）  
-> **更新**：2026-07-09（Phase 12 W6 关闭；**首次生产 GA**）
+> **当前稳定版**：**3.0.1**（`v3.0.1` — Post-GA 运行时缺口补丁）  
+> **上一 GA**：**3.0.0**（Phase 12 — `v3.0.0`）  
+> **更新**：2026-07-14（3.0.1 补丁发布）
 
 > **⚠️ 产品立场（必读）**  
 > 本 Provider 是 **Xugu 原生方言** 产品：SQL 语法、函数、DDL/DML 以 **XuguDB 官方文档** 为唯一权威。  
@@ -34,6 +34,7 @@
 | **2.1.0** | **GA-preview** ✅ | Phase 11 W1–W10：JSON、native-first、dual CI、**1056** 列测 |
 | **2.1.x** | 补丁（按需） | 仅严重缺陷；**不**承载 Phase 12 功能 |
 | **3.0.0** | **GA** ✅ | Phase 12 W1–W6：Adjusted 110.9%；1057 列测；194 disposition 100%；`v3.0.0` tag |
+| **3.0.1** | **补丁** ✅ | COUNT/DateDiff `E34412`、DateTimeOffset、DateOnly/TimeOnly 物化 Provider 闭环；`v3.0.1` |
 
 ---
 

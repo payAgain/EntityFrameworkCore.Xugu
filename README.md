@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | **NuGet** | `Microsoft.EntityFrameworkCore.Xugu` |
-| **Version** | **3.0.0** GA |
+| **Version** | **3.0.1**（GA 3.0.0 + runtime gap patch） |
 | **EF Core** | 9.0.x |
 | **.NET** | 9.0 (`net9.0`) |
 | **Driver** | [Xuguclient](https://www.nuget.org/packages/Xuguclient) (ADO.NET) |
@@ -17,7 +17,7 @@
 ## Install
 
 ```powershell
-dotnet add package Microsoft.EntityFrameworkCore.Xugu --version 3.0.0
+dotnet add package Microsoft.EntityFrameworkCore.Xugu --version 3.0.1
 dotnet add package Xuguclient
 ```
 

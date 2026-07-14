@@ -12,6 +12,7 @@ public class XuguDateOnlyTypeMapping : DateOnlyTypeMapping
             new RelationalTypeMappingParameters(
                 new CoreTypeMappingParameters(
                     typeof(DateOnly),
+                    converter: XuguTemporalValueConverters.DateOnlyToString,
                     jsonValueReaderWriter: JsonDateOnlyReaderWriter.Instance),
                 storeType,
                 StoreTypePostfix.None,
@@ -27,5 +28,6 @@ public class XuguDateOnlyTypeMapping : DateOnlyTypeMapping
     protected override RelationalTypeMapping Clone(RelationalTypeMappingParameters parameters)
         => new XuguDateOnlyTypeMapping(parameters);
 
-    protected override string SqlLiteralFormatString => "'{0:yyyy-MM-dd}'";
+    protected override string GenerateNonNullSqlLiteral(object value)
+        => $"'{((string)value).Replace("'", "''")}'";
 }

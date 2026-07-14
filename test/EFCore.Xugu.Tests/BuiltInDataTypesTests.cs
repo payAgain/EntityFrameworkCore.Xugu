@@ -14,7 +14,8 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 public class BuiltInDataTypesTests(XuguDatabaseFixture fixture)
 {
     [SkippableFact]
-    public void Can_roundtrip_builtin_scalar_types()
+    [Trait("Category", "RuntimeGap")]
+    public void Can_roundtrip_builtin_scalar_types_through_SaveChanges_and_full_entity_materialization()
     {
         XuguTestConnection.SkipIfUnavailable();
         fixture.ClearBuiltinTypes();
@@ -32,27 +33,54 @@ public class BuiltInDataTypesTests(XuguDatabaseFixture fixture)
             StrCol = "XuguDB",
         };
 
-        fixture.InsertBuiltinTypeRow(
-            expected.IntCol,
-            expected.DecimalCol,
-            expected.BoolCol,
-            expected.DtCol,
-            expected.DateCol,
-            expected.TimeCol,
-            expected.DtoCol,
-            expected.BinCol,
-            expected.StrCol);
+        using (var writeContext = CreateContext())
+        {
+            writeContext.BuiltinTypes.Add(expected);
+            writeContext.SaveChanges();
+        }
 
         using var readContext = CreateContext();
-        var actual = readContext.BuiltinTypes
-            .Select(r => new { r.IntCol, r.DecimalCol, r.BoolCol, r.StrCol })
-            .Single();
+        var actual = readContext.BuiltinTypes.Single(r => r.Id == expected.Id);
 
+        Assert.Equal(expected.Id, actual.Id);
         Assert.Equal(expected.IntCol, actual.IntCol);
         Assert.Equal(expected.DecimalCol, actual.DecimalCol);
         Assert.Equal(expected.BoolCol, actual.BoolCol);
+        Assert.Equal(expected.DtCol, actual.DtCol);
+        Assert.Equal(expected.DateCol, actual.DateCol);
+        Assert.Equal(expected.TimeCol, actual.TimeCol);
+        Assert.Equal(expected.DtoCol, actual.DtoCol);
+        Assert.Equal(expected.BinCol, actual.BinCol);
         Assert.Equal(expected.StrCol, actual.StrCol);
-        Assert.Equal(1, readContext.BuiltinTypes.Count(r => r.IntCol == expected.IntCol));
+    }
+
+    [SkippableFact]
+    [Trait("Category", "RuntimeGap")]
+    public void DateOnly_and_TimeOnly_roundtrip_without_DateTimeOffset_through_SaveChanges_and_full_entity_materialization()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ClearTimeOnlyScheduleItems();
+
+        var expected = new TemporalTypeRow
+        {
+            EventDate = new DateOnly(2024, 7, 1),
+            StartsAt = new TimeOnly(10, 20, 30),
+            EventAt = new DateTime(2024, 7, 1, 10, 20, 30),
+        };
+
+        using (var writeContext = CreateTemporalContext())
+        {
+            writeContext.TemporalTypes.Add(expected);
+            writeContext.SaveChanges();
+        }
+
+        using var readContext = CreateTemporalContext();
+        var actual = readContext.TemporalTypes.Single(row => row.Id == expected.Id);
+
+        Assert.Equal(expected.Id, actual.Id);
+        Assert.Equal(expected.EventDate, actual.EventDate);
+        Assert.Equal(expected.StartsAt, actual.StartsAt);
+        Assert.Equal(expected.EventAt, actual.EventAt);
     }
 
     [SkippableFact]
@@ -82,6 +110,15 @@ public class BuiltInDataTypesTests(XuguDatabaseFixture fixture)
         return new BuiltinTypesContext(options);
     }
 
+    private static TemporalTypesContext CreateTemporalContext()
+    {
+        var options = new DbContextOptionsBuilder<TemporalTypesContext>()
+            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
+            .Options;
+
+        return new TemporalTypesContext(options);
+    }
+
     private sealed class BuiltinTypeRow
     {
         public int Id { get; set; }
@@ -105,6 +142,17 @@ public class BuiltInDataTypesTests(XuguDatabaseFixture fixture)
         public string StrCol { get; set; } = string.Empty;
     }
 
+    private sealed class TemporalTypeRow
+    {
+        public int Id { get; set; }
+
+        public DateOnly EventDate { get; set; }
+
+        public TimeOnly StartsAt { get; set; }
+
+        public DateTime EventAt { get; set; }
+    }
+
     private sealed class BuiltinTypesContext(DbContextOptions<BuiltinTypesContext> options) : DbContext(options)
     {
         public DbSet<BuiltinTypeRow> BuiltinTypes => Set<BuiltinTypeRow>();
@@ -125,6 +173,24 @@ public class BuiltInDataTypesTests(XuguDatabaseFixture fixture)
                 entity.Property(e => e.DtoCol).HasColumnName("DTO_COL");
                 entity.Property(e => e.BinCol).HasColumnName("BIN_COL");
                 entity.Property(e => e.StrCol).HasColumnName("STR_COL").HasMaxLength(200);
+            });
+        }
+    }
+
+    private sealed class TemporalTypesContext(DbContextOptions<TemporalTypesContext> options) : DbContext(options)
+    {
+        public DbSet<TemporalTypeRow> TemporalTypes => Set<TemporalTypeRow>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<TemporalTypeRow>(entity =>
+            {
+                entity.ToTable(XuguDatabaseFixture.TimeOnlyScheduleTableName);
+                entity.HasKey(row => row.Id);
+                entity.Property(row => row.Id).HasColumnName("ID");
+                entity.Property(row => row.EventDate).HasColumnName("EVENT_DATE");
+                entity.Property(row => row.StartsAt).HasColumnName("STARTS_AT");
+                entity.Property(row => row.EventAt).HasColumnName("EVENT_AT");
             });
         }
     }

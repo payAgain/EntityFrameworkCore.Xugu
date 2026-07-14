@@ -1,7 +1,7 @@
 # Microsoft.EntityFrameworkCore.Xugu — Release Guide
 
-> **Current release**: **3.0.0 GA** (`v3.0.0`)  
-> **Release branch**: `release/3.0.0`  
+> **Current release**: **3.0.1** (`v3.0.1`) — Post-GA runtime gap patch  
+> **Release branch**: `release/3.0.1`  
 > **Package ID**: `Microsoft.EntityFrameworkCore.Xugu`
 
 ---
@@ -50,7 +50,7 @@ dotnet pack src/EFCore.Xugu/EFCore.Xugu.csproj -c Release `
   -p:UseLocalXuguDriver=false
 ```
 
-Output: `artifacts/Microsoft.EntityFrameworkCore.Xugu.3.0.0.nupkg` (+ `.snupkg` if symbols enabled).
+Output: `artifacts/Microsoft.EntityFrameworkCore.Xugu.3.0.1.nupkg` (+ `.snupkg` if symbols enabled).
 
 ---
 
@@ -88,11 +88,22 @@ dotnet nuget push artifacts/Microsoft.EntityFrameworkCore.Xugu.3.0.0.nupkg `
 Tags are created on the **development** branch after Release Gate passes:
 
 ```powershell
-git tag -a v3.0.0 -m "Microsoft.EntityFrameworkCore.Xugu 3.0.0 GA"
-git push origin v3.0.0
+git tag -a v3.0.1 -m "Microsoft.EntityFrameworkCore.Xugu 3.0.1"
+git push origin v3.0.1
 ```
 
 Create or refresh release branch from tag:
+
+```powershell
+harness/scripts/prepare-release-branch.ps1 -Version 3.0.1
+```
+
+Historical GA tag example:
+
+```powershell
+git tag -a v3.0.0 -m "Microsoft.EntityFrameworkCore.Xugu 3.0.0 GA"
+git push origin v3.0.0
+```
 
 ```powershell
 harness/scripts/prepare-release-branch.ps1 -Version 3.0.0
@@ -105,7 +116,7 @@ harness/scripts/prepare-release-branch.ps1 -Version 3.0.0
 ### Internal GitLab (full monorepo branch)
 
 ```powershell
-git push -u origin release/3.0.0
+git push -u origin release/3.0.1
 ```
 
 ### Public GitHub / GitLab (minimal mirror — **recommended**)
@@ -113,11 +124,11 @@ git push -u origin release/3.0.0
 Do **not** push the full monorepo. Use the mirror script:
 
 ```powershell
-harness/scripts/prepare-release-branch.ps1 -Mirror -OutputDir ..\xuguefcore-public
+harness/scripts/prepare-release-branch.ps1 -Version 3.0.1 -Mirror -OutputDir ..\xuguefcore-public
 cd ..\xuguefcore-public
-git remote add public https://github.com/YOUR_ORG/EntityFrameworkCore.Xugu.git
+git remote add public https://github.com/payAgain/EntityFrameworkCore.Xugu.git
 git push -u public HEAD:main
-git push public v3.0.0
+git push public v3.0.1
 ```
 
 See [docs/RELEASE-BRANCH-STRATEGY.md](docs/RELEASE-BRANCH-STRATEGY.md) for path include/exclude tables.
@@ -134,7 +145,18 @@ To publish from CI, add feed secrets and extend workflow (not enabled by default
 
 ---
 
-## 7. Release checklist (3.0.0 GA — completed)
+## 7. Release checklist
+
+### 3.0.1 (2026-07-14) — completed
+
+- [x] `Version.props` → `3.0.1`
+- [x] `docs/CHANGELOG.md` — 3.0.1 section
+- [x] Runtime gap Provider fixes + `RuntimeGap` gate
+- [x] `git tag v3.0.1`
+- [x] Public GitHub mirror `payAgain/EntityFrameworkCore.Xugu` (`main` + `v3.0.1`)
+- [ ] NuGet push to public feed (deferred — feed configuration)
+
+### 3.0.0 GA — completed
 
 - [x] `Version.props` → `3.0.0`
 - [x] `docs/CHANGELOG.md` — 3.0.0 section
@@ -144,7 +166,7 @@ To publish from CI, add feed secrets and extend workflow (not enabled by default
 - [x] `git tag v3.0.0`
 - [x] `release/3.0.0` branch + `RELEASE.md` + `LICENSE`
 - [ ] NuGet push to public feed (deferred — feed configuration)
-- [ ] Public GitHub mirror (deferred — org/repo URL)
+- [x] Public GitHub mirror (`payAgain/EntityFrameworkCore.Xugu`)
 
 ---
 

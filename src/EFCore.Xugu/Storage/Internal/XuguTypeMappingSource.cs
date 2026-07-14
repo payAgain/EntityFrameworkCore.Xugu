@@ -152,8 +152,38 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
 
     private RelationalTypeMapping? FindRawMapping(RelationalTypeMappingInfo mappingInfo)
     {
-        var clrType = mappingInfo.ClrType;
+        var clrType = mappingInfo.ClrType is null
+            ? null
+            : Nullable.GetUnderlyingType(mappingInfo.ClrType) ?? mappingInfo.ClrType;
         var storeTypeName = mappingInfo.StoreTypeName;
+
+        if (storeTypeName is not null
+            && HasWithTimeZone(storeTypeName))
+        {
+            return (clrType is null || clrType == typeof(DateTimeOffset))
+                && IsDateTimeOffsetStoreType(storeTypeName)
+                    ? new XuguDateTimeOffsetTypeMapping(storeTypeName)
+                    : null;
+        }
+
+        if ((clrType is null || clrType == typeof(TimeOnly))
+            && storeTypeName is not null
+            && IsTimeOnlyStoreType(storeTypeName))
+        {
+            var explicitTimePrecision = ParsePrecision(storeTypeName) ?? mappingInfo.Precision;
+            return explicitTimePrecision is null || IsValidTimePrecision(explicitTimePrecision.Value)
+                ? new XuguTimeOnlyTypeMapping(storeTypeName, explicitTimePrecision)
+                : null;
+        }
+
+        if (clrType == typeof(TimeOnly)
+            && storeTypeName is null
+            && mappingInfo.Precision is int timePrecision)
+        {
+            return IsValidTimePrecision(timePrecision)
+                ? new XuguTimeOnlyTypeMapping("TIME", timePrecision)
+                : null;
+        }
 
         if (clrType == typeof(decimal)
             && storeTypeName is not null
@@ -244,20 +274,12 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
                 return XuguGuidTypeMapping.Default;
             }
 
-            if (Contains(storeTypeName, "DATE")
-                && !Contains(storeTypeName, "TIME"))
+            if (IsDateOnlyStoreType(storeTypeName))
             {
                 return XuguDateOnlyTypeMapping.Default;
             }
 
-            if (Contains(storeTypeName, "TIME")
-                && !Contains(storeTypeName, "DATE"))
-            {
-                return XuguTimeOnlyTypeMapping.Default;
-            }
-
-            if (Contains(storeTypeName, "DATE")
-                || Contains(storeTypeName, "TIME"))
+            if (IsDateTimeStoreType(storeTypeName))
             {
                 return DateTime;
             }
@@ -268,6 +290,68 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
 
     private static bool Contains(string haystack, string needle)
         => haystack.Contains(needle, StringComparison.OrdinalIgnoreCase);
+
+    private static bool IsTimeOnlyStoreType(string storeTypeName)
+    {
+        var normalized = storeTypeName.Trim();
+        if (normalized.Equals("TIME", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        const string prefix = "TIME(";
+        if (!normalized.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)
+            || normalized[^1] != ')'
+            || !int.TryParse(normalized.AsSpan(prefix.Length, normalized.Length - prefix.Length - 1), out var precision))
+        {
+            return false;
+        }
+
+        return IsValidTimePrecision(precision);
+    }
+
+    private static bool IsValidTimePrecision(int precision)
+        => precision is >= 0 and <= 3;
+
+    private static bool IsDateOnlyStoreType(string storeTypeName)
+        => storeTypeName.Equals("DATE", StringComparison.OrdinalIgnoreCase);
+
+    private static bool IsDateTimeStoreType(string storeTypeName)
+        => IsStoreTypeOrFacetedStoreType(storeTypeName, "DATETIME")
+            || IsStoreTypeOrFacetedStoreType(storeTypeName, "TIMESTAMP");
+
+    private static bool IsDateTimeOffsetStoreType(string storeTypeName)
+        => HasWithTimeZone(storeTypeName)
+            && (StartsWithStoreType(storeTypeName, "DATETIME")
+                || StartsWithStoreType(storeTypeName, "TIMESTAMP"));
+
+    private static bool IsStoreTypeOrFacetedStoreType(string storeTypeName, string baseStoreType)
+        => storeTypeName.Equals(baseStoreType, StringComparison.OrdinalIgnoreCase)
+            || storeTypeName.StartsWith(baseStoreType + "(", StringComparison.OrdinalIgnoreCase);
+
+    private static bool StartsWithStoreType(string storeTypeName, string baseStoreType)
+        => storeTypeName.StartsWith(baseStoreType, StringComparison.OrdinalIgnoreCase)
+            && storeTypeName.Length > baseStoreType.Length
+            && (storeTypeName[baseStoreType.Length] == '('
+                || char.IsWhiteSpace(storeTypeName[baseStoreType.Length]));
+
+    private static bool HasWithTimeZone(string storeTypeName)
+        => storeTypeName.Contains("WITH TIME ZONE", StringComparison.OrdinalIgnoreCase);
+
+    private static int? ParsePrecision(string storeTypeName)
+    {
+        var openParen = storeTypeName.IndexOf('(');
+        if (openParen < 0)
+        {
+            return null;
+        }
+
+        var closeParen = storeTypeName.IndexOf(')', openParen + 1);
+        return closeParen > openParen + 1
+            && int.TryParse(storeTypeName.AsSpan(openParen + 1, closeParen - openParen - 1), out var precision)
+                ? precision
+                : null;
+    }
 
     private static bool TryParseDecimalStoreType(string storeTypeName, out int precision, out int scale)
     {

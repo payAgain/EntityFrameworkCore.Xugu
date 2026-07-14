@@ -13,6 +13,28 @@ Known limitations and deferred features: [LIMITATIONS.md](LIMITATIONS.md).
 
 ---
 
+## [3.0.1] — 2026-07-14 (Post-GA runtime gap patch)
+
+Provider 侧闭环应用审核暴露的 6 个独立运行时缺口（保留官方 `Xuguclient` / `external/csharp-driver` 只读基线，不改驱动）。
+
+### Fixed
+
+- **Count / LongCount / GroupBy Count / 导航 Count** — `CAST(COUNT(…) AS INTEGER|BIGINT)`，规避驱动 `E34412`（高精度→Int32）。
+- **DateDiff\*** — `TIMESTAMPDIFF` 按官方 **BIGINT** 生成，公共 `int` API 末端再转 `INTEGER`。
+- **DateTimeOffset SaveChanges** — string converter + 带偏移字面量；读回兼容驱动 `…+8` / `…+08:00`。
+- **DateOnly / TimeOnly 物化** — Provider string converter；默认 `TIME(3)`；Include DATE 覆盖。
+
+### Added
+
+- **RuntimeGap 门禁** — `RuntimeGapBaselineTests` + `harness/scripts/run-runtime-gap-gate.ps1`（Category=`RuntimeGap`）。
+- **严格实库模式** — `XUGU_REQUIRE_DATABASE=true` 时库不可用即失败（非 Skip）。
+
+### Evidence
+
+- 审核库 RuntimeGap：**native 9/9**、**compat 9/9**（0 skip）。
+
+---
+
 ## [3.0.0] — 2026-07-09 (Phase 12 — Pomelo 完全体 GA)
 
 Phase 12 完成：**首次生产 GA**。Adjusted **110.9%** Pomelo Comparable Parity（分母 **952** / 列测 **1057**）；compat + native 双矩阵 **0 FAIL**；`pomelo-file-map` **194/194** disposition **100%**。

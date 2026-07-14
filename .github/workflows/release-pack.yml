@@ -1,0 +1,56 @@
+name: Release pack
+
+# Standalone pack workflow for public mirrors (no harness dependency).
+# Triggers on version tags; uploads nupkg artifact for manual or feed push.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  Configuration: Release
+
+jobs:
+  pack:
+    name: Pack Microsoft.EntityFrameworkCore.Xugu
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore src/EFCore.Xugu/EFCore.Xugu.csproj
+
+      - name: Build
+        run: dotnet build src/EFCore.Xugu/EFCore.Xugu.csproj -c ${{ env.Configuration }} --no-restore
+
+      - name: Test (no DB)
+        run: dotnet test test/EFCore.Xugu.Tests/EFCore.Xugu.Tests.csproj -c ${{ env.Configuration }} --verbosity minimal
+
+      - name: Pack
+        run: |
+          New-Item -ItemType Directory -Force -Path artifacts | Out-Null
+          dotnet pack src/EFCore.Xugu/EFCore.Xugu.csproj -c ${{ env.Configuration }} `
+            -o artifacts/ `
+            --no-build `
+            -p:UseLocalXuguDriver=false
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkg-${{ github.ref_name }}
+          path: artifacts/*.nupkg
+
+      # Uncomment when feed secrets are configured:
+      # - name: Push to NuGet.org
+      #   if: github.repository_owner == 'YOUR_ORG'
+      #   run: |
+      #     dotnet nuget push artifacts/*.nupkg `
+      #       --source https://api.nuget.org/v3/index.json `
+      #       --api-key ${{ secrets.NUGET_API_KEY }}

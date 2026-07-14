@@ -132,6 +132,70 @@ public class TranslatorSqlTests
     }
 
     [Fact]
+    public void Count_scalar_subquery_generates_INTEGER_CAST()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .Select(row => context.NumericItems.Count(item => item.Id <= row.Id))
+            .ToQueryString();
+
+        AssertSql.Contains("CAST(COUNT(*) AS INTEGER)", sql);
+    }
+
+    [Fact]
+    public void LongCount_scalar_subquery_generates_BIGINT_CAST()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .Select(row => context.NumericItems.LongCount(item => item.Id <= row.Id))
+            .ToQueryString();
+
+        AssertSql.Contains("CAST(COUNT(*) AS BIGINT)", sql);
+    }
+
+    [Fact]
+    public void GroupBy_Count_generates_INTEGER_CAST()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .GroupBy(row => row.Title)
+            .Select(group => new { group.Key, Count = group.Count() })
+            .ToQueryString();
+
+        AssertSql.Contains("CAST(COUNT(*) AS INTEGER)", sql);
+        AssertSql.Contains("GROUP BY", sql);
+    }
+
+    [Fact]
+    public void Navigation_Count_generates_INTEGER_CAST()
+    {
+        using var context = CreateContext();
+
+        var sql = context.Events
+            .Select(row => row.Sessions.Count)
+            .ToQueryString();
+
+        AssertSql.Contains("CAST(COUNT(*) AS INTEGER)", sql);
+    }
+
+    [Fact]
+    public void DateDiffYear_scalar_projection_generates_INTEGER_CAST()
+    {
+        using var context = CreateContext();
+        var end = new DateTime(2024, 7, 1);
+
+        var sql = context.Events
+            .Select(row => XuguDbFunctionsExtensions.DateDiffYear(EF.Functions, row.CreatedAt, end))
+            .ToQueryString();
+
+        AssertSql.Contains("CAST(TIMESTAMPDIFF(YEAR,", sql);
+        AssertSql.Contains("AS INTEGER)", sql);
+    }
+
+    [Fact]
     public void DbFunctions_Like_generates_LIKE()
     {
         using var context = CreateContext();
@@ -693,6 +757,8 @@ public class TranslatorSqlTests
 
         public DbSet<JsonDocumentEntity> JsonDocuments => Set<JsonDocumentEntity>();
 
+        public DbSet<EventSessionEntity> EventSessions => Set<EventSessionEntity>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<EventEntity>(entity =>
@@ -704,10 +770,22 @@ public class TranslatorSqlTests
                 entity.Property(e => e.CreatedAt).HasColumnName("CREATED_AT");
             });
 
+            modelBuilder.Entity<EventSessionEntity>(entity =>
+            {
+                entity.ToTable("EF_TEST_EVENT_SESSIONS");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.EventId).HasColumnName("EVENT_ID");
+                entity.HasOne(e => e.Event)
+                    .WithMany(e => e.Sessions)
+                    .HasForeignKey(e => e.EventId);
+            });
+
             modelBuilder.Entity<NumericEntity>(entity =>
             {
                 entity.ToTable("EF_TEST_NUMERIC");
                 entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("ID");
                 entity.Property(e => e.Label).HasColumnName("LABEL");
             });
 
@@ -764,6 +842,17 @@ public class TranslatorSqlTests
         public string Title { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; }
+
+        public ICollection<EventSessionEntity> Sessions { get; set; } = [];
+    }
+
+    private sealed class EventSessionEntity
+    {
+        public int Id { get; set; }
+
+        public int EventId { get; set; }
+
+        public EventEntity Event { get; set; } = null!;
     }
 
     private sealed class NumericEntity

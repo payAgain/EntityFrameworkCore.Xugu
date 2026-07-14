@@ -1,12 +1,15 @@
 using XuguClient;
 using Xunit;
+using Xunit.Sdk;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 
 public static class XuguTestConnection
 {
+    private const string RequireDatabaseEnvironmentVariable = "XUGU_REQUIRE_DATABASE";
     private static readonly SemaphoreSlim OpenLock = new(1, 1);
     private static readonly object AvailabilityLock = new();
+    private static Func<string, XGConnection> _connectionFactory = static connectionString => new XGConnection(connectionString);
     private static bool? _cachedAvailability;
     private static DateTime _availabilityCheckedAt = DateTime.MinValue;
 
@@ -44,7 +47,12 @@ public static class XuguTestConnection
     }
 
     public static void SkipIfUnavailable(string reason = "XuguDB is not available")
-        => Skip.IfNot(IsAvailable(), reason);
+    {
+        if (!IsAvailable())
+        {
+            FailOrSkip(reason);
+        }
+    }
 
     /// <summary>
     /// Opens a driver connection with short retries for transient driver open errors (E34304/E34305).
@@ -59,15 +67,28 @@ public static class XuguTestConnection
 
             for (var attempt = 1; attempt <= maxAttempts; attempt++)
             {
+                XGConnection? connection = null;
                 try
                 {
-                    var connection = new XGConnection(ConnectionString);
+                    connection = _connectionFactory(ConnectionString);
                     connection.Open();
                     MarkAvailable(true);
                     return connection;
                 }
                 catch (Exception ex)
                 {
+                    if (connection is not null)
+                    {
+                        try
+                        {
+                            connection.Dispose();
+                        }
+                        catch (Exception disposeException)
+                        {
+                            ex.Data["XuguConnectionDisposeException"] = disposeException;
+                        }
+                    }
+
                     last = ex;
                     if (!IsTransientConnectionError(ex) || attempt >= maxAttempts)
                     {
@@ -83,7 +104,7 @@ public static class XuguTestConnection
             // may recover; subsequent tests skip via OpenConnectionOrSkip.
             if (last != null && IsTransientConnectionError(last))
             {
-                Skip.If(true, "XuguDB connection unavailable after transient retries (E34304/E34305)");
+                FailOrSkip("XuguDB connection unavailable after transient retries (E34304/E34305)");
             }
 
             throw last ?? new InvalidOperationException("Failed to open XuguDB connection.");
@@ -159,7 +180,23 @@ public static class XuguTestConnection
         if (IsTransientConnectionError(exception))
         {
             MarkUnavailable();
-            Skip.If(true, "XuguDB connection unavailable (E34304/E34305)");
+            FailOrSkip("XuguDB connection unavailable (E34304/E34305)");
         }
+    }
+
+    private static bool IsDatabaseRequired()
+        => bool.TryParse(
+                Environment.GetEnvironmentVariable(RequireDatabaseEnvironmentVariable)?.Trim(),
+                out var required)
+            && required;
+
+    private static void FailOrSkip(string reason)
+    {
+        if (IsDatabaseRequired())
+        {
+            throw new XunitException($"{reason} ({RequireDatabaseEnvironmentVariable}=true).");
+        }
+
+        Skip.If(true, reason);
     }
 }
