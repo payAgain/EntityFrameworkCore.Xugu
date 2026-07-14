@@ -1,6 +1,6 @@
 # XuguDB EF Core Provider — 快速开始
 
-> 当前版本：**`3.0.0`**（Phase 12 — Pomelo 完全体 GA）  
+> 当前版本：**`3.0.1`**（Phase 12 GA + Post-GA 运行时缺口补丁）  
 > 包名：`Microsoft.EntityFrameworkCore.Xugu`  
 > 目标框架：.NET 9.0
 

@@ -235,8 +235,18 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | `string` | `VARCHAR(n)` / `CHAR(n)` | `datatype/character.md` |
 | `DateTime` | `DATETIME` | `datatype/datetime.md` |
 | `DateOnly` | `DATE` | `datatype/datetime.md` |
-| `TimeOnly` | `TIME` | `datatype/datetime.md` |
-| `DateTimeOffset` | `DATETIME WITH TIME ZONE` / `TIMESTAMP WITH TIME ZONE` | `datatype/datetime.md` |
+| `TimeOnly` | `TIME(3)`（CLR 默认）；显式 `TIME` / `TIME(n)` 精度 `n∈[0,3]` | `datatype/datetime.md` |
+| `DateTimeOffset` | `DATETIME WITH TIME ZONE` / `TIMESTAMP WITH TIME ZONE`（**不**生成未经文档支持的 `DATETIME WITH TIME ZONE(n)` 后缀） | `datatype/datetime.md` |
+
+### ADO / 驱动适配（Post-GA · Provider 侧，2026-07-13）
+
+> 官方驱动 `external/csharp-driver` **只读**；下列规则在 Provider 层闭环，**不**修改驱动。
+
+| 场景 | XuguDB / 驱动事实 | Provider 处理 | 文档 |
+|------|-------------------|---------------|------|
+| `COUNT` → CLR `int`/`long` | 聚合结果常以高精度数值返回；驱动 `GetInt32` 遇高精度抛 `E34412` | `XuguQuerySqlGenerator.VisitSqlFunction`：`CAST(COUNT(…) AS INTEGER\|BIGINT)` | `type_conversion.md`（显式 `CAST`） |
+| `DateDiff*` / `TIMESTAMPDIFF` | 官方返回 **`BIGINT`** | Translator 以 `BIGINT`/`long` 生成 `TIMESTAMPDIFF`，单位换算后 `Convert` → CLR `int`（末端 `CAST … AS INTEGER`） | `timestampdiff.md` §输出结果 |
+| `DateOnly` / `TimeOnly` / `DateTimeOffset` 参数与物化 | 驱动缺完整原生 CLR 绑定；读回多为字符串/`DateTime` | `XuguTemporalValueConverters`：invariant 字符串往返；DTO 字面量含偏移（`yyyy-MM-dd HH:mm:ss[.fff] zzz`）；读回兼容驱动 `…+8` / `…+08:00` | `datatype/datetime.md` |
 | `Guid` | `GUID`（16 字节原生类型） | `datatype/guid.md` |
 | `TimeSpan` | `TIME` | `datatype/datetime.md` |
 | `byte[]` | 见二进制文档 | `datatype/binary.md` |
@@ -291,7 +301,8 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | `double.RadiansToDegrees/DegreesToRadians` | `DEGREES()` / `RADIANS()` | 同左 | QueryTranslators | done |
 | `DateOnly.ToDateTime(time)` | `MAKE_TIMESTAMP(...)` | `ADDTIME(CAST(...), time)` | QueryTranslators | done |
 | `DateOnly.DayNumber` | `TO_DAYS(d) - 366` | 同左 | QueryTranslators | done |
-| `XuguDbFunctionsExtensions.DateDiff*` | `TIMESTAMPDIFF(unit, start, end)` | 同左 | QueryTranslators | done |
+| `XuguDbFunctionsExtensions.DateDiff*` | `TIMESTAMPDIFF`→`BIGINT`，再 `CAST`/`Convert`→`INTEGER`（公共 API 为 `int`） | 同左 | QueryTranslators | done |
+| `Queryable.Count` / `LongCount` | `CAST(COUNT(…) AS INTEGER\|BIGINT)` | 直接 `COUNT` | QueryCore | done |
 | `byte[].Contains(b)` | `LOCATE(b, arr) > 0` | 同左 | QueryTranslators | done |
 | `Enumerable.First(byte[])` | `ASCII(arr)` | 同左 | QueryTranslators | done |
 | `XuguDbFunctionsExtensions.Like` | `LIKE` | 同左 | QueryTranslators | done |
@@ -345,7 +356,9 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 | EF.Functions.Degrees/Radians | `DEGREES()` / `RADIANS()` | 同左 | DbFunctionsExtensionsMethodTranslator |
 | double.RadiansToDegrees | `DEGREES()` | 同左 | MathMethodTranslator |
 | DateTimeOffset.Now | `SYSTIMESTAMP()` | `UTC_TIMESTAMP()` | DateTimeMemberTranslator |
-| DateDiff (DbFunctions) | `TIMESTAMPDIFF(unit, …)` | 同左 | XuguDateDiffFunctionsTranslator |
+| DateDiff (DbFunctions) | `TIMESTAMPDIFF`→`BIGINT`，公共 `int` API 末端 `CAST AS INTEGER` | 同左 | XuguDateDiffFunctionsTranslator |
+| Count / LongCount 物化 | `CAST(COUNT(…) AS INTEGER\|BIGINT)`（规避驱动 E34412） | 直接 `COUNT` | XuguQuerySqlGenerator |
+| DateOnly/TimeOnly/DTO ADO | Provider string converter 适配官方驱动；DTO 字面量带偏移；`+H`/`+HH:mm` 读回 | 原生 CLR 绑定 | XuguTemporalValueConverters |
 | byte[] Contains | `LOCATE(sub, src) > 0` | 同左 | XuguByteArrayMethodTranslator |
 | byte[] First | `ASCII(blob)` | 同左 | XuguByteArrayMethodTranslator |
 | byte[] Length | `LENGTH(blob)` | 同左 | XuguSqlTranslatingExpressionVisitor |
@@ -416,6 +429,7 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-13 | Post-GA 运行时缺口：`CAST(COUNT AS INTEGER\|BIGINT)`；`TIMESTAMPDIFF`→`BIGINT` 再转 `int`；DateOnly/TimeOnly/DTO string converter（`TIME(3)` 默认、DTO 无未文档 precision 后缀、`+H` 读回）；证据 `RuntimeGap` native/compat 9/9 | Provider |
 | 2026-07-09 | Phase 12 W4：NTS/FULLTEXT/Collation/CONVERT_TZ/Scaffolding Baselines formal exclusion（`out-of-scope-approved-12.409.md`） | W4 |
 | 2026-07-06 | Phase 8 W4：FOR UPDATE/位运算 defer 登记；Translator/TypeMapping/Migration/Scaffolding 测试扩展 | Orchestrator |
 | 2026-07-06 | Phase 8 W3：Having/BoolOptimizing/Postprocessor visitors；ExecuteUpdate 多表 LIMIT 守卫；SequentialGuid；MigrationsModelDiffer 索引/Collation 过滤 | Orchestrator |

@@ -33,6 +33,7 @@ if ([string]::IsNullOrWhiteSpace($Sln)) {
 }
 
 $env:XUGU_DIALECT_MODE = "compat"
+$env:XUGU_REQUIRE_DATABASE = "true"
 
 Write-Host "=== Compat Gate (max $MaxAttempts attempts) ===" -ForegroundColor Cyan
 

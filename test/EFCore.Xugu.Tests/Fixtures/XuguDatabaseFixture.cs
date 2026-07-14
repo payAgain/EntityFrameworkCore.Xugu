@@ -13,6 +13,8 @@ public sealed class XuguDatabaseFixture : IDisposable
     public const string BuiltinTypesTableName = "EF_TEST_BUILTIN_TYPES";
     public const string CustomerTableName = "EF_TEST_CUSTOMERS";
     public const string OrderTableName = "EF_TEST_ORDERS";
+    public const string RuntimeGapParentTableName = "EF_TEST_RUNTIME_GAP_PARENTS";
+    public const string RuntimeGapChildTableName = "EF_TEST_RUNTIME_GAP_CHILDREN";
 
     private bool _schemaReady;
 
@@ -36,6 +38,7 @@ public sealed class XuguDatabaseFixture : IDisposable
         EnsureAppointmentTable();
         EnsureBuiltinTypesTable();
         EnsureCustomerOrderTables();
+        EnsureRuntimeGapIncludeTables();
         _schemaReady = true;
     }
 
@@ -278,6 +281,58 @@ public sealed class XuguDatabaseFixture : IDisposable
         ExecuteNonQuery(connection, $"DELETE FROM {CustomerTableName}");
     }
 
+    public void EnsureRuntimeGapIncludeTables()
+    {
+        using var connection = OpenConnection();
+
+        TryExecuteNonQuery(connection, $"DROP TABLE {RuntimeGapChildTableName} CASCADE");
+        TryExecuteNonQuery(connection, $"DROP TABLE {RuntimeGapParentTableName} CASCADE");
+        ExecuteNonQuery(
+            connection,
+            $"""
+            CREATE TABLE {RuntimeGapParentTableName} (
+                ID INTEGER NOT NULL PRIMARY KEY,
+                NAME VARCHAR(200) NOT NULL
+            )
+            """);
+        ExecuteNonQuery(
+            connection,
+            $"""
+            CREATE TABLE {RuntimeGapChildTableName} (
+                ID INTEGER NOT NULL PRIMARY KEY,
+                PARENT_ID INTEGER NOT NULL,
+                EFFECTIVE_DATE DATE NOT NULL
+            )
+            """);
+    }
+
+    public void ClearRuntimeGapIncludeRows()
+    {
+        EnsureSchemaReady();
+        using var connection = OpenConnection();
+        ExecuteNonQuery(connection, $"DELETE FROM {RuntimeGapChildTableName}");
+        ExecuteNonQuery(connection, $"DELETE FROM {RuntimeGapParentTableName}");
+    }
+
+    public void SeedRuntimeGapIncludeRows(
+        int parentId,
+        string parentName,
+        int childId,
+        DateOnly effectiveDate)
+    {
+        using var connection = OpenConnection();
+        var escapedParentName = parentName.Replace("'", "''", StringComparison.Ordinal);
+        ExecuteNonQuery(
+            connection,
+            $"INSERT INTO {RuntimeGapParentTableName} (ID, NAME) VALUES ({parentId}, '{escapedParentName}')");
+        ExecuteNonQuery(
+            connection,
+            $"""
+            INSERT INTO {RuntimeGapChildTableName} (ID, PARENT_ID, EFFECTIVE_DATE)
+            VALUES ({childId}, {parentId}, DATE '{effectiveDate:yyyy-MM-dd}')
+            """);
+    }
+
     public int InsertCustomer(string name, string city)
     {
         using var connection = OpenConnection();
@@ -414,6 +469,8 @@ public sealed class XuguDatabaseFixture : IDisposable
             TryExecuteNonQuery(connection, $"DROP TABLE {BuiltinTypesTableName} CASCADE");
             TryExecuteNonQuery(connection, $"DROP TABLE {OrderTableName} CASCADE");
             TryExecuteNonQuery(connection, $"DROP TABLE {CustomerTableName} CASCADE");
+            TryExecuteNonQuery(connection, $"DROP TABLE {RuntimeGapChildTableName} CASCADE");
+            TryExecuteNonQuery(connection, $"DROP TABLE {RuntimeGapParentTableName} CASCADE");
             TryExecuteNonQuery(connection, "DROP TABLE EF_MIG_TEST_ITEMS CASCADE");
             TryExecuteNonQuery(connection, "DROP TABLE EF_MIG_IDX_EDGE CASCADE");
             TryExecuteNonQuery(connection, "DROP TABLE EF_MIG_IDX_EDGE_CHILD CASCADE");

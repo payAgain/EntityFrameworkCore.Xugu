@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
@@ -10,7 +9,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 internal static class XuguSpecificationFixtureHelper
 {
     public static void SkipIfDatabaseUnavailable()
-        => Skip.IfNot(XuguTestConnection.IsAvailable(), "XuguDB is not available");
+        => XuguTestConnection.SkipIfUnavailable();
 
     public static IServiceCollection AddXuguModelCacheKey(IServiceCollection services, string storeName)
         => services.AddSingleton<IModelCacheKeyFactory>(new XuguSpecModelCacheKeyFactory(storeName));

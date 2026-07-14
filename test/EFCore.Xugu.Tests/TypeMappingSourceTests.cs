@@ -1,9 +1,11 @@
+using System.Data;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Xugu.Storage.Internal;
 using Microsoft.Extensions.DependencyInjection;
+using XuguClient;
 using Xunit;
 using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 
@@ -54,7 +56,7 @@ public class TypeMappingSourceTests
     [InlineData(typeof(string), "VARCHAR(255)", typeof(XuguStringTypeMapping))]
     [InlineData(typeof(byte[]), "BLOB", typeof(XuguByteArrayTypeMapping))]
     [InlineData(typeof(DateOnly), "DATE", typeof(XuguDateOnlyTypeMapping))]
-    [InlineData(typeof(TimeOnly), "TIME", typeof(XuguTimeOnlyTypeMapping))]
+    [InlineData(typeof(TimeOnly), "TIME(3)", typeof(XuguTimeOnlyTypeMapping))]
     [InlineData(typeof(DateTimeOffset), "DATETIME WITH TIME ZONE", typeof(XuguDateTimeOffsetTypeMapping))]
     public void FindMapping_uses_xugu_specific_clr_mappings(Type clrType, string expectedStoreType, Type expectedMappingType)
     {
@@ -164,6 +166,203 @@ public class TypeMappingSourceTests
         var guid = Guid.Parse("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
 
         Assert.Equal($"'{guid:N}'", mapping.GenerateSqlLiteral(guid));
+    }
+
+    [Fact]
+    public void DateOnly_mapping_converts_and_binds_canonical_string()
+    {
+        using var context = CreateContext();
+        var source = context.GetInfrastructure().GetRequiredService<IRelationalTypeMappingSource>();
+        var mapping = Assert.IsType<XuguDateOnlyTypeMapping>(source.FindMapping(typeof(DateOnly)));
+        var value = new DateOnly(2026, 7, 13);
+
+        Assert.Equal(typeof(string), mapping.Converter?.ProviderClrType);
+        Assert.Equal("2026-07-13", mapping.Converter?.ConvertToProvider(value));
+        Assert.Equal(value, mapping.Converter?.ConvertFromProvider(" 2026-07-13 "));
+        Assert.Equal("'2026-07-13'", mapping.GenerateSqlLiteral(value));
+
+        using var command = new XGCommand();
+        var parameter = mapping.CreateParameter(command, "p", value);
+
+        Assert.Equal(DbType.Date, parameter.DbType);
+        Assert.Equal("2026-07-13", Assert.IsType<string>(parameter.Value));
+    }
+
+    [Fact]
+    public void TimeOnly_mapping_converts_and_binds_canonical_string_with_optional_milliseconds()
+    {
+        using var context = CreateContext();
+        var source = context.GetInfrastructure().GetRequiredService<IRelationalTypeMappingSource>();
+        var mapping = Assert.IsType<XuguTimeOnlyTypeMapping>(source.FindMapping(typeof(TimeOnly)));
+        var wholeSecond = new TimeOnly(10, 11, 12);
+        var withMilliseconds = new TimeOnly(10, 11, 12, 345);
+
+        Assert.Equal("TIME(3)", mapping.StoreType);
+        Assert.Equal(typeof(string), mapping.Converter?.ProviderClrType);
+        Assert.Equal("10:11:12", mapping.Converter?.ConvertToProvider(wholeSecond));
+        Assert.Equal("10:11:12.345", mapping.Converter?.ConvertToProvider(withMilliseconds));
+        Assert.Equal(withMilliseconds, mapping.Converter?.ConvertFromProvider(" 10:11:12.345 "));
+        Assert.Equal("'10:11:12'", mapping.GenerateSqlLiteral(wholeSecond));
+        Assert.Equal("'10:11:12.345'", mapping.GenerateSqlLiteral(withMilliseconds));
+
+        using var command = new XGCommand();
+        var parameter = mapping.CreateParameter(command, "p", withMilliseconds);
+
+        Assert.Equal(DbType.Time, parameter.DbType);
+        Assert.Equal("10:11:12.345", Assert.IsType<string>(parameter.Value));
+    }
+
+    [Fact]
+    public void DateTimeOffset_mapping_preserves_non_zero_offset_as_string()
+    {
+        using var context = CreateContext();
+        var source = context.GetInfrastructure().GetRequiredService<IRelationalTypeMappingSource>();
+        var mapping = Assert.IsType<XuguDateTimeOffsetTypeMapping>(source.FindMapping(typeof(DateTimeOffset)));
+        var value = new DateTimeOffset(2026, 7, 13, 10, 11, 12, 345, TimeSpan.FromHours(8));
+
+        Assert.Equal(typeof(string), mapping.Converter?.ProviderClrType);
+        Assert.Equal("2026-07-13 10:11:12.345 +08:00", mapping.Converter?.ConvertToProvider(value));
+        Assert.Equal(value, mapping.Converter?.ConvertFromProvider(" 2026-07-13 10:11:12.345   +08:00 "));
+        Assert.Equal("'2026-07-13 10:11:12.345 +08:00'", mapping.GenerateSqlLiteral(value));
+
+        using var command = new XGCommand();
+        var parameter = mapping.CreateParameter(command, "p", value);
+
+        Assert.Equal(DbType.AnsiString, parameter.DbType);
+        Assert.Equal("2026-07-13 10:11:12.345 +08:00", Assert.IsType<string>(parameter.Value));
+    }
+
+    [Fact]
+    public void DateTimeOffset_converter_parses_xugu_single_digit_hour_offsets()
+    {
+        var converter = XuguDateTimeOffsetTypeMapping.Default.Converter;
+
+        Assert.Equal(
+            new DateTimeOffset(2024, 6, 15, 10, 30, 0, TimeSpan.FromHours(8)),
+            converter?.ConvertFromProvider("2024-06-15 10:30:00+8"));
+        Assert.Equal(
+            new DateTimeOffset(2024, 7, 1, 10, 20, 30, 125, TimeSpan.FromHours(-8)),
+            converter?.ConvertFromProvider("2024-07-01 10:20:30.125-8"));
+    }
+
+    [Fact]
+    public void Temporal_mapping_clones_keep_string_converter()
+    {
+        var date = XuguDateOnlyTypeMapping.Default.WithStoreTypeAndSize("DATE", null);
+        var time = XuguTimeOnlyTypeMapping.Default.WithPrecisionAndScale(3, null);
+        var dateTimeOffset = XuguDateTimeOffsetTypeMapping.Default.WithPrecisionAndScale(3, null);
+
+        Assert.Equal(typeof(string), date.Converter?.ProviderClrType);
+        Assert.Equal(typeof(string), time.Converter?.ProviderClrType);
+        Assert.Equal(typeof(string), dateTimeOffset.Converter?.ProviderClrType);
+        Assert.Equal("TIME(3)", time.StoreType);
+        Assert.Equal("DATETIME WITH TIME ZONE", dateTimeOffset.StoreType);
+        Assert.Equal("10:11:12.345", time.Converter?.ConvertToProvider(new TimeOnly(10, 11, 12, 345)));
+        Assert.Equal(
+            "2026-07-13 10:11:12.345 +08:00",
+            dateTimeOffset.Converter?.ConvertToProvider(
+                new DateTimeOffset(2026, 7, 13, 10, 11, 12, 345, TimeSpan.FromHours(8))));
+        Assert.Equal(
+            "'2026-07-13 10:11:12.345 +08:00'",
+            dateTimeOffset.GenerateSqlLiteral(
+                new DateTimeOffset(2026, 7, 13, 10, 11, 12, 345, TimeSpan.FromHours(8))));
+    }
+
+    [Fact]
+    public void Explicit_TimeOnly_store_type_keeps_declared_precision()
+    {
+        using var context = CreateContext();
+        var source = context.GetInfrastructure().GetRequiredService<IRelationalTypeMappingSource>();
+
+        var time = source.FindMapping(typeof(TimeOnly), "TIME");
+        var timeZero = source.FindMapping(typeof(TimeOnly), "TIME(0)");
+        var explicitTimeOne = source.FindMapping(typeof(TimeOnly), "TIME(1)", precision: 2);
+
+        Assert.NotNull(time);
+        Assert.NotNull(timeZero);
+        Assert.NotNull(explicitTimeOne);
+        Assert.Equal("TIME", time.StoreType);
+        Assert.Null(time.Precision);
+        Assert.Equal("TIME(0)", timeZero.StoreType);
+        Assert.Equal(0, timeZero.Precision);
+        Assert.Equal("TIME(1)", explicitTimeOne.StoreType);
+        Assert.Equal(1, explicitTimeOne.Precision);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void TimeOnly_mapping_applies_precision_facet(int precision)
+    {
+        using var context = CreateContext();
+        var source = context.GetInfrastructure().GetRequiredService<IRelationalTypeMappingSource>();
+
+        var mapping = source.FindMapping(typeof(TimeOnly), null, precision: precision);
+
+        Assert.NotNull(mapping);
+        Assert.Equal($"TIME({precision})", mapping.StoreType);
+        Assert.Equal(precision, mapping.Precision);
+        Assert.Equal(typeof(string), mapping.Converter?.ProviderClrType);
+    }
+
+    [Fact]
+    public void TimeOnly_mapping_rejects_precision_above_database_limit()
+    {
+        using var context = CreateContext();
+        var source = context.GetInfrastructure().GetRequiredService<IRelationalTypeMappingSource>();
+
+        var mapping = source.FindMapping(typeof(TimeOnly), null, precision: 4);
+
+        Assert.IsNotType<XuguTimeOnlyTypeMapping>(mapping);
+    }
+
+    [Theory]
+    [InlineData("DATETIME WITH TIME ZONE")]
+    [InlineData("TIMESTAMP(3) WITH TIME ZONE")]
+    public void DateTime_with_time_zone_store_types_map_to_DateTimeOffset(string storeType)
+    {
+        using var context = CreateContext();
+        var source = context.GetInfrastructure().GetRequiredService<IRelationalTypeMappingSource>();
+
+        var mapping = source.FindMapping(storeType);
+
+        Assert.NotNull(mapping);
+        Assert.IsType<XuguDateTimeOffsetTypeMapping>(mapping);
+        Assert.Equal(typeof(DateTimeOffset), mapping.ClrType);
+        Assert.Equal(storeType, mapping.StoreType);
+    }
+
+    [Fact]
+    public void TimeOnly_fuzzy_matching_rejects_time_zone_and_unrelated_names()
+    {
+        using var context = CreateContext();
+        var source = context.GetInfrastructure().GetRequiredService<IRelationalTypeMappingSource>();
+
+        Assert.Null(source.FindMapping("TIME WITH TIME ZONE"));
+        Assert.IsNotType<XuguTimeOnlyTypeMapping>(
+            source.FindMapping(typeof(TimeOnly), "TIME WITH TIME ZONE"));
+        Assert.Null(source.FindMapping("RUNTIME"));
+        Assert.Null(source.FindMapping("TIME(3) TRAILING"));
+        Assert.Null(source.FindMapping("TIME(4)"));
+    }
+
+    [Fact]
+    public void Temporal_converters_use_optional_fixed_three_digit_fraction_and_parse_whole_seconds()
+    {
+        var time = XuguTimeOnlyTypeMapping.Default;
+        var dateTimeOffset = XuguDateTimeOffsetTypeMapping.Default;
+        var timeValue = new TimeOnly(10, 11, 12, 120);
+        var dateTimeOffsetValue = new DateTimeOffset(2026, 7, 13, 10, 11, 12, 120, TimeSpan.FromHours(8));
+
+        Assert.Equal("10:11:12.120", time.Converter?.ConvertToProvider(timeValue));
+        Assert.Equal(
+            "2026-07-13 10:11:12.120 +08:00",
+            dateTimeOffset.Converter?.ConvertToProvider(dateTimeOffsetValue));
+        Assert.Equal(new TimeOnly(10, 11, 12), time.Converter?.ConvertFromProvider(" 10:11:12 "));
+        Assert.Equal(
+            new DateTimeOffset(2026, 7, 13, 10, 11, 12, TimeSpan.FromHours(8)),
+            dateTimeOffset.Converter?.ConvertFromProvider(" 2026-07-13 10:11:12   +08:00 "));
     }
 
     private static DbContext CreateContext()

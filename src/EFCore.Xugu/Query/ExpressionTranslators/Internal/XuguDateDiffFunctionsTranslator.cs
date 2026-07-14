@@ -126,31 +126,36 @@ public class XuguDateDiffFunctionsTranslator : IMethodCallTranslator
             ? "MICROSECOND"
             : datePart;
 
-        var timeStampDiffExpression = _sqlExpressionFactory.NullableFunction(
+        var longTypeMapping = _sqlExpressionFactory.FindMapping(typeof(long), "BIGINT");
+        var intTypeMapping = _sqlExpressionFactory.FindMapping(typeof(int), "INTEGER");
+
+        SqlExpression result = _sqlExpressionFactory.NullableFunction(
             "TIMESTAMPDIFF",
             [
                 _sqlExpressionFactory.Fragment(actualDatePart),
                 startDate,
                 endDate
             ],
-            typeof(int),
-            typeMapping: null,
+            typeof(long),
+            longTypeMapping,
             onlyNullWhenAnyNullPropagatingArgumentIsNull: true,
             argumentsPropagateNullability: [false, true, true]);
 
-        return datePart switch
+        result = datePart switch
         {
             "MILLISECOND" => _sqlExpressionFactory.Divide(
-                timeStampDiffExpression,
-                _sqlExpressionFactory.Constant(1_000)),
+                result,
+                _sqlExpressionFactory.Constant(1_000L, longTypeMapping)),
             "TICK" => _sqlExpressionFactory.Multiply(
-                timeStampDiffExpression,
-                _sqlExpressionFactory.Constant(10)),
+                result,
+                _sqlExpressionFactory.Constant(10L, longTypeMapping)),
             "NANOSECOND" => _sqlExpressionFactory.Multiply(
-                timeStampDiffExpression,
-                _sqlExpressionFactory.Constant(1_000)),
-            _ => timeStampDiffExpression
+                result,
+                _sqlExpressionFactory.Constant(1_000L, longTypeMapping)),
+            _ => result
         };
+
+        return _sqlExpressionFactory.Convert(result, typeof(int), intTypeMapping);
     }
 
     private static MethodInfo GetDateDiffMethod(string name, Type startType, Type endType)

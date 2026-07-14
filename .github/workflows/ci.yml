@@ -109,6 +109,7 @@ jobs:
           XUGU_CONNECTION_STRING: ${{ secrets.XUGU_CONNECTION_STRING }}
           XUGU_NATIVE_DLL_PATH: ${{ secrets.XUGU_NATIVE_DLL_PATH }}
           XUGU_DIALECT_MODE: native
+          XUGU_REQUIRE_DATABASE: "true"
         run: |
           dotnet test test/EFCore.Xugu.Tests -c Release --no-build --filter "Category=NativeDialect" --verbosity minimal
 

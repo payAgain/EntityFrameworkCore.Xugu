@@ -12,10 +12,11 @@ public class XuguDateTimeOffsetTypeMapping : DateTimeOffsetTypeMapping
             new RelationalTypeMappingParameters(
                 new CoreTypeMappingParameters(
                     typeof(DateTimeOffset),
+                    converter: XuguTemporalValueConverters.DateTimeOffsetToString,
                     jsonValueReaderWriter: JsonDateTimeOffsetReaderWriter.Instance),
                 storeType,
-                StoreTypePostfix.Precision,
-                System.Data.DbType.DateTimeOffset,
+                StoreTypePostfix.None,
+                System.Data.DbType.AnsiString,
                 precision: precision))
     {
     }
@@ -28,15 +29,6 @@ public class XuguDateTimeOffsetTypeMapping : DateTimeOffsetTypeMapping
     protected override RelationalTypeMapping Clone(RelationalTypeMappingParameters parameters)
         => new XuguDateTimeOffsetTypeMapping(parameters);
 
-    protected override string SqlLiteralFormatString
-        => $"'{{0:{GetFormatString()}}}'";
-
-    private string GetFormatString()
-    {
-        var validPrecision = Math.Min(Math.Max(Parameters.Precision.GetValueOrDefault(), 0), 6);
-        var precisionFormat = validPrecision > 0
-            ? @"." + new string('F', validPrecision)
-            : null;
-        return @"yyyy-MM-dd HH\:mm\:ss" + precisionFormat;
-    }
+    protected override string GenerateNonNullSqlLiteral(object value)
+        => $"'{((string)value).Replace("'", "''")}'";
 }

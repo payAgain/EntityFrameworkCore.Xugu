@@ -112,6 +112,22 @@ public class XuguQuerySqlGenerator : QuerySqlGenerator
         return typeMapping.StoreType;
     }
 
+    protected override Expression VisitSqlFunction(SqlFunctionExpression sqlFunctionExpression)
+    {
+        if (sqlFunctionExpression.Name.Equals("COUNT", StringComparison.OrdinalIgnoreCase)
+            && sqlFunctionExpression.Type is { } type
+            && (type == typeof(int) || type == typeof(long)))
+        {
+            Sql.Append("CAST(");
+            base.VisitSqlFunction(sqlFunctionExpression);
+            Sql.Append(type == typeof(int) ? " AS INTEGER)" : " AS BIGINT)");
+
+            return sqlFunctionExpression;
+        }
+
+        return base.VisitSqlFunction(sqlFunctionExpression);
+    }
+
     protected override void GenerateLimitOffset(SelectExpression selectExpression)
     {
         if (selectExpression.Limit != null)
