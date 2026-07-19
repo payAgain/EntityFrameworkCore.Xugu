@@ -56,6 +56,18 @@ public static class XuguStrings
     public static string RetryingExecutionStrategyNotSupported
         => GetString(nameof(RetryingExecutionStrategyNotSupported));
 
+    public static string XgciHintE34412
+        => GetString(nameof(XgciHintE34412));
+
+    public static string XgciHintE19230
+        => GetString(nameof(XgciHintE19230));
+
+    public static string XgciHintE10049
+        => GetString(nameof(XgciHintE10049));
+
+    public static string OptimisticConcurrencyExceptionNotSupported
+        => GetString(nameof(OptimisticConcurrencyExceptionNotSupported));
+
     private static string GetString(string name)
         => ResourceManager.GetString(name, CultureInfo.CurrentUICulture)
            ?? throw new InvalidOperationException($"Missing resource string '{name}'.");

@@ -1,18 +1,31 @@
 # XuguDB EF Core Provider — Backlog
 
-> Orchestrator 维护。已映射至 Phase 7–11。详见 `harness/tasks/ROADMAP.md`。  
-> **最后同步**：2026-07-09（Phase 12 **done** — **3.0.0 GA**；`v3.0.0` tag）  
+> Orchestrator 维护。详见 `harness/tasks/ROADMAP.md`。  
+> **最后同步**：2026-07-19（**Phase 13 planned** — 生产硬化；Phase 12 **done** / `v3.0.0`+`v3.0.1`）  
+> **当前活跃任务**：`harness/tasks/phase-13-production-hardening/TASKS.md`  
 > **方言立场**：Pomelo/MySQL = **架构参考 only**；XuguDB 官方文档 = **SQL 权威**；非 MySQL 迁移目标。
 
-## Phase 12 映射（**当前活跃 — 目标 v3.0.0 GA**）
+## Phase 13 映射（**当前活跃**）
+
+| 主题 | Wave | 任务 ID | 版本 | 状态 |
+|------|------|---------|------|------|
+| 应用矩阵 + 驱动契约 + 文档 | W1 | **13.101–13.112** | **3.0.2** | **done** |
+| 生产缺口 + NuGet | W2 | **13.201–13.210** | **3.1.0** | **done**（push defer） |
+| 业务 SQL 频度清单 | W3 | **13.301–13.308** | **3.2.0** | **done** |
+| ORACLE/PG compat API | W4 | **13.401–13.405** | **3.3.0** | **done** |
+| Vendor ROW_COUNT / Linux / 驱动 | — | **V-01–V-03** | — | **open** |
+
+Post-GA（12.PG*）→ Phase 13 映射见 `phase-13-production-hardening/TASKS.md` §映射表。
+
+## Phase 12 映射（**done** — `v3.0.0` GA；补丁 `v3.0.1`）
 
 | 原 ID / 主题 | Phase 12 Wave | 新任务 ID | 状态 |
 |-------------|--------------|-----------|------|
-| Test parity（原 W11） | W1–W2 | **12.101–12.109**, **12.201–205** | **planned**（802–805 head start ✅） |
-| Feature defer 清零（原 W12） | W3 | **12.301–12.315** | **planned** |
+| Test parity（原 W11） | W1–W2 | **12.101–12.109**, **12.201–205** | **done** |
+| Feature defer 清零（原 W12） | W3 | **12.301–12.315** | **done** |
 | ROW_COUNT + Linux RID（原 W13） | W5 | **12.501–12.510** | **done**（signed-off PLAT-01/02） |
 | Skip 模块 resolution（原 W14） | W4 | **12.401–12.415** | **done** |
-| GA Gate + v3.0.0（原 W15） | W6 | **12.601–12.610** | **planned** |
+| GA Gate + v3.0.0（原 W15） | W6 | **12.601–12.610** | **done** |
 
 ## Phase 11 映射（**done** — W1–W10；2.1.0 GA-preview）
 

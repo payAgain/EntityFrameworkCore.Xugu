@@ -1,23 +1,34 @@
 # Phase 9–12 测试对等矩阵
 
-> **状态**：Phase 12 W4 **done** — Adjusted 分母 **952**；OUT OF SCOPE **approved** @ 2026-07-09  
+> **状态**：Phase 12 **done** + 3.0.1 patch；**3.0.x 冻结** compat **1057** / native **1056** / Adjusted **111.0%**（1057÷952）  
 > **冻结文档**：`comparable-set-freeze-12.101.md`  
-> **分母**：Pomelo `EFCore.MySql.FunctionalTests` ~**1050** 测试方法（估算）
+> **分母**：Pomelo `EFCore.MySql.FunctionalTests` ~**1050** → Adjusted **952**（剔除 OUT OF SCOPE）  
+> **Note（12.PG6）**：W6 早期表曾写 compat **1056**；GA 终态含 platform probe 为 **1057**（+1）。
 
-## Phase 12 W1 冻结基线（2026-07-09）
+## Phase 12 GA 冻结基线（终态）
 
-| 指标 | 当前 | Adjusted 目标 | 状态 |
+| 指标 | 数值 | 状态 |
+|------|------|------|
+| compat `--list-tests` | **1057** | **frozen** |
+| native `Category=NativeDialect` | **1056** | **done** |
+| Adjusted 分母 | **952** | **done** |
+| Adjusted 覆盖率 | **111.0%** | **done** |
+| 显式 `Skip=`（open defer） | evidence-backed / signed-off | **done** |
+
+## Phase 12 W1 冻结基线（2026-07-09 历史）
+
+| 指标 | 当时 | Adjusted 目标 | 状态 |
 |------|------|--------------|------|
-| compat `--list-tests` | **1056** | frozen | **done** |
+| compat `--list-tests` | **1056**（后 → **1057**） | frozen | **done** |
 | native `Category=NativeDialect` | **1056** | ≥845（80%） | **done** |
 | Pomelo 可比类 disposition | **~155** | 100% 分类 | **done** |
 | Excluded（OUT OF SCOPE） | **98** | formal evidence | **done** |
 | Adjusted 分母 | **952** | 12.411 recalc | **done** |
-| Adjusted 覆盖率 | **110.9%** | ≥100% | **done** |
+| Adjusted 覆盖率 | **110.9%**→**111.0%** | ≥100% | **done** |
 | 显式 `Skip=`（open defer） | **0** | evidence-backed | **done** |
-| compat 3× CI | **0 FAIL** | 连续 3× | **done** |
+| compat 3× CI | **0 FAIL** | 连续 3× | **done**（13.107 复验） |
 
-> **审计命令**：`dotnet test test/EFCore.Xugu.Tests -c Release --list-tests`  
+> **审计命令（拆分后）**：`dotnet test test/EFCore.Xugu.Tests.Integration -c Release --list-tests`  
 > **门禁**：`harness/scripts/run-compat-gate.ps1 -MaxAttempts 3`
 
 ## Phase 11 W11 基线（2026-07-09 W11.802–805 后实测）

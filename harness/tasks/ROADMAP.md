@@ -2,14 +2,12 @@
 
 > Orchestrator 维护。仓库：`E:\Work\xuguefcore`
 
-## 当前 Phase: **12 done**（**v3.0.0 GA** — Phase 12 关闭）
+## 当前 Phase: **13 in-progress → closing**（生产硬化 — Post-GA）
 
-**已发布**：**`3.0.0` GA**（`v3.0.0` tag；Phase 12 **done**）  
-**上一版本**：**`2.1.0` GA-preview**（`v2.1.0` @ 6dc0c72）  
-**测试**：compat **1057**；native **1056**（100% compat）；Adjusted **110.9%**  
-**源码**：**140** .cs implemented；**194/194** disposition ✅  
-**Wave 指针**：Phase 12 **W6 done** — GA Gate + `v3.0.0` tag ✅  
-**Post-GA**：vendor tickets only（PLAT-01 ROW_COUNT / PLAT-02 Linux RID）
+**已发布**：**`3.0.1`**（`v3.0.1`）；**`3.0.0` GA**  
+**工作版本**：`Version.props` → **3.3.0**（含 W1–W4 口径 3.0.2/3.1.0/3.2.0/3.3.0）  
+**Wave 指针**：Phase 13 **W1–W4 实现收口** — 见 `phase-13-production-hardening/`  
+**Post-GA 遗留**：PG2–PG7 文档漂移已清；PG1 compat 3× / PG12 NuGet push 见 TASKS 证据
 
 ---
 
@@ -28,7 +26,9 @@ Pomelo 9.0.0 测试对等 (2.0.0)
         ↓ Phase 11 ✓
 Xugu 原生方言 2.1.0 GA-preview
         ↓ Phase 12 ✓
-Pomelo 完全体 GA 3.0.0
+Pomelo 完全体 GA 3.0.0 (+ 3.0.1 patch)
+        ↓ Phase 13（当前）
+生产硬化 / 应用验收  3.0.2 → 3.1.0 → 3.2.0
 ```
 
 ---
@@ -49,7 +49,8 @@ Pomelo 完全体 GA 3.0.0
 | **9** | **Pomelo 测试对等** | **`done`** | **`2.0.0`** | FunctionalTests M1–M3 达标；676 列测 |
 | **10** | **维护 / 剩余对等** | **`done`** | 2.0.x | Wave 1–6 done；861 列测；10.M3 发布就绪 |
 | **11** | **Xugu 原生方言 GA-preview** | **`done`** | **2.1.0** | W1–W10 ✅；`v2.1.0` tag；GA-preview |
-| **12** | **Pomelo 完全体 GA** | **`done`** | **3.0.0** | W6 GA Gate ✅ |
+| **12** | **Pomelo 完全体 GA** | **`done`** | **3.0.0** | W6 GA Gate ✅；+ **3.0.1** patch |
+| **13** | **生产硬化 / 应用验收** | **`in-progress`** | **3.0.2 → 3.3.0** | W1–W4 产物进仓；pack/tag 公开 push 可 defer |
 
 ### Phase 任务文档
 
@@ -66,6 +67,9 @@ Pomelo 完全体 GA 3.0.0
 | **12** | **`harness/tasks/phase-12-pomelo-full-parity/TASKS.md`** |
 | **12 GA 定义** | **`harness/tasks/phase-12-pomelo-full-parity/PHASE12-GOALS.md`** |
 | **12 打包门禁** | **`harness/tasks/phase-12-pomelo-full-parity/PACKAGING-AND-GA-GATE.md`** |
+| **13** | **`harness/tasks/phase-13-production-hardening/TASKS.md`** |
+| **13 目标** | **`harness/tasks/phase-13-production-hardening/PHASE13-GOALS.md`** |
+| **13 业务 SQL 清单** | **`harness/tasks/phase-13-production-hardening/BUSINESS-SQL-BACKLOG.md`** |
 | 并行指南 | `harness/tasks/PARALLEL-EXECUTION-PLAN.md` |
 
 ---
@@ -432,11 +436,15 @@ Phase 7 生产级 ✓ → Phase 8 功能对等 ✓ → Phase 9 测试对等 ✓ 
          ↓
 Phase 11: Xugu 原生方言 2.1.0 GA-preview ✓
          ↓
-Phase 12: Pomelo 完全体 GA 3.0.0 ✓
+Phase 12: Pomelo 完全体 GA 3.0.0 ✓ (+ 3.0.1 runtime-gap)
+         ↓
+Phase 13: 生产硬化 / 应用验收 → 3.0.2 → 3.1.0 → 3.2.0
 
 ```
 
          ↑
 Pomelo = C# 架构参考 only（非 SQL 方言、非迁移目标）
 
-所有 Agent 必须引用 `E:\BaiduSyncdisk\docs\content\`；Phase 12 打包门禁见 `harness/tasks/phase-12-pomelo-full-parity/PACKAGING-AND-GA-GATE.md`。
+所有 Agent 必须引用 XuguDB 官方文档（见 `harness/references/xugudb-docs-map.md`）；  
+Phase 13 见 `harness/tasks/phase-13-production-hardening/`；  
+Phase 12 打包门禁见 `harness/tasks/phase-12-pomelo-full-parity/PACKAGING-AND-GA-GATE.md`。

@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | **NuGet** | `Microsoft.EntityFrameworkCore.Xugu` |
-| **Version** | **3.0.1**（GA 3.0.0 + runtime gap patch） |
+| **Version** | **9.0.0**（对齐 EF Core **9.0.x**） |
 | **EF Core** | 9.0.x |
 | **.NET** | 9.0 (`net9.0`) |
 | **Driver** | [Xuguclient](https://www.nuget.org/packages/Xuguclient) (ADO.NET) |
@@ -17,9 +17,11 @@
 ## Install
 
 ```powershell
-dotnet add package Microsoft.EntityFrameworkCore.Xugu --version 3.0.1
+dotnet add package Microsoft.EntityFrameworkCore.Xugu --version 9.0.0
 dotnet add package Xuguclient
 ```
+
+> **版本策略**：NuGet / GitHub 版本号的 **主.次** 与目标 EF Core 对齐（当前 EF Core `9.0.x` → 包 `9.0.x`）。详见 [RELEASE.md](RELEASE.md)。
 
 ## Quick start
 
@@ -55,10 +57,11 @@ dotnet pack src/EFCore.Xugu/EFCore.Xugu.csproj -c Release -o artifacts/ -p:UseLo
 
 ```
 ├── src/EFCore.Xugu/          # Provider 实现
-├── test/EFCore.Xugu.Tests/   # 功能与集成测试
-├── samples/EfDesignSample/   # 设计时工具示例
-├── docs/                     # 用户文档
-├── RELEASE.md                # 发布操作说明
+├── test/EFCore.Xugu.Tests.Unit/         # L1 单元测试（无 DB）
+├── test/EFCore.Xugu.Tests.Integration/  # L2 集成测试（需实库）
+├── test/EFCore.Xugu.Tests.Shared/       # 测试共享基建
+├── samples/EfDesignSample/              # 设计时 / L3 样本
+├── docs/                                # 用户文档（含 TESTING.md）
 └── Xugu.EFCore.Xugu.sln
 ```
 

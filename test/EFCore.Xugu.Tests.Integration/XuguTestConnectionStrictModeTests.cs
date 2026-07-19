@@ -23,7 +23,12 @@ public class XuguTestConnectionStrictModeTests
     {
         using var processState = new ProcessStateScope();
         Environment.SetEnvironmentVariable("XUGU_REQUIRE_DATABASE", value);
+        Environment.SetEnvironmentVariable("XUGU_CONNECTION_STRING", UnavailableConnectionString);
         XuguTestConnection.MarkUnavailable();
+        // Fail fast without hammering the real server / holding OpenLock for long retries.
+        // Non-transient failure: fail the ensure immediately without E34304/E34305 backoff storms.
+        processState.UseConnectionFactory(
+            static _ => throw new InvalidOperationException("simulated unavailable for StrictMode"));
 
         var exception = Record.Exception(
             () => XuguTestConnection.SkipIfUnavailable("strict database requirement"));
@@ -109,7 +114,10 @@ public class XuguTestConnectionStrictModeTests
     {
         using var processState = new ProcessStateScope();
         Environment.SetEnvironmentVariable("XUGU_REQUIRE_DATABASE", "true");
+        Environment.SetEnvironmentVariable("XUGU_CONNECTION_STRING", UnavailableConnectionString);
         XuguTestConnection.MarkUnavailable();
+        processState.UseConnectionFactory(
+            static _ => throw new InvalidOperationException("simulated unavailable for StrictMode"));
 
         var exception = Record.Exception(XuguSpecificationFixtureHelper.SkipIfDatabaseUnavailable);
 
@@ -121,12 +129,14 @@ public class XuguTestConnectionStrictModeTests
         private static readonly FieldInfo CachedAvailabilityField = GetField("_cachedAvailability");
         private static readonly FieldInfo AvailabilityCheckedAtField = GetField("_availabilityCheckedAt");
         private static readonly FieldInfo ConnectionFactoryField = GetField("_connectionFactory");
+        private static readonly FieldInfo RequireGatePassedField = GetField("_requireGatePassed");
 
         private readonly string? _requireDatabase = Environment.GetEnvironmentVariable("XUGU_REQUIRE_DATABASE");
         private readonly string? _connectionString = Environment.GetEnvironmentVariable("XUGU_CONNECTION_STRING");
         private readonly object? _cachedAvailability = CachedAvailabilityField.GetValue(null);
         private readonly object? _availabilityCheckedAt = AvailabilityCheckedAtField.GetValue(null);
         private readonly object? _connectionFactory = ConnectionFactoryField.GetValue(null);
+        private readonly object? _requireGatePassed = RequireGatePassedField.GetValue(null);
 
         public void UseConnectionFactory(Func<string, XGConnection> connectionFactory)
             => ConnectionFactoryField.SetValue(null, connectionFactory);
@@ -138,6 +148,7 @@ public class XuguTestConnectionStrictModeTests
             CachedAvailabilityField.SetValue(null, _cachedAvailability);
             AvailabilityCheckedAtField.SetValue(null, _availabilityCheckedAt);
             ConnectionFactoryField.SetValue(null, _connectionFactory);
+            RequireGatePassedField.SetValue(null, _requireGatePassed);
         }
 
         private static FieldInfo GetField(string name)

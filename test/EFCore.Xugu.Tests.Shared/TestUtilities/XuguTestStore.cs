@@ -69,22 +69,39 @@ public sealed class XuguTestStore : IDisposable
     }
 
     public void ExecuteNonQuery(string sql)
+        => ExecuteNonQueries(sql);
+
+    /// <summary>
+    /// Runs multiple statements on a single connection to avoid native open storms on remote servers.
+    /// </summary>
+    public void ExecuteNonQueries(params string[] sqlStatements)
     {
+        if (sqlStatements.Length == 0)
+        {
+            return;
+        }
+
         using var connection = OpenConnection();
-        using var command = connection.CreateCommand();
-        command.CommandText = sql;
-        command.ExecuteNonQuery();
+        foreach (var sql in sqlStatements)
+        {
+            ExecuteNonQuery(connection, sql);
+        }
     }
 
     public void TryExecuteNonQuery(string sql)
+        => TryExecuteNonQueries(sql);
+
+    public void TryExecuteNonQueries(params string[] sqlStatements)
     {
-        try
+        if (sqlStatements.Length == 0)
         {
-            ExecuteNonQuery(sql);
+            return;
         }
-        catch
+
+        using var connection = OpenConnection();
+        foreach (var sql in sqlStatements)
         {
-            // Best-effort for idempotent DDL.
+            TryExecuteNonQuery(connection, sql);
         }
     }
 
@@ -131,13 +148,18 @@ public sealed class XuguTestStore : IDisposable
     private static XGConnection OpenConnection()
         => XuguTestConnection.OpenConnection();
 
+    private static void ExecuteNonQuery(XGConnection connection, string sql)
+    {
+        using var command = connection.CreateCommand();
+        command.CommandText = sql;
+        command.ExecuteNonQuery();
+    }
+
     private static void TryExecuteNonQuery(XGConnection connection, string sql)
     {
         try
         {
-            using var command = connection.CreateCommand();
-            command.CommandText = sql;
-            command.ExecuteNonQuery();
+            ExecuteNonQuery(connection, sql);
         }
         catch
         {

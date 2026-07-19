@@ -109,11 +109,12 @@
 | 兼容模式 | 不需要 | SET compatible_mode TO 'MYSQL' |
 | INSERT 回读 | LAST_INSERT_ID() | 查 insert.md RETURNING 或等效函数 |
 
-## Phase 8 差距审计（2026-07-09 Phase 11 完全体重规划）
+## Phase 8 差距审计（历史）→ Phase 12/13 终态口径
 
-> Xugu **139** .cs vs Pomelo **194** .cs（**~72%**）；compat 列测 **896** / ~1050（**~85%**）；native **177**
+> **历史快照（已过时，勿作当前指标）**：Xugu 139 .cs / 896 列测 / native 177。  
+> **3.0.x 冻结口径（12.PG5 / 13.108）**：disposition **194/194**；物理 `.cs` **~140**（≠ disposition 计数）；compat 列测 **1057**；native **1056**；Adjusted **111.0%**（1057÷952）。物理文件缺口不阻塞 GA（12.PG13）。
 
-### 状态汇总（Phase 12 W3 — 2026-07-09）
+### 状态汇总（Phase 12 W3 — 2026-07-09；口径仍有效）
 
 | 状态 | 数量 | 说明 | 来源 |
 |------|------|------|------|

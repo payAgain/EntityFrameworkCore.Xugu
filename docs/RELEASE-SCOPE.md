@@ -1,8 +1,10 @@
 # Microsoft.EntityFrameworkCore.Xugu — 发布范围声明
 
-> **当前稳定版**：**3.0.1**（`v3.0.1` — Post-GA 运行时缺口补丁）  
-> **上一 GA**：**3.0.0**（Phase 12 — `v3.0.0`）  
-> **更新**：2026-07-14（3.0.1 补丁发布）
+> **当前稳定版**：**9.0.0**（`v9.0.0` — **与 EF Core 9.0.x 版本对齐**）  
+> **上一公开 tag（旧编号）**：**3.0.1**（`v3.0.1`）  
+> **更新**：2026-07-19（版本策略改为 EF 对齐；功能含 Phase 12 GA + Phase 13）
+
+> **版本策略**：包 `主.次` = 目标 EF Core `主.次`（见 `Directory.Packages.props` / `Version.props`）。旧 `3.x` 编号不再用于新公开发布。
 
 > **⚠️ 产品立场（必读）**  
 > 本 Provider 是 **Xugu 原生方言** 产品：SQL 语法、函数、DDL/DML 以 **XuguDB 官方文档** 为唯一权威。  
@@ -35,6 +37,11 @@
 | **2.1.x** | 补丁（按需） | 仅严重缺陷；**不**承载 Phase 12 功能 |
 | **3.0.0** | **GA** ✅ | Phase 12 W1–W6：Adjusted 110.9%；1057 列测；194 disposition 100%；`v3.0.0` tag |
 | **3.0.1** | **补丁** ✅ | COUNT/DateDiff `E34412`、DateTimeOffset、DateOnly/TimeOnly 物化 Provider 闭环；`v3.0.1` |
+| **3.0.2** | Phase 13 W1 | 应用矩阵门禁、ado-driver 契约、三类绿、文档漂移清零 |
+| **3.1.0** | Phase 13 W2 | 并发决策 C、RETURNING 探测、XGCI 提示 |
+| **3.2.0** | Phase 13 W3 | BUSINESS-SQL-BACKLOG frozen |
+| **3.3.0** | Phase 13 W4（归档编号） | `XuguCompatibleMode` 会话 API；**并入公开发布 9.0.0** |
+| **9.0.0** | **EF 对齐公开发布** ✅ | 主.次 = EF Core 9.0；功能 = 3.0.1 + Phase 13；`v9.0.0` |
 
 ---
 

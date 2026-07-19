@@ -29,13 +29,9 @@ if ($LASTEXITCODE -ne 0) { throw "dotnet restore failed" }
 dotnet @buildArgs
 if ($LASTEXITCODE -ne 0) { throw "dotnet build failed" }
 
-Write-Host "Running tests..." -ForegroundColor Yellow
-$testArgs = @("test", (Join-Path $Root "test\EFCore.Xugu.Tests\EFCore.Xugu.Tests.csproj"), "-c", $Configuration, "--no-build")
-if ($NativeDllPath) {
-    $testArgs += @("-p:XuguNativeDllPath=$NativeDllPath")
-}
-dotnet @testArgs
-if ($LASTEXITCODE -ne 0) { throw "dotnet test failed" }
+Write-Host "Running L1 Unit gate..." -ForegroundColor Yellow
+& (Join-Path $PSScriptRoot "run-unit-gate.ps1") -Configuration $Configuration -NoBuild
+if ($LASTEXITCODE -ne 0) { throw "L1 Unit gate failed" }
 
 & (Join-Path $PSScriptRoot "verify.ps1")
 if ($LASTEXITCODE -ne 0) { throw "verify.ps1 failed" }

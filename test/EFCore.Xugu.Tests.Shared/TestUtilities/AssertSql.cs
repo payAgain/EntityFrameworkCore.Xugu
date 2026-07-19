@@ -17,10 +17,33 @@ public static class SqlAssert
             $"Expected SQL to contain '{expectedFragment}'. Actual SQL:{Environment.NewLine}{sql}");
     }
 
+    public static void DoesNotContain(string unexpectedFragment, string sql)
+    {
+        var normalizedSql = Normalize(sql);
+        var normalizedFragment = Normalize(unexpectedFragment);
+
+        Assert.False(
+            normalizedSql.Contains(normalizedFragment, StringComparison.OrdinalIgnoreCase),
+            $"Expected SQL not to contain '{unexpectedFragment}'. Actual SQL:{Environment.NewLine}{sql}");
+    }
+
     public static void Equal(string expected, string actual)
     {
         Assert.Equal(Normalize(expected), Normalize(actual), ignoreCase: true);
     }
+
+    /// <summary>
+    /// Loads a baseline file from the Unit project's <c>Baselines/</c> output directory.
+    /// </summary>
+    public static string LoadBaseline(string relativePathUnderBaselines)
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "Baselines", relativePathUnderBaselines);
+        Assert.True(File.Exists(path), $"Missing baseline file: {path}");
+        return File.ReadAllText(path);
+    }
+
+    public static void EqualBaselineFile(string relativePathUnderBaselines, string actualSql)
+        => Equal(LoadBaseline(relativePathUnderBaselines), actualSql);
 
     public static void AssertBaseline(IReadOnlyList<string> actualStatements, params string[] expected)
     {

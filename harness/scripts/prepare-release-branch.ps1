@@ -33,7 +33,7 @@
   # Produce minimal public tree for git init + push
 #>
 param(
-    [string]$Version = "3.0.0",
+    [string]$Version = "9.0.0",
     [string]$Tag = "",
     [switch]$Mirror,
     [string]$OutputDir = "",

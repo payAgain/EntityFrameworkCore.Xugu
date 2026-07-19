@@ -17,14 +17,24 @@ public class XuguDbContextOptionsBuilder
     public virtual XuguDbContextOptionsBuilder EnableCompatibleModeOnOpen(bool enable = true)
         => WithOption(extension => extension.WithSetCompatibleModeOnOpen(enable));
 
+    /// <summary>
+    ///     Sets session <c>COMPATIBLE_MODE</c> on connection open
+    ///     (<c>NONE</c> / <c>MYSQL</c> / <c>ORACLE</c> / <c>POSTGRESQL</c>).
+    ///     Affects identifier folding only — does <strong>not</strong> implement Oracle/PostgreSQL SQL dialects.
+    ///     Docs: <c>reference/system-configuration-parameter/session-parameter/compatible_mode.md</c>.
+    /// </summary>
+    public virtual XuguDbContextOptionsBuilder EnableCompatibleModeOnOpen(XuguCompatibleMode mode)
+        => WithOption(extension => extension.WithCompatibleModeOnOpen(mode));
+
     public virtual XuguDbContextOptionsBuilder SetCompatibleModeOnOpen(bool setCompatibleModeOnOpen = true)
         => EnableCompatibleModeOnOpen(setCompatibleModeOnOpen);
 
     /// <summary>
-    ///     Disables executing <c>SET compatible_mode TO 'MYSQL'</c> when a connection is opened (native dialect default).
+    ///     Disables executing <c>SET compatible_mode</c> when a connection is opened (native dialect default).
     /// </summary>
     public virtual XuguDbContextOptionsBuilder DisableCompatibleModeOnOpen(bool disable = true)
-        => WithOption(extension => extension.WithSetCompatibleModeOnOpen(!disable));
+        => WithOption(extension => extension.WithCompatibleModeOnOpen(
+            disable ? XuguCompatibleMode.None : XuguCompatibleMode.Mysql));
 
     /// <summary>
     ///     Configures the context to use the default XuguDB <see cref="Storage.IExecutionStrategy" />

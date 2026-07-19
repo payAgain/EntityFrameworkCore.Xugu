@@ -73,8 +73,8 @@
 ## P1 — 发布质量（建议完全体前完成）
 
 - [x] native 矩阵 **1056** = compat 100%（W2）
-- [ ] Specification Tests Phase 3（PACKAGING §3）
-- [ ] JSON 实体 integration-sample 端点
+- [ ] Specification Tests Phase 3（PACKAGING §3） — **defer** → Post-GA **12.PG11**（不纳入 Phase 13 默认）
+- [ ] JSON 实体 integration-sample 端点 — **defer**（链 12.103 / sample 扩展；非 GA 阻塞）
 - [x] parity 仪表板（test-parity-matrix + pomelo-file-map）W4 签字
 
 ---

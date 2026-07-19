@@ -1,32 +1,33 @@
-# 距 GA v3.0.0 差距分析（Phase 12 工作项）
+# 距 GA v3.0.0 差距分析（Phase 12 工作项）— **历史归档**
 
-> **更新**：2026-07-09  
-> **Phase 11**：**done** — `v2.1.0` = **GA-preview** @ 6dc0c72  
-> **剩余工作**：**Phase 12** → **`v3.0.0` GA**  
-> **权威**：`phase-12-pomelo-full-parity/PHASE12-GOALS.md`、`PACKAGING-AND-GA-GATE.md`  
-> **Stub 策略**：`harness/contracts/stub-and-exclusion.contract.md`
+> **状态**：**superseded**（2026-07-19）— Phase 12 **done**；`v3.0.0` GA + `v3.0.1` patch 已发布  
+> **后续工作**：`harness/tasks/phase-13-production-hardening/`（**不要**再按本文 open 项实现）  
+> **Post-GA 映射**：`phase-12-pomelo-full-parity/POST-GA-GAPS.md` → Phase 13 TASKS
 
 ---
 
-## 版本定位
+## 版本定位（终态）
 
 | 版本 | 名称 | 状态 | 含义 |
 |------|------|------|------|
 | **2.1.0** | GA-preview | ✅ tagged | Xugu 原生方言功能首发；Phase 11 **done** |
-| **3.0.0** | **生产 GA** | ❌ Phase 12 | Adjusted 100% Pomelo Comparable Parity |
+| **3.0.0** | **生产 GA** | ✅ tagged | Phase 12 **64/64 done** |
+| **3.0.1** | runtime-gap patch | ✅ tagged | Count/DateDiff/DTO/DateOnly·TimeOnly |
+| **3.0.2+** | Phase 13 | 见 TASKS | 应用矩阵 / 生产硬化 |
 
 ---
 
-## 统计基线（Phase 11 closure）
+## 统计基线（Phase 12 GA 冻结）
 
-| 指标 | 数值 | Phase 12 目标 |
-|------|------|--------------|
-| compat `--list-tests` | **1056** | Comparable Set **100%** + 0 FAIL |
-| native `Category=NativeDialect` | **1056** | **≥845**（compat 80%） | **done**（W2） |
-| Pomelo 分母（literal） | **~1050** | Adjusted recalc 后 100% |
-| Provider `.cs` | **139** / 194 | disposition **100%** |
-| 显式 `Skip=` | **6** | **0** 或 evidence |
-| W11–W15 → Phase 12 | head start 4/64 | **~60** 任务 open |
+| 指标 | 数值 |
+|------|------|
+| compat `--list-tests` | **1057**（含 platform probe） |
+| native `Category=NativeDialect` | **1056** |
+| Adjusted 覆盖率 | **111.0%**（1057÷952） |
+| Provider 物理 `.cs` | **140**（disposition **194/194**；物理文件 ≠ disposition） |
+| Phase 12 任务 | **64/64 done** |
+
+下文为 Phase 11→12 规划时的历史差距表，**仅作证据索引**。
 
 ---
 

@@ -3,16 +3,18 @@ name: CI
 on:
   push:
     branches: ['**']
+    tags: ['v*']
     paths-ignore:
       - '**.md'
-      - 'harness/**'
       - 'docs/**'
   pull_request:
     branches: ['**']
     paths-ignore:
       - '**.md'
-      - 'harness/**'
       - 'docs/**'
+  schedule:
+    # Nightly L2+L3 (UTC)
+    - cron: '0 18 * * *'
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -20,8 +22,8 @@ env:
   Configuration: Release
 
 jobs:
-  build:
-    name: Build & test (no DB required)
+  l1-unit:
+    name: L1 Unit (no DB)
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -42,17 +44,18 @@ jobs:
         shell: pwsh
         run: harness/scripts/verify.ps1
 
-      - name: Test (SkippableFact skips when DB unavailable)
+      - name: L1 Unit gate
         shell: pwsh
-        env:
-          XUGU_DIALECT_MODE: compat
-        run: dotnet test Xugu.EFCore.Xugu.sln -c ${{ env.Configuration }} --no-build --verbosity minimal
+        run: harness/scripts/run-unit-gate.ps1 -Configuration ${{ env.Configuration }} -NoBuild
 
-  integration-compat:
-    name: Integration compat (full suite)
-    runs-on: windows-latest  # PLAT-02: Linux deferred until libxugusql.so (12.508 signed-off)
-    needs: build
-    if: vars.XUGU_CI_INTEGRATION == 'true'
+  l2-native:
+    name: L2 Integration native (full)
+    runs-on: windows-latest
+    needs: l1-unit
+    if: >
+      github.event_name == 'schedule' ||
+      startsWith(github.ref, 'refs/tags/v') ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main')
     steps:
       - uses: actions/checkout@v4
         with:
@@ -67,28 +70,42 @@ jobs:
           dotnet restore Xugu.EFCore.Xugu.sln
           dotnet build Xugu.EFCore.Xugu.sln -c ${{ env.Configuration }} --no-restore
 
-      - name: Full compat gate
+      - name: Require connection secret
+        shell: pwsh
+        run: |
+          if ([string]::IsNullOrWhiteSpace('${{ secrets.XUGU_CONNECTION_STRING }}')) {
+            throw 'XUGU_CONNECTION_STRING secret is required for L2 on main/nightly/tag'
+          }
+
+      - name: L2 native RuntimeGap gate
         shell: pwsh
         env:
           XUGU_CONNECTION_STRING: ${{ secrets.XUGU_CONNECTION_STRING }}
           XUGU_NATIVE_DLL_PATH: ${{ secrets.XUGU_NATIVE_DLL_PATH }}
-          XUGU_DIALECT_MODE: compat
-        run: harness/scripts/run-compat-gate.ps1 -MaxAttempts 3 -CooldownSeconds 20
+        run: harness/scripts/run-runtime-gap-gate.ps1 -Configuration ${{ env.Configuration }} -DialectMode native
 
-      - name: List-tests baseline check
+      - name: L2 native AppCapabilityMatrix gate
         shell: pwsh
         env:
-          XUGU_DIALECT_MODE: compat
-        run: |
-          $count = (dotnet test test/EFCore.Xugu.Tests -c Release --no-build --list-tests | Select-String '^\s+[A-Za-z]' | Measure-Object).Count
-          Write-Host "Listed tests: $count (baseline >= 880)"
-          if ($count -lt 880) { throw "Test count regressed below 880" }
+          XUGU_CONNECTION_STRING: ${{ secrets.XUGU_CONNECTION_STRING }}
+          XUGU_NATIVE_DLL_PATH: ${{ secrets.XUGU_NATIVE_DLL_PATH }}
+        run: harness/scripts/run-app-matrix-gate.ps1 -Configuration ${{ env.Configuration }} -DialectMode native -NoBuild
 
-  integration-native:
-    name: Integration native (core subset)
-    runs-on: windows-latest  # PLAT-02: Linux deferred until libxugusql.so (12.508 signed-off)
-    needs: build
-    if: vars.XUGU_CI_INTEGRATION == 'true'
+      - name: L2 native full gate
+        shell: pwsh
+        env:
+          XUGU_CONNECTION_STRING: ${{ secrets.XUGU_CONNECTION_STRING }}
+          XUGU_NATIVE_DLL_PATH: ${{ secrets.XUGU_NATIVE_DLL_PATH }}
+        run: harness/scripts/run-native-gate.ps1 -Configuration ${{ env.Configuration }} -MaxAttempts 3 -NoBuild
+
+  l2-compat:
+    name: L2 Integration compat (full)
+    runs-on: windows-latest
+    needs: l2-native
+    if: >
+      github.event_name == 'schedule' ||
+      startsWith(github.ref, 'refs/tags/v') ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main')
     steps:
       - uses: actions/checkout@v4
         with:
@@ -103,20 +120,59 @@ jobs:
           dotnet restore Xugu.EFCore.Xugu.sln
           dotnet build Xugu.EFCore.Xugu.sln -c ${{ env.Configuration }} --no-restore
 
-      - name: Native dialect core subset
+      - name: L2 compat RuntimeGap gate
         shell: pwsh
         env:
           XUGU_CONNECTION_STRING: ${{ secrets.XUGU_CONNECTION_STRING }}
           XUGU_NATIVE_DLL_PATH: ${{ secrets.XUGU_NATIVE_DLL_PATH }}
-          XUGU_DIALECT_MODE: native
-          XUGU_REQUIRE_DATABASE: "true"
+        run: harness/scripts/run-runtime-gap-gate.ps1 -Configuration ${{ env.Configuration }} -DialectMode compat
+
+      - name: L2 compat AppCapabilityMatrix gate
+        shell: pwsh
+        env:
+          XUGU_CONNECTION_STRING: ${{ secrets.XUGU_CONNECTION_STRING }}
+          XUGU_NATIVE_DLL_PATH: ${{ secrets.XUGU_NATIVE_DLL_PATH }}
+        run: harness/scripts/run-app-matrix-gate.ps1 -Configuration ${{ env.Configuration }} -DialectMode compat -NoBuild
+
+      - name: L2 compat full gate
+        shell: pwsh
+        env:
+          XUGU_CONNECTION_STRING: ${{ secrets.XUGU_CONNECTION_STRING }}
+          XUGU_NATIVE_DLL_PATH: ${{ secrets.XUGU_NATIVE_DLL_PATH }}
+        run: harness/scripts/run-compat-gate.ps1 -Configuration ${{ env.Configuration }} -MaxAttempts 3 -NoBuild
+
+  l3-experiential:
+    name: L3 Experiential
+    runs-on: windows-latest
+    needs: l2-compat
+    if: >
+      github.event_name == 'schedule' ||
+      startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore & build
         run: |
-          dotnet test test/EFCore.Xugu.Tests -c Release --no-build --filter "Category=NativeDialect" --verbosity minimal
+          dotnet restore Xugu.EFCore.Xugu.sln
+          dotnet build Xugu.EFCore.Xugu.sln -c ${{ env.Configuration }} --no-restore
+
+      - name: L3 experiential gate
+        shell: pwsh
+        env:
+          XUGU_CONNECTION_STRING: ${{ secrets.XUGU_CONNECTION_STRING }}
+          XUGU_NATIVE_DLL_PATH: ${{ secrets.XUGU_NATIVE_DLL_PATH }}
+        run: harness/scripts/run-experiential-gate.ps1 -Configuration ${{ env.Configuration }}
 
   pack:
-    name: NuGet pack (dry validation)
+    name: NuGet pack (tag)
     runs-on: windows-latest
-    needs: build
+    needs: l1-unit
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v4

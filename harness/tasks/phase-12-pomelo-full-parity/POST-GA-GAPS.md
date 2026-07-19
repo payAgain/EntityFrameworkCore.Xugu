@@ -1,8 +1,9 @@
 # Phase 12 — Post-GA 收口 / 审查遗留
 
-> **状态**：**open**（2026-07-09 — Phase 12 **done**；`v3.0.0` GA tag ✅；**2026-07-13** 审核六缺口 Provider 闭环 ✅）  
+> **状态**：**superseded by Phase 13**（2026-07-19）  
 > **创建**：2026-07-09（Phase 12 审查审计 + W6 handoff 交叉对账）  
 > **关联**：`TASKS.md` W7、`harness/handoffs/phase12-wave6-ga-release.done.md`、审核报告 `EFCORE-AUDIT-REPORT.md`  
+> **后续**：未关闭项已映射至 `harness/tasks/phase-13-production-hardening/TASKS.md`；**新工作在 Phase 13 跟踪**，本文仅作历史与证据索引  
 > **原则**：记录 Post-GA 维护项与文档漂移；运行时缺口修复证据写入本文，**不**替代 vendor/平台 signed-off 项
 
 ---
@@ -50,7 +51,7 @@ Phase 12 W1–W6 **64/64 done**；**`v3.0.0` GA 宣称合法**。审查发现：
 
 | ID | 优先级 | 描述 | 验收标准 | 状态 | 来源 |
 |----|--------|------|----------|------|------|
-| **12.PG1** | **P0** | **compat 3× 门禁仅 1× 复验** — W6 handoff 使用 `run-compat-gate.ps1 -MaxAttempts 1` 单次通过；W1 曾 3 连跑 PASS，审查期未再跑满 3× | `harness/scripts/run-compat-gate.ps1 -MaxAttempts 3` **连续 3 次** 0 FAIL；日志写入 handoff 或 CI artifact | **todo** | Phase 12 审查审计；`phase12-wave6-ga-release.done.md` L48 |
+| **12.PG1** | **P0** | **compat 3× 门禁仅 1× 复验** | 连续 3× 全量 compat 0 FAIL | **done→13.107**（2026-07-19；871 列测 ×3） | Phase 12 审查 |
 
 ---
 
@@ -58,12 +59,12 @@ Phase 12 W1–W6 **64/64 done**；**`v3.0.0` GA 宣称合法**。审查发现：
 
 | ID | 优先级 | 描述 | 验收标准 | 状态 | 来源 |
 |----|--------|------|----------|------|------|
-| **12.PG2** | **P1** | **`GA-GAP.md` 仍标 v3.0.0 ❌ Phase 12 open** | 版本表 **3.0.0 ✅ tagged**；Wave 进度 **64/64 done**；剩余工作指向本文档 | **todo** | 审查审计 |
-| **12.PG3** | **P1** | **`BACKLOG.md` 头 vs P0 表不一致** — 头写 Phase 12 done，P0-12 仍 **planned** | Phase 12 映射表 **done**；P0-12 迁 Post-GA 或标 **done**；统计段 **3.0.0 / 140 .cs / 1057** | **todo** | 审查审计 |
-| **12.PG4** | **P1** | **`XUGU-VS-MYSQL.md` 陈旧** — 仍 **2.1.0**、**139** .cs、**896/~85%** | 版本 **3.0.0**；compat **1057**；physical **140** .cs；Adjusted **111.0%**；blocked/defer 与 LIMITATIONS 3.0.0 一致 | **todo** | 审查审计 |
-| **12.PG5** | **P1** | **`pomelo-file-map.md` L114 陈旧计数** — 仍 **139/~72%**、**896/~85%**、native **177**；defer 段部分已 done | L112–151 同步 W3/W4/W5 终态；disposition **194/194**；physical **140** .cs 口径说明 | **todo** | 审查审计 |
-| **12.PG6** | **P1** | **`test-parity-matrix.md` compat 1056 vs 实测 1057** | 冻结表 compat **1057**；Adjusted 覆盖率 **111.0%**（1057÷952）；1056/1057 差异 note | **todo** | 审查审计；W6 handoff |
-| **12.PG7** | **P1** | **`PRODUCTION-RELEASE-CHECKLIST.md` P1 未勾** — Spec Phase 3、JSON integration-sample 端点 | P1 项标 **defer** 并链 **12.PG11** / 12.103；或勾选 + evidence | **todo** | 审查审计；checklist L76–77 |
+| **12.PG2** | **P1** | **`GA-GAP.md` 仍标 v3.0.0 ❌** | 已改为 superseded / 3.0.0 ✅ | **done→13.108** | 审查 |
+| **12.PG3** | **P1** | **`BACKLOG.md` 头 vs P0 表不一致** | Phase 13 映射表已同步 | **done→13.108** | 审查 |
+| **12.PG4** | **P1** | **`XUGU-VS-MYSQL.md` 陈旧** | 3.0.x 口径 | **done→13.108** | 审查 |
+| **12.PG5** | **P1** | **`pomelo-file-map.md` 陈旧计数** | 194 disposition / ~140 物理 | **done→13.108** | 审查 |
+| **12.PG6** | **P1** | **`test-parity-matrix.md` 1056 vs 1057** | 冻结 **1057** + note | **done→13.108** | 审查 |
+| **12.PG7** | **P1** | **checklist P1 未勾** | Spec/JSON sample **defer** 标注 | **done→13.108** | 审查 |
 
 ---
 
@@ -105,6 +106,30 @@ Phase 12 W1–W6 **64/64 done**；**`v3.0.0` GA 宣称合法**。审查发现：
 ---
 
 ## 建议执行顺序
+
+> **已迁 Phase 13**：按下表到 `phase-13-production-hardening/TASKS.md` 执行，勿在本文继续改状态。
+
+| Post-GA | Phase 13 |
+|---------|----------|
+| 12.PG1 | **13.107** |
+| 12.PG2–PG7 | **13.108** |
+| 12.PG8 | **13.201–202** + V-01 |
+| 12.PG9 | **13.208** + V-02 |
+| 12.PG12 | **13.209** |
+| 12.PG13 | **13.108**（文档口径） |
+| 审核六缺口 | **done**（3.0.1）；门禁强化 → **13.103** |
+
+```
+13.W1（应用矩阵 + 契约 + 文档）→ 3.0.2
+    ↓
+13.W2（生产缺口 + NuGet）→ 3.1.0
+    ↓
+13.W3（业务 SQL 清单）→ 3.2.0
+    ↓
+13.W4（ORACLE/PG API，客户门控）
+```
+
+历史顺序（已归档）：
 
 ```
 12.PG1（compat 3× 复验）

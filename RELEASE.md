@@ -1,8 +1,21 @@
 # Microsoft.EntityFrameworkCore.Xugu — Release Guide
 
-> **Current release**: **3.0.1** (`v3.0.1`) — Post-GA runtime gap patch  
-> **Release branch**: `release/3.0.1`  
+> **Current release**: **9.0.0** (`v9.0.0`) — EF Core **9.0.x** aligned  
+> **Release branch**: `phase-13-production-hardening`（发版后可切 `release/9.0.0`）  
 > **Package ID**: `Microsoft.EntityFrameworkCore.Xugu`
+
+---
+
+## Versioning policy（与 EF Core 对齐）
+
+| 规则 | 说明 |
+|------|------|
+| **主.次 = EF Core 主.次** | `Directory.Packages.props` 中 `EFCoreVersion` 为 `9.0.0` 时，包版本为 `9.0.x` |
+| **修订号** | 可仅因 Provider 修复递增（如 `9.0.1`），仍绑定同一 EF Core 9.0 带 |
+| **升级 EF** | 升到 EF Core `9.1.x` / `10.0.x` 时，同步升包版本主.次 |
+| **历史** | GitHub 上 `v1.x`–`v3.x` 为旧编号；自 **`v9.0.0`** 起采用本策略（对齐 Pomelo 惯例） |
+
+`Version.props` 的 `VersionPrefix` 必须与当前目标 EF 带一致；发版 checklist 须核对 `EFCoreVersion`。
 
 ---
 
@@ -11,7 +24,8 @@
 | Item | Value |
 |------|-------|
 | Target framework | .NET 9.0 (`net9.0`) |
-| EF Core | 9.0.x (see `Directory.Packages.props`) |
+| EF Core | **9.0.0** (`Directory.Packages.props` → `EFCoreVersion`) |
+| Package version | **9.0.0**（与 EF 主.次对齐） |
 | Driver (published) | NuGet [Xuguclient](https://www.nuget.org/packages/Xuguclient) (`UseLocalXuguDriver=false`) |
 | Platform GA | **Windows** (Linux RID signed-off blocked — see [LIMITATIONS.md](docs/LIMITATIONS.md)) |
 
@@ -50,7 +64,7 @@ dotnet pack src/EFCore.Xugu/EFCore.Xugu.csproj -c Release `
   -p:UseLocalXuguDriver=false
 ```
 
-Output: `artifacts/Microsoft.EntityFrameworkCore.Xugu.3.0.1.nupkg` (+ `.snupkg` if symbols enabled).
+Output: `artifacts/Microsoft.EntityFrameworkCore.Xugu.9.0.0.nupkg` (+ `.snupkg` if symbols enabled).
 
 ---
 
@@ -88,25 +102,21 @@ dotnet nuget push artifacts/Microsoft.EntityFrameworkCore.Xugu.3.0.0.nupkg `
 Tags are created on the **development** branch after Release Gate passes:
 
 ```powershell
-git tag -a v3.0.1 -m "Microsoft.EntityFrameworkCore.Xugu 3.0.1"
-git push origin v3.0.1
+git tag -a v9.0.0 -m "Microsoft.EntityFrameworkCore.Xugu 9.0.0 (EF Core 9.0 aligned)"
+git push origin v9.0.0
 ```
 
 Create or refresh release branch from tag:
 
 ```powershell
-harness/scripts/prepare-release-branch.ps1 -Version 3.0.1
+harness/scripts/prepare-release-branch.ps1 -Version 9.0.0
 ```
 
-Historical GA tag example:
+Historical tags (pre–EF-alignment numbering):
 
 ```powershell
+git tag -a v3.0.1 -m "Microsoft.EntityFrameworkCore.Xugu 3.0.1"
 git tag -a v3.0.0 -m "Microsoft.EntityFrameworkCore.Xugu 3.0.0 GA"
-git push origin v3.0.0
-```
-
-```powershell
-harness/scripts/prepare-release-branch.ps1 -Version 3.0.0
 ```
 
 ---
@@ -116,7 +126,7 @@ harness/scripts/prepare-release-branch.ps1 -Version 3.0.0
 ### Internal GitLab (full monorepo branch)
 
 ```powershell
-git push -u origin release/3.0.1
+git push -u origin release/9.0.0
 ```
 
 ### Public GitHub / GitLab (minimal mirror — **recommended**)
@@ -124,11 +134,10 @@ git push -u origin release/3.0.1
 Do **not** push the full monorepo. Use the mirror script:
 
 ```powershell
-harness/scripts/prepare-release-branch.ps1 -Version 3.0.1 -Mirror -OutputDir ..\xuguefcore-public
-cd ..\xuguefcore-public
-git remote add public https://github.com/payAgain/EntityFrameworkCore.Xugu.git
-git push -u public HEAD:main
-git push public v3.0.1
+harness/scripts/prepare-release-branch.ps1 -Version 9.0.0 -Mirror -Force -OutputDir ..\xuguefcore-public-staging
+# sync into payAgain/EntityFrameworkCore.Xugu clone, then:
+git push -u origin main
+git push origin v9.0.0
 ```
 
 See [docs/RELEASE-BRANCH-STRATEGY.md](docs/RELEASE-BRANCH-STRATEGY.md) for path include/exclude tables.
@@ -137,7 +146,7 @@ See [docs/RELEASE-BRANCH-STRATEGY.md](docs/RELEASE-BRANCH-STRATEGY.md) for path 
 
 ## 6. GitHub Actions (tag pack)
 
-On push of `v*` tags, `.github/workflows/ci.yml` runs the `pack` job and uploads `artifacts/*.nupkg` as a workflow artifact. Configure repository secrets:
+On push of `v*` tags, `.github/workflows/ci.yml` / `release-pack.yml` runs pack and uploads `artifacts/*.nupkg`. Configure repository secrets:
 
 - `XUGU_NATIVE_DLL_PATH` — optional, for native RID validation during pack
 
@@ -147,7 +156,16 @@ To publish from CI, add feed secrets and extend workflow (not enabled by default
 
 ## 7. Release checklist
 
-### 3.0.1 (2026-07-14) — completed
+### 9.0.0 (2026-07-19) — EF Core aligned
+
+- [x] `Version.props` → `9.0.0`（与 `EFCoreVersion=9.0.0` 主.次对齐）
+- [x] `docs/CHANGELOG.md` — 9.0.0 + 版本策略说明
+- [x] README / GETTING-STARTED / RELEASE-SCOPE / LIMITATIONS 同步
+- [x] `publish-nuget.ps1 -Pack` → `Microsoft.EntityFrameworkCore.Xugu.9.0.0.nupkg`
+- [x] Public GitHub mirror `payAgain/EntityFrameworkCore.Xugu` (`main` + `v9.0.0`)
+- [ ] NuGet push to public feed (deferred — feed configuration)
+
+### 3.0.1 (2026-07-14) — completed（旧编号）
 
 - [x] `Version.props` → `3.0.1`
 - [x] `docs/CHANGELOG.md` — 3.0.1 section
@@ -156,7 +174,7 @@ To publish from CI, add feed secrets and extend workflow (not enabled by default
 - [x] Public GitHub mirror `payAgain/EntityFrameworkCore.Xugu` (`main` + `v3.0.1`)
 - [ ] NuGet push to public feed (deferred — feed configuration)
 
-### 3.0.0 GA — completed
+### 3.0.0 GA — completed（旧编号）
 
 - [x] `Version.props` → `3.0.0`
 - [x] `docs/CHANGELOG.md` — 3.0.0 section

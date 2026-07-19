@@ -1,9 +1,8 @@
-# XuguDB EF Core Provider — GitLab CI (Phase 10.001)
-# Secrets (Settings → CI/CD → Variables, masked):
-#   XUGU_CONNECTION_STRING  — 实库连接串（test-integration 必需）
-#   XUGU_NATIVE_DLL_PATH    — 可选；默认 external/csharp-driver/test_xugusql/64/xugusql.dll
-#   GITLAB_NUGET_FEED_URL     — publish job 可选
-#   GITLAB_NUGET_API_KEY      — publish job 可选
+# XuguDB EF Core Provider — GitLab CI (L1/L2/L3 baseline)
+# Variables (Settings → CI/CD → Variables, masked):
+#   XUGU_CONNECTION_STRING  — required for L2/L3 on main / nightly / tags
+#   XUGU_NATIVE_DLL_PATH    — optional
+#   GITLAB_NUGET_FEED_URL / GITLAB_NUGET_API_KEY — publish job
 
 stages:
   - build
@@ -21,44 +20,64 @@ variables:
   before_script:
     - dotnet --version
 
-build:
+l1-unit:
   extends: .default_dotnet
   stage: build
   script:
     - dotnet restore Xugu.EFCore.Xugu.sln
     - dotnet build Xugu.EFCore.Xugu.sln -c $env:Configuration --no-restore
     - pwsh harness/scripts/verify.ps1
+    - pwsh harness/scripts/run-unit-gate.ps1 -Configuration $env:Configuration -NoBuild
   artifacts:
     paths:
       - "**/bin/Release/"
       - "**/obj/Release/"
     expire_in: 1 day
 
-test:
+l2-native:
   extends: .default_dotnet
   stage: test
-  needs: [build]
-  script:
-    - dotnet test Xugu.EFCore.Xugu.sln -c $env:Configuration --verbosity minimal
-  allow_failure: false
-
-test-integration:
-  extends: .default_dotnet
-  stage: test
-  needs: [build]
+  needs: [l1-unit]
   rules:
-    - if: $XUGU_CONNECTION_STRING
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+/
   script:
-    - pwsh harness/scripts/verify.ps1 -RunTests
     - |
-      $count = (dotnet test test/EFCore.Xugu.Tests -c Release --no-build --list-tests | Select-String '^\s+[A-Za-z]' | Measure-Object).Count
-      Write-Host "Listed tests: $count (baseline 676)"
-      if ($count -lt 676) { throw "Test count regressed below 676" }
+      if ([string]::IsNullOrWhiteSpace($env:XUGU_CONNECTION_STRING)) {
+        throw "XUGU_CONNECTION_STRING is required for L2"
+      }
+    - pwsh harness/scripts/run-runtime-gap-gate.ps1 -Configuration $env:Configuration -DialectMode native
+    - pwsh harness/scripts/run-app-matrix-gate.ps1 -Configuration $env:Configuration -DialectMode native -NoBuild
+    - pwsh harness/scripts/run-native-gate.ps1 -Configuration $env:Configuration -MaxAttempts 3 -NoBuild
+
+l2-compat:
+  extends: .default_dotnet
+  stage: test
+  needs: [l2-native]
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+/
+  script:
+    - pwsh harness/scripts/run-runtime-gap-gate.ps1 -Configuration $env:Configuration -DialectMode compat
+    - pwsh harness/scripts/run-app-matrix-gate.ps1 -Configuration $env:Configuration -DialectMode compat -NoBuild
+    - pwsh harness/scripts/run-compat-gate.ps1 -Configuration $env:Configuration -MaxAttempts 3 -NoBuild
+
+l3-experiential:
+  extends: .default_dotnet
+  stage: test
+  needs: [l2-compat]
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+/
+  script:
+    - pwsh harness/scripts/run-experiential-gate.ps1 -Configuration $env:Configuration
 
 pack:
   extends: .default_dotnet
   stage: pack
-  needs: [build, test]
+  needs: [l1-unit]
   rules:
     - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+/
   script:

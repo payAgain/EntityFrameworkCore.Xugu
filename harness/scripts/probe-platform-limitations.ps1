@@ -21,8 +21,8 @@ Write-Host "linux-x64 libxugusql.so : $(if (Test-Path $soPath) { 'PRESENT' } els
 
 Push-Location $Root
 try {
-    dotnet build test/EFCore.Xugu.Tests/EFCore.Xugu.Tests.csproj -c Release -v q | Out-Null
-    dotnet test test/EFCore.Xugu.Tests/EFCore.Xugu.Tests.csproj -c Release --no-build `
+    dotnet build test/EFCore.Xugu.Tests.Integration/EFCore.Xugu.Tests.Integration.csproj -c Release -v q | Out-Null
+    dotnet test test/EFCore.Xugu.Tests.Integration/EFCore.Xugu.Tests.Integration.csproj -c Release --no-build `
         --filter "FullyQualifiedName~PlatformLimitationProbeTests" -v q
 }
 finally {

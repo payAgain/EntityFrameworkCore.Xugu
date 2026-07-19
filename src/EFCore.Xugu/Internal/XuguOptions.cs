@@ -11,7 +11,7 @@ public class XuguOptions : IXuguOptions
     {
         var extension = options.FindExtension<XuguOptionsExtension>() ?? new XuguOptionsExtension();
         ServerVersion = extension.ServerVersion ?? XuguServerVersion.Default;
-        SetCompatibleModeOnOpen = extension.SetCompatibleModeOnOpen;
+        CompatibleModeOnOpen = extension.CompatibleModeOnOpen;
     }
 
     public void Validate(IDbContextOptions options)
@@ -24,7 +24,7 @@ public class XuguOptions : IXuguOptions
             throw new InvalidOperationException(XuguStrings.ServerVersionCannotChange);
         }
 
-        if (SetCompatibleModeOnOpen != extension.SetCompatibleModeOnOpen)
+        if (CompatibleModeOnOpen != extension.CompatibleModeOnOpen)
         {
             throw new InvalidOperationException(XuguStrings.SetCompatibleModeOnOpenCannotChange);
         }
@@ -32,5 +32,8 @@ public class XuguOptions : IXuguOptions
 
     public ServerVersion ServerVersion { get; private set; } = XuguServerVersion.Default;
 
-    public bool SetCompatibleModeOnOpen { get; private set; }
+    public XuguCompatibleMode CompatibleModeOnOpen { get; private set; }
+
+    public bool SetCompatibleModeOnOpen
+        => CompatibleModeOnOpen == XuguCompatibleMode.Mysql;
 }

@@ -70,10 +70,16 @@ if ($null -ne $sln) {
         Write-Host "[OK] Build succeeded" -ForegroundColor Green
 
         if ($RunTests) {
-            Write-Host "Running full test gate (Release)..." -ForegroundColor Yellow
-            & (Join-Path $PSScriptRoot "run-compat-gate.ps1") -Configuration Release -MaxAttempts 3
-            if ($LASTEXITCODE -ne 0) { throw "compat gate failed" }
-            Write-Host "[OK] Tests passed (0 FAIL expected when XuguDB available)" -ForegroundColor Green
+            Write-Host "Running L1 Unit gate..." -ForegroundColor Yellow
+            & (Join-Path $PSScriptRoot "run-unit-gate.ps1") -Configuration Release
+            if ($LASTEXITCODE -ne 0) { throw "L1 Unit gate failed" }
+
+            Write-Host "Running L2 native then compat Integration gates..." -ForegroundColor Yellow
+            & (Join-Path $PSScriptRoot "run-native-gate.ps1") -Configuration Release -MaxAttempts 3 -NoBuild
+            if ($LASTEXITCODE -ne 0) { throw "L2 native gate failed" }
+            & (Join-Path $PSScriptRoot "run-compat-gate.ps1") -Configuration Release -MaxAttempts 3 -NoBuild
+            if ($LASTEXITCODE -ne 0) { throw "L2 compat gate failed" }
+            Write-Host "[OK] L1 + L2 gates passed" -ForegroundColor Green
         }
     }
 } else {

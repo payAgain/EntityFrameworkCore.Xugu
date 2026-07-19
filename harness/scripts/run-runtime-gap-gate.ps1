@@ -11,7 +11,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $Root = Resolve-Path (Join-Path $PSScriptRoot "..\..")
-$TestProject = Join-Path $Root "test\EFCore.Xugu.Tests\EFCore.Xugu.Tests.csproj"
+$TestProject = Join-Path $Root "test\EFCore.Xugu.Tests.Integration\EFCore.Xugu.Tests.Integration.csproj"
 
 $env:XUGU_DIALECT_MODE = $DialectMode
 $env:XUGU_REQUIRE_DATABASE = "true"

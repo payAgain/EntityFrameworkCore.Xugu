@@ -35,7 +35,7 @@
 
 > 文档：`reference/system-configuration-parameter/session-parameter/compatible_mode.md`
 
-**产品定位**：`COMPATIBLE_MODE=MYSQL` 是 **可选** 会话参数，用于开发对照与遗留脚本调试；**不是** Provider 的产品目标。**2.1.0 起默认关闭**（连接打开时不执行 `SET compatible_mode`）；显式 `EnableCompatibleModeOnOpen()` 启用。
+**产品定位**：`COMPATIBLE_MODE` 是 **可选** 会话参数（`NONE`/`MYSQL`/`ORACLE`/`POSTGRESQL`），用于标识符折叠与开发对照；**不是** Provider 的异构 SQL 方言目标。**2.1.0 起默认关闭**；`EnableCompatibleModeOnOpen(XuguCompatibleMode)` 启用。交叉：`ado-driver-contract.md`、Phase 13 W4。
 
 | COMPATIBLE_MODE | 标识符处理 | Provider 默认（2.1.0+） |
 |-----------------|-----------|-------------------------|
@@ -429,6 +429,7 @@ CREATE TABLE t1(c1 INTEGER IDENTITY(1, 1));
 
 | 日期 | 变更 | 作者 |
 |------|------|------|
+| 2026-07-19 | Phase 13：ado-driver-contract v1；CompatibleMode 枚举 ORACLE/MYSQL/POSTGRESQL（仅会话 SET）；并发决策 C；BUSINESS-SQL-BACKLOG frozen；AppCapabilityMatrix 门禁 | Provider / Testing / Docs |
 | 2026-07-13 | Post-GA 运行时缺口：`CAST(COUNT AS INTEGER\|BIGINT)`；`TIMESTAMPDIFF`→`BIGINT` 再转 `int`；DateOnly/TimeOnly/DTO string converter（`TIME(3)` 默认、DTO 无未文档 precision 后缀、`+H` 读回）；证据 `RuntimeGap` native/compat 9/9 | Provider |
 | 2026-07-09 | Phase 12 W4：NTS/FULLTEXT/Collation/CONVERT_TZ/Scaffolding Baselines formal exclusion（`out-of-scope-approved-12.409.md`） | W4 |
 | 2026-07-06 | Phase 8 W4：FOR UPDATE/位运算 defer 登记；Translator/TypeMapping/Migration/Scaffolding 测试扩展 | Orchestrator |

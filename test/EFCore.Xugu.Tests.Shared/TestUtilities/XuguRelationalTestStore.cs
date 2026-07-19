@@ -25,7 +25,11 @@ public sealed class XuguRelationalTestStore : RelationalTestStore
     }
 
     private static DbConnection CreateConnection()
-        => new XGConnection(XuguTestConnection.ConnectionString);
+    {
+        // Keep a concrete XGConnection for RelationalTestStore, but dispose via Close+Dispose
+        // in DisposeOwnedXuguConnection — DbConnection.Dispose alone would leak native sockets.
+        return new XGConnection(XuguTestConnection.ConnectionString);
+    }
 
     public override DbContextOptionsBuilder AddProviderOptions(DbContextOptionsBuilder builder)
         => builder.UseXugu(ConnectionString, XuguServerVersion.Default);
@@ -115,7 +119,13 @@ public sealed class XuguRelationalTestStore : RelationalTestStore
 
         var creator = context.GetService<IRelationalDatabaseCreator>();
         var prefix = XuguTestStoreFactory.Instance.FormatTablePrefix(Name);
-        if (!GetTablesWithPrefix(XuguTestConnection.OpenConnection(), prefix).Any())
+        bool missingTables;
+        using (var probe = XuguTestConnection.OpenConnection())
+        {
+            missingTables = !GetTablesWithPrefix(probe, prefix).Any();
+        }
+
+        if (missingTables)
         {
             await creator.CreateTablesAsync().ConfigureAwait(false);
         }
@@ -184,6 +194,49 @@ public sealed class XuguRelationalTestStore : RelationalTestStore
         catch
         {
             // Table may not exist.
+        }
+    }
+
+    public override void Dispose()
+    {
+        // RelationalTestStore holds Connection as DbConnection; XGConnection.Dispose is `new` and
+        // would not run via the base dispose path — close explicitly to avoid native socket leaks.
+        DisposeOwnedXuguConnection();
+        base.Dispose();
+    }
+
+    public override async Task DisposeAsync()
+    {
+        DisposeOwnedXuguConnection();
+        await base.DisposeAsync().ConfigureAwait(false);
+    }
+
+    private void DisposeOwnedXuguConnection()
+    {
+        if (Connection is not XGConnection xgConnection)
+        {
+            return;
+        }
+
+        try
+        {
+            if (xgConnection.State != ConnectionState.Closed)
+            {
+                xgConnection.Close();
+            }
+        }
+        catch
+        {
+            // best-effort
+        }
+
+        try
+        {
+            xgConnection.Dispose();
+        }
+        catch
+        {
+            // best-effort
         }
     }
 }
