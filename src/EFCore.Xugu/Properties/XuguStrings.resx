@@ -106,4 +106,16 @@
   <data name="RetryingExecutionStrategyNotSupported" xml:space="preserve">
     <value>Automatic retry (EnableRetryOnFailure) is not yet supported for XuguDB. See docs/LIMITATIONS.md.</value>
   </data>
+  <data name="XgciHintE34412" xml:space="preserve">
+    <value>XGCI E34412 usually indicates a high-precision numeric result was read as Int32. The provider casts COUNT/TIMESTAMPDIFF results; if you still see this, project BIGINT or use a converter. See docs/LIMITATIONS.md and harness/contracts/ado-driver-contract.md.</value>
+  </data>
+  <data name="XgciHintE19230" xml:space="preserve">
+    <value>XGCI E19230 often indicates DateTimeOffset / temporal binding mismatch. Prefer provider temporal converters or store DATETIME WITH TIME ZONE without unsupported precision suffixes. See docs/LIMITATIONS.md.</value>
+  </data>
+  <data name="XgciHintE10049" xml:space="preserve">
+    <value>XGCI E10049 means the function or variable does not exist (commonly ROW_COUNT). Automatic DbUpdateConcurrencyException is not supported; see docs/LIMITATIONS.md (optimistic concurrency decision C).</value>
+  </data>
+  <data name="OptimisticConcurrencyExceptionNotSupported" xml:space="preserve">
+    <value>Automatic DbUpdateConcurrencyException detection is not supported on XuguDB because ROW_COUNT() is unavailable (E10049). Concurrency token columns still map; applications must detect conflicts manually. See docs/LIMITATIONS.md.</value>
+  </data>
 </root>

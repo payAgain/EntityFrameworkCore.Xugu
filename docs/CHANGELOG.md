@@ -13,6 +13,78 @@ Known limitations and deferred features: [LIMITATIONS.md](LIMITATIONS.md).
 
 ---
 
+## [9.0.0] — 2026-07-19 (EF Core 9 aligned public release)
+
+**版本策略变更**：自本版起，包版本 **主.次与目标 EF Core 对齐**（`EFCoreVersion=9.0.0` → `9.0.0`）。历史 `1.x`–`3.x` 编号仅作归档；功能基线包含原 3.0.0 GA、3.0.1 runtime-gap 与 Phase 13（原工作口径 3.0.2–3.3.0）全部能力。
+
+### Added / Fixed（相对公开 `v3.0.1`）
+
+- Phase 13：应用能力矩阵门禁、`ado-driver-contract`、RuntimeGap 强化、乐观并发决策 C、RETURNING 探测、业务 SQL 清单、`XuguCompatibleMode` 会话 API。
+- 3.0.1：COUNT/DateDiff CAST、时态 converter、严格实库模式。
+
+### Docs
+
+- `RELEASE.md` 增加 EF 对齐版本策略；安装示例改为 `9.0.0`。
+
+---
+
+## [3.3.0] — 2026-07-19 (Phase 13 W4 — 归档编号；并入 9.0.0)
+
+### Added
+
+- **`XuguCompatibleMode`** 枚举与 `EnableCompatibleModeOnOpen(XuguCompatibleMode)`（MYSQL / ORACLE / POSTGRESQL / None）。
+- 会话 `SET compatible_mode` + `CompatibleModeSessionTests`（标识符/SHOW 行为；**不**实现 Oracle/PG SQL 方言）。
+
+### Docs
+
+- LIMITATIONS：compat ≠ 异构 SQL 方言；W4 门控签字记录。
+
+---
+
+## [3.2.0] — 2026-07-19 (Phase 13 W3 — business SQL backlog)
+
+### Added
+
+- **BUSINESS-SQL-BACKLOG** 冻结（20 项：implement/defer/excluded，无 open）。
+- **MYSQL-COMPAT-DIFFS** 验收清单（13.306）。
+
+### Docs
+
+- sql-dialect / LIMITATIONS 与清单交叉引用。
+
+---
+
+## [3.1.0] — 2026-07-19 (Phase 13 W2 — production gaps)
+
+### Changed
+
+- **乐观并发**：产品决策 **(C)** — 不支持自动 `DbUpdateConcurrencyException`（ROW_COUNT E10049）；token 列仍映射。
+- **RETURNING**：探测脚本/测试确认驱动不可读 → 保持 `LAST_INSERT_ID`。
+- **ExecuteUpdate 边缘 / JSON 整列**：LIMITATIONS 清单化。
+- **XGCI 提示**：`XuguExceptionHints` + resx（E34412 / E19230 / E10049）。
+
+### Deferred
+
+- NuGet 公开 push（无 feed）→ 本地 pack 验证。
+- Linux RID：无 `.so` → signed-off 续期。
+
+---
+
+## [3.0.2] — 2026-07-19 (Phase 13 W1 — app matrix / contracts)
+
+### Added
+
+- **应用能力矩阵** — `samples/AppCapabilityMatrix` + `AppCapabilityMatrixTests`（Category=`AppCapabilityMatrix`）。
+- **门禁** — `run-app-matrix-gate.ps1`；CI L2 并入 RuntimeGap + AppMatrix。
+- **驱动契约** — `harness/contracts/ado-driver-contract.md`。
+- **三类绿** — `docs/TESTING.md`（SQL 形状 / 服务端执行 / 客户端物化）。
+
+### Docs
+
+- Post-GA PG2–PG7 文档漂移清零；LIMITATIONS/CHANGELOG 指向应用矩阵与契约。
+
+---
+
 ## [3.0.1] — 2026-07-14 (Post-GA runtime gap patch)
 
 Provider 侧闭环应用审核暴露的 6 个独立运行时缺口（保留官方 `Xuguclient` / `external/csharp-driver` 只读基线，不改驱动）。

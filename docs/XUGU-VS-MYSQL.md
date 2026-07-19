@@ -2,9 +2,9 @@
 
 ## 对照参考 · 非迁移目标 · 非虚谷方言定义
 
-> **版本**：Microsoft.EntityFrameworkCore.Xugu **3.0.0**（Phase 12 GA）  
+> **版本**：Microsoft.EntityFrameworkCore.Xugu **3.0.1+**（Phase 12 GA + runtime-gap；Phase 13 硬化中）  
 > **对照基准**：Pomelo.EntityFrameworkCore.MySql **9.0.0**（EF Core 9）— **仅 C# 架构参考**  
-> **更新**：2026-07-09（3.0.0 GA — native-first / compat opt-in）
+> **更新**：2026-07-19（关闭 Post-GA 文档漂移 12.PG4；口径对齐 3.0.x）
 
 > **⚠️ 本文档定位（必读）**
 >
@@ -22,21 +22,21 @@
 
 ## 执行摘要
 
-| 维度 | Xugu 3.0.0 | Pomelo / MySQL |
+| 维度 | Xugu 3.0.x | Pomelo / MySQL |
 |------|------------|----------------|
 | 架构对齐 | 目录与服务注册对齐 Pomelo 9.0.0 | 参考实现 |
-| 源码文件 | **139** .cs（~72% Pomelo 194） | 194 .cs |
-| FunctionalTests | **896** 列测（~**85%** Pomelo ~1050） | ~1050 |
+| 源码文件 | 物理 **~140** `.cs`；disposition **194/194**（含 EF-base / excluded） | 194 .cs |
+| FunctionalTests | compat **1057** / native **1056**；Adjusted **111.0%**（分母 952） | ~1050 |
 | 核心 CRUD / LINQ / 迁移 | **支持** | 支持 |
-| ExecuteDelete / ExecuteUpdate | **核心路径支持** | 支持 |
-| JSON / Spatial / FULLTEXT | JSON **✅ 2.1.0**（11.109）；Spatial/FULLTEXT **不实现** | 支持 |
-| 自动重试（Retry） | **支持**（10.106 — Message 解析 XGCI 码） | `EnableRetryOnFailure` |
-| 乐观并发异常检测 | **blocked**（10.105 — `ROW_COUNT()` E10049） | `ROW_COUNT()` |
+| ExecuteDelete / ExecuteUpdate | **核心路径支持**（Owned/多表 ORDER·LIMIT 见 LIMITATIONS） | 支持 |
+| JSON / Spatial / FULLTEXT | JSON **✅**；Spatial/FULLTEXT **excluded** | 支持 |
+| 自动重试（Retry） | **支持**（Message 解析 XGCI 码） | `EnableRetryOnFailure` |
+| 乐观并发异常检测 | **产品声明不支持自动** `DbUpdateConcurrencyException`（ROW_COUNT E10049；见 13.201） | `ROW_COUNT()` |
 | 连接串 | Xugu 键值对（`IP=…; DB=…`） | MySQL 标准 URI/键值 |
 | 自增主键 DDL | `IDENTITY(1,1)` | `AUTO_INCREMENT` |
 | GUID 存储 | 原生 `GUID`（16 字节） | 常映射 `CHAR(36)` |
 
-**结论**：Xugu Provider 3.0.0 GA 已具备生产级 CRUD、查询翻译、迁移与 Scaffolding **主路径**；与 Pomelo 差距主要在 **扩展生态**（NTS/FULLTEXT）、**驱动级能力缺口**（`ROW_COUNT` 乐观并发）及 **平台**（Linux RID）。详见 [LIMITATIONS.md](LIMITATIONS.md) 与 [USER-GUIDE.md](USER-GUIDE.md)。
+**结论**：Xugu Provider **3.0.x** 已具备生产级 CRUD、查询翻译、迁移与 Scaffolding **主路径**；与 Pomelo 差距主要在 **扩展生态**（NTS/FULLTEXT）、**驱动级能力缺口**（`ROW_COUNT` 乐观并发）及 **平台**（Linux RID）。详见 [LIMITATIONS.md](LIMITATIONS.md) 与 [USER-GUIDE.md](USER-GUIDE.md)。
 
 ---
 

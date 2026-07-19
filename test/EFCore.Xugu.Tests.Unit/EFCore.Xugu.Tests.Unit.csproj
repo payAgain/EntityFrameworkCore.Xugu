@@ -4,14 +4,17 @@
     <TargetFramework>net9.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <RootNamespace>Microsoft.EntityFrameworkCore.Xugu.Tests</RootNamespace>
+    <AssemblyName>EFCore.Xugu.Tests.Unit</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EFCore.Xugu.Tests.Shared\EFCore.Xugu.Tests.Shared.csproj" />
     <ProjectReference Include="..\..\src\EFCore.Xugu\EFCore.Xugu.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Baselines\**\*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,13 +27,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(XuguNativeDllExists)' == 'true'">
-    <None Include="$(XuguNativeDllPath)">
-      <Link>xugusql.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

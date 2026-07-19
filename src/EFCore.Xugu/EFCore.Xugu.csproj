@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Entity Framework Core provider for XuguDB (虚谷数据库).</Description>
+    <Description>Entity Framework Core provider for XuguDB (铏氳胺鏁版嵁搴?.</Description>
     <TargetFramework>$(XuguTargetFramework)</TargetFramework>
     <AssemblyName>Microsoft.EntityFrameworkCore.Xugu</AssemblyName>
     <RootNamespace>Microsoft.EntityFrameworkCore.Xugu</RootNamespace>
@@ -19,9 +19,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
   </ItemGroup>
 
-  <!-- Phase 0: local driver reference; switch to PackageReference Xuguclient for release builds -->
+  <!-- Local driver: csharp-driver-v3.3.4-cyj (Dispose(bool) fix). Override with UseLocalXuguDriver=false for NuGet. -->
   <ItemGroup Condition="'$(UseLocalXuguDriver)' != 'false'">
-    <ProjectReference Include="..\..\external\csharp-driver\XGCSClient\XGCSClient.csproj" />
+    <ProjectReference Include="..\..\..\csharp-driver-v3.3.4-cyj\XGCSClient\XGCSClient.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(UseLocalXuguDriver)' == 'false'">
@@ -39,7 +39,7 @@
     </None>
   </ItemGroup>
 
-  <!-- linux-x64 native: pack when XuguNativeSoPath exists (10.205 — blocked until driver ships .so) -->
+  <!-- linux-x64 native: pack when XuguNativeSoPath exists (10.205 鈥?blocked until driver ships .so) -->
   <ItemGroup Condition="'$(XuguNativeSoExists)' == 'true'">
     <None Include="$(XuguNativeSoPath)">
       <Link>libxugusql.so</Link>
@@ -66,3 +66,5 @@
   </ItemGroup>
 
 </Project>
+
+

@@ -7,5 +7,7 @@ public interface IXuguOptions : ISingletonOptions
 {
     ServerVersion ServerVersion { get; }
 
+    XuguCompatibleMode CompatibleModeOnOpen { get; }
+
     bool SetCompatibleModeOnOpen { get; }
 }

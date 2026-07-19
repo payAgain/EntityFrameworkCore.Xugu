@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure.Internal;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Query.Internal;
@@ -20,17 +21,17 @@ public class XuguCompiledQueryCacheKeyGenerator : RelationalCompiledQueryCacheKe
         return new XuguCompiledQueryCacheKey(
             GenerateCacheKeyCore(query, async),
             extension?.ServerVersion,
-            extension?.SetCompatibleModeOnOpen ?? false);
+            extension?.CompatibleModeOnOpen ?? XuguCompatibleMode.None);
     }
 
     private readonly struct XuguCompiledQueryCacheKey(
         RelationalCompiledQueryCacheKey relationalCompiledQueryCacheKey,
         Infrastructure.ServerVersion? serverVersion,
-        bool setCompatibleModeOnOpen)
+        XuguCompatibleMode compatibleModeOnOpen)
     {
         private readonly RelationalCompiledQueryCacheKey _relationalCompiledQueryCacheKey = relationalCompiledQueryCacheKey;
         private readonly Infrastructure.ServerVersion? _serverVersion = serverVersion;
-        private readonly bool _setCompatibleModeOnOpen = setCompatibleModeOnOpen;
+        private readonly XuguCompatibleMode _compatibleModeOnOpen = compatibleModeOnOpen;
 
         public override bool Equals(object? obj)
             => obj is XuguCompiledQueryCacheKey key && Equals(key);
@@ -38,9 +39,9 @@ public class XuguCompiledQueryCacheKeyGenerator : RelationalCompiledQueryCacheKe
         private bool Equals(XuguCompiledQueryCacheKey other)
             => _relationalCompiledQueryCacheKey.Equals(other._relationalCompiledQueryCacheKey)
                && Equals(_serverVersion, other._serverVersion)
-               && _setCompatibleModeOnOpen == other._setCompatibleModeOnOpen;
+               && _compatibleModeOnOpen == other._compatibleModeOnOpen;
 
         public override int GetHashCode()
-            => HashCode.Combine(_relationalCompiledQueryCacheKey, _serverVersion, _setCompatibleModeOnOpen);
+            => HashCode.Combine(_relationalCompiledQueryCacheKey, _serverVersion, _compatibleModeOnOpen);
     }
 }

@@ -57,13 +57,14 @@ public static class NorthwindSeedData
             return;
         }
 
-        store.TryExecuteNonQuery($"DELETE FROM {store.FormatTableName("Orders")}");
-        store.TryExecuteNonQuery($"DELETE FROM {store.FormatTableName("Products")}");
-        store.TryExecuteNonQuery($"DELETE FROM {store.FormatTableName("Employees")}");
-        store.TryExecuteNonQuery($"DELETE FROM {store.FormatTableName("Customers")}");
-        store.TryExecuteNonQuery($"DELETE FROM {store.FormatTableName("Shippers")}");
-        store.TryExecuteNonQuery($"DELETE FROM {store.FormatTableName("Suppliers")}");
-        store.TryExecuteNonQuery($"DELETE FROM {store.FormatTableName("Categories")}");
+        store.TryExecuteNonQueries(
+            $"DELETE FROM {store.FormatTableName("Orders")}",
+            $"DELETE FROM {store.FormatTableName("Products")}",
+            $"DELETE FROM {store.FormatTableName("Employees")}",
+            $"DELETE FROM {store.FormatTableName("Customers")}",
+            $"DELETE FROM {store.FormatTableName("Shippers")}",
+            $"DELETE FROM {store.FormatTableName("Suppliers")}",
+            $"DELETE FROM {store.FormatTableName("Categories")}");
         SeedData(store);
     }
 
@@ -79,17 +80,15 @@ public static class NorthwindSeedData
         var products = store.FormatAndTrackTable("Products");
         var orders = store.FormatAndTrackTable("Orders");
 
-        store.ExecuteNonQuery(
+        store.ExecuteNonQueries(
             $"""
             CREATE TABLE {categories} (
                 CATEGORY_ID INTEGER NOT NULL,
                 CATEGORY_NAME VARCHAR(15) NOT NULL,
                 DESCRIPTION VARCHAR(500)
             )
-            """);
-        store.ExecuteNonQuery($"ALTER TABLE {categories} ALTER COLUMN CATEGORY_ID INTEGER IDENTITY(1, 1) PRIMARY KEY");
-
-        store.ExecuteNonQuery(
+            """,
+            $"ALTER TABLE {categories} ALTER COLUMN CATEGORY_ID INTEGER IDENTITY(1, 1) PRIMARY KEY",
             $"""
             CREATE TABLE {suppliers} (
                 SUPPLIER_ID INTEGER NOT NULL,
@@ -97,19 +96,15 @@ public static class NorthwindSeedData
                 CITY VARCHAR(15),
                 COUNTRY VARCHAR(15)
             )
-            """);
-        store.ExecuteNonQuery($"ALTER TABLE {suppliers} ALTER COLUMN SUPPLIER_ID INTEGER IDENTITY(1, 1) PRIMARY KEY");
-
-        store.ExecuteNonQuery(
+            """,
+            $"ALTER TABLE {suppliers} ALTER COLUMN SUPPLIER_ID INTEGER IDENTITY(1, 1) PRIMARY KEY",
             $"""
             CREATE TABLE {shippers} (
                 SHIPPER_ID INTEGER NOT NULL,
                 COMPANY_NAME VARCHAR(40) NOT NULL
             )
-            """);
-        store.ExecuteNonQuery($"ALTER TABLE {shippers} ALTER COLUMN SHIPPER_ID INTEGER IDENTITY(1, 1) PRIMARY KEY");
-
-        store.ExecuteNonQuery(
+            """,
+            $"ALTER TABLE {shippers} ALTER COLUMN SHIPPER_ID INTEGER IDENTITY(1, 1) PRIMARY KEY",
             $"""
             CREATE TABLE {customers} (
                 CUSTOMER_ID CHAR(5) NOT NULL,
@@ -118,10 +113,8 @@ public static class NorthwindSeedData
                 CITY VARCHAR(15),
                 COUNTRY VARCHAR(15)
             )
-            """);
-        store.ExecuteNonQuery($"ALTER TABLE {customers} ADD PRIMARY KEY (CUSTOMER_ID)");
-
-        store.ExecuteNonQuery(
+            """,
+            $"ALTER TABLE {customers} ADD PRIMARY KEY (CUSTOMER_ID)",
             $"""
             CREATE TABLE {employees} (
                 EMPLOYEE_ID INTEGER NOT NULL,
@@ -132,10 +125,8 @@ public static class NorthwindSeedData
                 COUNTRY VARCHAR(15),
                 REPORTS_TO INTEGER
             )
-            """);
-        store.ExecuteNonQuery($"ALTER TABLE {employees} ALTER COLUMN EMPLOYEE_ID INTEGER IDENTITY(1, 1) PRIMARY KEY");
-
-        store.ExecuteNonQuery(
+            """,
+            $"ALTER TABLE {employees} ALTER COLUMN EMPLOYEE_ID INTEGER IDENTITY(1, 1) PRIMARY KEY",
             $"""
             CREATE TABLE {products} (
                 PRODUCT_ID INTEGER NOT NULL,
@@ -146,10 +137,8 @@ public static class NorthwindSeedData
                 UNITS_IN_STOCK SMALLINT,
                 DISCONTINUED BOOLEAN NOT NULL
             )
-            """);
-        store.ExecuteNonQuery($"ALTER TABLE {products} ALTER COLUMN PRODUCT_ID INTEGER IDENTITY(1, 1) PRIMARY KEY");
-
-        store.ExecuteNonQuery(
+            """,
+            $"ALTER TABLE {products} ALTER COLUMN PRODUCT_ID INTEGER IDENTITY(1, 1) PRIMARY KEY",
             $"""
             CREATE TABLE {orders} (
                 ORDER_ID INTEGER NOT NULL,
@@ -159,8 +148,8 @@ public static class NorthwindSeedData
                 FREIGHT NUMERIC(18,2),
                 SHIP_CITY VARCHAR(15)
             )
-            """);
-        store.ExecuteNonQuery($"ALTER TABLE {orders} ALTER COLUMN ORDER_ID INTEGER IDENTITY(1, 1) PRIMARY KEY");
+            """,
+            $"ALTER TABLE {orders} ALTER COLUMN ORDER_ID INTEGER IDENTITY(1, 1) PRIMARY KEY");
     }
 
     public static void SeedData(XuguTestStore store)
@@ -173,46 +162,36 @@ public static class NorthwindSeedData
         var products = store.FormatTableName("Products");
         var orders = store.FormatTableName("Orders");
 
-        store.ExecuteNonQuery(
+        store.ExecuteNonQueries(
             $"""
             INSERT INTO {categories} (CATEGORY_NAME, DESCRIPTION) VALUES
                 ('Beverages', 'Soft drinks and coffee'),
                 ('Condiments', 'Sauces and spices'),
                 ('Confections', 'Desserts and sweets')
-            """);
-
-        store.ExecuteNonQuery(
+            """,
             $"""
             INSERT INTO {suppliers} (COMPANY_NAME, CITY, COUNTRY) VALUES
                 ('Exotic Liquids', 'London', 'UK'),
                 ('New Orleans Cajun', 'New Orleans', 'USA')
-            """);
-
-        store.ExecuteNonQuery(
+            """,
             $"""
             INSERT INTO {shippers} (COMPANY_NAME) VALUES
                 ('Speedy Express'),
                 ('United Package')
-            """);
-
-        store.ExecuteNonQuery(
+            """,
             $"""
             INSERT INTO {customers} (CUSTOMER_ID, COMPANY_NAME, CONTACT_NAME, CITY, COUNTRY) VALUES
                 ('ALFKI', 'Alfreds Futterkiste', 'Maria Anders', 'Berlin', 'Germany'),
                 ('ANATR', 'Ana Trujillo', 'Ana Trujillo', 'México D.F.', 'Mexico'),
                 ('FOLKO', 'Folk och Fä HB', 'Maria Larsson', 'Bräcke', 'Sweden'),
                 ('SEVES', 'Seven Seas Trading', 'James Kirk', 'London', 'UK')
-            """);
-
-        store.ExecuteNonQuery(
+            """,
             $"""
             INSERT INTO {employees} (LAST_NAME, FIRST_NAME, TITLE, CITY, COUNTRY, REPORTS_TO) VALUES
                 ('Davolio', 'Nancy', 'Sales Representative', 'Seattle', 'USA', NULL),
                 ('Fuller', 'Andrew', 'Vice President', 'Tacoma', 'USA', NULL),
                 ('Peacock', 'Margaret', 'Sales Representative', 'Redmond', 'USA', 2)
-            """);
-
-        store.ExecuteNonQuery(
+            """,
             $"""
             INSERT INTO {products} (PRODUCT_NAME, SUPPLIER_ID, CATEGORY_ID, UNIT_PRICE, UNITS_IN_STOCK, DISCONTINUED) VALUES
                 ('Chai', 1, 1, 18.00, 39, FALSE),
@@ -220,9 +199,7 @@ public static class NorthwindSeedData
                 ('Aniseed Syrup', 1, 2, 10.00, 13, FALSE),
                 ('Chef Anton''s Gumbo Mix', 2, 2, 21.35, 0, TRUE),
                 ('Sir Rodney''s Marmalade', 2, 3, 81.00, 40, FALSE)
-            """);
-
-        store.ExecuteNonQuery(
+            """,
             $"""
             INSERT INTO {orders} (CUSTOMER_ID, EMPLOYEE_ID, ORDER_DATE, FREIGHT, SHIP_CITY) VALUES
                 ('ALFKI', 1, '1998-05-04 00:00:00', 29.46, 'Berlin'),
@@ -235,11 +212,14 @@ public static class NorthwindSeedData
 
     private static void DropTables(XuguTestStore store)
     {
-        foreach (var logical in new[] { "Orders", "Products", "Employees", "Customers", "Shippers", "Suppliers", "Categories" })
-        {
-            var table = store.FormatTableName(logical);
-            store.TryExecuteNonQuery($"DROP TABLE {table} CASCADE");
-        }
+        store.TryExecuteNonQueries(
+            $"DROP TABLE {store.FormatTableName("Orders")} CASCADE",
+            $"DROP TABLE {store.FormatTableName("Products")} CASCADE",
+            $"DROP TABLE {store.FormatTableName("Employees")} CASCADE",
+            $"DROP TABLE {store.FormatTableName("Customers")} CASCADE",
+            $"DROP TABLE {store.FormatTableName("Shippers")} CASCADE",
+            $"DROP TABLE {store.FormatTableName("Suppliers")} CASCADE",
+            $"DROP TABLE {store.FormatTableName("Categories")} CASCADE");
     }
 
     private static bool TableExists(XuguTestStore store, string logicalName)
