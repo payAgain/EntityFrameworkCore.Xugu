@@ -73,4 +73,23 @@ public class XuguRetryingExecutionStrategy : ExecutionStrategy
 
     protected override bool ShouldRetryOn(Exception exception)
         => XuguTransientExceptionDetector.ShouldRetryOn(exception);
+
+    /// <summary>
+    ///     Server-side session kill (<c>DROP SESSION</c> / idle disconnect) leaves the ADO.NET
+    ///     connection object "Open" with a dead native handle. Close before retry so the next
+    ///     attempt opens a fresh session.
+    /// </summary>
+    protected override void OnRetry()
+    {
+        try
+        {
+            Dependencies.CurrentContext.Context?.Database.CloseConnection();
+        }
+        catch
+        {
+            // Dead connections may throw on Close; ignore and continue retry.
+        }
+
+        base.OnRetry();
+    }
 }

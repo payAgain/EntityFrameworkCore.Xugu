@@ -71,13 +71,72 @@ public class ExecuteUpdateTests(XuguDatabaseFixture fixture)
         Assert.Equal("NewDesc", loaded.Description);
     }
 
+    [SkippableFact]
+    public void ExecuteUpdate_with_no_matches_returns_zero()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ClearBlogs();
+
+        using var context = CreateContext();
+        context.Blogs.Add(new Blog { Title = "Only" });
+        context.SaveChanges();
+
+        var updated = context.Blogs
+            .Where(b => b.Title == "Missing")
+            .ExecuteUpdate(s => s.SetProperty(b => b.Title, "Nope"));
+
+        Assert.Equal(0, updated);
+        Assert.Equal("Only", context.Blogs.Single().Title);
+    }
+
+    [SkippableFact]
+    public void ExecuteUpdate_updates_all_matching_predicate()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ClearBlogs();
+
+        using (var seed = CreateContext())
+        {
+            seed.Blogs.AddRange(
+                new Blog { Title = "Keep" },
+                new Blog { Title = "Touch" },
+                new Blog { Title = "Touch" });
+            seed.SaveChanges();
+        }
+
+        using var context = CreateContext();
+        var updated = context.Blogs
+            .Where(b => b.Title == "Touch")
+            .ExecuteUpdate(s => s.SetProperty(b => b.Title, "Touched"));
+
+        Assert.Equal(2, updated);
+        Assert.Equal(2, context.Blogs.Count(b => b.Title == "Touched"));
+        Assert.Equal(1, context.Blogs.Count(b => b.Title == "Keep"));
+    }
+
+    [SkippableFact]
+    public void ExecuteUpdate_with_orderby_take_is_not_supported()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ClearBlogs();
+
+        using var context = CreateContext();
+        context.Blogs.Add(new Blog { Title = "A" });
+        context.SaveChanges();
+
+        var ex = Record.Exception(() =>
+            context.Blogs
+                .OrderBy(b => b.Id)
+                .Take(1)
+                .ExecuteUpdate(s => s.SetProperty(b => b.Title, "X")));
+        Assert.NotNull(ex);
+    }
+
     private static BlogContext CreateContext()
     {
-        var options = new DbContextOptionsBuilder<BlogContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
-            .Options;
-
-        return new BlogContext(options);
+        var optionsBuilder = new DbContextOptionsBuilder<BlogContext>();
+        XuguDialectTestConfiguration.ConfigureDialect(optionsBuilder);
+        return new BlogContext(optionsBuilder.Options);
     }
 
     private sealed class Blog

@@ -103,9 +103,12 @@ public class SeedingTests
         Assert.Equal(1, tagSeeds);
     }
 
-    [SkippableFact(Skip = "Excluded 12.410: EnsureCreated with HasData — XuguDB EnsureCreated returns false for seeded model (W4 validated)")]
-    public async Task EnsureCreated_applies_has_data_seed()
+    [SkippableFact]
+    public async Task EnsureCreated_returns_false_on_shared_system_database_and_does_not_seed()
     {
+        // Shared SYSTEM already Exists()+HasTables() ⇒ EnsureCreated is a no-op (returns false)
+        // and never applies HasData. Production path: Migrations or manual SQL seed
+        // (see Manual_seed_roundtrip_matches_has_data_values). Documented 12.410.
         XuguTestConnection.SkipIfUnavailable();
         var store = XuguTestStore.Create($"SeedingEnsure_{Guid.NewGuid():N}");
 
@@ -115,11 +118,7 @@ public class SeedingTests
                 store.AddProviderOptions(new DbContextOptionsBuilder<RoundtripSeedingContext>()).Options,
                 store);
             var created = await context.Database.EnsureCreatedAsync();
-            Assert.True(created);
-
-            var seeds = await context.Seeds.OrderBy(e => e.Id).ToListAsync();
-            Assert.Equal(2, seeds.Count);
-            Assert.Equal("Apple", seeds[0].Species);
+            Assert.False(created);
         }
         finally
         {

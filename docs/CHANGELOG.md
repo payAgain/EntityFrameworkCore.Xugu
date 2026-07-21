@@ -9,22 +9,37 @@ Known limitations and deferred features: [LIMITATIONS.md](LIMITATIONS.md).
 
 ## [Unreleased]
 
-（无）
+（下一批次变更记于此。）
 
 ---
 
-## [9.0.0] — 2026-07-19 (EF Core 9 aligned public release)
+## [9.0.0] — 2026-07-21 (EF Core 9 aligned — dialect iteration baseline)
 
-**版本策略变更**：自本版起，包版本 **主.次与目标 EF Core 对齐**（`EFCoreVersion=9.0.0` → `9.0.0`）。历史 `1.x`–`3.x` 编号仅作归档；功能基线包含原 3.0.0 GA、3.0.1 runtime-gap 与 Phase 13（原工作口径 3.0.2–3.3.0）全部能力。
+**版本策略**：自本版起，包版本 **主.次与目标 EF Core 对齐**（`EFCoreVersion=9.0.0` → `9.0.0`）。历史 `1.x`–`3.x` 编号仅作归档。
 
-### Added / Fixed（相对公开 `v3.0.1`）
+**基线声明**：本版为 **方言迭代基线**。功能 = 原 3.0.0 GA + 3.0.1 runtime-gap + Phase 13（原工作口径 3.0.2–3.3.0）+ **Post-GA hardening**（原 Unreleased，于 2026-07-21 收口并入）。
 
-- Phase 13：应用能力矩阵门禁、`ado-driver-contract`、RuntimeGap 强化、乐观并发决策 C、RETURNING 探测、业务 SQL 清单、`XuguCompatibleMode` 会话 API。
+### Added / Fixed（相对公开 `v3.0.1`；含 Post-GA hardening）
+
+- Phase 13：应用能力矩阵门禁、`ado-driver-contract`、RuntimeGap 强化、RETURNING 探测、业务 SQL 清单、`XuguCompatibleMode` 会话 API。
 - 3.0.1：COUNT/DateDiff CAST、时态 converter、严格实库模式。
+- **乐观并发 Path A** — `ConsumeResultSetWithRowsAffectedOnly` 使用 `DbDataReader.RecordsAffected`（UPDATE/DELETE）；去掉占位 `SELECT 1`；启用 `DbUpdateConcurrencyException`（`OptimisticConcurrencyTests.Stale_*` PASS）。INSERT 经 reader 的 `RecordsAffected` 恒 0 时对 `Added` 不做误报。（**取代** Phase 13 W2 归档决策 C。）
+- **TIME 物化** — `TimeSpan`/`TimeOnly` 经 `GetString` + `CustomizeDataReaderExpression` 物化，消除 shaper「No coercion operator … String and TimeSpan」。
+- **BLOB 物化** — `byte[]` 从驱动 `XGBlob` 适配为 `byte[]`（不改驱动）。
+- **DateTimeOffset 读回** — 兼容短年（`3-03-01…`）与小时级偏移（`…-5`）；LIMITATIONS 注明亚小时偏移/亚秒截断边界。
+- **DateTimeOffset.Date / DayOfYear** — LINQ 翻译为文档函数 `DATE` / `DAYOFYEAR`。
+- **二进制 DDL** — `byte[]` 有长度时映射为无后缀 `BINARY`（非 `BLOB(n)`）；文档无 size 后缀（`binary.md` / `large-object.md`）。
+- **标识符长度** — `RelationalMaxIdentifierLengthConvention(127)`（`identifier.md`）；Spec 表前缀改为短哈希，避免 FK 名超长。
+- **byte / 未映射 DbType 参数绑定与物化** — TinyInt/`UInt*`/`Single`/`Guid`/`SByte`/`StringFixedLength` 等旁路驱动 Binary 默认；TIME/DATE 按驱动要求绑定为字符串。
+- **APPLY/LATERAL 明确拒绝** — 实库确认无 `CROSS/OUTER APPLY`、`LATERAL`；抛 `XuguStrings.ApplyNotSupported`。
+- **瞬态检测 / Retry** — `[E34304]`/`[E34305]` 不再视为可重试；识别空正文 `[E34501]`/`[E34301]`，`OnRetry` 关闭失效连接后再重试。
+- **Sequence Migrations DDL** — 按 `reference/object/sequence.md`；`RESTART WITH` NotSupported。
+- **Spec Functional 工程** — `test/EFCore.Xugu.Tests.Functional`（NullSemantics / GearsOfWar(+TPT/TPC) / ComplexNavigations / Owned / PrimitiveCollections / BulkUpdates 等，`--list-tests` ~8500+）。
+- **质量补强** — QualityMatrix / Cluster Integration / Affected-rows 探针；Integration Skip 闭环；测试默认方言 **native**。
 
 ### Docs
 
-- `RELEASE.md` 增加 EF 对齐版本策略；安装示例改为 `9.0.0`。
+- `RELEASE.md` / README / USER-GUIDE / RELEASE-SCOPE / LIMITATIONS：公开口径统一为 **9.0.0**（对齐 EF Core 9.0.x）。
 
 ---
 

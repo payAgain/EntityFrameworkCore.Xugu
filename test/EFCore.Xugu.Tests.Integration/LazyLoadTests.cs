@@ -11,9 +11,19 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests;
 [Trait("Category", XuguDialectTestConfiguration.NativeDialectCategory)]
 public class LazyLoadTests(LoadFixture fixture)
 {
-    [SkippableFact(Skip = "Excluded 12.410: lazy-loading proxies require Castle.DynamicProxy host — not in Xugu test harness")]
-    public void Lazy_loading_proxies_not_supported_in_harness()
+    [SkippableFact]
+    public async Task Without_lazy_proxies_navigation_stays_unloaded_until_explicit_load()
     {
+        // Harness does not host Castle.DynamicProxy (OOS-08 / 12.410). Prove the supported
+        // path: no auto-load; Explicit Load still works (see Explicit_load_populates_navigation).
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ResetStore();
+        fixture.SeedData();
+
+        await using var context = fixture.CreateContext();
+        var blog = await context.Blogs.SingleAsync();
+        Assert.False(context.Entry(blog).Collection(b => b.Posts).IsLoaded);
+        Assert.Empty(blog.Posts);
     }
 
     [SkippableFact]

@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
@@ -6,7 +6,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 /// <summary>
 /// Shared helpers for EF Specification Tests fixtures hosted on XuguDB.
 /// </summary>
-internal static class XuguSpecificationFixtureHelper
+public static class XuguSpecificationFixtureHelper
 {
     public static void SkipIfDatabaseUnavailable()
         => XuguTestConnection.SkipIfUnavailable();

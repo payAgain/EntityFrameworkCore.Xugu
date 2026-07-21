@@ -461,6 +461,93 @@ public class XuguMigrationsSqlGenerator : MigrationsSqlGenerator
         EndStatement(builder);
     }
 
+    /// <summary>
+    ///     Docs: <c>reference/object/sequence.md</c> — Xugu sequences have no <c>AS type</c> clause.
+    /// </summary>
+    protected override void Generate(
+        CreateSequenceOperation operation,
+        IModel? model,
+        MigrationCommandListBuilder builder)
+    {
+        var longMapping = Dependencies.TypeMappingSource.GetMapping(typeof(long));
+
+        builder
+            .Append("CREATE SEQUENCE ")
+            .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema))
+            .Append(" START WITH ")
+            .Append(longMapping.GenerateSqlLiteral(operation.StartValue));
+
+        SequenceOptions(operation.Schema, operation.Name, operation, model, builder, forAlter: false);
+
+        builder.AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+        EndStatement(builder);
+    }
+
+    protected override void Generate(
+        DropSequenceOperation operation,
+        IModel? model,
+        MigrationCommandListBuilder builder)
+    {
+        builder
+            .Append("DROP SEQUENCE IF EXISTS ")
+            .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema))
+            .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+
+        EndStatement(builder);
+    }
+
+    /// <summary>
+    ///     XuguDB <c>ALTER SEQUENCE</c> does not document <c>RESTART WITH</c>.
+    /// </summary>
+    protected override void Generate(
+        RestartSequenceOperation operation,
+        IModel? model,
+        MigrationCommandListBuilder builder)
+        => throw new NotSupportedException(XuguStrings.SequenceRestartNotSupported);
+
+    /// <summary>
+    ///     Docs: <c>NOMINVALUE</c> / <c>NOMAXVALUE</c> / <c>CYCLE</c> / <c>NO CYCLE</c>.
+    /// </summary>
+    protected override void SequenceOptions(
+        string? schema,
+        string name,
+        SequenceOperation operation,
+        IModel? model,
+        MigrationCommandListBuilder builder,
+        bool forAlter)
+    {
+        var intMapping = Dependencies.TypeMappingSource.GetMapping(typeof(int));
+        var longMapping = Dependencies.TypeMappingSource.GetMapping(typeof(long));
+
+        builder
+            .Append(" INCREMENT BY ")
+            .Append(intMapping.GenerateSqlLiteral(operation.IncrementBy));
+
+        if (operation.MinValue is not null)
+        {
+            builder
+                .Append(" MINVALUE ")
+                .Append(longMapping.GenerateSqlLiteral(operation.MinValue));
+        }
+        else if (forAlter)
+        {
+            builder.Append(" NOMINVALUE");
+        }
+
+        if (operation.MaxValue is not null)
+        {
+            builder
+                .Append(" MAXVALUE ")
+                .Append(longMapping.GenerateSqlLiteral(operation.MaxValue));
+        }
+        else if (forAlter)
+        {
+            builder.Append(" NOMAXVALUE");
+        }
+
+        builder.Append(operation.IsCyclic ? " CYCLE" : " NO CYCLE");
+    }
+
     private static XuguIndexType? GetIndexType(MigrationOperation operation)
     {
         if (operation[XuguAnnotationNames.IndexType] is XuguIndexType indexType)

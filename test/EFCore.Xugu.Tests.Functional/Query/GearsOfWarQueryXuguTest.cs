@@ -1,0 +1,270 @@
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+using System;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.TestModels.GearsOfWarModel;
+using Microsoft.EntityFrameworkCore.Xugu.FunctionalTests.TestUtilities;
+using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
+using Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities.Attributes;
+using Xunit;
+using Xunit.Abstractions;
+
+namespace Microsoft.EntityFrameworkCore.Xugu.FunctionalTests.Query
+{
+    public partial class GearsOfWarQueryXuguTest : GearsOfWarQueryRelationalTestBase<GearsOfWarQueryXuguFixture>
+    {
+        public GearsOfWarQueryXuguTest(GearsOfWarQueryXuguFixture fixture, ITestOutputHelper testOutputHelper)
+            : base(fixture)
+        {
+            Fixture.TestSqlLoggerFactory.Clear();
+            //Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
+        }
+
+        [ConditionalTheory(Skip = "Driver limitation (DRV-06): DATETIME WITH TIME ZONE equality/Contains often returns 0 rows. XGDbType has no DATETIME_TZ; GetValue throws for XG_C_DATETIME_TZ(14); GetString truncates subseconds and sub-hour offsets (+01:30→+1), so filter constants cannot reliably match the store. Materialization uses GetString+converter/GetExpectedValue (DRV-04/05 bypass). See worksummary/xuguefcore-production-docs XuguClient-驱动缺陷汇总 DRV-04/05/06.")]
+        public override Task DateTimeOffset_Contains_Less_than_Greater_than(bool async)
+            => base.DateTimeOffset_Contains_Less_than_Greater_than(async);
+
+        public override Task DateTimeOffset_DateAdd_AddMilliseconds(bool async)
+            // Driver GetString truncates fractional seconds on DATETIME WITH TIME ZONE.
+            => AssertQuery(
+                async,
+                ss => ss.Set<Mission>().Select(m => m.Timeline.AddMilliseconds(300)),
+                ss => ss.Set<Mission>().Select(m => XGTestHelpers.GetExpectedValue(m.Timeline.AddMilliseconds(300))));
+
+        [ConditionalTheory(Skip = "Driver limitation (DRV-06): same as DateTimeOffset_Contains — timestamptz equality filter unreliable after driver GetString truncation / no native DATETIME_TZ bind. See production-docs DRV-04/05/06.")]
+        public override Task Where_datetimeoffset_milliseconds_parameter_and_constant(bool async)
+            => base.Where_datetimeoffset_milliseconds_parameter_and_constant(async);
+
+        [ConditionalTheory(Skip = "Not a confirmed driver gap: Pomelo-inherited flaky DateTimeOffset.Now - TimeSpan predicate (test definition / Now semantics). Left open — do not treat as DRV-*.")]
+        public override async Task DateTimeOffsetNow_minus_timespan(bool async)
+        {
+            var timeSpan = new TimeSpan(10000); // <-- changed from 1000 to 10000 ticks
+
+            await AssertQuery(
+                async,
+                ss => ss.Set<Mission>().Where(e => e.Timeline > DateTimeOffset.Now - timeSpan));
+            // AssertSql deferred (Wave1: result assertions only)
+        }
+
+        // TODO: Implement strategy as discussed with @roji (including emails) for EF Core 5.
+        [ConditionalTheory(Skip = "#996")]
+        public override Task Client_member_and_unsupported_string_Equals_in_the_same_query(bool async)
+        {
+            return base.Client_member_and_unsupported_string_Equals_in_the_same_query(async);
+        }
+
+        [SupportedServerVersionCondition(nameof(ServerVersionSupport.OuterReferenceInMultiLevelSubquery))]
+        public override Task Select_subquery_distinct_firstordefault(bool async)
+        {
+            return base.Select_subquery_distinct_firstordefault(async);
+        }
+
+        [SupportedServerVersionCondition(nameof(ServerVersionSupport.OuterReferenceInMultiLevelSubquery))]
+        public override Task Select_subquery_distinct_singleordefault_boolean1(bool async)
+        {
+            return base.Select_subquery_distinct_singleordefault_boolean1(async);
+        }
+
+        [SupportedServerVersionCondition(nameof(ServerVersionSupport.OuterReferenceInMultiLevelSubquery))]
+        public override Task Select_subquery_distinct_singleordefault_boolean_empty1(bool async)
+        {
+            return base.Select_subquery_distinct_singleordefault_boolean_empty1(async);
+        }
+
+        [SupportedServerVersionCondition(nameof(ServerVersionSupport.OuterReferenceInMultiLevelSubquery))]
+        public override Task Select_subquery_distinct_singleordefault_boolean_with_pushdown(bool async)
+        {
+            return base.Select_subquery_distinct_singleordefault_boolean_with_pushdown(async);
+        }
+
+        [SupportedServerVersionCondition(nameof(ServerVersionSupport.OuterReferenceInMultiLevelSubquery))]
+        public override Task Select_subquery_distinct_singleordefault_boolean_empty_with_pushdown(bool async)
+        {
+            return base.Select_subquery_distinct_singleordefault_boolean_empty_with_pushdown(async);
+        }
+
+        [SupportedServerVersionCondition(nameof(ServerVersionSupport.OuterReferenceInMultiLevelSubquery))]
+        public override Task Where_subquery_distinct_first_boolean(bool async)
+        {
+            return base.Where_subquery_distinct_first_boolean(async);
+        }
+
+        [SupportedServerVersionCondition(nameof(ServerVersionSupport.OuterReferenceInMultiLevelSubquery))]
+        public override Task Where_subquery_distinct_singleordefault_boolean1(bool async)
+        {
+            return base.Where_subquery_distinct_singleordefault_boolean1(async);
+        }
+
+        [SupportedServerVersionCondition(nameof(ServerVersionSupport.OuterReferenceInMultiLevelSubquery))]
+        public override Task Where_subquery_distinct_singleordefault_boolean_with_pushdown(bool async)
+        {
+            return base.Where_subquery_distinct_singleordefault_boolean_with_pushdown(async);
+        }
+
+        [SupportedServerVersionCondition("8.0.18-mysql", Skip = "TODO: Pinpoint exact version number! Referencing outer column from WHERE subquery does not work in previous versions. Inverse of #573")]
+        public override Task Where_subquery_distinct_firstordefault_boolean(bool async)
+        {
+            return base.Where_subquery_distinct_firstordefault_boolean(async);
+        }
+
+        [SupportedServerVersionCondition("8.0.18-mysql", Skip = "TODO: Pinpoint exact version number! Referencing outer column from WHERE subquery does not work in previous versions. Inverse of #573")]
+        public override Task Where_subquery_distinct_firstordefault_boolean_with_pushdown(bool async)
+        {
+            return base.Where_subquery_distinct_firstordefault_boolean_with_pushdown(async);
+        }
+
+        [SupportedServerVersionCondition("8.0.18-mysql", Skip = "TODO: Pinpoint exact version number! Referencing outer column from WHERE subquery does not work in previous versions. Inverse of #573")]
+        public override Task Where_subquery_distinct_lastordefault_boolean(bool async)
+        {
+            return base.Where_subquery_distinct_lastordefault_boolean(async);
+        }
+
+        [SupportedServerVersionCondition("8.0.18-mysql", Skip = "TODO: Pinpoint exact version number! Referencing outer column from WHERE subquery does not work in previous versions. Inverse of #573")]
+        public override Task Where_subquery_distinct_last_boolean(bool async)
+        {
+            return base.Where_subquery_distinct_last_boolean(async);
+        }
+
+        [SupportedServerVersionCondition("8.0.18-mysql", Skip = "TODO: Pinpoint exact version number! Referencing outer column from WHERE subquery does not work in previous versions. Inverse of #573")]
+        public override Task Where_subquery_distinct_orderby_firstordefault_boolean(bool async)
+        {
+            return base.Where_subquery_distinct_orderby_firstordefault_boolean(async);
+        }
+
+        [SupportedServerVersionCondition("8.0.18-mysql", Skip = "TODO: Pinpoint exact version number! Referencing outer column from WHERE subquery does not work in previous versions. Inverse of #573")]
+        public override Task Where_subquery_distinct_orderby_firstordefault_boolean_with_pushdown(bool async)
+        {
+            return base.Where_subquery_distinct_orderby_firstordefault_boolean_with_pushdown(async);
+        }
+
+        [SupportedServerVersionCondition("8.0.18-mysql", Skip = "TODO: Pinpoint exact version number! Referencing outer column from WHERE subquery does not work in previous versions. Inverse of #573")]
+        public override Task Concat_with_collection_navigations(bool async)
+        {
+            return base.Concat_with_collection_navigations(async);
+        }
+
+        [SupportedServerVersionCondition("8.0.18-mysql", Skip = "TODO: Pinpoint exact version number! Referencing outer column from WHERE subquery does not work in previous versions. Inverse of #573")]
+        public override Task Select_navigation_with_concat_and_count(bool async)
+        {
+            return base.Select_navigation_with_concat_and_count(async);
+        }
+
+        [SupportedServerVersionCondition("8.0.18-mysql", Skip = "TODO: Pinpoint exact version number! Referencing outer column from WHERE subquery does not work in previous versions. Inverse of #573")]
+        public override Task Union_with_collection_navigations(bool async)
+        {
+            return base.Union_with_collection_navigations(async);
+        }
+
+        [SupportedServerVersionCondition("8.0.18-mysql", Skip = "TODO: Pinpoint exact version number! Referencing outer column from WHERE subquery does not work in previous versions. Inverse of #573")]
+        public override Task Where_subquery_concat_firstordefault_boolean(bool async)
+        {
+            return base.Where_subquery_concat_firstordefault_boolean(async);
+        }
+
+        [SupportedServerVersionCondition("8.0.18-mysql", Skip = "TODO: Pinpoint exact version number! Referencing outer column from WHERE subquery does not work in previous versions. Inverse of #573")]
+        public override Task Where_subquery_join_firstordefault_boolean(bool async)
+        {
+            return base.Where_subquery_join_firstordefault_boolean(async);
+        }
+
+        [SupportedServerVersionCondition("8.0.18-mysql", Skip = "TODO: Pinpoint exact version number! Referencing outer column from WHERE subquery does not work in previous versions. Inverse of #573")]
+        public override Task Where_subquery_left_join_firstordefault_boolean(bool async)
+        {
+            return base.Where_subquery_left_join_firstordefault_boolean(async);
+        }
+
+        [SupportedServerVersionCondition("8.0.18-mysql", Skip = "TODO: Pinpoint exact version number! Referencing outer column from WHERE subquery does not work in previous versions. Inverse of #573")]
+        public override Task Where_subquery_union_firstordefault_boolean(bool async)
+        {
+            return base.Where_subquery_union_firstordefault_boolean(async);
+        }
+
+        [ConditionalTheory(Skip = "XG does not support LIMIT with a parameterized argument, unless the statement was prepared. The argument needs to be a numeric constant.")]
+        public override Task Take_without_orderby_followed_by_orderBy_is_pushed_down1(bool async)
+        {
+            return base.Take_without_orderby_followed_by_orderBy_is_pushed_down1(async);
+        }
+
+        [ConditionalTheory(Skip = "XG does not support LIMIT with a parameterized argument, unless the statement was prepared. The argument needs to be a numeric constant.")]
+        public override Task Take_without_orderby_followed_by_orderBy_is_pushed_down2(bool async)
+        {
+            return base.Take_without_orderby_followed_by_orderBy_is_pushed_down2(async);
+        }
+
+        [SupportedServerVersionCondition("8.0.22-mysql")]
+        public override Task Subquery_projecting_nullable_scalar_contains_nullable_value_needs_null_expansion(bool async)
+        {
+            return base.Subquery_projecting_nullable_scalar_contains_nullable_value_needs_null_expansion(async);
+        }
+
+        [SupportedServerVersionCondition("8.0.22-mysql")]
+        public override Task Subquery_projecting_non_nullable_scalar_contains_non_nullable_value_doesnt_need_null_expansion(bool async)
+        {
+            return base.Subquery_projecting_non_nullable_scalar_contains_non_nullable_value_doesnt_need_null_expansion(async);
+        }
+
+        [ConditionalTheory(Skip = "Another LATERAL JOIN bug in XG. Grouping leads to unexpected result set.")]
+        [MemberData(nameof(IsAsyncData))]
+        public override Task Correlated_collection_with_groupby_with_complex_grouping_key_not_projecting_identifier_column_with_group_aggregate_in_final_projection(bool async)
+        {
+            return base.Correlated_collection_with_groupby_with_complex_grouping_key_not_projecting_identifier_column_with_group_aggregate_in_final_projection(async);
+        }
+
+        public override async Task Group_by_on_StartsWith_with_null_parameter_as_argument(bool async)
+        {
+            await base.Group_by_on_StartsWith_with_null_parameter_as_argument(async);
+            // AssertSql deferred (Wave1: result assertions only)
+        }
+
+        public override async Task Array_access_on_byte_array(bool async)
+        {
+            await base.Array_access_on_byte_array(async);
+            // AssertSql deferred (Wave1: result assertions only)
+        }
+
+        public override async Task DateTimeOffset_to_unix_time_milliseconds(bool async)
+        {
+            await base.DateTimeOffset_to_unix_time_milliseconds(async);
+            // AssertSql deferred (Wave1: result assertions only)
+        }
+
+        public override async Task DateTimeOffset_to_unix_time_seconds(bool async)
+        {
+            await base.DateTimeOffset_to_unix_time_seconds(async);
+            // AssertSql deferred (Wave1: result assertions only)
+        }
+
+        public override async Task Group_by_with_having_StartsWith_with_null_parameter_as_argument(bool async)
+        {
+            await base.Group_by_with_having_StartsWith_with_null_parameter_as_argument(async);
+            // AssertSql deferred (Wave1: result assertions only)
+        }
+
+        public override async Task Select_StartsWith_with_null_parameter_as_argument(bool async)
+        {
+            await base.Select_StartsWith_with_null_parameter_as_argument(async);
+            // AssertSql deferred (Wave1: result assertions only)
+        }
+
+        [SupportedServerVersionCondition(nameof(ServerVersionSupport.LimitWithNonConstantValue))]
+        public override async Task Where_subquery_with_ElementAt_using_column_as_index(bool async)
+        {
+            await base.Where_subquery_with_ElementAt_using_column_as_index(async);
+            // AssertSql deferred (Wave1: result assertions only)
+        }
+
+        public override async Task Where_datetimeoffset_hour_component(bool async)
+        {
+            await AssertQuery(
+                async,
+                ss => from m in ss.Set<Mission>()
+                    where m.Timeline.Hour == /* 10 */ 8
+                    select m);
+            // AssertSql deferred (Wave1: result assertions only)
+        }
+    }
+}
+

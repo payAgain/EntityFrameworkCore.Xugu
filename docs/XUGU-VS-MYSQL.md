@@ -2,8 +2,8 @@
 
 ## 对照参考 · 非迁移目标 · 非虚谷方言定义
 
-> **版本**：Microsoft.EntityFrameworkCore.Xugu **3.0.1+**（Phase 12 GA + runtime-gap；Phase 13 硬化中）  
-> **对照基准**：Pomelo.EntityFrameworkCore.MySql **9.0.0**（EF Core 9）— **仅 C# 架构参考**  
+> **版本**：Microsoft.EntityFrameworkCore.Xugu **9.0.0**（对齐 EF Core 9.0.x；方言迭代基线）
+> **对照基准**：Pomelo.EntityFrameworkCore.MySql **9.0.0**（EF Core 9）— **仅 C# 架构参考**
 > **更新**：2026-07-19（关闭 Post-GA 文档漂移 12.PG4；口径对齐 3.0.x）
 
 > **⚠️ 本文档定位（必读）**
@@ -31,12 +31,12 @@
 | ExecuteDelete / ExecuteUpdate | **核心路径支持**（Owned/多表 ORDER·LIMIT 见 LIMITATIONS） | 支持 |
 | JSON / Spatial / FULLTEXT | JSON **✅**；Spatial/FULLTEXT **excluded** | 支持 |
 | 自动重试（Retry） | **支持**（Message 解析 XGCI 码） | `EnableRetryOnFailure` |
-| 乐观并发异常检测 | **产品声明不支持自动** `DbUpdateConcurrencyException`（ROW_COUNT E10049；见 13.201） | `ROW_COUNT()` |
+| 乐观并发异常检测 | **支持**（Path A：`RecordsAffected`；不依赖 `ROW_COUNT()`；见 13.201 / LIMITATIONS） | `ROW_COUNT()` |
 | 连接串 | Xugu 键值对（`IP=…; DB=…`） | MySQL 标准 URI/键值 |
 | 自增主键 DDL | `IDENTITY(1,1)` | `AUTO_INCREMENT` |
 | GUID 存储 | 原生 `GUID`（16 字节） | 常映射 `CHAR(36)` |
 
-**结论**：Xugu Provider **3.0.x** 已具备生产级 CRUD、查询翻译、迁移与 Scaffolding **主路径**；与 Pomelo 差距主要在 **扩展生态**（NTS/FULLTEXT）、**驱动级能力缺口**（`ROW_COUNT` 乐观并发）及 **平台**（Linux RID）。详见 [LIMITATIONS.md](LIMITATIONS.md) 与 [USER-GUIDE.md](USER-GUIDE.md)。
+**结论**：Xugu Provider **9.0.x / 3.0.x** 已具备生产级 CRUD、查询翻译、迁移与 Scaffolding **主路径**；乐观并发走驱动 `RecordsAffected`。与 Pomelo 差距主要在 **扩展生态**（NTS/FULLTEXT）、**驱动 workaround 依赖**（COUNT/时态/RETURNING）及 **平台**（Linux RID）。详见 [LIMITATIONS.md](LIMITATIONS.md) 与 [USER-GUIDE.md](USER-GUIDE.md)。
 
 ---
 
@@ -54,8 +54,8 @@
 | MySQL `YEAR` 列类型 | `YEAR` | **skip** | XuguDB 无 YEAR 类型 |
 | `AUTO_INCREMENT` DDL | 标准语法 | **不同** — 用 `IDENTITY(1,1)` | `reference/object/table/create.md` |
 | `INFORMATION_SCHEMA` Scaffolding | 标准元数据视图 | **不同** — `DBA_*` / `ALL_*` | `reference/system-view/` |
-| `ROW_COUNT()` 乐观并发 | `SELECT ROW_COUNT()` / `WHERE ROW_COUNT() = n` | **blocked**（10.105） | 实库 **E10049**；MYSQL 兼容模式亦不可用 |
-| `DbUpdateConcurrencyException` 自动检测 | Pomelo `MySqlUpdateSqlGenerator` | **blocked** | 依赖 ROW_COUNT 或驱动 `RecordsAffected` |
+| `ROW_COUNT()` SQL 函数 | `SELECT ROW_COUNT()` / `WHERE ROW_COUNT() = n` | **不可用**（E10049） | 不依赖；并发改走 `RecordsAffected` |
+| `DbUpdateConcurrencyException` 自动检测 | Pomelo `MySqlUpdateSqlGenerator` | **支持**（Path A） | `XuguModificationCommandBatch` + `RecordsAffected` |
 | CREATE/DROP DATABASE（EF API） | 部分支持 | **defer** | 运维手工建库 |
 | 过滤索引 `HasFilter` | 迁移生成 WHERE 子句 | **不支持** — Differ 剥离 | DDL 不支持 |
 | Identity PK **类型变更**（自动迁移） | DropPrimaryKey + 重建 | **NotSupported** | `XuguMigrationsSqlGenerator` 抛异常 |
@@ -144,21 +144,20 @@
 
 | 项 | Pomelo / MySQL | Xugu 2.0.0（Wave 4） | 状态 |
 |----|----------------|----------------------|------|
-| **10.106 Retry** | `MySqlRetryingExecutionStrategy` + `MySqlException.IsTransient` | `XuguRetryingExecutionStrategy` + `XuguTransientExceptionDetector`（解析 `[E19886]`、`[E32506]`、`[E34304]`、`[E34305]` 等） | **done** |
+| **10.106 Retry** | `MySqlRetryingExecutionStrategy` + `MySqlException.IsTransient` | `XuguRetryingExecutionStrategy` + `XuguTransientExceptionDetector`（`[E19886]`/`[E19887]`/`[E32506]`；**不含** E34304/E34305） | **done** |
 | `EnableRetryOnFailure()` | 三重重载 | 三重重载，注册重试策略 | **done** |
 | 默认执行策略 | 可配置 | `XuguExecutionStrategy`（`RetriesOnFailure => false`） | **done** |
 | Retry 单元测试 | Pomelo 对等 | +10（`XuguTransientExceptionDetectorTests` + `ExecutionStrategyTests`） | **done** |
-| 故障注入集成测试 | 有 | 无（依赖单元测试 + 实库偶发） | 残余风险 |
-| **10.105 ROW_COUNT** | `SELECT ROW_COUNT()`；`WHERE ROW_COUNT() = n` | `SELECT 1` 占位；`WHERE 1 = n` | **blocked** |
-| `DbUpdateConcurrencyException` | `OptimisticConcurrencyMySqlTest` 全通过 | `Stale_concurrency_token_throws_*` 显式 Skip（E10049） | **blocked** |
-| 并发 token 列映射 / UPDATE 含 token | 支持 | 支持（3/4 测试通过） | **partial** |
-| 解锁条件 | — | 驱动可靠 `RecordsAffected`，或 XuguDB 提供等价 affected-rows API | 待驱动/方言 |
+| 故障注入 / 策略重试证明 | 有 | **有**（`ExecutionStrategyTests` 注入 `[E19886]`；非实库 idle disconnect） | **done**（残余：无真实断连注入） |
+| **10.105 ROW_COUNT** | `SELECT ROW_COUNT()` | 仍 E10049；**不使用** | 函数不可用（与并发解耦） |
+| `DbUpdateConcurrencyException` | Pomelo 全通过 | Path A：`RecordsAffected`；`OptimisticConcurrencyTests.Stale_*` | **done** |
+| 并发 token 列映射 / UPDATE 含 token | 支持 | 支持 | **done** |
 
 ### 代码锚点
 
 - Retry：`src/EFCore.Xugu/Storage/Internal/XuguRetryingExecutionStrategy.cs`、`XuguTransientExceptionDetector.cs`
-- ROW_COUNT 占位：`src/EFCore.Xugu/Update/Internal/XuguUpdateSqlGenerator.cs`（`SELECT 1` / `1 = n`）
-- 测试：`test/EFCore.Xugu.Tests/OptimisticConcurrencyTests.cs`（Skip 理由含 E10049）
+- 并发：`XuguModificationCommandBatch`（`RecordsAffected`）；`ado-driver-contract.md` ROW_COUNT 行
+- 测试：`OptimisticConcurrencyTests`、`AffectedRowsProbeTests`、`ExecutionStrategyTests`
 
 ### XuguDB 文档依据
 
@@ -180,8 +179,8 @@
 | 迁移（Create/Alter/Drop、索引、FK） | ✅ supported | 列重命名：ADD+UPDATE+DROP workaround |
 | Scaffolding | ⚠️ partial | DBA/ALL 视图；无 Collation/Charset 列级还原 |
 | SequentialGuid | ✅ supported | 客户端 ticks+random；查询 `SYS_GUID()` |
-| 乐观并发 token 列 | ✅ supported | 异常检测 ⚠️ blocked（10.105） |
-| DateOnly / TimeOnly 查询 | ✅ supported | SaveChanges 写入 ⚠️ defer |
+| 乐观并发 token 列 | ✅ supported | 异常检测 ✅ Path A（`RecordsAffected`） |
+| DateOnly / TimeOnly 查询 | ✅ supported | SaveChanges / 物化 ✅（Post-GA converter） |
 | `EnableRetryOnFailure` | ✅ supported | Wave 4 — 10.106 |
 | Monster / Specification 子集 | ✅ supported | Wave 3 — 10.101/10.102 |
 | Collation / `HasCharSet` Fluent | ❌ skip | 连接串 `CHAR_SET` |
@@ -263,7 +262,7 @@
 |-------------|------|
 | Spatial / Match | 永久 skip |
 | JSON EF Provider（`Json*MySqlTest`） | **2.1.0 目标**（11.109） |
-| ROW_COUNT 乐观并发异常 | blocked（10.105） |
+| ROW_COUNT() SQL / 旧并发路径 | 函数仍 E10049；异常检测已 Path A |
 | IntegrationTests（Vegeta/ASP.NET） | defer（10.206） |
 | Linux RID | blocked（10.205） |
 | FOR UPDATE / 位运算 / RelationalCommand | defer（10.202–10.204） |
@@ -317,9 +316,9 @@ options.UseXugu(connectionString, xugu => xugu.EnableRetryOnFailure(
 
 | 限制 | 变通 |
 |------|------|
-| ROW_COUNT 乐观并发 | 业务层版本检查；等待驱动 `RecordsAffected` 或 XuguDB 等价 API |
-| DateOnly/TimeOnly SaveChanges | 查询可用；写入用 `DateTime` 或 raw SQL |
-| 无 EF JSON Provider（2.0.x） | 应用 `VARCHAR`/`CLOB` + 序列化；或 raw SQL `JSON_EXTRACT`/`->`；**2.1.0** 见 11.109 |
+| `ROW_COUNT()` SQL | 勿使用；乐观并发用 Provider Path A（`RecordsAffected`） |
+| DateOnly/TimeOnly SaveChanges | **已支持**（converter）；见 LIMITATIONS |
+| JSON 整列大 LOB | 优先 `JsonValue`/`JsonExtract` 投影；见 LIMITATIONS 13.206 |
 | 无 FULLTEXT | 应用层搜索；或 `LIKE` / `REGEXP_LIKE` |
 | Identity PK 类型变更 | 手工迁移 |
 | 仅 Windows x64 原生包 | Linux 待 10.205 |
@@ -335,14 +334,14 @@ options.UseXugu(connectionString, xugu => xugu.EnableRetryOnFailure(
 
 - 目标数据库为 **XuguDB**
 - 需要 EF Core 9 + CRUD/LINQ/迁移主路径
-- 可接受连接串差异、连接级字符集、ROW_COUNT 并发限制
-- 不依赖 EF JSON Fluent、Spatial、FULLTEXT、列级 Collation
+- 可接受连接串差异、连接级字符集、Windows-only 原生包
+- 不依赖 Spatial、FULLTEXT、列级 Collation；JSON 按文档边界使用
 
 ### 选择 Pomelo（MySQL）
 
 - 目标库为 **MySQL / MariaDB**
-- 需要 JSON、Spatial、FULLTEXT、完整 `ROW_COUNT` 乐观并发
-- 依赖 MySQL 特有 DDL 与成熟多平台生态
+- 需要 Spatial、FULLTEXT、MySQL 原生 `ROW_COUNT()` 语义、多平台生态
+- 依赖 MySQL 特有 DDL
 
 ### 从 Pomelo 迁移检查清单
 
@@ -353,7 +352,7 @@ options.UseXugu(connectionString, xugu => xugu.EnableRetryOnFailure(
 3. `Guid` 存储（二进制 vs 字符串）
 4. `AUTO_INCREMENT` → `IDENTITY`
 5. 移除 `HasCollation` / Spatial；JSON 按 11.109 或 VARCHAR 变通
-6. 评估 Retry（已支持）、ROW_COUNT 并发（仍 blocked）、DateOnly SaveChanges
+6. 评估 Retry（已支持）、乐观并发 Path A、DateOnly/TimeOnly 物化边界
 7. 集成测试 — [TESTING.md](TESTING.md)
 
 ### 请勿以 MySQL 语法作为首要依据

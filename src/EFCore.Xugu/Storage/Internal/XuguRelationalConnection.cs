@@ -155,20 +155,8 @@ public class XuguRelationalConnection : RelationalConnection, IXuguRelationalCon
     }
 
     private static bool IsTransientOpenError(Exception exception)
-    {
-        for (var current = exception; current is not null; current = current.InnerException)
-        {
-            var message = current.Message;
-            if (message.Contains("E34304", StringComparison.Ordinal)
-                || message.Contains("E34305", StringComparison.Ordinal)
-                || message.Contains("InValidConnectionException", StringComparison.Ordinal))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
+        // Align with production retry policy: do not treat E34304/E34305 (bad IP/CS) as transient.
+        => XuguTransientExceptionDetector.ShouldRetryOn(exception);
 
     private void TrySetCompatibleModeOnOpen()
     {

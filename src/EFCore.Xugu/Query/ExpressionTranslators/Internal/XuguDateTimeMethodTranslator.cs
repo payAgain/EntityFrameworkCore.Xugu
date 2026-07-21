@@ -266,11 +266,19 @@ public class XuguDateTimeMethodTranslator : IMethodCallTranslator
         {
 
             if (method == TimeOnlyAddTimeSpanMethod)
-
             {
+                // Docs: ADDTIME(expr, INTERVAL n SECOND) — avoid bare `time + timespan` (E17003).
+                if (arguments[0] is SqlConstantExpression { Value: TimeSpan timeSpan })
+                {
+                    var totalSeconds = (int)Math.Truncate(timeSpan.TotalSeconds);
+                    return TranslateTimeOnlyAddTime(
+                        instance!,
+                        "SECOND",
+                        _sqlExpressionFactory.Constant(totalSeconds),
+                        method.ReturnType);
+                }
 
-                return _sqlExpressionFactory.Add(instance, arguments[0]);
-
+                return null;
             }
 
 

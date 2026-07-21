@@ -79,41 +79,66 @@ public class XuguDateTimeMemberTranslator : IMemberTranslator
                 _sqlExpressionFactory.Constant(366));
         }
 
-        if (declaringType == typeof(DateTimeOffset))
+        // DateTime and DateTimeOffset share DATE/DAYOFYEAR/DAYOFWEEK (docs:
+        // reference/function/date-and-time-functions/date.md, dayofyear.md).
+        if (declaringType == typeof(DateTime)
+            || declaringType == typeof(DateTimeOffset))
         {
-            return member.Name switch
+            switch (member.Name)
             {
-                nameof(DateTimeOffset.DateTime) or nameof(DateTimeOffset.UtcDateTime)
-                    => _sqlExpressionFactory.Convert(instance, typeof(DateTime)),
+                case nameof(DateTime.DayOfYear):
+                    // DAYOFYEAR rejects DATETIME WITH TIME ZONE (E10049/E17007).
+                    // DATE() accepts WITH TIME ZONE; feed that into DAYOFYEAR.
+                    return _sqlExpressionFactory.NullableFunction(
+                        "DAYOFYEAR",
+                        [ToDateArgumentForDayOfYear(instance, declaringType)],
+                        returnType,
+                        onlyNullWhenAnyNullPropagatingArgumentIsNull: false);
 
-                _ => null
-            };
+                case nameof(DateTime.Date):
+                    // DateTime.Date → DateTime; DateTimeOffset.Date → DateTime (date at midnight).
+                    return _sqlExpressionFactory.NullableFunction(
+                        "DATE",
+                        [instance],
+                        returnType,
+                        onlyNullWhenAnyNullPropagatingArgumentIsNull: false);
+
+                case nameof(DateTime.DayOfWeek):
+                    return _sqlExpressionFactory.Subtract(
+                        _sqlExpressionFactory.NullableFunction(
+                            "DAYOFWEEK",
+                            [ToDateArgumentForDayOfYear(instance, declaringType)],
+                            returnType,
+                            onlyNullWhenAnyNullPropagatingArgumentIsNull: false),
+                        _sqlExpressionFactory.Constant(1));
+
+                case nameof(DateTimeOffset.DateTime):
+                case nameof(DateTimeOffset.UtcDateTime):
+                    if (declaringType == typeof(DateTimeOffset))
+                    {
+                        return _sqlExpressionFactory.Convert(instance, typeof(DateTime));
+                    }
+
+                    break;
+            }
         }
 
-        return member.Name switch
+        return null;
+    }
+
+    private SqlExpression ToDateArgumentForDayOfYear(SqlExpression instance, Type declaringType)
+    {
+        if (declaringType != typeof(DateTimeOffset))
         {
-            nameof(DateTime.DayOfYear) => _sqlExpressionFactory.NullableFunction(
-                "DAYOFYEAR",
-                [instance],
-                returnType,
-                onlyNullWhenAnyNullPropagatingArgumentIsNull: false),
+            return instance;
+        }
 
-            nameof(DateTime.Date) => _sqlExpressionFactory.NullableFunction(
-                "DATE",
-                [instance],
-                returnType,
-                onlyNullWhenAnyNullPropagatingArgumentIsNull: false),
-
-            nameof(DateTime.DayOfWeek) => _sqlExpressionFactory.Subtract(
-                _sqlExpressionFactory.NullableFunction(
-                    "DAYOFWEEK",
-                    [instance],
-                    returnType,
-                    onlyNullWhenAnyNullPropagatingArgumentIsNull: false),
-                _sqlExpressionFactory.Constant(1)),
-
-            _ => null
-        };
+        // DATE(timestamptz) is documented; CAST(... AS DATETIME) is not (E17007).
+        return _sqlExpressionFactory.NullableFunction(
+            "DATE",
+            [instance],
+            typeof(DateOnly),
+            onlyNullWhenAnyNullPropagatingArgumentIsNull: false);
     }
 
     private SqlExpression? TranslateStaticMember(MemberInfo member, Type returnType)

@@ -109,19 +109,32 @@ public class ComplexTypesTrackingTests(ComplexTypesFixture fixture)
         await context.SaveChangesAsync();
     }
 
-    [SkippableFact(Skip = "Excluded 12.313: optional complex properties require EF #31376")]
-    public async Task Nullable_complex_property_can_be_null()
+    [Fact]
+    public void Complex_property_is_required_optional_null_not_in_model()
+    {
+        // Optional (nullable) complex properties require EF #31376 (excluded 12.313).
+        // Current model maps ShippingAddress as a required complex property.
+        using var context = fixture.CreateContext();
+        var complexProperty = context.Model
+            .FindEntityType(typeof(CustomerWithAddress))!
+            .FindComplexProperty(nameof(CustomerWithAddress.ShippingAddress))!;
+
+        Assert.False(complexProperty.IsNullable);
+    }
+
+    [SkippableFact]
+    public async Task Null_complex_property_on_required_mapping_is_rejected()
     {
         XuguTestConnection.SkipIfUnavailable();
         fixture.ResetStore();
 
         await using var context = fixture.CreateContext();
         context.Customers.Add(new CustomerWithAddress { Id = 2, Name = "NoAddress", ShippingAddress = null! });
-        await context.SaveChangesAsync();
 
-        await using var verify = fixture.CreateContext();
-        var loaded = await verify.Customers.SingleAsync(c => c.Id == 2);
-        Assert.Null(loaded.ShippingAddress);
+        var ex = await Assert.ThrowsAnyAsync<Exception>(() => context.SaveChangesAsync());
+        Assert.True(
+            ex is InvalidOperationException or ArgumentNullException or NullReferenceException,
+            $"Expected null-complex rejection, got: {ex.GetType().FullName}: {ex.Message}");
     }
 
     [Fact]

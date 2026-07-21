@@ -15,9 +15,11 @@
 
 | 错误码 | 返回值 | 含义 | 是否适合自动重试 |
 |--------|--------|------|------------------|
-| E19886 | -24 | 空闲断开，重建连接但当前 SQL 未成功发送 | 可能 |
-| E19887 | -25 | 执行超时 + 连接重建失败 | 可能 |
-| E32506 | -4 | 连接长时间未访问已与服务端断开 | 可能 |
+| E19886 | -24 | 空闲断开，重建连接但当前 SQL 未成功发送 | **是**（已纳入 Detector） |
+| E19887 | -25 | 执行超时 + 连接重建失败 | **是**（已纳入 Detector） |
+| E32506 | -4 | 连接长时间未访问已与服务端断开 | **是**（已纳入 Detector） |
+| E34304 | — | 指定的 Ip,Port 无效（驱动 Open `ret==-8`） | **否** — 配置错误，fail-fast |
+| E34305 | — | 指定的连接串无效（驱动 Open `ret==-9`） | **否** — 配置错误，fail-fast |
 | E32513 | -4 | 发送失败且重建连接失败 | 否 |
 | E32514 | -24 | 空闲断开且再次连接失败 | 否 |
 | E19884 | -1 | 网络不通或认证错误 | 否 |
@@ -47,9 +49,10 @@
 
 | 项 | 决定 |
 |----|------|
-| `XuguRetryingExecutionStrategy` 实现 | **done**（10.106）— Message 解析 XGCI 码；`errorNumbersToAdd` 忽略 |
+| `XuguRetryingExecutionStrategy` 实现 | **done**（10.106）— Message 解析 XGCI 码；`errorNumbersToAdd` 忽略；`OnRetry` 关闭失效连接 |
+| 瞬态码 | `E19886` / `E19887` / `E32506` / `E34301`；空正文 `E34501`（`sqlexecure`/`sqlexecute err:`） |
 | 残余风险 | 驱动 Message 格式变更可能破坏判定；长期建议 `XuguException` + `IsTransient` |
-| 后续工作 | 故障注入集成测试（模拟 idle disconnect） |
+| 实库证明 | `RetryFaultInjectionTests`（拦截器）；`RetryServerDisconnectTests`（`DROP SESSION`） |
 
 ## DbFunctions 相关 defer（同波次）
 

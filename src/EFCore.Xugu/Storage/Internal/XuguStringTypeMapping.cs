@@ -1,4 +1,5 @@
 using System.Data;
+using System.Data.Common;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Json;
 
@@ -20,7 +21,8 @@ public class XuguStringTypeMapping : StringTypeMapping
                     jsonValueReaderWriter: JsonStringReaderWriter.Instance),
                 storeType,
                 storeTypePostfix,
-                fixedLength ? System.Data.DbType.StringFixedLength : System.Data.DbType.String,
+                // XuguClient does not map StringFixedLength (defaults to Binary); use String → Char.
+                System.Data.DbType.String,
                 unicode: true,
                 size: size,
                 fixedLength: fixedLength))
@@ -34,4 +36,13 @@ public class XuguStringTypeMapping : StringTypeMapping
 
     protected override RelationalTypeMapping Clone(RelationalTypeMappingParameters parameters)
         => new XuguStringTypeMapping(parameters);
+
+    /// <summary>
+    /// Keep string parameters on a mapped DbType (String → Char). Avoid StringFixedLength → Binary.
+    /// </summary>
+    protected override void ConfigureParameter(DbParameter parameter)
+    {
+        base.ConfigureParameter(parameter);
+        parameter.DbType = System.Data.DbType.String;
+    }
 }

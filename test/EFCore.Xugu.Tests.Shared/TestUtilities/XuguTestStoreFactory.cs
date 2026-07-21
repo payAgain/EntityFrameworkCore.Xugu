@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
@@ -26,10 +28,15 @@ public sealed class XuguTestStoreFactory : IXuguTestStoreFactory
     public XuguTestStore Create(string name)
         => XuguTestStore.Create(NormalizeStoreName(name));
 
+    /// <summary>
+    /// Compact prefix so FK/PK names stay within Xugu's 127-byte identifier limit
+    /// (<c>reference/sql/identifier.md</c>) when two prefixed table names are combined.
+    /// </summary>
     public string FormatTablePrefix(string storeName)
     {
         var normalized = NormalizeStoreName(storeName);
-        return $"EF_TS_{normalized}_";
+        var hash = Convert.ToHexString(SHA1.HashData(Encoding.UTF8.GetBytes(normalized)))[..8];
+        return $"EF_{hash}_";
     }
 
     public string FormatTableName(string storeName, string logicalTableName)

@@ -22,7 +22,79 @@ public static class XuguTestConnection
         Environment.GetEnvironmentVariable("XUGU_CONNECTION_STRING") ?? DefaultConnectionString;
 
     /// <summary>
-    /// Applies provider options for tests (respects <c>XUGU_DIALECT_MODE</c>: compat by default).
+    /// Optional cluster listen ports (comma-separated), e.g. <c>5287,5288,5289</c>.
+    /// When set, <see cref="ClusterNodeConnectionStrings"/> builds one connection string per port
+    /// from <see cref="ConnectionString"/> (same host/credentials, replaced <c>PORT</c>).
+    /// </summary>
+    public static string? ClusterPortsEnvironment
+        => Environment.GetEnvironmentVariable("XUGU_CLUSTER_PORTS")?.Trim();
+
+    /// <summary>
+    /// Connection strings for each configured cluster listen port, or empty when
+    /// <c>XUGU_CLUSTER_PORTS</c> is unset.
+    /// </summary>
+    public static IReadOnlyList<string> ClusterNodeConnectionStrings
+    {
+        get
+        {
+            var portsEnv = ClusterPortsEnvironment;
+            if (string.IsNullOrWhiteSpace(portsEnv))
+            {
+                return Array.Empty<string>();
+            }
+
+            var ports = portsEnv
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Where(static p => int.TryParse(p, out _))
+                .ToArray();
+            if (ports.Length == 0)
+            {
+                return Array.Empty<string>();
+            }
+
+            return ports.Select(port => WithPort(ConnectionString, port)).ToArray();
+        }
+    }
+
+    /// <summary>
+    /// Skips when <c>XUGU_CLUSTER_PORTS</c> is not configured (cluster suite is opt-in).
+    /// </summary>
+    public static void SkipIfClusterNotConfigured()
+    {
+        if (ClusterNodeConnectionStrings.Count < 2)
+        {
+            FailOrSkip(
+                "Cluster tests require XUGU_CLUSTER_PORTS with at least two ports (e.g. 5287,5288,5289)");
+        }
+    }
+
+    /// <summary>
+    /// Returns a copy of <paramref name="connectionString"/> with <c>PORT=</c> replaced.
+    /// </summary>
+    public static string WithPort(string connectionString, string port)
+    {
+        var parts = connectionString.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var replaced = false;
+        for (var i = 0; i < parts.Length; i++)
+        {
+            if (parts[i].StartsWith("PORT=", StringComparison.OrdinalIgnoreCase)
+                || parts[i].StartsWith("Port=", StringComparison.OrdinalIgnoreCase))
+            {
+                parts[i] = "PORT=" + port;
+                replaced = true;
+            }
+        }
+
+        if (!replaced)
+        {
+            return connectionString.TrimEnd(';') + ";PORT=" + port;
+        }
+
+        return string.Join("; ", parts);
+    }
+
+    /// <summary>
+    /// Applies provider options for tests (respects <c>XUGU_DIALECT_MODE</c>: native by default).
     /// </summary>
     public static DbContextOptionsBuilder ConfigureProviderOptions(DbContextOptionsBuilder builder)
         => TestUtilities.XuguDialectTestConfiguration.ConfigureDialect(builder);
@@ -132,11 +204,19 @@ public static class XuguTestConnection
     }
 
     /// <summary>
-    /// Opens a driver connection with retries for transient native open errors (E34304/E34305).
+    /// Opens a driver connection with retries for native open errors (E34304/E34305).
+    /// Test-harness only — production <see cref="Storage.Internal.XuguTransientExceptionDetector"/>
+    /// does <b>not</b> treat these codes as transient.
     /// Serialized to avoid native driver races under long test runs.
     /// </summary>
     public static XGConnection OpenConnection(int maxAttempts = 5)
+        => OpenConnection(ConnectionString, maxAttempts);
+
+    /// <inheritdoc cref="OpenConnection(int)"/>
+    public static XGConnection OpenConnection(string connectionString, int maxAttempts = 5)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
+
         OpenLock.Wait();
         try
         {
@@ -149,7 +229,7 @@ public static class XuguTestConnection
                 XGConnection? connection = null;
                 try
                 {
-                    connection = _connectionFactory(ConnectionString);
+                    connection = _connectionFactory(connectionString);
                     connection.Open();
                     MarkAvailable(true);
                     ClearOpenCooldown();

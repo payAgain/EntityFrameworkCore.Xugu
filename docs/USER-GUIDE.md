@@ -1,6 +1,6 @@
 # XuguDB EF Core Provider — 用户指南
 
-> **版本**：`Microsoft.EntityFrameworkCore.Xugu` **3.0.0**（GA）  
+> **版本**：`Microsoft.EntityFrameworkCore.Xugu` **9.0.0**（对齐 EF Core 9.0.x；方言迭代基线）  
 > **目标框架**：.NET 9.0 · EF Core 9.0.x  
 > **适用读者**：在 Windows 上使用 XuguDB 的应用开发者
 
@@ -30,7 +30,7 @@
 | 项 | 要求 |
 |----|------|
 | .NET SDK | **9.0+**（见仓库 `global.json`） |
-| 操作系统 | **Windows x64**（3.0.0 GA 生产平台） |
+| 操作系统 | **Windows x64**（9.0.0 生产平台） |
 | XuguDB 服务端 | 可网络访问的实例（默认端口 `5138`） |
 | ADO.NET 驱动 | NuGet 包 [`Xuguclient`](https://www.nuget.org/packages/Xuguclient) |
 | 原生库 | `xugusql.dll`（须与应用程序同目录或在 PATH 中） |
@@ -40,7 +40,7 @@
 ### 1.2 安装 NuGet 包
 
 ```powershell
-dotnet add package Microsoft.EntityFrameworkCore.Xugu --version 3.0.0
+dotnet add package Microsoft.EntityFrameworkCore.Xugu --version 9.0.0
 dotnet add package Xuguclient
 ```
 
@@ -110,7 +110,7 @@ $env:XUGU_CONNECTION = "IP=127.0.0.1; DB=SYSTEM; USER=SYSDBA; PWD=***; PORT=5138
 
 ### 2.3 兼容模式（可选，非默认）
 
-**3.0.0 默认使用 Xugu 原生方言**，连接打开时 **不会** 自动设置 `compatible_mode`。
+**9.0.0 默认使用 Xugu 原生方言**，连接打开时 **不会** 自动设置 `compatible_mode`。
 
 若需与 MySQL 脚本对照或运行遗留 compat 测试，显式启用：
 
@@ -395,7 +395,7 @@ options.UseXugu(connectionString, xugu => xugu.EnableRetryOnFailure(
     maxRetryDelay: TimeSpan.FromSeconds(10)));
 ```
 
-实现通过解析异常 `Message` 中的 XGCI 码（如 `[E19886]`、`[E34304]`）判定瞬态错误。
+实现通过解析异常 `Message` 中的 XGCI 码（如 `[E19886]`、`[E32506]`）判定瞬态错误。`[E34304]` / `[E34305]`（IP/连接串无效）**不是**瞬态错误，不会无限/多次重试掩盖配置问题。
 
 > **注意**：Pomelo 的 `errorNumbersToAdd` 参数在 Xugu 上 **被忽略**（Xugu 使用字符串 XGCI 码，非 MySQL 数字 error number）。
 
@@ -415,11 +415,11 @@ await strategy.ExecuteAsync(async () =>
 
 ## 9. 已知限制摘要
 
-以下为 3.0.0 GA 最常见限制。**完整清单**见 [LIMITATIONS.md](LIMITATIONS.md)。
+以下为 9.0.0 最常见限制。**完整清单**见 [LIMITATIONS.md](LIMITATIONS.md)。
 
 | 类别 | 限制 | 影响 |
 |------|------|------|
-| **PLAT-01 乐观并发** | `ROW_COUNT()` 在 XuguDB 不可用（E10049） | 并发 token 列可映射，但 **`DbUpdateConcurrencyException` 自动检测 blocked** |
+| **PLAT-01 乐观并发** | 不依赖 `ROW_COUNT()`（仍 E10049） | **`DbUpdateConcurrencyException` 已支持**（`RecordsAffected` Path A） |
 | **PLAT-02 平台** | Linux 无 `libxugusql.so` | **仅 Windows x64 为 GA 平台** |
 | **建库 API** | 无 `CREATE/DROP DATABASE` | 须 DBA 手工建库 |
 | **EnsureCreated** | 不支持 | 使用 Migrations |
@@ -454,11 +454,11 @@ Xugu Provider 不支持 EF 的 `Database.EnsureCreated()` / `EnsureDeleted()`。
 
 ### Q6：乐观并发 token 能用吗？
 
-**映射与 UPDATE 含 token 列：支持。** 但 XuguDB 缺少 `ROW_COUNT()`，Provider 无法可靠抛出 `DbUpdateConcurrencyException`。高并发场景需应用层补偿或显式 SQL 检查（见 LIMITATIONS PLAT-01）。
+**可以。** 并发 token 列映射、UPDATE WHERE、以及陈旧 token 时抛出 `DbUpdateConcurrencyException` 均已支持（Provider 读 `DbDataReader.RecordsAffected`，不依赖 `ROW_COUNT()`）。详见 `LIMITATIONS.md`。
 
 ### Q7：能在 Linux 上跑吗？
 
-3.0.0 GA **仅签 Windows**。Linux RID 待 Xugu 驱动发布 `libxugusql.so` 后解锁。
+9.0.0 **仅签 Windows**。Linux RID 待 Xugu 驱动发布 `libxugusql.so` 后解锁。
 
 ### Q8：JSON 列怎么查？
 

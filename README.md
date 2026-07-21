@@ -81,7 +81,7 @@ dotnet pack src/EFCore.Xugu/EFCore.Xugu.csproj -c Release -o artifacts/ -p:UseLo
 
 ---
 
-## Platform support (3.0.0 GA)
+## Platform support (9.0.0)
 
 - **Windows** — 生产 GA 平台
 - **Linux x64** — RID / `libxugusql.so` 已登记 vendor ticket，signed-off blocked（见 LIMITATIONS）

@@ -1,5 +1,6 @@
 using System.Data;
 using System.Data.Common;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.TestUtilities;
@@ -32,7 +33,25 @@ public sealed class XuguRelationalTestStore : RelationalTestStore
     }
 
     public override DbContextOptionsBuilder AddProviderOptions(DbContextOptionsBuilder builder)
-        => builder.UseXugu(ConnectionString, XuguServerVersion.Default);
+        // Share the store's ADO.NET connection so UseTransaction(GetDbTransaction()) works across
+        // nested contexts (same pattern as Pomelo/SqlServer RelationalTestStore).
+        => builder.UseXugu(
+            Connection,
+            XuguServerVersion.Default,
+            xugu =>
+            {
+                // Avoid MultipleCollectionIncludeWarning failing the suite (Pomelo same default).
+                xugu.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery);
+
+                if (XuguDialectTestConfiguration.UseCompatibleMode)
+                {
+                    xugu.SetCompatibleModeOnOpen();
+                }
+                else
+                {
+                    xugu.DisableCompatibleModeOnOpen();
+                }
+            });
 
     public override async Task<TestStore> InitializeAsync(
         IServiceProvider? serviceProvider,
@@ -118,16 +137,48 @@ public sealed class XuguRelationalTestStore : RelationalTestStore
         }
 
         var creator = context.GetService<IRelationalDatabaseCreator>();
-        var prefix = XuguTestStoreFactory.Instance.FormatTablePrefix(Name);
-        bool missingTables;
-        using (var probe = XuguTestConnection.OpenConnection())
+        // CleanAsync drops prefixed tables; always recreate afterward. Retry once if DROP raced.
+        Exception? createEx = null;
+        for (var attempt = 1; attempt <= 2; attempt++)
         {
-            missingTables = !GetTablesWithPrefix(probe, prefix).Any();
+            try
+            {
+                await creator.CreateTablesAsync().ConfigureAwait(false);
+                createEx = null;
+                break;
+            }
+            catch (Exception ex)
+            {
+                createEx = ex;
+                DropTablesForStore();
+            }
         }
 
-        if (missingTables)
+        if (createEx is not null)
         {
-            await creator.CreateTablesAsync().ConfigureAwait(false);
+            string? script = null;
+            try
+            {
+                script = ((RelationalDatabaseCreator)creator).GenerateCreateScript();
+            }
+            catch
+            {
+                // best-effort
+            }
+
+            var dumpDir = Path.Combine(
+                Path.GetTempPath(),
+                "xugu-efcore-ddl-dump");
+            Directory.CreateDirectory(dumpDir);
+            var dumpPath = Path.Combine(dumpDir, $"{Name}-create.sql");
+            if (!string.IsNullOrEmpty(script))
+            {
+                await File.WriteAllTextAsync(dumpPath, script).ConfigureAwait(false);
+            }
+
+            throw new InvalidOperationException(
+                $"CreateTables failed for store '{Name}'. DDL dump: {dumpPath}. {createEx.Message}",
+                createEx);
         }
 
         if (seed != null)
@@ -151,13 +202,38 @@ public sealed class XuguRelationalTestStore : RelationalTestStore
 
         var prefix = XuguTestStoreFactory.Instance.FormatTablePrefix(Name);
 
+        // Prefer the store connection (shared with DbContext); fall back to a probe connection
+        // when DROP must not contend with an open reader on the store connection.
+        void DropOn(XGConnection connection)
+        {
+            if (connection.State != ConnectionState.Open)
+            {
+                connection.Open();
+            }
+
+            var tables = GetTablesWithPrefix(connection, prefix);
+            foreach (var table in tables)
+            {
+                TryExecuteNonQuery(connection, $"DROP TABLE \"{table}\" CASCADE");
+            }
+        }
+
         try
         {
-            using var connection = XuguTestConnection.OpenConnection();
-            foreach (var table in GetTablesWithPrefix(connection, prefix))
+            if (Connection is XGConnection storeConnection)
             {
-                TryExecuteNonQuery(connection, $"DROP TABLE {table} CASCADE");
+                DropOn(storeConnection);
             }
+        }
+        catch
+        {
+            // fall through to probe connection
+        }
+
+        try
+        {
+            using var probe = XuguTestConnection.OpenConnection();
+            DropOn(probe);
         }
         catch
         {
@@ -165,22 +241,24 @@ public sealed class XuguRelationalTestStore : RelationalTestStore
         }
     }
 
-    private static IEnumerable<string> GetTablesWithPrefix(XGConnection connection, string prefix)
+    private static List<string> GetTablesWithPrefix(XGConnection connection, string prefix)
     {
+        var tables = new List<string>();
         using var command = connection.CreateCommand();
+        // Prefix isolation is sufficient; avoid VALID/IS_SYS filters (BOOLEAN vs CHAR differs by session).
         command.CommandText = $"""
             SELECT TABLE_NAME
             FROM DBA_TABLES
-            WHERE VALID = 'T'
-              AND (IS_SYS = 'F' OR IS_SYS IS NULL)
-              AND TABLE_NAME LIKE '{prefix}%'
+            WHERE TABLE_NAME LIKE '{prefix}%'
             """;
 
         using var reader = command.ExecuteReader();
         while (reader.Read())
         {
-            yield return reader.GetString(0);
+            tables.Add(reader.GetString(0));
         }
+
+        return tables;
     }
 
     private static void TryExecuteNonQuery(XGConnection connection, string sql)

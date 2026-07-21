@@ -19,6 +19,10 @@ public class XuguConventionSetBuilder : RelationalConventionSetBuilder
     {
         var conventionSet = base.CreateConventionSet();
 
+        // Docs: reference/sql/identifier.md — identifiers are 1–127 bytes.
+        conventionSet.ModelInitializedConventions.Add(
+            new RelationalMaxIdentifierLengthConvention(127, Dependencies, RelationalDependencies));
+
         conventionSet.Add(new XuguValueGenerationStrategyConvention(Dependencies, RelationalDependencies));
 
         var valueGenerationConvention = new XuguValueGenerationConvention(Dependencies, RelationalDependencies);

@@ -118,4 +118,10 @@
   <data name="OptimisticConcurrencyExceptionNotSupported" xml:space="preserve">
     <value>Automatic DbUpdateConcurrencyException detection is not supported on XuguDB because ROW_COUNT() is unavailable (E10049). Concurrency token columns still map; applications must detect conflicts manually. See docs/LIMITATIONS.md.</value>
   </data>
+  <data name="SequenceRestartNotSupported" xml:space="preserve">
+    <value>Restarting a sequence (RESTART WITH) is not supported by XuguDB ALTER SEQUENCE. Drop and recreate the sequence, or adjust MINVALUE/START via a new sequence. See reference/object/sequence.md.</value>
+  </data>
+  <data name="ApplyNotSupported" xml:space="preserve">
+    <value>XuguDB does not support CROSS APPLY, OUTER APPLY, or LATERAL joins. Rewrite the query to use supported JOIN/subquery shapes, or evaluate client-side. See docs/LIMITATIONS.md and reference/sql/select/from.md.</value>
+  </data>
 </root>

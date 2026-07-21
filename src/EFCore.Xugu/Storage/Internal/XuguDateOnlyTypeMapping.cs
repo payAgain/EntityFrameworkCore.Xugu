@@ -1,3 +1,4 @@
+using System.Data.Common;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Json;
 
@@ -27,6 +28,19 @@ public class XuguDateOnlyTypeMapping : DateOnlyTypeMapping
 
     protected override RelationalTypeMapping Clone(RelationalTypeMappingParameters parameters)
         => new XuguDateOnlyTypeMapping(parameters);
+
+    /// <summary>
+    /// XuguClient <c>XGDbType.Date</c> binds via <c>(string)Value</c>.
+    /// </summary>
+    protected override void ConfigureParameter(DbParameter parameter)
+    {
+        base.ConfigureParameter(parameter);
+
+        if (parameter.Value is DateOnly dateOnly)
+        {
+            parameter.Value = XuguTemporalValueConverters.DateOnlyToString.ConvertToProvider(dateOnly)!;
+        }
+    }
 
     protected override string GenerateNonNullSqlLiteral(object value)
         => $"'{((string)value).Replace("'", "''")}'";

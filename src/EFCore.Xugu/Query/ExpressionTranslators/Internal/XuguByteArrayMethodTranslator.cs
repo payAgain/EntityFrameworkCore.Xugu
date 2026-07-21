@@ -8,8 +8,11 @@ using Microsoft.EntityFrameworkCore.Xugu.Query.Internal;
 namespace Microsoft.EntityFrameworkCore.Xugu.Query.ExpressionTranslators.Internal;
 
 /// <summary>
-/// byte[] Contains/First via LOCATE/ASCII.
-/// Docs: reference/function/string-functions/locate.md, reference/function/string-functions/ascii.md
+/// byte[] Contains/First via HEX + LOCATE / CONV.
+/// BLOB rejects LOCATE/ASCII directly (E10049); HEX(blob) works.
+/// TinyInt→BLOB CAST fails (E17007); HEX(needle) avoids that.
+/// Driver probe (csharp-driver-v3.3.4-cyj): LOCATE/ASCII on BLOB unsupported;
+/// LOCATE(LPAD(HEX(n),2,'0'), HEX(b)) and CONV(SUBSTRING(HEX(b),1,2),16,10) verified.
 /// </summary>
 public class XuguByteArrayMethodTranslator : IMethodCallTranslator
 {
@@ -43,28 +46,89 @@ public class XuguByteArrayMethodTranslator : IMethodCallTranslator
         if (method.GetGenericMethodDefinition().Equals(ContainsMethod))
         {
             var source = arguments[0];
-            var sourceTypeMapping = source.TypeMapping;
-
-            var value = arguments[1] is SqlConstantExpression constantValue
-                ? (SqlExpression)_sqlExpressionFactory.Constant(new[] { (byte)constantValue.Value! }, sourceTypeMapping)
-                : _sqlExpressionFactory.Convert(arguments[1], typeof(byte[]), sourceTypeMapping);
+            var needle = NormalizeByteNeedle(arguments[1]);
+            var hexNeedle = LpadHex(needle, width: 2);
+            var hexSource = _sqlExpressionFactory.NullableFunction(
+                "HEX",
+                [source],
+                typeof(string));
 
             return _sqlExpressionFactory.GreaterThan(
                 _sqlExpressionFactory.NullableFunction(
                     "LOCATE",
-                    [value, source],
+                    [hexNeedle, hexSource],
                     typeof(int)),
                 _sqlExpressionFactory.Constant(0));
         }
 
         if (method.GetGenericMethodDefinition().Equals(FirstWithoutPredicate))
         {
-            return _sqlExpressionFactory.NullableFunction(
-                "ASCII",
-                [arguments[0]],
-                typeof(byte));
+            return HexByteAt(arguments[0], indexExpression: null);
         }
 
         return null;
+    }
+
+    private SqlExpression NormalizeByteNeedle(SqlExpression needle)
+    {
+        if (needle is SqlConstantExpression { Value: byte b })
+        {
+            return _sqlExpressionFactory.Constant((int)b);
+        }
+
+        if (needle is SqlConstantExpression { Value: byte[] { Length: 1 } bytes })
+        {
+            return _sqlExpressionFactory.Constant((int)bytes[0]);
+        }
+
+        // Column / parameter: keep CLR type; HEX accepts integer/numeric.
+        return needle.Type == typeof(byte) || needle.Type == typeof(byte?)
+            ? _sqlExpressionFactory.Convert(needle, typeof(int))
+            : needle;
+    }
+
+    private SqlExpression LpadHex(SqlExpression value, int width)
+        => _sqlExpressionFactory.NullableFunction(
+            "LPAD",
+            [
+                _sqlExpressionFactory.NullableFunction("HEX", [value], typeof(string)),
+                _sqlExpressionFactory.Constant(width),
+                _sqlExpressionFactory.Constant("0")
+            ],
+            typeof(string));
+
+    /// <summary>
+    /// First byte (index 0) or indexed byte via HEX nibble pairs.
+    /// </summary>
+    internal SqlExpression HexByteAt(SqlExpression array, SqlExpression? indexExpression)
+    {
+        // HEX position: byte index i → substring start = i*2 + 1 (1-based).
+        SqlExpression start = indexExpression is null
+            ? _sqlExpressionFactory.Constant(1)
+            : _sqlExpressionFactory.Add(
+                _sqlExpressionFactory.Multiply(
+                    _sqlExpressionFactory.ApplyDefaultTypeMapping(indexExpression),
+                    _sqlExpressionFactory.Constant(2)),
+                _sqlExpressionFactory.Constant(1));
+
+        var hexPair = _sqlExpressionFactory.NullableFunction(
+            "SUBSTRING",
+            [
+                _sqlExpressionFactory.NullableFunction("HEX", [array], typeof(string)),
+                start,
+                _sqlExpressionFactory.Constant(2)
+            ],
+            typeof(string));
+
+        var asInt = _sqlExpressionFactory.NullableFunction(
+            "CONV",
+            [
+                hexPair,
+                _sqlExpressionFactory.Constant(16),
+                _sqlExpressionFactory.Constant(10)
+            ],
+            typeof(string));
+
+        return _sqlExpressionFactory.Convert(asInt, typeof(byte));
     }
 }

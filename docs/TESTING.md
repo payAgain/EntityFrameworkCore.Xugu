@@ -1,5 +1,6 @@
 # Testing — Microsoft.EntityFrameworkCore.Xugu
 
+> **架构与用例规模汇总**：[TEST-ARCHITECTURE.md](TEST-ARCHITECTURE.md)  
 > **L1 / L2 / L3 基线**（2026-07-17）。PR 强制 Unit；main / nightly / release 强制 Integration 双方言全量 + Experiential。
 
 ## 三层门禁
@@ -12,6 +13,26 @@
 
 共享基建：`test/EFCore.Xugu.Tests.Shared`（非测试项目）。
 
+### Spec Functional（对齐虚谷开源矩阵）
+
+| 项 | 说明 |
+|----|------|
+| 工程 | `test/EFCore.Xugu.Tests.Functional` |
+| 对照 | [Xugu-Open-Source/efcore](https://github.com/Xugu-Open-Source/efcore) `v8.0.0-xugu` FunctionalTests |
+| 形态 | 继承 `Microsoft.EntityFrameworkCore.Relational.Specification.Tests` `*TestBase` |
+| W1 套件 | NullSemantics、GearsOfWar(+TPT/TPC)、ComplexNavigations、Owned、PrimitiveCollections、TPC Inheritance Query、BulkUpdates |
+| 规模 | `--list-tests` 约 **8500+**（含 Theory 展开） |
+| 运行 | 需实库；`XUGU_REQUIRE_DATABASE=true`；共享 SYSTEM + 表前缀（非 CREATE DATABASE） |
+| 金标 | Wave1 **结果断言优先**；AssertSql 多已 deferred |
+
+```powershell
+$env:XUGU_DIALECT_MODE = 'native'
+$env:XUGU_REQUIRE_DATABASE = 'true'
+dotnet test test/EFCore.Xugu.Tests.Functional -c Release --filter "FullyQualifiedName~NullSemantics"
+```
+
+设计：`docs/superpowers/specs/2026-07-21-spec-matrix-alignment-design.md`。
+
 ### 方言矩阵（L2）
 
 | Job | `XUGU_DIALECT_MODE` | 范围 |
@@ -20,6 +41,31 @@
 | **compat** | `compat` | Integration **完整套件**（不降级） |
 
 产品默认仍为 native-first；compat 完整测试用于对照与回归，**不是**产品方言定义。
+
+### QualityMatrix（质量补强子集）
+
+Trait `Category=QualityMatrix`，覆盖此前证据缺口：
+
+| 类 | 覆盖 |
+|----|------|
+| `UpdatesMatrixTests` | 图插入/更新/删除、多实体同批 SaveChanges、Attach 修改 |
+| `ExecuteBulkBoundaryTests` | LIMITATIONS 13.205 支持/拒绝全矩阵（TPH/TPT/TPC/Owned/ORDER·LIMIT/DISTINCT/GROUP BY/导航目标） |
+| `JsonBoundaryTests` | 大 LOB 物化边界、`ToJson` owned 非支持路径 |
+| `RetryFaultInjectionTests` | 实库路径上拦截器注入 `[E19886]` + `EnableRetryOnFailure` |
+| `RetryServerDisconnectTests` | 实库 `DROP SESSION`（`USERENV('SID')`）+ `EnableRetryOnFailure` 恢复 |
+| `SequenceIntegrationTests` | `CREATE SEQUENCE` / `NEXTVAL` / `DROP SEQUENCE IF EXISTS` |
+| `ClusterIntegrationTests` | 多监听端口集群：各节点 Open、`SHOW CLUSTERS`、跨节点读写 / EF SaveChanges（需 `XUGU_CLUSTER_PORTS`） |
+
+```powershell
+$env:XUGU_DIALECT_MODE = 'native'
+dotnet test test/EFCore.Xugu.Tests.Integration -c Release --filter "Category=QualityMatrix"
+
+# 三节点同机多端口集群示例（dym-cluster）
+$env:XUGU_CONNECTION_STRING = 'IP=192.168.2.239; DB=SYSTEM; USER=SYSDBA; PWD=SYSDBA; PORT=5287; AUTO_COMMIT=on; CHAR_SET=UTF8'
+$env:XUGU_CLUSTER_PORTS = '5287,5288,5289'
+$env:XUGU_REQUIRE_DATABASE = 'true'
+dotnet test test/EFCore.Xugu.Tests.Integration -c Release --filter "Category=Cluster"
+```
 
 ### 冻结列测下限
 
@@ -45,7 +91,8 @@
 |------|------|------|
 | `XUGU_CONNECTION_STRING` | 实库连接串 | `IP=127.0.0.1; DB=SYSTEM; USER=SYSDBA; PWD=SYSDBA; PORT=5138; AUTO_COMMIT=on; CHAR_SET=UTF8` |
 | `XUGU_CONNECTION` | EfDesignSample 别名 | 同连接串 |
-| `XUGU_DIALECT_MODE` | `compat` 或 `native` | Unit 无关；L2 由 gate 设置 |
+| `XUGU_CLUSTER_PORTS` | 集群监听端口列表（逗号分隔）；与主连接串同主机/凭据 | 未设置则 `Category=Cluster` Skip |
+| `XUGU_DIALECT_MODE` | `compat` 或 `native` | **未设置 = native**（产品默认）；L2 compat job 须显式 `compat` |
 | `XUGU_REQUIRE_DATABASE` | 不可达时 **失败**（非 Skip） | L2/L3 gate 设为 `true` |
 
 ## 本地命令

@@ -125,12 +125,19 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
                 fixedLength: mappingInfo.IsFixedLength == true);
         }
 
-        if (clrType == typeof(byte[]) && mappingInfo.Size is int binarySize)
+        if (clrType == typeof(byte[]))
         {
-            return new XuguByteArrayTypeMapping(
-                mappingInfo.IsFixedLength == true ? "BINARY" : "BLOB",
-                size: binarySize,
-                fixedLength: mappingInfo.IsFixedLength == true);
+            // Docs: BINARY is inline ≤64KB; BLOB is LOB ≤2GB. Neither accepts (size) in DDL.
+            if (mappingInfo.Size is int binarySize)
+            {
+                var sizedStoreType = mappingInfo.IsFixedLength == true || binarySize <= 65536
+                    ? "BINARY"
+                    : "BLOB";
+                return new XuguByteArrayTypeMapping(
+                    sizedStoreType,
+                    size: binarySize,
+                    fixedLength: mappingInfo.IsFixedLength == true);
+            }
         }
 
         var mapping = base.FindMapping(mappingInfo)
@@ -145,6 +152,17 @@ public class XuguTypeMappingSource : RelationalTypeMappingSource
             && mapping is XuguDecimalTypeMapping)
         {
             return mapping.WithStoreTypeAndSize(mappingInfo.StoreTypeName, mappingInfo.Size);
+        }
+
+        if (mapping is XuguByteArrayTypeMapping
+            || Contains(mappingInfo.StoreTypeName, "BLOB")
+            || Contains(mappingInfo.StoreTypeName, "BINARY"))
+        {
+            var binaryStoreType = XuguByteArrayTypeMapping.NormalizeStoreTypeName(mappingInfo.StoreTypeName);
+            return new XuguByteArrayTypeMapping(
+                binaryStoreType,
+                size: mappingInfo.Size,
+                fixedLength: mappingInfo.IsFixedLength == true);
         }
 
         return mapping.WithStoreTypeAndSize(mappingInfo.StoreTypeName, mappingInfo.Size);

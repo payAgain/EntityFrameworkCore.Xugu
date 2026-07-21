@@ -57,10 +57,13 @@ public class XuguUpdateSqlGenerator : UpdateAndSelectSqlGenerator, IXuguUpdateSq
         string? schema,
         int commandPosition)
     {
-        commandStringBuilder
-            .Append("SELECT 1")
-            .Append(SqlGenerationHelper.StatementTerminator).AppendLine()
-            .AppendLine();
+        // Do not append SELECT 1 / ROW_COUNT() — XuguDB has no ROW_COUNT() (E10049).
+        // Affected rows are read from DbDataReader.RecordsAffected on the DML result set
+        // (see AffectedRowsProbeTests / XuguModificationCommandBatch).
+        _ = commandStringBuilder;
+        _ = name;
+        _ = schema;
+        _ = commandPosition;
 
         return ResultSetMapping.LastInResultSet | ResultSetMapping.ResultSetWithRowsAffectedOnly;
     }

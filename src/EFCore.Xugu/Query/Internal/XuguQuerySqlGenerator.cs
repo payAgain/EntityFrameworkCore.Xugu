@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Xugu.Properties;
 using Microsoft.EntityFrameworkCore.Xugu.Query.Expressions.Internal;
 
 namespace Microsoft.EntityFrameworkCore.Xugu.Query.Internal;
@@ -62,6 +63,23 @@ public class XuguQuerySqlGenerator : QuerySqlGenerator
     {
         Sql.Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(columnAliasReferenceExpression.Alias));
         return columnAliasReferenceExpression;
+    }
+
+    protected override Expression VisitSqlBinary(SqlBinaryExpression sqlBinaryExpression)
+    {
+        // Xugu rejects string `+` (E17003 data format); use CONCAT (docs: string-functions).
+        if (sqlBinaryExpression.OperatorType == ExpressionType.Add
+            && sqlBinaryExpression.Type == typeof(string))
+        {
+            Sql.Append("CONCAT(");
+            Visit(sqlBinaryExpression.Left);
+            Sql.Append(", ");
+            Visit(sqlBinaryExpression.Right);
+            Sql.Append(")");
+            return sqlBinaryExpression;
+        }
+
+        return base.VisitSqlBinary(sqlBinaryExpression);
     }
 
     protected override Expression VisitSqlUnary(SqlUnaryExpression sqlUnaryExpression)
@@ -185,6 +203,17 @@ public class XuguQuerySqlGenerator : QuerySqlGenerator
 
         return base.VisitTable(tableExpression);
     }
+
+    /// <summary>
+    /// XuguDB has no CROSS APPLY / OUTER APPLY / LATERAL (probe + from.md join grammar).
+    /// Fail clearly instead of emitting SQL the server rejects with E19132.
+    /// </summary>
+    protected override Expression VisitCrossApply(CrossApplyExpression crossApplyExpression)
+        => throw new InvalidOperationException(XuguStrings.ApplyNotSupported);
+
+    /// <inheritdoc cref="VisitCrossApply" />
+    protected override Expression VisitOuterApply(OuterApplyExpression outerApplyExpression)
+        => throw new InvalidOperationException(XuguStrings.ApplyNotSupported);
 
     protected override Expression VisitDelete(DeleteExpression deleteExpression)
     {

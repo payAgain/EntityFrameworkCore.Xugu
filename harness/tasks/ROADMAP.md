@@ -2,12 +2,13 @@
 
 > Orchestrator 维护。仓库：`E:\Work\xuguefcore`
 
-## 当前 Phase: **13 in-progress → closing**（生产硬化 — Post-GA）
+## 当前 Phase: **13 closed → 方言迭代基线**
 
-**已发布**：**`3.0.1`**（`v3.0.1`）；**`3.0.0` GA**  
-**工作版本**：`Version.props` → **3.3.0**（含 W1–W4 口径 3.0.2/3.1.0/3.2.0/3.3.0）  
-**Wave 指针**：Phase 13 **W1–W4 实现收口** — 见 `phase-13-production-hardening/`  
-**Post-GA 遗留**：PG2–PG7 文档漂移已清；PG1 compat 3× / PG12 NuGet push 见 TASKS 证据
+**公开发布**：**`9.0.0`**（`v9.0.0` — 主.次对齐 EF Core **9.0.x**）  
+**工作版本**：`Version.props` → **9.0.0**（`EFCoreVersion=9.0.0`）  
+**历史归档编号**：`3.0.0` GA / `3.0.1` / Phase 13 工作口径 `3.0.2`–`3.3.0` 均已并入 **9.0.0**  
+**Wave 指针**：Phase 13 **W1–W4 实现收口** — 见 `phase-13-production-hardening/`；Post-GA hardening 已并入 CHANGELOG `[9.0.0]`（2026-07-21）  
+**遗留**：PG12 NuGet 公开 push（feed 配置）；Linux RID blocked
 
 ---
 
@@ -26,9 +27,11 @@ Pomelo 9.0.0 测试对等 (2.0.0)
         ↓ Phase 11 ✓
 Xugu 原生方言 2.1.0 GA-preview
         ↓ Phase 12 ✓
-Pomelo 完全体 GA 3.0.0 (+ 3.0.1 patch)
-        ↓ Phase 13（当前）
-生产硬化 / 应用验收  3.0.2 → 3.1.0 → 3.2.0
+Pomelo 完全体 GA 3.0.0 (+ 3.0.1 patch)  ← 旧编号
+        ↓ Phase 13 ✓
+生产硬化（归档编号 3.0.2–3.3.0）
+        ↓ 版本策略切换
+EF 对齐公开发布 / 方言迭代基线  9.0.0
 ```
 
 ---

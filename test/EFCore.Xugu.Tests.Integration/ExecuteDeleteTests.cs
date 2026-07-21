@@ -51,13 +51,50 @@ public class ExecuteDeleteTests(XuguDatabaseFixture fixture)
         Assert.Single(context.Blogs);
     }
 
+    [SkippableFact]
+    public void ExecuteDelete_without_predicate_removes_all_rows()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ClearBlogs();
+
+        using (var seed = CreateContext())
+        {
+            seed.Blogs.AddRange(
+                new Blog { Title = "A" },
+                new Blog { Title = "B" });
+            seed.SaveChanges();
+        }
+
+        using var context = CreateContext();
+        var deleted = context.Blogs.ExecuteDelete();
+
+        Assert.Equal(2, deleted);
+        Assert.Empty(context.Blogs);
+    }
+
+    [SkippableFact]
+    public void ExecuteDelete_with_orderby_take_is_not_supported()
+    {
+        XuguTestConnection.SkipIfUnavailable();
+        fixture.ClearBlogs();
+
+        using var context = CreateContext();
+        context.Blogs.Add(new Blog { Title = "A" });
+        context.SaveChanges();
+
+        var ex = Record.Exception(() =>
+            context.Blogs
+                .OrderBy(b => b.Id)
+                .Take(1)
+                .ExecuteDelete());
+        Assert.NotNull(ex);
+    }
+
     private static BlogContext CreateContext()
     {
-        var options = new DbContextOptionsBuilder<BlogContext>()
-            .UseXugu(XuguTestConnection.ConnectionString, XuguServerVersion.Default, x => { if (TestUtilities.XuguDialectTestConfiguration.UseCompatibleMode) x.SetCompatibleModeOnOpen(); })
-            .Options;
-
-        return new BlogContext(options);
+        var optionsBuilder = new DbContextOptionsBuilder<BlogContext>();
+        XuguDialectTestConfiguration.ConfigureDialect(optionsBuilder);
+        return new BlogContext(optionsBuilder.Options);
     }
 
     private sealed class Blog

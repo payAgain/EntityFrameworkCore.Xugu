@@ -1,8 +1,8 @@
 # Microsoft.EntityFrameworkCore.Xugu — 发布范围声明
 
-> **当前稳定版**：**9.0.0**（`v9.0.0` — **与 EF Core 9.0.x 版本对齐**）  
+> **当前稳定版**：**9.0.0**（`v9.0.0` — **与 EF Core 9.0.x 版本对齐**；**方言迭代基线**）  
 > **上一公开 tag（旧编号）**：**3.0.1**（`v3.0.1`）  
-> **更新**：2026-07-19（版本策略改为 EF 对齐；功能含 Phase 12 GA + Phase 13）
+> **更新**：2026-07-21（Post-GA hardening 并入 9.0.0；公开文档口径统一）
 
 > **版本策略**：包 `主.次` = 目标 EF Core `主.次`（见 `Directory.Packages.props` / `Version.props`）。旧 `3.x` 编号不再用于新公开发布。
 
@@ -41,7 +41,7 @@
 | **3.1.0** | Phase 13 W2 | 并发决策 C、RETURNING 探测、XGCI 提示 |
 | **3.2.0** | Phase 13 W3 | BUSINESS-SQL-BACKLOG frozen |
 | **3.3.0** | Phase 13 W4（归档编号） | `XuguCompatibleMode` 会话 API；**并入公开发布 9.0.0** |
-| **9.0.0** | **EF 对齐公开发布** ✅ | 主.次 = EF Core 9.0；功能 = 3.0.1 + Phase 13；`v9.0.0` |
+| **9.0.0** | **EF 对齐 / 方言迭代基线** ✅ | 主.次 = EF Core 9.0；功能 = 3.0.1 + Phase 13 + Post-GA hardening；`v9.0.0` |
 
 ---
 
@@ -75,7 +75,7 @@
 | **Xugu 原生 JSON 列** | EF 映射 `JSON` 类型；路径运算符与 JSON 函数按官方文档 |
 | **核心 ORM 路径** | CRUD、LINQ 翻译、迁移、`dotnet ef`、Scaffolding（`DBA_*` 元数据） |
 | **ExecuteDelete / ExecuteUpdate** | 单表及文档支持的多表路径 |
-| **乐观并发 token 列** | UPDATE 含 concurrency token（**不含** `DbUpdateConcurrencyException` 自动检测） |
+| **乐观并发 token 列** | UPDATE 含 concurrency token；**9.0+ / 当前树** 另支持 `DbUpdateConcurrencyException`（Path A：`RecordsAffected`；见 LIMITATIONS） |
 | **自动重试** | `EnableRetryOnFailure` + XGCI 码解析 |
 | **连接串校验** | Xugu 键值对格式（`IP`、`DB`、`USER`、`PWD`、`PORT` 等） |
 | **NuGet 包** | `Microsoft.EntityFrameworkCore.Xugu` + 依赖 `Xuguclient`（Windows x64 当前支持） |
@@ -90,7 +90,7 @@
 | 能力 | 处置 | 原因 |
 |------|------|------|
 | MySQL 迁移零改动 / Pomelo 即插即用 | **非目标** | 产品定位为 Xugu 原生方言 |
-| `DbUpdateConcurrencyException`（ROW_COUNT） | **signed-off blocked** PLAT-01 | E10049；VT-XUGU-ROWCOUNT-001 |
+| `ROW_COUNT()` SQL（非并发路径依赖） | **仍不可用** E10049 | 并发已改 Path A；VT-XUGU-ROWCOUNT-001 可作简化 |
 | Linux x64 原生 RID | **signed-off blocked** PLAT-02 | 驱动无 `libxugusql.so`；VT-XUGU-LINUXRID-001 |
 | NetTopologySuite / Spatial | **永久 skip** | 无 NTS 生态 |
 | FULLTEXT / `MATCH … AGAINST` | **永久 skip** | 文档无对外 FULLTEXT；用 `REGEXP_LIKE` |

@@ -1,9 +1,10 @@
 # Release Branch Strategy — XuguDB EF Core Provider
 
-> **版本**：3.0.0 GA（`v3.0.0` @ `6ab8184`）  
-> **更新**：2026-07-09
+> **当前公开版本**：**9.0.0**（`v9.0.0` — 对齐 EF Core 9.0.x；方言迭代基线）  
+> **历史示例**：3.0.0 GA（`v3.0.0` @ `6ab8184`）  
+> **更新**：2026-07-21（公开口径改为 9.0.0；下文 `release/3.0.0` 段落保留为历史流程参考）
 
-本文档对比 [Pomelo.EntityFrameworkCore.MySql](https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql) 的公开发布布局与当前 **xuguefcore** 开发单体仓库，并定义 **release 分支** 与 **公开远程** 的推送策略。
+本文档对比 [Pomelo.EntityFrameworkCore.MySql](https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql) 的公开发布布局与当前 **xuguefcore** 开发单体仓库，并定义 **release 分支** 与 **公开远程** 的推送策略。当前发布线建议使用 `release/9.0.0`（见 [RELEASE.md](../RELEASE.md)）。
 
 ---
 
@@ -12,7 +13,7 @@
 | 角色 | 分支 | 远程 | 用途 |
 |------|------|------|------|
 | **开发单体** | `phase-8/feature-parity`（或未来 `develop`） | 内部 GitLab `gitlab2.xugu.com/RDB/xuguefcore` | Harness 多 Agent 编排、Pomelo 参考子模块、内部驱动子模块、Phase 任务与 handoff |
-| **发布线** | `release/3.0.0`（及未来 `release/x.y.z`） | 可选：公开 GitHub / 公开 GitLab / NuGet only | GA 代码快照 + 面向用户的 README / LICENSE / 发布说明 |
+| **发布线** | `release/9.0.0`（及历史 `release/3.0.0` / 未来 `release/x.y.z`） | 可选：公开 GitHub / 公开 GitLab / NuGet only | 稳定版代码快照 + 面向用户的 README / LICENSE / 发布说明 |
 | **公开镜像**（推荐） | `main` on **独立公开仓库** | 例如 `github.com/xugudb/EntityFrameworkCore.Xugu` | 仅含可发布路径；无 harness、无 external 子模块 |
 
 **原则**：开发分支 **保留** harness 与 external；公开发布 **不推送** 整个单体仓库。

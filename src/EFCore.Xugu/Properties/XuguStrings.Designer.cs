@@ -68,6 +68,12 @@ public static class XuguStrings
     public static string OptimisticConcurrencyExceptionNotSupported
         => GetString(nameof(OptimisticConcurrencyExceptionNotSupported));
 
+    public static string SequenceRestartNotSupported
+        => GetString(nameof(SequenceRestartNotSupported));
+
+    public static string ApplyNotSupported
+        => GetString(nameof(ApplyNotSupported));
+
     private static string GetString(string name)
         => ResourceManager.GetString(name, CultureInfo.CurrentUICulture)
            ?? throw new InvalidOperationException($"Missing resource string '{name}'.");

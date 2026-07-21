@@ -82,7 +82,7 @@ harness/scripts/publish-nuget.ps1 -Pack -Push
 Or manually:
 
 ```powershell
-dotnet nuget push artifacts/Microsoft.EntityFrameworkCore.Xugu.3.0.0.nupkg `
+dotnet nuget push artifacts/Microsoft.EntityFrameworkCore.Xugu.9.0.0.nupkg `
   --source $env:GITLAB_NUGET_FEED_URL `
   --api-key $env:GITLAB_NUGET_API_KEY
 ```
@@ -90,7 +90,7 @@ dotnet nuget push artifacts/Microsoft.EntityFrameworkCore.Xugu.3.0.0.nupkg `
 For [nuget.org](https://www.nuget.org):
 
 ```powershell
-dotnet nuget push artifacts/Microsoft.EntityFrameworkCore.Xugu.3.0.0.nupkg `
+dotnet nuget push artifacts/Microsoft.EntityFrameworkCore.Xugu.9.0.0.nupkg `
   --source https://api.nuget.org/v3/index.json `
   --api-key <NUGET_API_KEY>
 ```
@@ -156,13 +156,13 @@ To publish from CI, add feed secrets and extend workflow (not enabled by default
 
 ## 7. Release checklist
 
-### 9.0.0 (2026-07-19) — EF Core aligned
+### 9.0.0 (2026-07-21) — EF Core aligned / dialect iteration baseline
 
 - [x] `Version.props` → `9.0.0`（与 `EFCoreVersion=9.0.0` 主.次对齐）
-- [x] `docs/CHANGELOG.md` — 9.0.0 + 版本策略说明
-- [x] README / GETTING-STARTED / RELEASE-SCOPE / LIMITATIONS 同步
+- [x] `docs/CHANGELOG.md` — 9.0.0 + Post-GA hardening 收口 + 版本策略说明
+- [x] README / USER-GUIDE / GETTING-STARTED / RELEASE-SCOPE / LIMITATIONS 同步为 **9.0.0**
 - [x] `publish-nuget.ps1 -Pack` → `Microsoft.EntityFrameworkCore.Xugu.9.0.0.nupkg`
-- [x] Public GitHub mirror `payAgain/EntityFrameworkCore.Xugu` (`main` + `v9.0.0`)
+- [x] Public GitHub mirror `payAgain/EntityFrameworkCore.Xugu`（历史 `v9.0.0`；本收尾后请用户自行确认是否重打/附注 tag）
 - [ ] NuGet push to public feed (deferred — feed configuration)
 
 ### 3.0.1 (2026-07-14) — completed（旧编号）

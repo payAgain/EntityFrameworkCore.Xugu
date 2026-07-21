@@ -161,24 +161,41 @@ public class XuguSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExpre
     }
 
     private Expression TranslateByteArrayElementAccess(Expression array, Expression index)
-        => Visit(array) is SqlExpression leftSql &&
-           Visit(index) is SqlExpression rightSql
-            ? _sqlExpressionFactory.NullableFunction(
-                "ASCII",
-                [
-                    _sqlExpressionFactory.NullableFunction(
-                        "SUBSTRING",
-                        [
-                            leftSql,
-                            Dependencies.SqlExpressionFactory.Add(
-                                Dependencies.SqlExpressionFactory.ApplyDefaultTypeMapping(rightSql),
-                                Dependencies.SqlExpressionFactory.Constant(1)),
-                            Dependencies.SqlExpressionFactory.Constant(1)
-                        ],
-                        typeof(byte[]))
-                ],
-                typeof(byte))
-            : QueryCompilationContext.NotTranslatedExpression;
+    {
+        // BLOB rejects ASCII/SUBSTRING byte semantics (E10049); HEX nibble pairs work
+        // (CONV(SUBSTRING(HEX(blob), i*2+1, 2), 16, 10)). See XuguByteArrayMethodTranslator.
+        if (Visit(array) is not SqlExpression leftSql
+            || Visit(index) is not SqlExpression rightSql)
+        {
+            return QueryCompilationContext.NotTranslatedExpression;
+        }
+
+        var start = Dependencies.SqlExpressionFactory.Add(
+            Dependencies.SqlExpressionFactory.Multiply(
+                Dependencies.SqlExpressionFactory.ApplyDefaultTypeMapping(rightSql),
+                Dependencies.SqlExpressionFactory.Constant(2)),
+            Dependencies.SqlExpressionFactory.Constant(1));
+
+        var hexPair = _sqlExpressionFactory.NullableFunction(
+            "SUBSTRING",
+            [
+                _sqlExpressionFactory.NullableFunction("HEX", [leftSql], typeof(string)),
+                start,
+                Dependencies.SqlExpressionFactory.Constant(2)
+            ],
+            typeof(string));
+
+        var asInt = _sqlExpressionFactory.NullableFunction(
+            "CONV",
+            [
+                hexPair,
+                Dependencies.SqlExpressionFactory.Constant(16),
+                Dependencies.SqlExpressionFactory.Constant(10)
+            ],
+            typeof(string));
+
+        return _sqlExpressionFactory.Convert(asInt, typeof(byte));
+    }
 
     private Expression CallBaseVisitMethodCall(MethodCallExpression methodCallExpression)
     {

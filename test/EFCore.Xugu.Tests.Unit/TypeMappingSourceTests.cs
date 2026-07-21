@@ -1,4 +1,5 @@
 using System.Data;
+using System.Data.Common;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Xugu.Infrastructure;
@@ -88,6 +89,132 @@ public class TypeMappingSourceTests
 
         Assert.Equal("TRUE", mapping.GenerateSqlLiteral(true));
         Assert.Equal("FALSE", mapping.GenerateSqlLiteral(false));
+    }
+
+    [Fact]
+    public void ByteTypeMapping_configure_parameter_avoids_driver_byte_to_char_cast()
+    {
+        var mapping = XuguByteTypeMapping.Default;
+        using var command = new XuguClient.XGCommand();
+        var parameter = mapping.CreateParameter(command, "p", (byte)200, nullable: false);
+
+        Assert.Equal(DbType.Int16, parameter.DbType);
+        Assert.Equal((short)200, parameter.Value);
+    }
+
+    [Fact]
+    public void UIntTypeMapping_configure_parameter_binds_as_int64()
+    {
+        var mapping = XuguUIntTypeMapping.Default;
+        using var command = new XGCommand();
+        var parameter = mapping.CreateParameter(command, "p", 3_000_000_000u, nullable: false);
+
+        Assert.Equal(typeof(long), mapping.Converter?.ProviderClrType);
+        Assert.Equal(DbType.Int64, parameter.DbType);
+        Assert.Equal(3_000_000_000L, parameter.Value);
+        Assert.Equal(nameof(DbDataReader.GetInt64), mapping.GetDataReaderMethod().Name);
+    }
+
+    [Fact]
+    public void UShortTypeMapping_configure_parameter_binds_as_int32()
+    {
+        var mapping = XuguUShortTypeMapping.Default;
+        using var command = new XGCommand();
+        var parameter = mapping.CreateParameter(command, "p", (ushort)40000, nullable: false);
+
+        Assert.Equal(typeof(int), mapping.Converter?.ProviderClrType);
+        Assert.Equal(DbType.Int32, parameter.DbType);
+        Assert.Equal(40000, parameter.Value);
+        Assert.Equal(nameof(DbDataReader.GetInt32), mapping.GetDataReaderMethod().Name);
+    }
+
+    [Fact]
+    public void ULongTypeMapping_configure_parameter_binds_as_decimal()
+    {
+        var mapping = XuguULongTypeMapping.Default;
+        using var command = new XGCommand();
+        var value = ulong.MaxValue;
+        var parameter = mapping.CreateParameter(command, "p", value, nullable: false);
+
+        Assert.Equal(typeof(decimal), mapping.Converter?.ProviderClrType);
+        Assert.Equal(DbType.Decimal, parameter.DbType);
+        Assert.Equal((decimal)value, parameter.Value);
+        Assert.Equal(nameof(DbDataReader.GetDecimal), mapping.GetDataReaderMethod().Name);
+    }
+
+    [Fact]
+    public void FloatTypeMapping_configure_parameter_binds_as_double()
+    {
+        var mapping = XuguFloatTypeMapping.Default;
+        using var command = new XGCommand();
+        var parameter = mapping.CreateParameter(command, "p", 1.25f, nullable: false);
+
+        Assert.Equal(typeof(double), mapping.Converter?.ProviderClrType);
+        Assert.Equal(DbType.Double, parameter.DbType);
+        Assert.Equal((double)1.25f, parameter.Value);
+        Assert.Equal(nameof(DbDataReader.GetDouble), mapping.GetDataReaderMethod().Name);
+    }
+
+    [Fact]
+    public void SByteTypeMapping_configure_parameter_binds_as_int16()
+    {
+        var mapping = XuguSByteTypeMapping.Default;
+        using var command = new XGCommand();
+        var parameter = mapping.CreateParameter(command, "p", (sbyte)(-5), nullable: false);
+
+        Assert.Equal(typeof(short), mapping.Converter?.ProviderClrType);
+        Assert.Equal(DbType.Int16, parameter.DbType);
+        Assert.Equal((short)(-5), parameter.Value);
+        Assert.Equal(nameof(DbDataReader.GetInt16), mapping.GetDataReaderMethod().Name);
+    }
+
+    [Fact]
+    public void StringTypeMapping_configure_parameter_avoids_string_fixed_length_binary()
+    {
+        var mapping = new XuguStringTypeMapping("CHAR", StoreTypePostfix.Size, size: 5, fixedLength: true);
+        using var command = new XGCommand();
+        var parameter = mapping.CreateParameter(command, "p", "ALFKI", nullable: false);
+
+        Assert.Equal(DbType.String, parameter.DbType);
+        Assert.Equal("ALFKI", parameter.Value);
+        Assert.NotEqual(XGDbType.Binary, Assert.IsType<XGParameters>(parameter).m_DbType);
+    }
+
+    [Fact]
+    public void GuidTypeMapping_configure_parameter_sets_xg_guid_dbtype()
+    {
+        var mapping = XuguGuidTypeMapping.Default;
+        using var command = new XGCommand();
+        var guid = Guid.Parse("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
+        var parameter = Assert.IsType<XGParameters>(
+            mapping.CreateParameter(command, "p", guid, nullable: false));
+
+        Assert.Equal(XGDbType.Guid, parameter.m_DbType);
+        Assert.Equal(guid, parameter.Value);
+    }
+
+    [Fact]
+    public void FindMapping_sized_byte_array_uses_binary_without_size_postfix()
+    {
+        using var context = CreateContext();
+        var source = context.GetInfrastructure().GetRequiredService<IRelationalTypeMappingSource>();
+        var mapping = source.FindMapping(typeof(byte[]), storeTypeName: null, size: 5);
+
+        Assert.NotNull(mapping);
+        Assert.Equal("BINARY", mapping!.StoreType);
+        Assert.DoesNotContain('(', mapping.StoreType);
+        Assert.Equal(5, mapping.Size);
+    }
+
+    [Fact]
+    public void FindMapping_binary_store_type_with_size_token_strips_postfix()
+    {
+        using var context = CreateContext();
+        var source = context.GetInfrastructure().GetRequiredService<IRelationalTypeMappingSource>();
+        var mapping = source.FindMapping(typeof(byte[]), "BINARY(16)");
+
+        Assert.NotNull(mapping);
+        Assert.Equal("BINARY", mapping!.StoreType);
     }
 
     [Fact]

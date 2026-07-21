@@ -16,6 +16,8 @@ public abstract class ServerVersion : IEquatable<ServerVersion>
 
     public Version Version { get; }
 
+    public abstract ServerVersionSupport Supports { get; }
+
     public override string ToString()
         => Version.ToString();
 
@@ -61,6 +63,15 @@ public abstract class ServerVersion : IEquatable<ServerVersion>
     {
         ArgumentException.ThrowIfNullOrEmpty(versionString);
 
+        if (versionString.EndsWith("-xg", StringComparison.OrdinalIgnoreCase))
+        {
+            versionString = versionString[..^3];
+        }
+        else if (versionString.Contains('-', StringComparison.Ordinal))
+        {
+            throw new ArgumentException($"Unsupported server version string '{versionString}'.", nameof(versionString));
+        }
+
         var match = VersionRegex.Match(versionString);
         if (!match.Success)
         {
@@ -81,7 +92,17 @@ public abstract class ServerVersion : IEquatable<ServerVersion>
             return false;
         }
 
-        var match = VersionRegex.Match(versionString);
+        var normalized = versionString;
+        if (normalized.EndsWith("-xg", StringComparison.OrdinalIgnoreCase))
+        {
+            normalized = normalized[..^3];
+        }
+        else if (normalized.Contains('-', StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        var match = VersionRegex.Match(normalized);
         if (!match.Success)
         {
             return false;

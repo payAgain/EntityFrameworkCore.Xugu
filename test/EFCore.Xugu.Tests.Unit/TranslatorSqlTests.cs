@@ -346,6 +346,7 @@ public class TranslatorSqlTests
             .ToQueryString();
 
         AssertSql.Contains("LOCATE(", sql);
+        AssertSql.Contains("HEX(", sql);
     }
 
     [Fact]
@@ -478,7 +479,9 @@ public class TranslatorSqlTests
             .Where(b => b.Payload[0] == 0xAB)
             .ToQueryString();
 
-        AssertSql.Contains("ASCII(", sql);
+        // BLOB: HEX + CONV(SUBSTRING(...),16,10) — ASCII on BLOB is E10049.
+        AssertSql.Contains("HEX(", sql);
+        AssertSql.Contains("CONV(", sql);
         AssertSql.Contains("SUBSTRING(", sql);
     }
 

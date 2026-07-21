@@ -1,8 +1,8 @@
 # 兼容模式自动探测与标识符适配 — 设计规格
 
-> **状态**：已审阅待实现  
-> **日期**：2026-07-20  
-> **依据**：虚谷官方文档 `compatible_mode.md` / `def_compatible_mode.md` / `identifier.md`；项目方案 1（探测 + 原生 SQL 不变）
+> **状态**：**已搁置（superseded）** — 产品决策为 Provider **只保留 Xugu 原生方言**；不实现自动探测/按模式切换引号。compat 仅保留 opt-in `EnableCompatibleModeOnOpen` 会话 SET。  
+> **日期**：2026-07-20（搁置说明 2026-07-20）  
+> **依据**：虚谷官方文档 `compatible_mode.md` / `def_compatible_mode.md` / `identifier.md`；驱动调研（无模式分支）；质量评估后确认方言层不做适配
 
 ## 1. 背景与结论
 

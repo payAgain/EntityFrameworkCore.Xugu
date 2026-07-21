@@ -5,7 +5,8 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 /// <summary>
 /// Reads <c>XUGU_DIALECT_MODE</c> for CI dual-matrix runs:
 /// <c>compat</c> enables MYSQL compatible mode; <c>native</c> uses Xugu native dialect.
-/// Unset defaults to <c>compat</c> so the full Pomelo-ported suite keeps passing.
+/// Unset defaults to <c>native</c> (product default). CI compat jobs must set
+/// <c>XUGU_DIALECT_MODE=compat</c> explicitly.
 /// </summary>
 public static class XuguDialectTestConfiguration
 {
@@ -17,10 +18,10 @@ public static class XuguDialectTestConfiguration
         => Environment.GetEnvironmentVariable("XUGU_DIALECT_MODE");
 
     public static bool UseCompatibleMode
-        => !string.Equals(DialectMode, NativeMode, StringComparison.OrdinalIgnoreCase);
+        => string.Equals(DialectMode, CompatMode, StringComparison.OrdinalIgnoreCase);
 
     public static bool IsNativeDialectJob
-        => string.Equals(DialectMode, NativeMode, StringComparison.OrdinalIgnoreCase);
+        => !UseCompatibleMode;
 
     public static DbContextOptionsBuilder ConfigureDialect(DbContextOptionsBuilder builder)
     {
