@@ -21,7 +21,7 @@ xugusql.dll（C++ 原生驱动）
 XuguDB 服务端
 ```
 
-驱动分析详见 `harness/references/csharp-driver-analysis.md`。
+驱动分析详见 `docs/references/csharp-driver-analysis.md`。
 
 ---
 
@@ -97,22 +97,22 @@ dotnet pack src/EFCore.Xugu/EFCore.Xugu.csproj -c Release -o artifacts -p:UseLoc
 
 ### 内部 GitLab feed（7.R3）
 
-`harness/scripts/publish-nuget.ps1` 提供 pack / 可选 push 流程：
+`scripts/publish-nuget.ps1` 提供 pack / 可选 push 流程：
 
 ```powershell
 # 默认 dry-run：打印版本、输出路径与命令，不写包
-harness/scripts/publish-nuget.ps1
+scripts/publish-nuget.ps1
 
 # 产出 artifacts/Microsoft.EntityFrameworkCore.Xugu.{version}.nupkg
-harness/scripts/publish-nuget.ps1 -Pack
+scripts/publish-nuget.ps1 -Pack
 
 # 构建 + 测试 + verify + pack（与 CI 一致）
-harness/scripts/publish-nuget.ps1 -Pack -UseCiBuild
+scripts/publish-nuget.ps1 -Pack -UseCiBuild
 
 # 推送到内部 feed（需环境变量；本地发版默认不 push）
 $env:GITLAB_NUGET_FEED_URL = "https://gitlab.example.com/api/v4/projects/.../packages/nuget/index.json"
 $env:GITLAB_NUGET_API_KEY = "<token>"
-harness/scripts/publish-nuget.ps1 -Pack -Push
+scripts/publish-nuget.ps1 -Pack -Push
 ```
 
 | 参数 | 说明 |
@@ -148,18 +148,18 @@ harness/scripts/publish-nuget.ps1 -Pack -Push
 
 ## CI 用法
 
-`harness/scripts/ci-build.ps1` 标准流程：
+`scripts/ci-build.ps1` 标准流程：
 
 ```powershell
 # 构建 + 测试 + verify（默认本地驱动）
-harness/scripts/ci-build.ps1 -Configuration Release
+scripts/ci-build.ps1 -Configuration Release
 
 # 额外验证 NuGet 打包（强制 NuGet 驱动）
-harness/scripts/ci-build.ps1 -Configuration Release -Pack
+scripts/ci-build.ps1 -Configuration Release -Pack
 
 # 指定原生 DLL 路径
 $env:XUGU_NATIVE_DLL_PATH = "C:\path\to\xugusql.dll"
-harness/scripts/ci-build.ps1 -Configuration Release -Pack
+scripts/ci-build.ps1 -Configuration Release -Pack
 ```
 
 | 步骤 | `UseLocalXuguDriver` | 说明 |
@@ -199,6 +199,6 @@ CI 实库测试通过环境变量 `XUGU_CONNECTION_STRING` 配置连接；无数
 | `src/EFCore.Xugu/EFCore.Xugu.csproj` | 条件引用逻辑 |
 | `Directory.Packages.props` | `XuguClientVersion` |
 | `Directory.Build.props` / `NativeAssets.props` | 原生 DLL 检测 |
-| `harness/scripts/ci-build.ps1` | CI build/test/pack |
-| `harness/scripts/publish-nuget.ps1` | NuGet dry-run / pack / optional push |
+| `scripts/ci-build.ps1` | CI build/test/pack |
+| `scripts/publish-nuget.ps1` | NuGet dry-run / pack / optional push |
 | `external/csharp-driver/XGCSClient/XGCSClient.csproj` | 本地驱动工程 |

@@ -32,7 +32,7 @@
 | `test/.../ReturningProbeTests.cs` | Assert documented FieldCount==0 path still recorded |
 | `test/.../ClusterIntegrationTests.cs` | Update/Delete/concurrent/tx/identity |
 | `docs/TEST-ARCHITECTURE.md` / `docs/TESTING.md` / `docs/CHANGELOG.md` | Counts + notes after waves |
-| `harness/scripts/run-runtime-gap-gate.ps1` | Optional comment on expanded Category=RuntimeGap |
+| `scripts/run-runtime-gap-gate.ps1` | Optional comment on expanded Category=RuntimeGap |
 
 ---
 
@@ -118,7 +118,7 @@ Expected: baseline ~9 + extended ≥25 total RuntimeGap methods.
 
 ```powershell
 $env:XUGU_REQUIRE_DATABASE='true'
-harness/scripts/run-runtime-gap-gate.ps1 -Configuration Release -DialectMode native
+scripts/run-runtime-gap-gate.ps1 -Configuration Release -DialectMode native
 ```
 
 Expected: 0 FAIL (Skip only if DB unreachable without REQUIRE). If REQUIRE=true and DB down → FAIL.

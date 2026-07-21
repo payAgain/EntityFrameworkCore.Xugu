@@ -60,7 +60,7 @@
 | `XG_RG_050+` | JSON：小文档整列物化 vs 大 LOB 边界；优先 `JsonValue`/`JsonExtract` | 与 LIMITATIONS 13.206 一致 |
 | `XG_RG_060+` | `Guid` 原生 GUID 往返与物化 | 读写一致 |
 
-**验收**：`harness/scripts/run-runtime-gap-gate.ps1` 双方言 0 FAIL；list-tests 中 `Category=RuntimeGap` ≥ 现有 + 25。
+**验收**：`scripts/run-runtime-gap-gate.ps1` 双方言 0 FAIL；list-tests 中 `Category=RuntimeGap` ≥ 现有 + 25。
 
 ### Wave 2 — Scaffolding + Native 边界
 
@@ -111,7 +111,7 @@
 |------|----------|
 | `test/EFCore.Xugu.Tests.Integration/` | 扩展或新增上述测试类 |
 | `test/EFCore.Xugu.Tests.Unit/` | Sequence / 必要时 byte[]、DateDiff SQL 金标 |
-| `harness/scripts/run-runtime-gap-gate.ps1` | 上调 list-tests 下限（按 Wave1 实测） |
+| `scripts/run-runtime-gap-gate.ps1` | 上调 list-tests 下限（按 Wave1 实测） |
 | `docs/TEST-ARCHITECTURE.md` / `docs/TESTING.md` | 规模与 Category 说明 |
 | `docs/LIMITATIONS.md` | 仅当新用例固化「已知边界」时交叉链接（如 DTO 过滤） |
 | `docs/CHANGELOG.md` | Wave 完成后记测试增量 |

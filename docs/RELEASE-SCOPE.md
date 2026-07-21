@@ -64,7 +64,7 @@
 | **Literal 100%** | 1050 测试 + 194 文件 + 全部 Pomelo 特性物理实现 | Stretch goal；可能不可达 |
 | **Adjusted 100%** | 对 proven Xugu-impossible 项 recalc 分母后 **100%**；每项须 doc link + approval | **推荐** — 满足「无 silent gap」意图 |
 
-权威门禁：`harness/tasks/phase-12-pomelo-full-parity/PHASE12-GOALS.md`
+权威门禁：见 [RELEASE.md](../RELEASE.md) 与 `scripts/verify.ps1`（原 Phase 12 GOALS 已随 harness 移除）
 
 ---
 
@@ -118,7 +118,7 @@
 ### 构建与测试
 
 - [x] `dotnet build Xugu.EFCore.Xugu.sln -c Release` — PASS
-- [x] `harness/scripts/verify.ps1` — PASS
+- [x] `scripts/verify.ps1` — PASS
 - [x] `dotnet test Xugu.EFCore.Xugu.sln -c Release` — **0 FAIL**
 - [x] 列测基线 **1056** compat（literal ≥ ~1050）
 - [x] **native** CI 子集 **177** 列测 0 FAIL
@@ -131,8 +131,8 @@
 
 ### 打包与文档
 
-- [x] `harness/scripts/test-nuget-pack.ps1` — 干净项目安装 + 编译 PASS
-- [x] `harness/scripts/publish-nuget.ps1 -Pack` — 产出 `Microsoft.EntityFrameworkCore.Xugu.2.1.0.nupkg`
+- [x] `scripts/test-nuget-pack.ps1` — 干净项目安装 + 编译 PASS
+- [x] `scripts/publish-nuget.ps1 -Pack` — 产出 `Microsoft.EntityFrameworkCore.Xugu.2.1.0.nupkg`
 - [x] `docs/RELEASE-SCOPE.md`、`docs/GETTING-STARTED.md`、`CHANGELOG.md` — 2.1.0 同步
 - [x] `docs/XUGU-VS-MYSQL.md` — 已标注「对照参考，非迁移目标」
 - [x] `LIMITATIONS.md` — **frozen** for 2.1.0
@@ -167,7 +167,7 @@
 
 ```
 1. E:\BaiduSyncdisk\docs\content\          ← XuguDB 官方文档（SQL 唯一权威）
-2. harness/contracts/sql-dialect.contract.md ← 项目内已确认方言规则
+2. docs/contracts/sql-dialect.contract.md ← 项目内已确认方言规则
 3. docs/LIMITATIONS.md / RELEASE-SCOPE.md    ← 产品范围与已知限制
 4. external/Pomelo.EntityFrameworkCore.MySql  ← 仅 C# 架构/DI/目录参考；禁止作为 SQL 依据
 5. MySQL 文档 / 社区习惯                     ← 不得作为实现依据
@@ -189,7 +189,7 @@ Agent 与贡献者：**禁止**仅凭 MySQL 或 Pomelo 行为推断 Xugu SQL；*
 
 ## 相关文档
 
-- Phase 11 任务：`harness/tasks/phase-11-xugu-native-release/TASKS.md`（**done**）
-- **GA 目标**：`harness/tasks/phase-12-pomelo-full-parity/PHASE12-GOALS.md`
-- 打包与集成：`harness/tasks/phase-11-xugu-native-release/PACKAGING-AND-INTEGRATION.md`
-- 路线图：`harness/tasks/ROADMAP.md`
+- [RELEASE.md](../RELEASE.md) — 发版与本地门禁
+- [docs/contracts/sql-dialect.contract.md](contracts/sql-dialect.contract.md)
+- [.trellis/spec/guides/xugu-provider-constraints.md](../.trellis/spec/guides/xugu-provider-constraints.md)
+- 历史 Phase 任务 / ROADMAP：原 `harness/tasks/*`（已移除；见 git 历史）

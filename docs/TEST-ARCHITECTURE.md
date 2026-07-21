@@ -28,7 +28,7 @@ test/
 ├── EFCore.Xugu.Tests/README.md        # 旧单体已退役（仅指针）
 └── integration-sample/MinimalApi/     # L3 消费方冒烟宿主
 
-harness/scripts/
+scripts/
 ├── run-unit-gate.ps1                  # L1
 ├── run-native-gate.ps1 / run-compat-gate.ps1
 ├── run-integration-gate.ps1           # L2 批处理执行（被 native/compat 调用）
@@ -188,7 +188,7 @@ dotnet test test/EFCore.Xugu.Tests.Functional -c Release --list-tests
 | 来源 | 落点 | 说明 |
 |------|------|------|
 | **自写** | Unit 为主；Integration 部分 | SQL 金标、TypeMapping、NotSupported、Retry、方言烟测、QualityMatrix 等 |
-| **Pomelo 对等** | Integration | 目录/类命名对齐 Pomelo FunctionalTests 子集；矩阵与 Adjusted 覆盖率见 `harness/references/test-parity-matrix.md`（Phase 12 冻结叙事） |
+| **Pomelo 对等** | Integration | 目录/类命名对齐 Pomelo FunctionalTests 子集；矩阵与 Adjusted 覆盖率见 `docs/references/test-parity-matrix.md`（Phase 12 冻结叙事） |
 | **EF Relational Spec** | Functional（主）；Integration `Specification/` 子集 | 继承 `*TestBase`；Functional W1 对齐开源 Xugu FunctionalTests |
 | **L3 消费路径** | 脚本 + samples / integration-sample | 验证 pack、dotnet-ef、MinimalApi，非 Spec 继承 |
 
@@ -198,15 +198,15 @@ dotnet test test/EFCore.Xugu.Tests.Functional -c Release --list-tests
 
 ```powershell
 # L1（无库）
-harness/scripts/run-unit-gate.ps1 -Configuration Release
+scripts/run-unit-gate.ps1 -Configuration Release
 # 或
 dotnet test test/EFCore.Xugu.Tests.Unit -c Release
 
 # L2（需 XuguDB；gate 会设 XUGU_REQUIRE_DATABASE=true）
-harness/scripts/run-native-gate.ps1 -Configuration Release -MaxAttempts 3
-harness/scripts/run-compat-gate.ps1 -Configuration Release -MaxAttempts 3
+scripts/run-native-gate.ps1 -Configuration Release -MaxAttempts 3
+scripts/run-compat-gate.ps1 -Configuration Release -MaxAttempts 3
 # 或 verify：L1 + L2 双方言
-harness/scripts/verify.ps1 -RunTests
+scripts/verify.ps1 -RunTests
 
 # Functional（需实库；建议按套件过滤）
 $env:XUGU_DIALECT_MODE = 'native'
@@ -214,10 +214,10 @@ $env:XUGU_REQUIRE_DATABASE = 'true'
 dotnet test test/EFCore.Xugu.Tests.Functional -c Release --filter "FullyQualifiedName~NullSemantics"
 
 # L3（需实库 + dotnet-ef）
-harness/scripts/run-experiential-gate.ps1 -Configuration Release
+scripts/run-experiential-gate.ps1 -Configuration Release
 ```
 
-默认连接：`IP=127.0.0.1; ... PORT=5138 ...`（可用 `XUGU_CONNECTION_STRING` 覆盖）。启动库：`harness/scripts/start-xugudb.ps1`。
+默认连接：`IP=127.0.0.1; ... PORT=5138 ...`（可用 `XUGU_CONNECTION_STRING` 覆盖）。启动库：`scripts/start-xugudb.ps1`。
 
 ## 7. 门禁与 CI
 
@@ -249,7 +249,7 @@ CI：L1 = 所有 PR/push；L2 = main / schedule / `v*`；L3 = schedule / `v*`。
 | 文档 | 用途 |
 |------|------|
 | [TESTING.md](TESTING.md) | 日常命令、环境变量、QualityMatrix、三类绿 |
-| `harness/skills/provider-testing/SKILL.md` | Agent 测试模块技能 |
-| `harness/references/test-parity-matrix.md` | Phase 9–12 Pomelo 对等与冻结数字（历史） |
+| `.trellis/spec/guides/xugu-provider-constraints.md` | Trellis 项目硬约束（含测试门禁入口） |
+| `docs/references/test-parity-matrix.md` | Phase 9–12 Pomelo 对等与冻结数字（历史） |
 | `docs/superpowers/specs/2026-07-21-spec-matrix-alignment-design.md` | Functional Spec 对齐设计 |
 | [LIMITATIONS.md](LIMITATIONS.md) | 产品/平台限制 |

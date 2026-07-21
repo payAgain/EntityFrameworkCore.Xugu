@@ -14,10 +14,10 @@
 > | 能力差异与选型边界的 **说明** | 「零改动迁移到 Xugu」的 **目标清单** |
 > | Pomelo 测试覆盖差距的 **速查** | 应以 MySQL 语法 **首要编写** 应用的指南 |
 >
-> **SQL 方言唯一权威**：`E:\BaiduSyncdisk\docs\content\` → [RELEASE-SCOPE.md](RELEASE-SCOPE.md) → `harness/contracts/sql-dialect.contract.md`  
+> **SQL 方言唯一权威**：`E:\BaiduSyncdisk\docs\content\` → [RELEASE-SCOPE.md](RELEASE-SCOPE.md) → `docs/contracts/sql-dialect.contract.md`  
 > `COMPATIBLE_MODE=MYSQL` 仅为开发/对照便利，**不是**产品承诺。新应用请编写 **Xugu 原生 SQL** 与 EF 映射。
 
-本文面向并列评估 XuguDB 与 MySQL/Pomelo 的开发者，说明能力差异、SQL 方言、测试覆盖与选型建议。技术细节以 [LIMITATIONS.md](LIMITATIONS.md)、[RELEASE-SCOPE.md](RELEASE-SCOPE.md) 与 `harness/contracts/sql-dialect.contract.md` 为准。
+本文面向并列评估 XuguDB 与 MySQL/Pomelo 的开发者，说明能力差异、SQL 方言、测试覆盖与选型建议。技术细节以 [LIMITATIONS.md](LIMITATIONS.md)、[RELEASE-SCOPE.md](RELEASE-SCOPE.md) 与 `docs/contracts/sql-dialect.contract.md` 为准。
 ---
 
 ## 执行摘要
@@ -136,7 +136,7 @@
 | Scaffolding Baselines 快照 | 维护成本 | 永久 skip（10.209） |
 | Lazy loading proxies 宿主 | 无 Proxies 测试基础设施 | 永久 skip |
 
-详见 `harness/tasks/phase-10-maintenance-and-parity/TASKS.md` §永久 skip、`harness/references/pomelo-file-map.md` 来源 **skip** 列。
+详见 `docs/references/pomelo-file-map.md` 来源 **skip** 列（历史 Phase 任务文档已随 harness 移除，见 git 历史）。
 
 ---
 
@@ -192,7 +192,7 @@
 
 ## SQL 方言差异（节选）
 
-> 完整映射：`harness/contracts/sql-dialect.contract.md` §函数映射表
+> 完整映射：`docs/contracts/sql-dialect.contract.md` §函数映射表
 
 ### 连接与兼容模式
 
@@ -267,7 +267,7 @@
 | Linux RID | blocked（10.205） |
 | FOR UPDATE / 位运算 / RelationalCommand | defer（10.202–10.204） |
 
-详见 `harness/references/test-parity-matrix.md`、`harness/handoffs/phase10-closure-2026-07-08.done.md`。
+详见 `docs/references/test-parity-matrix.md`（Phase 10 closure handoff 已随 harness 移除，见 git 历史）。
 
 ---
 
@@ -373,10 +373,9 @@ options.UseXugu(connectionString, xugu => xugu.EnableRetryOnFailure(
 | 已知限制 | [LIMITATIONS.md](LIMITATIONS.md) |
 | 快速开始 | [GETTING-STARTED.md](GETTING-STARTED.md) |
 | 测试说明 | [TESTING.md](TESTING.md) |
-| SQL 方言契约 | `harness/contracts/sql-dialect.contract.md` |
-| Retry 调研 | `harness/references/retrying-execution-strategy.md` |
-| Wave 6 Handoff | `harness/handoffs/phase10-wave6-2026-07-08.done.md` |
-| Phase 10 Closure | `harness/handoffs/phase10-closure-2026-07-08.done.md` |
-| 测试对等矩阵 | `harness/references/test-parity-matrix.md` |
+| SQL 方言契约 | `docs/contracts/sql-dialect.contract.md` |
+| Retry 调研 | `docs/references/retrying-execution-strategy.md` |
+| Wave 6 / Phase 10 Closure | 原 `harness/handoffs/*`（已移除；见 git 历史） |
+| 测试对等矩阵 | `docs/references/test-parity-matrix.md` |
 | XuguDB 官方文档 | `E:\BaiduSyncdisk\docs\content\` |
 | Pomelo 参考源码 | `external/Pomelo.EntityFrameworkCore.MySql/` |

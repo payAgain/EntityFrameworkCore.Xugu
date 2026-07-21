@@ -7,9 +7,9 @@
 
 | 层 | 项目 | 触发 | 数据库 | 命令 |
 |----|------|------|--------|------|
-| **L1 Unit** | `test/EFCore.Xugu.Tests.Unit` | **每次 PR / push** | 不需要 | `harness/scripts/run-unit-gate.ps1` |
+| **L1 Unit** | `test/EFCore.Xugu.Tests.Unit` | **每次 PR / push** | 不需要 | `scripts/run-unit-gate.ps1` |
 | **L2 Integration** | `test/EFCore.Xugu.Tests.Integration` | **main / nightly / tag `v*`** | **必需**（`XUGU_REQUIRE_DATABASE=true`） | native 先：`run-native-gate.ps1`；再 compat：`run-compat-gate.ps1`（均为**全量**） |
-| **L3 Experiential** | pack + EfDesignSample + MinimalApi | **nightly / tag `v*`** | 必需 | `harness/scripts/run-experiential-gate.ps1` |
+| **L3 Experiential** | pack + EfDesignSample + MinimalApi | **nightly / tag `v*`** | 必需 | `scripts/run-experiential-gate.ps1` |
 
 共享基建：`test/EFCore.Xugu.Tests.Shared`（非测试项目）。
 
@@ -81,7 +81,7 @@ dotnet test test/EFCore.Xugu.Tests.Integration -c Release --filter "Category=Clu
 | 项 | 说明 |
 |----|------|
 | .NET SDK | 9.0+（`global.json`） |
-| XuguDB（L2/L3） | 默认 `127.0.0.1:5138`；`harness/scripts/start-xugudb.ps1` |
+| XuguDB（L2/L3） | 默认 `127.0.0.1:5138`；`scripts/start-xugudb.ps1` |
 | 原生驱动 | Integration 构建复制 `xugusql.dll` |
 | `dotnet-ef`（L3） | `dotnet tool install --global dotnet-ef` |
 
@@ -99,17 +99,17 @@ dotnet test test/EFCore.Xugu.Tests.Integration -c Release --filter "Category=Clu
 
 ```powershell
 # L1（无库）
-harness/scripts/run-unit-gate.ps1 -Configuration Release
+scripts/run-unit-gate.ps1 -Configuration Release
 
 # L2 native 全量 → compat 全量（需实库）
-harness/scripts/run-native-gate.ps1 -Configuration Release -MaxAttempts 3
-harness/scripts/run-compat-gate.ps1 -Configuration Release -MaxAttempts 3
+scripts/run-native-gate.ps1 -Configuration Release -MaxAttempts 3
+scripts/run-compat-gate.ps1 -Configuration Release -MaxAttempts 3
 
 # 或 verify -RunTests（L1 + L2 双方言）
-harness/scripts/verify.ps1 -RunTests
+scripts/verify.ps1 -RunTests
 
 # L3 实测（需实库 + dotnet-ef）
-harness/scripts/run-experiential-gate.ps1 -Configuration Release
+scripts/run-experiential-gate.ps1 -Configuration Release
 ```
 
 ## 项目内测试类型
@@ -167,6 +167,6 @@ Windows-only 实库（Linux RID：PLAT-02 blocked）。
 ## 参考
 
 - 限制：[LIMITATIONS.md](LIMITATIONS.md)
-- 驱动契约：`harness/contracts/ado-driver-contract.md`
-- Skill：`harness/skills/provider-testing/SKILL.md`
+- 驱动契约：`docs/contracts/ado-driver-contract.md`
+- Trellis：`.trellis/spec/guides/xugu-provider-constraints.md`；本地门禁见 `scripts/`
 - 旧单体项目已退役：见 `test/EFCore.Xugu.Tests/README.md`

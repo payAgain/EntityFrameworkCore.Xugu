@@ -45,9 +45,9 @@ dotnet test Xugu.EFCore.Xugu.sln -c Release --no-build
 With XuguDB instance and harness (development monorepo):
 
 ```powershell
-harness/scripts/verify.ps1
-harness/scripts/test-nuget-pack.ps1
-harness/scripts/run-integration-smoke.ps1   # requires DB
+scripts/verify.ps1
+scripts/test-nuget-pack.ps1
+scripts/run-integration-smoke.ps1   # requires DB
 ```
 
 ---
@@ -56,7 +56,7 @@ harness/scripts/run-integration-smoke.ps1   # requires DB
 
 ```powershell
 # Development monorepo (uses harness script)
-harness/scripts/publish-nuget.ps1 -Pack
+scripts/publish-nuget.ps1 -Pack
 
 # Public mirror / minimal checkout (no harness)
 dotnet pack src/EFCore.Xugu/EFCore.Xugu.csproj -c Release `
@@ -76,7 +76,7 @@ Output: `artifacts/Microsoft.EntityFrameworkCore.Xugu.9.0.0.nupkg` (+ `.snupkg` 
 $env:GITLAB_NUGET_FEED_URL = "https://your-feed/v3/index.json"
 $env:GITLAB_NUGET_API_KEY = "<api-key>"
 
-harness/scripts/publish-nuget.ps1 -Pack -Push
+scripts/publish-nuget.ps1 -Pack -Push
 ```
 
 Or manually:
@@ -109,7 +109,7 @@ git push origin v9.0.0
 Create or refresh release branch from tag:
 
 ```powershell
-harness/scripts/prepare-release-branch.ps1 -Version 9.0.0
+scripts/prepare-release-branch.ps1 -Version 9.0.0
 ```
 
 Historical tags (pre–EF-alignment numbering):
@@ -134,7 +134,7 @@ git push -u origin release/9.0.0
 Do **not** push the full monorepo. Use the mirror script:
 
 ```powershell
-harness/scripts/prepare-release-branch.ps1 -Version 9.0.0 -Mirror -Force -OutputDir ..\xuguefcore-public-staging
+scripts/prepare-release-branch.ps1 -Version 9.0.0 -Mirror -Force -OutputDir ..\xuguefcore-public-staging
 # sync into payAgain/EntityFrameworkCore.Xugu clone, then:
 git push -u origin main
 git push origin v9.0.0
