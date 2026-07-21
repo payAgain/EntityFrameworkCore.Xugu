@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | **NuGet** | `Microsoft.EntityFrameworkCore.Xugu` |
-| **Version** | **9.0.0**（对齐 EF Core **9.0.x**） |
+| **Version** | **9.0.1**（对齐 EF Core **9.0.x**） |
 | **EF Core** | 9.0.x |
 | **.NET** | 9.0 (`net9.0`) |
 | **Driver** | [Xuguclient](https://www.nuget.org/packages/Xuguclient) (ADO.NET) |
@@ -17,11 +17,11 @@
 ## Install
 
 ```powershell
-dotnet add package Microsoft.EntityFrameworkCore.Xugu --version 9.0.0
+dotnet add package Microsoft.EntityFrameworkCore.Xugu --version 9.0.1
 dotnet add package Xuguclient
 ```
 
-> **版本策略**：NuGet / GitHub 版本号的 **主.次** 与目标 EF Core 对齐（当前 EF Core `9.0.x` → 包 `9.0.x`）。详见 [RELEASE.md](RELEASE.md)。
+> **版本策略**：NuGet / GitHub 版本号的 **主.次** 与目标 EF Core 对齐（当前 EF Core `9.0.x` → 包 `9.0.x`；本版修订号 `9.0.1`）。详见 [RELEASE.md](RELEASE.md)。
 
 ## Quick start
 

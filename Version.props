@@ -6,7 +6,7 @@
       Patch digit may advance for provider-only fixes while still targeting the same EF Core band.
       Historical 1.x–3.x tags predate this policy; public releases from 9.0.0 onward follow EF alignment.
     -->
-    <VersionPrefix>9.0.0</VersionPrefix>
+    <VersionPrefix>9.0.1</VersionPrefix>
     <VersionSuffix></VersionSuffix>
   </PropertyGroup>
 </Project>

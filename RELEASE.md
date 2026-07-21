@@ -1,7 +1,7 @@
 # Microsoft.EntityFrameworkCore.Xugu — Release Guide
 
-> **Current release**: **9.0.0** (`v9.0.0`) — EF Core **9.0.x** aligned  
-> **Release branch**: `phase-13-production-hardening`（发版后可切 `release/9.0.0`）  
+> **Current release**: **9.0.1** (`v9.0.1`) — EF Core **9.0.x** aligned（Trellis / tooling patch）  
+> **Release branch**: `phase-13-production-hardening` / tip also on `release/9.0.0`  
 > **Package ID**: `Microsoft.EntityFrameworkCore.Xugu`
 
 ---
@@ -25,7 +25,7 @@
 |------|-------|
 | Target framework | .NET 9.0 (`net9.0`) |
 | EF Core | **9.0.0** (`Directory.Packages.props` → `EFCoreVersion`) |
-| Package version | **9.0.0**（与 EF 主.次对齐） |
+| Package version | **9.0.1**（与 EF 主.次对齐；本版为 Provider 修订） |
 | Driver (published) | NuGet [Xuguclient](https://www.nuget.org/packages/Xuguclient) (`UseLocalXuguDriver=false`) |
 | Platform GA | **Windows** (Linux RID signed-off blocked — see [LIMITATIONS.md](docs/LIMITATIONS.md)) |
 
@@ -64,7 +64,7 @@ dotnet pack src/EFCore.Xugu/EFCore.Xugu.csproj -c Release `
   -p:UseLocalXuguDriver=false
 ```
 
-Output: `artifacts/Microsoft.EntityFrameworkCore.Xugu.9.0.0.nupkg` (+ `.snupkg` if symbols enabled).
+Output: `artifacts/Microsoft.EntityFrameworkCore.Xugu.9.0.1.nupkg` (+ `.snupkg` if symbols enabled).
 
 ---
 
