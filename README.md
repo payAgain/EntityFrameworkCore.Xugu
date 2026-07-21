@@ -56,12 +56,12 @@ dotnet pack src/EFCore.Xugu/EFCore.Xugu.csproj -c Release -o artifacts/ -p:UseLo
 ## Repository layout
 
 ```
-├── src/EFCore.Xugu/          # Provider 实现
-├── test/EFCore.Xugu.Tests.Unit/         # L1 单元测试（无 DB）
-├── test/EFCore.Xugu.Tests.Integration/  # L2 集成测试（需实库）
-├── test/EFCore.Xugu.Tests.Shared/       # 测试共享基建
-├── samples/EfDesignSample/              # 设计时 / L3 样本
-├── docs/                                # 用户文档（含 TESTING.md）
+├── src/EFCore.Xugu/                     # Provider 实现
+├── test/                                # L1/L2/Functional 测试
+├── samples/                             # 设计时 / L3 样本
+├── docs/                                # 用户文档 + contracts/ + references/
+├── scripts/                             # 本地 verify / 门禁 / 发版脚本
+├── .trellis/                            # Trellis（Cursor Agent 工作流）
 └── Xugu.EFCore.Xugu.sln
 ```
 
@@ -95,3 +95,5 @@ MIT — see [LICENSE](LICENSE).
 ## Contributing
 
 欢迎通过 GitHub Issue / Pull Request 参与。开发环境需 .NET 9 SDK、Windows x64 与可访问的 XuguDB 实例。
+
+Agent 工作流由 [Trellis](https://docs.trytrellis.app/) 接管（`trellis init --cursor`）。硬约束见 [.trellis/spec/guides/xugu-provider-constraints.md](.trellis/spec/guides/xugu-provider-constraints.md)；本地门禁：`scripts/verify.ps1`。
