@@ -13,28 +13,18 @@ Known limitations and deferred features: [LIMITATIONS.md](LIMITATIONS.md).
 
 ---
 
-## [9.0.1] — 2026-07-21 (Trellis migration / tooling)
-
-**Provider patch** on EF Core **9.0.x** band（无方言行为变更要求）。
-
-### Changed
-
-- **Agent 工作流** — 移除 `harness/`；用 Trellis（Cursor）接管：`.trellis/` + `.cursor/`。
-- **活文档迁出** — 方言/驱动契约 → `docs/contracts/`；关键参考 → `docs/references/`；门禁/发版脚本 → `scripts/`。
-- **Trellis specs** — `.trellis/spec/src/EFCore.Xugu/backend/` 按源码填写 Query/Storage/Update/Migrations 等指引；硬约束见 `guides/xugu-provider-constraints.md`。
-- **CI** — GitHub Actions / GitLab CI 工作流已移除（公网无法访问内网驱动子模块；门禁改本地 `scripts/`）。
-
-### Docs
-
-- 更新 TESTING / LIMITATIONS / RELEASE-* / README 路径引用；CHANGELOG 历史条目中的 `harness/` 路径保留为档案。
-
----
-
 ## [9.0.0] — 2026-07-21 (EF Core 9 aligned — dialect iteration baseline)
 
 **版本策略**：自本版起，包版本 **主.次与目标 EF Core 对齐**（`EFCoreVersion=9.0.0` → `9.0.0`）。历史 `1.x`–`3.x` 编号仅作归档。
 
 **基线声明**：本版为 **方言迭代基线**。功能 = 原 3.0.0 GA + 3.0.1 runtime-gap + Phase 13（原工作口径 3.0.2–3.3.0）+ **Post-GA hardening**（原 Unreleased，于 2026-07-21 收口并入）。
+
+### Tooling（同版覆盖）
+
+- **Agent 工作流** — 移除 `harness/`；用 Trellis（Cursor）接管：`.trellis/` + `.cursor/`。
+- **活文档迁出** — 方言/驱动契约 → `docs/contracts/`；关键参考 → `docs/references/`；门禁/发版脚本 → `scripts/`。
+- **Trellis specs** — `.trellis/spec/src/EFCore.Xugu/backend/`；硬约束见 `guides/xugu-provider-constraints.md`。
+- **CI** — GitHub Actions / GitLab CI 工作流已移除（门禁改本地 `scripts/`）。
 
 ### Added / Fixed（相对公开 `v3.0.1`；含 Post-GA hardening）
 
