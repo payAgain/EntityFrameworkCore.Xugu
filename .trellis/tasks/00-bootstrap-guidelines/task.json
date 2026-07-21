@@ -21,9 +21,11 @@
   "children": [],
   "parent": null,
   "relatedFiles": [
-    ".trellis/spec/external/Pomelo.EntityFrameworkCore.MySql/",
-    ".trellis/spec/external/csharp-driver/"
+    ".trellis/spec/src/EFCore.Xugu/backend/",
+    ".trellis/spec/guides/xugu-provider-constraints.md",
+    "docs/contracts/",
+    "scripts/"
   ],
-  "notes": "First-time setup task created by trellis init (fullstack project)",
+  "notes": "Bootstrap for EFCore.Xugu (corrected away from external submodule packages).",
   "meta": {}
 }

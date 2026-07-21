@@ -79,7 +79,7 @@ Messages go through `src/EFCore.Xugu/Properties/XuguStrings.resx`.
 | Kind | Convention | Example |
 |------|------------|---------|
 | Public API namespace | `Microsoft.EntityFrameworkCore` | `UseXugu()` |
-| Implementation namespace | `Xugu.EntityFrameworkCore.Xugu` | internal types |
+| Implementation namespace | `Microsoft.EntityFrameworkCore.Xugu.*` | e.g. `...Xugu.Query.Internal` |
 | Class prefix | `Xugu` | `XuguQuerySqlGenerator` |
 | NuGet package | `Microsoft.EntityFrameworkCore.Xugu` | |
 | Connection extension | `UseXugu(connectionString)` | |
