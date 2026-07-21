@@ -17,9 +17,9 @@ Any change under `src/EFCore.Xugu/Query/` — method/member translators, SQL tra
 | Concern | Path |
 |---------|------|
 | SQL rendering | `Query/Internal/XuguQuerySqlGenerator.cs` |
-| Method calls | `Query/ExpressionTranslators/Internal/XuguMethodCallTranslatorProvider.cs` |
-| Members | `Query/ExpressionTranslators/Internal/XuguMemberTranslatorProvider.cs` |
-| DateTime / byte[] / etc. | sibling `Xugu*Translator.cs` files |
+| Method calls | `Query/Internal/XuguMethodCallTranslatorProvider.cs` |
+| Members | `Query/Internal/XuguMemberTranslatorProvider.cs` |
+| DateTime / byte[] / etc. | `Query/ExpressionTranslators/Internal/Xugu*Translator.cs` |
 | APPLY / unsupported shapes | throw via `XuguStrings` (e.g. `ApplyNotSupported`) |
 
 ## Tests to mirror

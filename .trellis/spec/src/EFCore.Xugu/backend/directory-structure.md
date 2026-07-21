@@ -7,8 +7,8 @@ Implementation root: `src/EFCore.Xugu/`. Layout mirrors Pomelo for C# discoverab
 | Folder | Owns | Hub types |
 |--------|------|-----------|
 | `Extensions/` | Public Fluent API | `XuguDbContextOptionsBuilderExtensions` (`UseXugu`), `XuguServiceCollectionExtensions` |
-| `Infrastructure/` | Options builder, server version, compatible mode | `XuguDbContextOptionsBuilder`, `XuguServerVersion`, `XuguCompatibleMode` |
-| `Internal/` | Singleton options bag | `XuguOptions`, `IXuguOptions` |
+| `Infrastructure/` | Options builder, server version, compatible mode | `XuguDbContextOptionsBuilder`, `XuguServerVersion`, `XuguCompatibleMode`, `IXuguOptions` |
+| `Internal/` | Singleton options bag | `XuguOptions` |
 | `Storage/` | Type mappings, connection, creator, retry | `XuguTypeMappingSource`, `XuguRelationalConnection`, `XuguRetryingExecutionStrategy` |
 | `Query/` | LINQ → SQL | `XuguQuerySqlGenerator`, `XuguMethodCallTranslatorProvider`, expression visitors |
 | `Update/` | INSERT/UPDATE/DELETE SQL + batches | `XuguUpdateSqlGenerator`, `XuguModificationCommandBatch` |
