@@ -71,7 +71,7 @@ public class ConnectionSettingsExtendedTests(XuguDatabaseFixture fixture)
         XuguTestConnection.SkipIfUnavailable();
         using var context = CreateContext();
         using var command = context.Database.GetDbConnection().CreateCommand();
-        command.CommandText = "SELECT COUNT(*) FROM DBA_TABLES";
+        command.CommandText = "SELECT COUNT(*) FROM ALL_TABLES";
         if (command.Connection!.State != System.Data.ConnectionState.Open)
         {
             command.Connection.Open();

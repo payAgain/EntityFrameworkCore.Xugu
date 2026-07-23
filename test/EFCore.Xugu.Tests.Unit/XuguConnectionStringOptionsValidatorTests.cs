@@ -66,4 +66,22 @@ public class XuguConnectionStringOptionsValidatorTests
         Assert.Equal("SYSTEM", pairs["db"]);
         Assert.Equal("5138", pairs["PORT"]);
     }
+
+    [Fact]
+    public void EnsureUtf8Charset_appends_when_missing()
+    {
+        var cs = XuguTestConnection.EnsureUtf8Charset(
+            "IP=192.168.2.239; DB=SYSTEM; USER=SYSDBA; PWD=SYSDBA; PORT=5287; AUTO_COMMIT=on");
+        Assert.Contains("CHAR_SET=UTF8", cs, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("CHAR_SET=GBK", cs, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void EnsureUtf8Charset_replaces_gbk()
+    {
+        var cs = XuguTestConnection.EnsureUtf8Charset(
+            "IP=127.0.0.1; DB=SYSTEM; USER=SYSDBA; PWD=SYSDBA; PORT=5138; CHAR_SET=GBK");
+        Assert.Contains("CHAR_SET=UTF8", cs, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("CHAR_SET=GBK", cs, StringComparison.OrdinalIgnoreCase);
+    }
 }

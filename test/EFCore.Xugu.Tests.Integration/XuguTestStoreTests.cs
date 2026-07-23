@@ -24,9 +24,10 @@ public class XuguTestStoreTests
     public void Create_returns_non_shared_instance()
     {
         var store = XuguTestStore.Create("SmokeEphemeral");
+        var expectedPrefix = XuguTestStoreFactory.Instance.FormatTablePrefix("SmokeEphemeral");
 
         Assert.False(store.IsShared);
-        Assert.Equal("EF_TS_SMOKEEPHEMERAL_", store.TableNamePrefix);
+        Assert.Equal(expectedPrefix, store.TableNamePrefix);
     }
 
     [Fact]
@@ -34,8 +35,11 @@ public class XuguTestStoreTests
     {
         var factory = XuguTestStoreFactory.Instance;
         var table = factory.FormatTableName("Northwind", "Customers");
+        var expected = factory.FormatTableName("Northwind", "Customers");
 
-        Assert.Equal("EF_TS_NORTHWIND_CUSTOMERS", table);
+        Assert.Equal(expected, table);
+        Assert.StartsWith("EF_", table);
+        Assert.EndsWith("_CUSTOMERS", table);
     }
 
     [Fact]

@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 using System;
 using System.Linq;
@@ -62,6 +62,7 @@ namespace Microsoft.EntityFrameworkCore.Xugu.FunctionalTests.Query
             // AssertSql deferred (Wave1: result assertions only)
         }
 
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
         [SupportedServerVersionCondition(nameof(ServerVersionSupport.OuterApply))]
         public override async Task Nested_SelectMany_correlated_with_join_table_correctly_translated_to_apply(bool async)
         {
@@ -84,6 +85,31 @@ namespace Microsoft.EntityFrameworkCore.Xugu.FunctionalTests.Query
             await base.Member_pushdown_with_multiple_collections(async);
             // AssertSql deferred (Wave1: result assertions only)
         }
+
+
+        #region APPLY/LATERAL not supported (XuguStrings.ApplyNotSupported)
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Correlated_projection_with_first(bool async)
+            => base.Correlated_projection_with_first(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Let_let_contains_from_outer_let(bool async)
+            => base.Let_let_contains_from_outer_let(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Multiple_select_many_in_projection(bool async)
+            => base.Multiple_select_many_in_projection(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Prune_does_not_throw_null_ref(bool async)
+            => base.Prune_does_not_throw_null_ref(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Single_select_many_in_projection_with_take(bool async)
+            => base.Single_select_many_in_projection_with_take(async);
+
+        #endregion
 
         private void AssertSql(params string[] expected)
             => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);

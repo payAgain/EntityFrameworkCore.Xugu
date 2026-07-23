@@ -13,11 +13,30 @@ Known limitations and deferred features: [LIMITATIONS.md](LIMITATIONS.md).
 
 ---
 
-## [9.0.0] — 2026-07-21 (EF Core 9 aligned — dialect iteration baseline)
+## [9.0.0] — 2026-07-23 (EF Core 9 aligned — dialect iteration baseline + Wave A acceptance)
 
-**版本策略**：自本版起，包版本 **主.次与目标 EF Core 对齐**（`EFCoreVersion=9.0.0` → `9.0.0`）。历史 `1.x`–`3.x` 编号仅作归档。
+**版本策略**：自本版起，包版本 **主.次与目标 EF Core 对齐**（`EFCoreVersion=9.0.0` → `9.0.0`）。历史 `1.x`–`3.x` 编号仅作归档。本 tag 为 **覆盖式** 发布（Wave A 修复仍标 9.0.0，不 bump 9.0.1）。
 
-**基线声明**：本版为 **方言迭代基线**。功能 = 原 3.0.0 GA + 3.0.1 runtime-gap + Phase 13（原工作口径 3.0.2–3.3.0）+ **Post-GA hardening**（原 Unreleased，于 2026-07-21 收口并入）。
+**基线声明**：本版为 **方言迭代基线** + **Wave A 可试用验收**。功能 = 原 3.0.0 GA + 3.0.1 runtime-gap + Phase 13（原工作口径 3.0.2–3.3.0）+ Post-GA hardening + **Wave A 发布验收修复**（2026-07-23）。
+
+**Wave A 验收门槛**（详见 [RELEASE-SCOPE.md](RELEASE-SCOPE.md#900-wave-a-验收release-acceptance-wave-a)）：
+
+| 层 | 结果 |
+|----|------|
+| Unit | **0 FAIL**（修复 TimeOnly / temporal 契约 6 项） |
+| Integration | 独立验收原 **13 FAIL → 0 FAIL** |
+| Functional | **仅** APPLY/LATERAL Skip；**不**宣称 Comparable Set 全矩阵 0 FAIL |
+| 平台 | **Windows x64 可试用**；Linux **未验收** |
+
+### Wave A fixes（2026-07-23）
+
+- **TimeOnly Unit 契约** — 恢复 converter 路径（`XuguTemporalValueConverters.TimeOnlyToString`）、`TIME(n)` 精度、`DbType.Time` 绑定；`TypeMappingSourceTests` 全绿。
+- **NuGet Description UTF-8** — 修正 `<Description>` 乱码为「虚谷数据库」；`dotnet pack -p:UseLocalXuguDriver=false` 验证 nuspec。
+- **Integration EF_TS 前缀** — 断言对齐 SHA1 短前缀 `EF_{8-hex}_`（`XuguTestStoreFactory.FormatTablePrefix`）。
+- **Integration E18012 / ALL_*** — Scaffolding、迁移 history、`HasTables` 与 fixture 元数据统一走 `ALL_*` 视图；普通用户无需 `DBA_*`/`SYS_*` GRANT。
+- **Integration Northwind UTF-8** — 测试连接强制 `CHAR_SET=UTF8`；Northwind seed 重音 canary（`Bräcke` / `Folk och Fä HB`）防共享库污染。
+- **Functional APPLY Skip 卫生** — ~120 方法 / ~240 theory 标记 Skip（`ApplyNotSupported`）；BulkUpdates 负向断言保留 PASS。
+- **文档** — RELEASE-SCOPE / LIMITATIONS / USER-GUIDE / CHANGELOG 对齐 Wave A 口径。
 
 ### Tooling（同版覆盖）
 
@@ -31,22 +50,22 @@ Known limitations and deferred features: [LIMITATIONS.md](LIMITATIONS.md).
 - Phase 13：应用能力矩阵门禁、`ado-driver-contract`、RuntimeGap 强化、RETURNING 探测、业务 SQL 清单、`XuguCompatibleMode` 会话 API。
 - 3.0.1：COUNT/DateDiff CAST、时态 converter、严格实库模式。
 - **乐观并发 Path A** — `ConsumeResultSetWithRowsAffectedOnly` 使用 `DbDataReader.RecordsAffected`（UPDATE/DELETE）；去掉占位 `SELECT 1`；启用 `DbUpdateConcurrencyException`（`OptimisticConcurrencyTests.Stale_*` PASS）。INSERT 经 reader 的 `RecordsAffected` 恒 0 时对 `Added` 不做误报。（**取代** Phase 13 W2 归档决策 C。）
-- **TIME 物化** — `TimeSpan`/`TimeOnly` 经 `GetString` + `CustomizeDataReaderExpression` 物化，消除 shaper「No coercion operator … String and TimeSpan」。
+- **TIME 物化** — `TimeSpan`/`TimeOnly` 经 converter / `GetString` 物化（Wave A：TimeOnly 以 Unit 契约为准，见 `XuguTimeOnlyTypeMapping`）。
 - **BLOB 物化** — `byte[]` 从驱动 `XGBlob` 适配为 `byte[]`（不改驱动）。
 - **DateTimeOffset 读回** — 兼容短年（`3-03-01…`）与小时级偏移（`…-5`）；LIMITATIONS 注明亚小时偏移/亚秒截断边界。
 - **DateTimeOffset.Date / DayOfYear** — LINQ 翻译为文档函数 `DATE` / `DAYOFYEAR`。
 - **二进制 DDL** — `byte[]` 有长度时映射为无后缀 `BINARY`（非 `BLOB(n)`）；文档无 size 后缀（`binary.md` / `large-object.md`）。
 - **标识符长度** — `RelationalMaxIdentifierLengthConvention(127)`（`identifier.md`）；Spec 表前缀改为短哈希，避免 FK 名超长。
 - **byte / 未映射 DbType 参数绑定与物化** — TinyInt/`UInt*`/`Single`/`Guid`/`SByte`/`StringFixedLength` 等旁路驱动 Binary 默认；TIME/DATE 按驱动要求绑定为字符串。
-- **APPLY/LATERAL 明确拒绝** — 实库确认无 `CROSS/OUTER APPLY`、`LATERAL`；抛 `XuguStrings.ApplyNotSupported`。
+- **APPLY/LATERAL 明确拒绝** — 实库确认无 `CROSS/OUTER APPLY`、`LATERAL`；抛 `XuguStrings.ApplyNotSupported`；Functional 相关用例 Skip（Wave A）。
 - **瞬态检测 / Retry** — `[E34304]`/`[E34305]` 不再视为可重试；识别空正文 `[E34501]`/`[E34301]`，`OnRetry` 关闭失效连接后再重试。
 - **Sequence Migrations DDL** — 按 `reference/object/sequence.md`；`RESTART WITH` NotSupported。
-- **Spec Functional 工程** — `test/EFCore.Xugu.Tests.Functional`（NullSemantics / GearsOfWar(+TPT/TPC) / ComplexNavigations / Owned / PrimitiveCollections / BulkUpdates 等，`--list-tests` ~8500+）。
+- **Spec Functional 工程** — `test/EFCore.Xugu.Tests.Functional`（NullSemantics / GearsOfWar(+TPT/TPC) / ComplexNavigations / Owned / PrimitiveCollections / BulkUpdates 等，`--list-tests` ~8500+）；**Wave A 不宣称全矩阵 0 FAIL**。
 - **质量补强** — QualityMatrix / Cluster Integration / Affected-rows 探针；Integration Skip 闭环；测试默认方言 **native**。
 
 ### Docs
 
-- `RELEASE.md` / README / USER-GUIDE / RELEASE-SCOPE / LIMITATIONS：公开口径统一为 **9.0.0**（对齐 EF Core 9.0.x）。
+- `RELEASE.md` / README / USER-GUIDE / RELEASE-SCOPE / LIMITATIONS / CHANGELOG：公开口径统一为 **9.0.0 Wave A**（对齐 EF Core 9.0.x）。
 
 ---
 

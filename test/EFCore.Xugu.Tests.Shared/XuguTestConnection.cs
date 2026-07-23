@@ -18,8 +18,31 @@ public static class XuguTestConnection
     public const string DefaultConnectionString =
         "IP=127.0.0.1; DB=SYSTEM; USER=SYSDBA; PWD=SYSDBA; PORT=5138; AUTO_COMMIT=on; CHAR_SET=UTF8";
 
+    /// <summary>
+    /// Harness connection string. Always forces <c>CHAR_SET=UTF8</c> so Northwind accent
+    /// seeds (Bräcke / Fä) stay intact: the driver defaults omitted CHAR_SET to GBK, and a
+    /// GBK write + UTF8 read yields mojibake (<c>Br盲cke</c>).
+    /// </summary>
     public static string ConnectionString =>
-        Environment.GetEnvironmentVariable("XUGU_CONNECTION_STRING") ?? DefaultConnectionString;
+        EnsureUtf8Charset(
+            Environment.GetEnvironmentVariable("XUGU_CONNECTION_STRING") ?? DefaultConnectionString);
+
+    /// <summary>
+    /// Ensures <c>CHAR_SET=UTF8</c> on a Xugu connection string (replaces any existing CHAR_SET).
+    /// </summary>
+    public static string EnsureUtf8Charset(string connectionString)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
+
+        var parts = connectionString
+            .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(static p => !p.StartsWith("CHAR_SET=", StringComparison.OrdinalIgnoreCase)
+                               && !p.StartsWith("Char_set=", StringComparison.OrdinalIgnoreCase)
+                               && !p.StartsWith("charset=", StringComparison.OrdinalIgnoreCase))
+            .ToList();
+        parts.Add("CHAR_SET=UTF8");
+        return string.Join("; ", parts);
+    }
 
     /// <summary>
     /// Optional cluster listen ports (comma-separated), e.g. <c>5287,5288,5289</c>.
@@ -58,14 +81,14 @@ public static class XuguTestConnection
 
     /// <summary>
     /// Skips when <c>XUGU_CLUSTER_PORTS</c> is not configured (cluster suite is opt-in).
+    /// Remains a Skip even under <c>XUGU_REQUIRE_DATABASE=true</c> — missing cluster ports
+    /// is not the same as an unavailable primary database.
     /// </summary>
     public static void SkipIfClusterNotConfigured()
     {
-        if (ClusterNodeConnectionStrings.Count < 2)
-        {
-            FailOrSkip(
-                "Cluster tests require XUGU_CLUSTER_PORTS with at least two ports (e.g. 5287,5288,5289)");
-        }
+        Skip.If(
+            ClusterNodeConnectionStrings.Count < 2,
+            "Cluster tests require XUGU_CLUSTER_PORTS with at least two ports (e.g. 5287,5288,5289)");
     }
 
     /// <summary>

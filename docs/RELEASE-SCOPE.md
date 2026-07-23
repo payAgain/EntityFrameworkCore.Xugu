@@ -2,7 +2,7 @@
 
 > **当前稳定版**：**9.0.0**（`v9.0.0` — **与 EF Core 9.0.x 版本对齐**；**方言迭代基线**）  
 > **上一公开 tag（旧编号）**：**3.0.1**（`v3.0.1`）  
-> **更新**：2026-07-21（Post-GA hardening 并入 9.0.0；公开文档口径统一）
+> **更新**：2026-07-23（Wave A 验收口径对齐；Post-GA hardening 并入 9.0.0）
 
 > **版本策略**：包 `主.次` = 目标 EF Core `主.次`（见 `Directory.Packages.props` / `Version.props`）。旧 `3.x` 编号不再用于新公开发布。
 
@@ -41,7 +41,43 @@
 | **3.1.0** | Phase 13 W2 | 并发决策 C、RETURNING 探测、XGCI 提示 |
 | **3.2.0** | Phase 13 W3 | BUSINESS-SQL-BACKLOG frozen |
 | **3.3.0** | Phase 13 W4（归档编号） | `XuguCompatibleMode` 会话 API；**并入公开发布 9.0.0** |
-| **9.0.0** | **EF 对齐 / 方言迭代基线** ✅ | 主.次 = EF Core 9.0；功能 = 3.0.1 + Phase 13 + Post-GA hardening；`v9.0.0` |
+| **9.0.0** | **EF 对齐 / 方言迭代基线** ✅ | 主.次 = EF Core 9.0；功能 = 3.0.1 + Phase 13 + Post-GA hardening + **Wave A 验收修复**；`v9.0.0`（**Wave A 门禁**，见下节） |
+
+---
+
+## 9.0.0 Wave A 验收（Release Acceptance Wave A）
+
+> **定位**：**Windows 可试用** 发布门槛（2026-07-23 收口）。**不是** Pomelo FunctionalTests Comparable Set 全矩阵 0 FAIL 承诺，**不是** Linux 生产认证。
+
+### 验收标准（Wave A gate）
+
+| 层 | 标准 | 状态 |
+|----|------|------|
+| **Unit** | Release 全量 **0 FAIL**（含 TimeOnly / temporal 契约） | ✅ Wave A |
+| **Integration** | 独立验收报告原 **13 FAIL → 0 FAIL**（EF_TS 前缀断言、E18012、`ALL_*` 元数据、Northwind UTF-8 重音隔离） | ✅ Wave A |
+| **Functional** | **仅** APPLY / LATERAL（`ApplyNotSupported`）集群标记 Skip（~120 方法 / ~240 theory）；**不**宣称 Comparable Set 双矩阵 0 FAIL | ⚠️ 部分 Skip |
+| **Packaging** | NuGet `<Description>` UTF-8 正确（虚谷数据库）；`dotnet pack -p:UseLocalXuguDriver=false` 可还原 | ✅ Wave A |
+| **核心用户路径** | CRUD、LINQ、迁移、`dotnet ef`、Scaffolding（`ALL_*`）、ExecuteDelete/Update 主路径 | ✅ Wave A |
+
+### 明确不在 Wave A 范围
+
+| 项 | 处置 |
+|----|------|
+| Pomelo **Comparable Set** 全量 Functional（~8500+ 列测）双模式 **0 FAIL** | **未宣称** — 仍有 LINQ 翻译、E19132、E17010、结果/异常不匹配等 FAIL；后续波次 |
+| **Linux x64** 生产可用 | **未验收** — `Xuguclient` 3.3.6-bionic 可能含 `.so` 资产，Wave A **仅签 Windows x64 试用** |
+| nuget.org 公开发布 | 不在本波次 |
+| 版本号 bump（9.0.1） | 不在本波次 — 仍为 **9.0.0 覆盖式** 发布叙事 |
+
+### Wave A 本地门禁（参考命令）
+
+```powershell
+dotnet test test/EFCore.Xugu.Tests.Unit/EFCore.Xugu.Tests.Unit.csproj -c Release
+dotnet test test/EFCore.Xugu.Tests.Integration/EFCore.Xugu.Tests.Integration.csproj -c Release
+# Functional：APPLY/LATERAL 已 Skip；其余 FAIL 不阻塞 Wave A
+dotnet pack src/EFCore.Xugu/EFCore.Xugu.csproj -c Release -p:UseLocalXuguDriver=false -o artifacts
+```
+
+证据与修复明细见 `.superpowers/sdd/task-*-report.md` 与 `docs/superpowers/specs/2026-07-23-release-acceptance-wave-a-design.md`。
 
 ---
 
@@ -158,6 +194,10 @@
 ### GA 3.0.0（Phase 12 — **done**）
 
 在 **Comparable Parity Adjusted 110.9%** 前提下：Phase 12 W1–W6 全绿 + `PHASE12-GOALS.md` 全部门禁 + `v3.0.0` tag。平台限制 PLAT-01/02 **signed-off blocked**（vendor tickets filed）；**Windows-only GA**。
+
+### 9.0.0 Wave A（**done** @ 2026-07-23）
+
+在 **Windows 可试用** 前提下：Unit **0 FAIL**；Integration 独立验收原 13 项 **0 FAIL**；Functional **仅** APPLY/LATERAL Skip 卫生；NuGet 描述 UTF-8 修复。**不**宣称 Functional Comparable Set 全绿或 Linux 生产就绪。详见上文 [9.0.0 Wave A 验收](#900-wave-a-验收release-acceptance-wave-a)。
 
 ---
 

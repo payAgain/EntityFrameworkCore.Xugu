@@ -7,7 +7,7 @@
 ## Local pattern
 
 1. `Design/Internal/XuguDesignTimeServices` registers `AddEntityFrameworkXugu()` plus scaffolding services for `dotnet ef`.
-2. `Scaffolding/Internal/XuguDatabaseModelFactory` reads catalog via Xugu dictionary views (`DBA_TABLES` / `DBA_COLUMNS` style markers — not MySQL `INFORMATION_SCHEMA` copies).
+2. `Scaffolding/Internal/XuguDatabaseModelFactory` reads catalog via Xugu `ALL_*` views (`ALL_TABLES` / `ALL_COLUMNS` / `ALL_INDEXES` / `ALL_CONSTRAINTS` — ordinary-user privilege; not MySQL `INFORMATION_SCHEMA`, not `DBA_*` / `SYS_*`).
 3. `XuguCodeGenerator` emits `UseXugu(...)` for scaffolded contexts.
 4. Store types must round-trip through `XuguTypeMappingSource` names.
 

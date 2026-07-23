@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 using System;
 using System.Linq;
@@ -242,6 +242,27 @@ namespace Microsoft.EntityFrameworkCore.Xugu.FunctionalTests.Query
                     select m);
             // AssertSql deferred (Wave1: result assertions only)
         }
+
+
+        #region APPLY/LATERAL not supported (XuguStrings.ApplyNotSupported)
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Correlated_collection_after_distinct_3_levels(bool async)
+            => base.Correlated_collection_after_distinct_3_levels(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Correlated_collections_inner_subquery_predicate_references_outer_qsre(bool async)
+            => base.Correlated_collections_inner_subquery_predicate_references_outer_qsre(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Outer_parameter_in_join_key(bool async)
+            => base.Outer_parameter_in_join_key(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Outer_parameter_in_join_key_inner_and_outer(bool async)
+            => base.Outer_parameter_in_join_key_inner_and_outer(async);
+
+        #endregion
 
         private string AssertSql(string expected)
         {

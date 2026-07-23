@@ -431,7 +431,8 @@ public sealed class XuguDatabaseFixture : IDisposable
     {
         using var connection = OpenConnection();
         using var command = connection.CreateCommand();
-        command.CommandText = $"SELECT COUNT(*) FROM DBA_TABLES WHERE TABLE_NAME = '{tableName}'";
+        // ALL_TABLES: ordinary-user catalog (no DBA). Docs: reference/system-view/all/all.md
+        command.CommandText = $"SELECT COUNT(*) FROM ALL_TABLES WHERE TABLE_NAME = '{tableName}'";
         var result = command.ExecuteScalar();
         return Convert.ToInt64(result) > 0;
     }
@@ -440,11 +441,13 @@ public sealed class XuguDatabaseFixture : IDisposable
     {
         using var connection = OpenConnection();
         using var command = connection.CreateCommand();
+        // Prefer ALL_* over SYS_* / DBA_* — SYS_COLUMNS raised E18012 for non-DBA harness users.
+        // Docs: reference/system-view/all/all_columns.md (same columns as DBA_COLUMNS).
         command.CommandText = $"""
             SELECT COUNT(*)
-            FROM SYS_COLUMNS uc
-            JOIN SYS_TABLES ut ON uc.table_id = ut.table_id
-            WHERE ut.table_name = '{tableName}' AND uc.col_name = '{columnName}'
+            FROM ALL_COLUMNS c
+            JOIN ALL_TABLES t ON c.TABLE_ID = t.TABLE_ID
+            WHERE t.TABLE_NAME = '{tableName}' AND c.COL_NAME = '{columnName}'
             """;
         var result = command.ExecuteScalar();
         return Convert.ToInt64(result) > 0;

@@ -16,8 +16,9 @@ public class NorthwindSeedDataTests
         XuguTestConnection.SkipIfUnavailable();
 
         var store = XuguNorthwindTestStoreFactory.Instance.GetOrCreate("NorthwindSeedSmoke");
+        var expectedPrefix = XuguTestStoreFactory.Instance.FormatTablePrefix("NorthwindSeedSmoke");
 
-        Assert.Equal("EF_TS_NORTHWINDSEEDSMOKE_", store.TableNamePrefix);
+        Assert.Equal(expectedPrefix, store.TableNamePrefix);
 
         using var connection = OpenConnection();
         using var command = connection.CreateCommand();

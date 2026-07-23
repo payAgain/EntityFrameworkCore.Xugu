@@ -32,10 +32,10 @@
 | .NET SDK | **9.0+**（见仓库 `global.json`） |
 | 操作系统 | **Windows x64**（9.0.0 生产平台） |
 | XuguDB 服务端 | 可网络访问的实例（默认端口 `5138`） |
-| ADO.NET 驱动 | NuGet 包 [`Xuguclient`](https://www.nuget.org/packages/Xuguclient) |
-| 原生库 | `xugusql.dll`（须与应用程序同目录或在 PATH 中） |
+| ADO.NET 驱动 | NuGet 包 [`Xuguclient`](https://www.nuget.org/packages/Xuguclient)（Provider 包传递依赖；pack 时当前 `3.3.6-bionic`） |
+| 原生库 | `xugusql.dll`（Windows x64；须能被进程加载） |
 
-> **Linux**：驱动尚未提供 `libxugusql.so`，Linux RID 为 **signed-off blocked**（见 [LIMITATIONS.md](LIMITATIONS.md)）。请勿在生产环境假设跨平台可用。
+> **Linux**：`Xuguclient` 3.3.6-bionic **可能**含 `libxugusql.so`，但 **9.0.0 Wave A 未在 Linux 实库验收** — 仍为 **signed-off blocked**（见 [LIMITATIONS.md](LIMITATIONS.md)）。请勿在生产环境假设跨平台可用。
 
 ### 1.2 安装 NuGet 包
 
@@ -53,12 +53,22 @@ dotnet tool install --global dotnet-ef
 
 ### 1.3 原生库部署
 
-Provider 通过 `Xuguclient` P/Invoke 调用 `xugusql.dll`。常见部署方式：
+Provider 通过 `Xuguclient` P/Invoke 调用原生驱动（Windows：`xugusql.dll`）。
 
-1. **NuGet 还原**：驱动包内 `runtimes/win-x64/native/xugusql.dll` 会随应用输出目录复制。
-2. **手动复制**：若运行时提示找不到 DLL，将 `xugusql.dll` 复制到 `.exe` 同目录。
+**依赖链**：
 
-驱动依赖策略详见 [xuguclient-dependency-strategy.md](xuguclient-dependency-strategy.md)。
+```text
+Microsoft.EntityFrameworkCore.Xugu  →  Xuguclient (XuguClient.dll)  →  xugusql.dll  →  XuguDB
+```
+
+常见部署方式：
+
+1. **NuGet 还原（推荐）**：安装 Provider 后，`Xuguclient` 作为传递依赖还原；`runtimes/win-x64/native/xugusql.dll` 随应用输出目录复制。
+2. **手动复制**：若运行时提示找不到 DLL，将与 `Xuguclient` 版本匹配的 `xugusql.dll` 复制到 `.exe` 同目录。
+
+**双源注意**：从源码构建时，仓库可能在 `runtimes/win-x64/native/` **嵌入**本地 `xugusql.dll`；**NuGet 消费方以 `Xuguclient` 包内资产为准**，可能与仓库嵌入版本不同。详见 [xuguclient-dependency-strategy.md](xuguclient-dependency-strategy.md)。
+
+**字符集**：连接串务必含 `CHAR_SET=UTF8`（或 `CHARSET=UTF8`）。驱动在省略时默认 GBK，会导致中文与欧洲重音字符乱码。
 
 ---
 
@@ -336,7 +346,7 @@ dotnet ef dbcontext scaffold $env:XUGU_CONNECTION Microsoft.EntityFrameworkCore.
   --context ScaffoldedDbContext --table YOUR_TABLE
 ```
 
-Provider 读取 `DBA_TABLES` / `DBA_COLUMNS` 系统视图（**不是** MySQL 的 `INFORMATION_SCHEMA`）。
+Provider 读取 `ALL_TABLES` / `ALL_COLUMNS` 等系统视图（普通用户可读；**不是** MySQL 的 `INFORMATION_SCHEMA`，也**不**依赖 `DBA_*` / `SYS_*`）。
 
 生成的 `OnConfiguring` 会调用 `UseXugu(...)`。
 
@@ -377,6 +387,7 @@ await db.Blogs
 | TPC / TPT 继承层次批量 DML | 未实现 |
 | Owned 类型上的 ExecuteUpdate/Delete | 未实现 |
 | 带 `ORDER BY` / `LIMIT` / `DISTINCT` / `GROUP BY` 的源查询 | 拒绝翻译 |
+| `CROSS APPLY` / `OUTER APPLY` / `LATERAL` | **不支持** — Provider 抛 `ApplyNotSupported`；请用常规 JOIN 或 `SaveChanges` |
 
 需要上述能力时使用常规 `SaveChanges` 或显式 SQL。
 
@@ -420,13 +431,14 @@ await strategy.ExecuteAsync(async () =>
 | 类别 | 限制 | 影响 |
 |------|------|------|
 | **PLAT-01 乐观并发** | 不依赖 `ROW_COUNT()`（仍 E10049） | **`DbUpdateConcurrencyException` 已支持**（`RecordsAffected` Path A） |
-| **PLAT-02 平台** | Linux 无 `libxugusql.so` | **仅 Windows x64 为 GA 平台** |
+| **PLAT-02 平台** | Linux 无稳定实库验收 | **9.0.0 Wave A 仅 Windows x64 可试用**；3.3.6-bionic 或含 `.so` 但未验 Linux |
 | **建库 API** | 无 `CREATE/DROP DATABASE` | 须 DBA 手工建库 |
 | **EnsureCreated** | 不支持 | 使用 Migrations |
 | **过滤索引** | `HasFilter` 不支持 | 迁移会剥离 filter |
 | **Spatial / FULLTEXT** | 永久不实现 | 见 LIMITATIONS |
 | **Collation Fluent** | 永久不实现 | 连接级 `CHAR_SET=UTF8` |
 | **JSON 整列 LOB 读取** | 部分场景未验证 | 优先 JSON 函数投影 |
+| **APPLY / LATERAL** | XuguDB 无 APPLY/LATERAL | ExecuteDelete/Update 与部分 LINQ 形状不可用 |
 
 ---
 
@@ -458,7 +470,7 @@ Xugu Provider 不支持 EF 的 `Database.EnsureCreated()` / `EnsureDeleted()`。
 
 ### Q7：能在 Linux 上跑吗？
 
-9.0.0 **仅签 Windows**。Linux RID 待 Xugu 驱动发布 `libxugusql.so` 后解锁。
+9.0.0 **Wave A 仅签 Windows x64 可试用**。`Xuguclient` 3.3.6-bionic 预发布包**可能**携带 Linux `.so`，但 **未在 Linux 实库验收** — 与 Phase 12 PLAT-02 signed-off blocked 一致。待驱动稳定发布并完成实库矩阵后再解锁。
 
 ### Q8：JSON 列怎么查？
 

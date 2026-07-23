@@ -248,7 +248,7 @@ public sealed class XuguRelationalTestStore : RelationalTestStore
         // Prefix isolation is sufficient; avoid VALID/IS_SYS filters (BOOLEAN vs CHAR differs by session).
         command.CommandText = $"""
             SELECT TABLE_NAME
-            FROM DBA_TABLES
+            FROM ALL_TABLES
             WHERE TABLE_NAME LIKE '{prefix}%'
             """;
 

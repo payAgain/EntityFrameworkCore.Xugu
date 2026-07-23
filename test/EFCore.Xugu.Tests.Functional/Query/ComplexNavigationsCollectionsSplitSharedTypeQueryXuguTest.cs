@@ -1,5 +1,6 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Query;
 using Xunit.Abstractions;
 
@@ -15,6 +16,77 @@ namespace Microsoft.EntityFrameworkCore.Xugu.FunctionalTests.Query
             Fixture.TestSqlLoggerFactory.Clear();
             //Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
         }
+
+        #region APPLY/LATERAL not supported (XuguStrings.ApplyNotSupported)
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Complex_query_with_let_collection_projection_FirstOrDefault(bool async)
+            => base.Complex_query_with_let_collection_projection_FirstOrDefault(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Complex_query_with_let_collection_projection_FirstOrDefault_with_ToList_on_inner_and_outer(bool async)
+            => base.Complex_query_with_let_collection_projection_FirstOrDefault_with_ToList_on_inner_and_outer(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Filtered_include_and_non_filtered_include_followed_by_then_include_on_same_navigation(bool async)
+            => base.Filtered_include_and_non_filtered_include_followed_by_then_include_on_same_navigation(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Filtered_include_multiple_multi_level_includes_with_first_level_using_filter_include_on_one_of_the_chains_only(bool async)
+            => base.Filtered_include_multiple_multi_level_includes_with_first_level_using_filter_include_on_one_of_the_chains_only(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Filtered_include_same_filter_set_on_same_navigation_twice_followed_by_ThenIncludes(bool async)
+            => base.Filtered_include_same_filter_set_on_same_navigation_twice_followed_by_ThenIncludes(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Filtered_include_Skip_Take_with_another_Skip_Take_on_top_level(bool async)
+            => base.Filtered_include_Skip_Take_with_another_Skip_Take_on_top_level(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Filtered_include_Take_with_another_Take_on_top_level(bool async)
+            => base.Filtered_include_Take_with_another_Take_on_top_level(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Filtered_include_with_Take_without_order_by_followed_by_ThenInclude_and_FirstOrDefault_on_top_level(bool async)
+            => base.Filtered_include_with_Take_without_order_by_followed_by_ThenInclude_and_FirstOrDefault_on_top_level(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Filtered_include_with_Take_without_order_by_followed_by_ThenInclude_and_unordered_Take_on_top_level(bool async)
+            => base.Filtered_include_with_Take_without_order_by_followed_by_ThenInclude_and_unordered_Take_on_top_level(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Projecting_collection_after_optional_reference_correlated_with_parent(bool async)
+            => base.Projecting_collection_after_optional_reference_correlated_with_parent(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Projecting_collection_with_group_by_after_optional_reference_correlated_with_parent(bool async)
+            => base.Projecting_collection_with_group_by_after_optional_reference_correlated_with_parent(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task SelectMany_with_predicate_and_DefaultIfEmpty_projecting_root_collection_element_and_another_collection(bool async)
+            => base.SelectMany_with_predicate_and_DefaultIfEmpty_projecting_root_collection_element_and_another_collection(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Skip_Take_Distinct_on_grouping_element(bool async)
+            => base.Skip_Take_Distinct_on_grouping_element(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Skip_Take_on_grouping_element_inside_collection_projection(bool async)
+            => base.Skip_Take_on_grouping_element_inside_collection_projection(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Skip_Take_on_grouping_element_with_reference_include(bool async)
+            => base.Skip_Take_on_grouping_element_with_reference_include(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Skip_Take_Select_collection_Skip_Take(bool async)
+            => base.Skip_Take_Select_collection_Skip_Take(async);
+
+        [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+        public override Task Take_Select_collection_Take(bool async)
+            => base.Take_Select_collection_Take(async);
+
+        #endregion
     }
 }
-

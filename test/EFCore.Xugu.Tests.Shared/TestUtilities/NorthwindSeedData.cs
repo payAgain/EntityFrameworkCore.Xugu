@@ -8,6 +8,20 @@ namespace Microsoft.EntityFrameworkCore.Xugu.Tests.TestUtilities;
 /// </summary>
 public static class NorthwindSeedData
 {
+    public const string FolkOchFaCompanyName = "Folk och Fä HB";
+    public const string BrackeCity = "Bräcke";
+
+    private static readonly string[] LogicalTables =
+    [
+        "Categories",
+        "Suppliers",
+        "Shippers",
+        "Customers",
+        "Employees",
+        "Products",
+        "Orders"
+    ];
+
     private static readonly ConcurrentDictionary<string, object> StoreLocks = new(StringComparer.OrdinalIgnoreCase);
 
     public static void EnsureInitialized(XuguTestStore store)
@@ -17,23 +31,32 @@ public static class NorthwindSeedData
             return;
         }
 
-        if (TableExists(store, "Customers") && HasSeedRows(store))
+        if (IsReady(store))
         {
+            TrackSchemaTables(store);
             return;
         }
 
         var lockObject = StoreLocks.GetOrAdd(store.Name, static _ => new object());
         lock (lockObject)
         {
-            if (TableExists(store, "Customers") && HasSeedRows(store))
+            if (IsReady(store))
             {
+                TrackSchemaTables(store);
                 return;
             }
 
+            // Rebuild when missing, incomplete, or accent-corrupted (GBK-default seed vs UTF8 read).
             EnsureSchema(store);
             SeedData(store);
         }
     }
+
+    private static bool IsReady(XuguTestStore store)
+        => TableExists(store, "Customers")
+           && TableExists(store, "Orders")
+           && HasSeedRows(store)
+           && HasIntactUnicodeSeed(store);
 
     private static bool HasSeedRows(XuguTestStore store)
     {
@@ -47,6 +70,47 @@ public static class NorthwindSeedData
         catch
         {
             return false;
+        }
+    }
+
+    /// <summary>
+    /// FOLKO City/CompanyName must round-trip as Unicode under <c>CHAR_SET=UTF8</c>.
+    /// A prior seed without UTF8 (driver GBK default) stores bytes that read back as
+    /// <c>Br盲cke</c> / <c>F盲</c> — treat that as not ready and rebuild.
+    /// </summary>
+    private static bool HasIntactUnicodeSeed(XuguTestStore store)
+    {
+        try
+        {
+            using var connection = OpenConnection();
+            using var command = connection.CreateCommand();
+            command.CommandText = $"""
+                SELECT CITY, COMPANY_NAME
+                FROM {store.FormatTableName("Customers")}
+                WHERE CUSTOMER_ID = 'FOLKO'
+                """;
+            using var reader = command.ExecuteReader();
+            if (!reader.Read())
+            {
+                return false;
+            }
+
+            var city = Convert.ToString(reader.GetValue(0));
+            var company = Convert.ToString(reader.GetValue(1));
+            return string.Equals(city, BrackeCity, StringComparison.Ordinal)
+                   && string.Equals(company, FolkOchFaCompanyName, StringComparison.Ordinal);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static void TrackSchemaTables(XuguTestStore store)
+    {
+        foreach (var logical in LogicalTables)
+        {
+            store.TrackTable(store.FormatTableName(logical));
         }
     }
 
@@ -183,7 +247,7 @@ public static class NorthwindSeedData
             INSERT INTO {customers} (CUSTOMER_ID, COMPANY_NAME, CONTACT_NAME, CITY, COUNTRY) VALUES
                 ('ALFKI', 'Alfreds Futterkiste', 'Maria Anders', 'Berlin', 'Germany'),
                 ('ANATR', 'Ana Trujillo', 'Ana Trujillo', 'México D.F.', 'Mexico'),
-                ('FOLKO', 'Folk och Fä HB', 'Maria Larsson', 'Bräcke', 'Sweden'),
+                ('FOLKO', '{FolkOchFaCompanyName}', 'Maria Larsson', '{BrackeCity}', 'Sweden'),
                 ('SEVES', 'Seven Seas Trading', 'James Kirk', 'London', 'UK')
             """,
             $"""
@@ -205,7 +269,7 @@ public static class NorthwindSeedData
                 ('ALFKI', 1, '1998-05-04 00:00:00', 29.46, 'Berlin'),
                 ('ALFKI', 1, '1998-08-25 00:00:00', 23.94, 'Berlin'),
                 ('ANATR', 3, '1998-07-16 00:00:00', 45.33, 'México D.F.'),
-                ('FOLKO', 3, '1998-03-13 00:00:00', 208.58, 'Bräcke'),
+                ('FOLKO', 3, '1998-03-13 00:00:00', 208.58, '{BrackeCity}'),
                 ('SEVES', 2, '1998-12-25 00:00:00', 64.50, 'London')
             """);
     }
@@ -229,7 +293,7 @@ public static class NorthwindSeedData
             using var connection = OpenConnection();
             using var command = connection.CreateCommand();
             var tableName = store.FormatTableName(logicalName);
-            command.CommandText = $"SELECT COUNT(*) FROM DBA_TABLES WHERE TABLE_NAME = '{tableName}'";
+            command.CommandText = $"SELECT COUNT(*) FROM ALL_TABLES WHERE TABLE_NAME = '{tableName}'";
             return Convert.ToInt64(command.ExecuteScalar()) > 0;
         }
         catch
@@ -239,9 +303,5 @@ public static class NorthwindSeedData
     }
 
     private static XuguClient.XGConnection OpenConnection()
-    {
-        var connection = new XuguClient.XGConnection(XuguTestConnection.ConnectionString);
-        connection.Open();
-        return connection;
-    }
+        => XuguTestConnection.OpenConnection();
 }

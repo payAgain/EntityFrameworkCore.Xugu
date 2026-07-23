@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 using System;
 using System.Linq;
@@ -1795,24 +1795,28 @@ public class TPCGearsOfWarQueryXuguTest : TPCGearsOfWarQueryRelationalTestBase<T
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Correlated_collections_inner_subquery_selector_references_outer_qsre(bool async)
     {
         await base.Correlated_collections_inner_subquery_selector_references_outer_qsre(async);
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Correlated_collections_inner_subquery_predicate_references_outer_qsre(bool async)
     {
         await base.Correlated_collections_inner_subquery_predicate_references_outer_qsre(async);
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Correlated_collections_nested_inner_subquery_references_outer_qsre_one_level_up(bool async)
     {
         await base.Correlated_collections_nested_inner_subquery_references_outer_qsre_one_level_up(async);
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Correlated_collections_nested_inner_subquery_references_outer_qsre_two_levels_up(bool async)
     {
         await base.Correlated_collections_nested_inner_subquery_references_outer_qsre_two_levels_up(async);
@@ -1837,6 +1841,7 @@ public class TPCGearsOfWarQueryXuguTest : TPCGearsOfWarQueryRelationalTestBase<T
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Correlated_collections_with_Distinct(bool async)
     {
         await base.Correlated_collections_with_Distinct(async);
@@ -1963,18 +1968,21 @@ public class TPCGearsOfWarQueryXuguTest : TPCGearsOfWarQueryRelationalTestBase<T
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Outer_parameter_in_join_key(bool async)
     {
         await base.Outer_parameter_in_join_key(async);
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Outer_parameter_in_join_key_inner_and_outer(bool async)
     {
         await base.Outer_parameter_in_join_key_inner_and_outer(async);
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Outer_parameter_in_group_join_with_DefaultIfEmpty(bool async)
     {
         await base.Outer_parameter_in_group_join_with_DefaultIfEmpty(async);
@@ -3082,6 +3090,7 @@ public class TPCGearsOfWarQueryXuguTest : TPCGearsOfWarQueryRelationalTestBase<T
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Subquery_projecting_non_nullable_scalar_contains_non_nullable_value_doesnt_need_null_expansion(
         bool async)
     {
@@ -3089,6 +3098,7 @@ public class TPCGearsOfWarQueryXuguTest : TPCGearsOfWarQueryRelationalTestBase<T
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Subquery_projecting_non_nullable_scalar_contains_non_nullable_value_doesnt_need_null_expansion_negated(
         bool async)
     {
@@ -3096,12 +3106,14 @@ public class TPCGearsOfWarQueryXuguTest : TPCGearsOfWarQueryRelationalTestBase<T
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Subquery_projecting_nullable_scalar_contains_nullable_value_needs_null_expansion(bool async)
     {
         await base.Subquery_projecting_nullable_scalar_contains_nullable_value_needs_null_expansion(async);
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Subquery_projecting_nullable_scalar_contains_nullable_value_needs_null_expansion_negated(bool async)
     {
         await base.Subquery_projecting_nullable_scalar_contains_nullable_value_needs_null_expansion_negated(async);
@@ -3207,6 +3219,7 @@ public class TPCGearsOfWarQueryXuguTest : TPCGearsOfWarQueryRelationalTestBase<T
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task SelectMany_predicate_with_non_equality_comparison_with_Take_doesnt_convert_to_join(bool async)
     {
         await base.SelectMany_predicate_with_non_equality_comparison_with_Take_doesnt_convert_to_join(async);
@@ -3219,6 +3232,7 @@ public class TPCGearsOfWarQueryXuguTest : TPCGearsOfWarQueryRelationalTestBase<T
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Correlated_collection_with_inner_collection_references_element_two_levels_up(bool async)
     {
         await base.Correlated_collection_with_inner_collection_references_element_two_levels_up(async);
@@ -3535,6 +3549,7 @@ public class TPCGearsOfWarQueryXuguTest : TPCGearsOfWarQueryRelationalTestBase<T
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Correlated_collection_via_SelectMany_with_Distinct_missing_indentifying_columns_in_projection(bool async)
     {
         await base.Correlated_collection_via_SelectMany_with_Distinct_missing_indentifying_columns_in_projection(async);
@@ -3583,6 +3598,7 @@ public class TPCGearsOfWarQueryXuguTest : TPCGearsOfWarQueryRelationalTestBase<T
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task
         Correlated_collection_with_groupby_not_projecting_identifier_column_with_group_aggregate_in_final_projection_multiple_grouping_keys(
             bool async)
@@ -3605,6 +3621,7 @@ public class TPCGearsOfWarQueryXuguTest : TPCGearsOfWarQueryRelationalTestBase<T
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Correlated_collection_with_distinct_not_projecting_identifier_column(bool async)
     {
         await base.Correlated_collection_with_distinct_not_projecting_identifier_column(async);
@@ -3623,6 +3640,7 @@ public class TPCGearsOfWarQueryXuguTest : TPCGearsOfWarQueryRelationalTestBase<T
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Correlated_collection_with_distinct_projecting_identifier_column(bool async)
     {
         await base.Correlated_collection_with_distinct_projecting_identifier_column(async);
@@ -3635,6 +3653,7 @@ public class TPCGearsOfWarQueryXuguTest : TPCGearsOfWarQueryRelationalTestBase<T
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task
         Correlated_collection_with_groupby_not_projecting_identifier_column_but_only_grouping_key_in_final_projection(bool async)
     {
@@ -3678,6 +3697,7 @@ public class TPCGearsOfWarQueryXuguTest : TPCGearsOfWarQueryRelationalTestBase<T
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Correlated_collection_after_distinct_3_levels(bool async)
     {
         await base.Correlated_collection_after_distinct_3_levels(async);
@@ -3708,6 +3728,7 @@ public class TPCGearsOfWarQueryXuguTest : TPCGearsOfWarQueryRelationalTestBase<T
             // AssertSql deferred (Wave1: result assertions only)
     }
 
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
     public override async Task Correlated_collection_with_groupby_not_projecting_identifier_column_with_group_aggregate_in_final_projection(
         bool async)
     {

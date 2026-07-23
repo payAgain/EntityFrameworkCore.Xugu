@@ -15,10 +15,11 @@ using Microsoft.Extensions.Logging;
 namespace Microsoft.EntityFrameworkCore.Xugu.Scaffolding.Internal;
 
 /// <summary>
-///     Reads XuguDB catalog views (<c>DBA_TABLES</c>, <c>DBA_COLUMNS</c>, <c>ALL_INDEXES</c>, <c>DBA_CONSTRAINTS</c>)
-///     for reverse engineering.
-///     Document: <c>reference/system-view/dba/dba_tables.md</c>, <c>reference/system-view/all/all_columns.md</c>,
-///     <c>reference/system-view/all/all_indexes.md</c>, <c>reference/system-view/all/all_constraints.md</c>.
+///     Reads XuguDB catalog views (<c>ALL_TABLES</c>, <c>ALL_COLUMNS</c>, <c>ALL_INDEXES</c>, <c>ALL_CONSTRAINTS</c>)
+///     for reverse engineering. Prefer <c>ALL_*</c> (ordinary-user privilege) over <c>DBA_*</c>.
+///     Document: <c>reference/system-view/all/all.md</c>, <c>reference/system-view/all/all_tables.md</c>,
+///     <c>reference/system-view/all/all_columns.md</c>, <c>reference/system-view/all/all_indexes.md</c>,
+///     <c>reference/system-view/all/all_constraints.md</c>.
 /// </summary>
 public class XuguDatabaseModelFactory : DatabaseModelFactory
 {
@@ -28,7 +29,7 @@ public class XuguDatabaseModelFactory : DatabaseModelFactory
 
     private const string GetTablesSql = """
         SELECT TABLE_ID, TABLE_NAME, COMMENTS
-        FROM DBA_TABLES
+        FROM ALL_TABLES
         WHERE VALID = 'T'
           AND (IS_SYS = 'F' OR IS_SYS IS NULL)
         """;
@@ -44,8 +45,8 @@ public class XuguDatabaseModelFactory : DatabaseModelFactory
             c.IS_SERIAL,
             c.COMMENTS,
             c.COL_NO
-        FROM DBA_COLUMNS c
-        INNER JOIN DBA_TABLES t ON c.TABLE_ID = t.TABLE_ID
+        FROM ALL_COLUMNS c
+        INNER JOIN ALL_TABLES t ON c.TABLE_ID = t.TABLE_ID
         WHERE t.VALID = 'T'
           AND (t.IS_SYS = 'F' OR t.IS_SYS IS NULL)
         ORDER BY t.TABLE_NAME, c.COL_NO
@@ -60,7 +61,7 @@ public class XuguDatabaseModelFactory : DatabaseModelFactory
             i.INDEX_TYPE,
             i.KEYS
         FROM ALL_INDEXES i
-        INNER JOIN DBA_TABLES t ON i.TABLE_ID = t.TABLE_ID
+        INNER JOIN ALL_TABLES t ON i.TABLE_ID = t.TABLE_ID
         WHERE i.VALID = 1
           AND (i.IS_SYS = 'F' OR i.IS_SYS IS NULL)
           AND t.VALID = 'T'
@@ -75,8 +76,8 @@ public class XuguDatabaseModelFactory : DatabaseModelFactory
             c.DEFINE,
             c.UPDATE_ACTION,
             c.DELETE_ACTION
-        FROM DBA_CONSTRAINTS c
-        INNER JOIN DBA_TABLES t ON c.TABLE_ID = t.TABLE_ID
+        FROM ALL_CONSTRAINTS c
+        INNER JOIN ALL_TABLES t ON c.TABLE_ID = t.TABLE_ID
         WHERE c.CONS_TYPE = 'F'
           AND c.VALID = 'T'
           AND (c.IS_SYS = 'F' OR c.IS_SYS IS NULL)

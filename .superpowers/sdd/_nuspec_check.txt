@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.EntityFrameworkCore.Xugu</id>
+    <version>9.0.0</version>
+    <authors>XuguDB</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <readme>README.md</readme>
+    <projectUrl>https://gitlab2.xugu.com/RDB/xuguefcore</projectUrl>
+    <description>Entity Framework Core provider for XuguDB (虚谷数据库).</description>
+    <tags>xugudb 虚谷 Entity Framework Core entity-framework-core ef efcore ef core orm sql</tags>
+    <repository type="git" url="https://gitlab2.xugu.com/RDB/xuguefcore" commit="9953ce296461019a6bcf8d5a873a321b06bd6196" />
+    <dependencies>
+      <group targetFramework="net9.0">
+        <dependency id="Microsoft.EntityFrameworkCore.Relational" version="9.0.0" include="All" />
+        <dependency id="Xuguclient" version="3.3.6-bionic" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

@@ -24,6 +24,8 @@ public sealed class XuguNorthwindQueryFixture : XuguSharedStoreFixture<Northwind
 
     protected override Task OnStoreInitializedAsync()
     {
+        // EnsureInitialized verifies FOLKO Bräcke / Folk och Fä HB and rebuilds if a prior
+        // non-UTF8 seed left mojibake rows (shared DB across L2 batches / full matrix).
         NorthwindSeedData.EnsureInitialized(TestStore);
         return Task.CompletedTask;
     }

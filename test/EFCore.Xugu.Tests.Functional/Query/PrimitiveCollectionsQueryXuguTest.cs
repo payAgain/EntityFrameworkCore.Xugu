@@ -736,6 +736,15 @@ public class PrimitiveCollectionsQueryXuguTest : PrimitiveCollectionsQueryRelati
     public virtual void Check_all_tests_overridden()
         => TestHelpers.AssertAllMethodsOverridden(GetType());
 
+
+    #region APPLY/LATERAL not supported (XuguStrings.ApplyNotSupported)
+
+    [ConditionalTheory(Skip = "XuguDB does not support CROSS APPLY / OUTER APPLY / LATERAL (XuguStrings.ApplyNotSupported).")]
+    public override Task Project_inline_collection_with_Union(bool async)
+        => base.Project_inline_collection_with_Union(async);
+
+    #endregion
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 

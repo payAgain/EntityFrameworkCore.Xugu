@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore.Xugu.Properties;
 namespace Microsoft.EntityFrameworkCore.Xugu.Storage.Internal;
 
 /// <summary>
-///     Database existence via connection open; HasTables via DBA_TABLES.
-///     Docs: reference/system-view/dba/dba_tables.md
+///     Database existence via connection open; HasTables via ALL_TABLES (ordinary-user catalog).
+///     Docs: reference/system-view/all/all_tables.md, reference/system-view/all/all.md
 /// </summary>
 public class XuguDatabaseCreator : RelationalDatabaseCreator
 {
     private const string HasTablesSql = """
         SELECT CASE WHEN COUNT(*) = 0 THEN FALSE ELSE TRUE END
-        FROM DBA_TABLES
+        FROM ALL_TABLES
         WHERE VALID = 'T'
           AND (IS_SYS = 'F' OR IS_SYS IS NULL)
         """;

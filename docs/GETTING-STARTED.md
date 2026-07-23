@@ -135,7 +135,7 @@ dotnet ef database update --project YourApp --startup-project YourApp
 | 能力 | 状态 |
 |------|------|
 | `migrations add` / `database update` | ✅ 支持 |
-| `dbcontext scaffold` | ✅ 基础支持（`DBA_TABLES` / `DBA_COLUMNS`） |
+| `dbcontext scaffold` | ✅ 基础支持（`ALL_TABLES` / `ALL_COLUMNS`） |
 | `EnsureCreated()` / `EnsureDeleted()` | ❌ 不支持（`Database.Create`/`Delete` 抛 `NotSupportedException`） |
 | 幂等迁移脚本 | ❌ 不支持 |
 | 过滤索引（`HasFilter`） | ❌ 不支持 |

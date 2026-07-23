@@ -162,7 +162,7 @@ public class MigrationIntegrationEdgeTests(XuguDatabaseFixture fixture)
         command.CommandText = $"""
             SELECT COUNT(*)
             FROM ALL_INDEXES i
-            INNER JOIN DBA_TABLES t ON i.TABLE_ID = t.TABLE_ID
+            INNER JOIN ALL_TABLES t ON i.TABLE_ID = t.TABLE_ID
             WHERE t.TABLE_NAME = '{tableName}' AND i.INDEX_NAME = '{indexName}' AND i.VALID = 1
             """;
         return Convert.ToInt64(command.ExecuteScalar()) > 0;
@@ -174,8 +174,8 @@ public class MigrationIntegrationEdgeTests(XuguDatabaseFixture fixture)
         using var command = connection.CreateCommand();
         command.CommandText = $"""
             SELECT COUNT(*)
-            FROM DBA_CONSTRAINTS c
-            INNER JOIN DBA_TABLES t ON c.TABLE_ID = t.TABLE_ID
+            FROM ALL_CONSTRAINTS c
+            INNER JOIN ALL_TABLES t ON c.TABLE_ID = t.TABLE_ID
             WHERE t.TABLE_NAME = '{tableName}' AND c.CONS_NAME = '{constraintName}' AND c.VALID = 'T'
             """;
         return Convert.ToInt64(command.ExecuteScalar()) > 0;

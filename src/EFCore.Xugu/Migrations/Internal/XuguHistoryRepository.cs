@@ -31,7 +31,7 @@ public class XuguHistoryRepository : HistoryRepository
             var tableName = TableName;
 
             return $"""
-                SELECT COUNT(*) FROM DBA_TABLES WHERE TABLE_NAME = {stringTypeMapping.GenerateSqlLiteral(tableName)}
+                SELECT COUNT(*) FROM ALL_TABLES WHERE TABLE_NAME = {stringTypeMapping.GenerateSqlLiteral(tableName)}
                 """;
         }
     }
@@ -150,7 +150,7 @@ public class XuguHistoryRepository : HistoryRepository
     {
         var stringTypeMapping = Dependencies.TypeMappingSource.GetMapping(typeof(string));
         return $"""
-            SELECT COUNT(*) FROM DBA_TABLES WHERE TABLE_NAME = {stringTypeMapping.GenerateSqlLiteral(LockTableName)}
+            SELECT COUNT(*) FROM ALL_TABLES WHERE TABLE_NAME = {stringTypeMapping.GenerateSqlLiteral(LockTableName)}
             """;
     }
 

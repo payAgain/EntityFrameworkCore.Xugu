@@ -12,8 +12,11 @@
 | **L1 Unit** | 每次 PR / push | 无 DB；SQL 金标 + NotSupported |
 | **L2 Integration** | `main` / nightly / `v*` tag | **native 全量 + compat 全量**（均 `XUGU_REQUIRE_DATABASE=true`） |
 | **L3 Experiential** | nightly / `v*` tag | NuGet 消费 + `dotnet ef` + MinimalApi 冒烟 |
+| **L4 Functional（Spec 矩阵）** | 本地 / 独立验收 | Pomelo Comparable Set 移植（~8500+）；**9.0.0 Wave A 不宣称全绿** |
 
 详见 [TESTING.md](TESTING.md)。PR **不**跑 L2；主干与发布强制双方言完整集成。
+
+**9.0.0 Wave A**：Unit **0 FAIL**；Integration **0 FAIL**（原独立验收 13 项已闭合）；Functional **仅** APPLY/LATERAL（`ApplyNotSupported`）~120 方法已 Skip — 其余 FAIL **不**计入 Wave A 发布阻塞。见 [RELEASE-SCOPE.md](RELEASE-SCOPE.md#900-wave-a-验收release-acceptance-wave-a)。
 
 ## 方言模式（9.0.0）
 
@@ -162,6 +165,16 @@ XuguDB 服务端有 `spatial-database/` SQL 能力，但 **无** EF Core NetTopo
 | `DateTimeOffset.LocalDateTime` LINQ | 客户端求值 |
 | 时区配置 | 库级 `def_timezone` / 会话参数 |
 
+## Scaffolding / catalog privilege (E18012)
+
+**状态：fixed（Wave A — Task 4）**
+
+Scaffolding、`HasTables`、迁移 history 探测与 Integration 元数据断言统一走 **`ALL_*` 系统视图**（`ALL_TABLES` / `ALL_COLUMNS` / `ALL_INDEXES` / `ALL_CONSTRAINTS` / `ALL_VIEWS`），**不**再查询 `SYS_*` 字典表或依赖 `DBA_*`。
+
+文档依据：`reference/system-view/all/all.md` — ALL 视图只需普通用户权限（无需 DBA）；`DBA_*` 需 DBA 权限。验收中 `ColumnExists` 查 `SYS_COLUMNS` 会稳定触发 `E18012 权限不够`。
+
+应用用户只要能读本库 `ALL_*`（自建对象默认可见）即可完成 scaffold / migrate 探测；**无需**再 GRANT `DBA_*`。
+
 ## Scaffolding Baselines
 
 **状态：excluded-with-evidence（Phase 12 W4 — OOS-05）**
@@ -190,7 +203,7 @@ SQL 生成见 `XuguQuerySqlGenerator`；验证见 `ExecuteDeleteTests` / `Execut
 | 导航 JOIN UPDATE（`o.Customer.City`） | **拒绝**（生成 CROSS，E19132） | 用 FK 谓词代替 |
 | FK 谓词单表 ExecuteUpdate | **支持** | `Single_table_ExecuteUpdate_by_fk_filter_*` |
 | `ORDER BY` / `LIMIT` / `DISTINCT` / `GROUP BY` 源 | **拒绝**（翻译或服务器错误） | `ExecuteBulkBoundaryTests` / Execute*Tests |
-| `CROSS APPLY` / `OUTER APPLY` / `LATERAL` | **拒绝**（`XuguStrings.ApplyNotSupported`；实库 E19132） | Northwind BulkUpdates `*_apply_*`；`from.md` 无 APPLY/LATERAL |
+| `CROSS APPLY` / `OUTER APPLY` / `LATERAL` | **拒绝**（`XuguStrings.ApplyNotSupported`；实库 E19132） | Northwind BulkUpdates `*_apply_*`；Functional **~120** 覆盖 APPLY/LATERAL 的 override 已 `[Skip]`（Wave A Task 6）；`from.md` 无 APPLY/LATERAL |
 | `UPDATE`/`DELETE` … `CROSS JOIN` | **拒绝**（实库 E19132 unexpected CROSS；SELECT 侧 `CROSS JOIN` 有文档） | Northwind BulkUpdates `*_cross_join_*` 负向断言 |
 
 需要上述能力时请使用常规 `SaveChanges` 或显式 SQL。
@@ -234,18 +247,28 @@ CLR `Guid` 默认映射 XuguDB 原生 `GUID`（16 字节），非 MySQL 风格 `
 
 ## 平台支持（Windows / Linux RID）
 
-**状态：signed-off platform exclusion（Phase 12 W5 — 12.509/PLAT-02）**
+**状态：signed-off platform exclusion（Phase 12 W5 — 12.509/PLAT-02）；Wave A 仅签 Windows 试用**
 
 | 平台 | RID | 状态 |
 |------|-----|------|
 | Windows x64 | `win-x64` | **支持** — `xugusql.dll` 随 NuGet / 构建输出 |
-| Linux x64 | `linux-x64` | **signed-off blocked** — 驱动无 `libxugusql.so`；VT-XUGU-LINUXRID-001 |
+| Linux x64 | `linux-x64` | **signed-off blocked** — 官方驱动长期无 `libxugusql.so`；VT-XUGU-LINUXRID-001 |
 
-**预备**：`NativeAssets.props` + `EFCore.Xugu.csproj` 条件 `runtimes/linux-x64/native/` 打包（`.so` 存在时自动启用）。
+### 原生库与 NuGet 驱动（Xuguclient）
 
-**CI**：GitHub Actions 实库 job 为 **Windows-only**（12.508 signed-off）；Linux agent 待驱动发布 `.so` 后添加。
+| 项 | 说明 |
+|----|------|
+| **NuGet 依赖** | 发布包 nuspec 依赖 **`Xuguclient`**（pack 时 `UseLocalXuguDriver=false`，当前 `VersionOverride=3.3.6-bionic`） |
+| **托管层** | `XuguClient.dll` 由 `Xuguclient` 包还原 |
+| **原生层** | P/Invoke 加载 `xugusql.dll`（Windows）或 `libxugusql.so`（Linux，若存在） |
+| **双源行为** | 仓库可在 `runtimes/win-x64/native/` **嵌入**本地 `xugusql.dll`（`XuguNativeDllPath` / `NativeAssets.props`）；**NuGet 还原时 `Xuguclient` 包内资产优先**，可能与本地嵌入版本不同 — 以消费方还原结果为准 |
+| **Wave A 范围** | **仅 Windows x64 已验收**；连接串须含 `CHAR_SET=UTF8`（驱动默认 GBK 会导致中文/重音乱码） |
 
-详见 `docs/references/platform-limitations-signed-off-12.509.md`。
+**预备**：`NativeAssets.props` + `EFCore.Xugu.csproj` 条件 `runtimes/linux-x64/native/` 打包（`.so` 存在时自动启用）。`Xuguclient` **3.3.6-bionic** 预发布包**可能**含 Linux `.so` 资产，但 **Wave A 未在 Linux 实库验收**，**不得**据此宣称 Linux 生产就绪。
+
+**CI**：GitHub Actions 实库 job 为 **Windows-only**（12.508 signed-off）；Linux agent 待驱动发布稳定 `.so` 且完成实库矩阵后添加。
+
+详见 `docs/references/platform-limitations-signed-off-12.509.md` 与 [xuguclient-dependency-strategy.md](xuguclient-dependency-strategy.md)。
 
 ## JSON 列（EF Core 映射）
 
